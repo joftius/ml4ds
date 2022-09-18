@@ -1,0 +1,34 @@
+---
+title: "6 Regularization and validation"
+description: |
+  When optimizing an ML model there are a variety of strategies to improve generalization from the training data. We can add a complexity penalty to the loss function, and we can evaluate the loss function on validation data.
+author:
+  - name: Joshua Loftus
+date: 10-06-2021
+output:
+  distill::distill_article:
+    self_contained: false
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+knitr::opts_chunk$set(fig.retina = 3, warning = FALSE, message = FALSE)
+library(tidyverse)
+library(knitr)
+library(gapminder)
+theme_set(theme_minimal(base_size = 22))
+```
+
+## Regularization
+
+## Validation
+
+## Slides, notebooks, exercises
+
+[Slides](slides/06-1-regularization.html) for regularization video ([PDF](slides/regularization.pdf))
+
+[Slides](slides/06-2-lasso.html) for lasso video ([PDF](slides/validation.pdf))
+
+[Notebook](notebooks/validation.Rmd) for validation
+
+[Notebook](notebooks/lasso_inference.Rmd) for lasso 

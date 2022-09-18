@@ -1,0 +1,223 @@
+---
+title: "Seminar notebook"
+author: "Joshua Loftus"
+date: "1/26/2021"
+output: html_document
+---
+
+```{r setup, message = FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(gapminder)
+library(broom)
+theme_set(theme_minimal(base_size = 22))
+```
+
+# Linear regression
+
+## Simple linear regression
+
+### Estimation
+
+```{r}
+gm2007 <- gapminder %>% filter(year == 2007)
+model_lm <- lm(lifeExp ~ gdpPercap, data = gm2007)
+model_lm
+```
+
+
+- Slope = `cor(x,y) * sd(y) / sd(x)`
+- Regression line passes through `(mean(x), mean(y))`
+
+
+```{r}
+gm2007 %>%
+  summarize(cor_xy = cor(gdpPercap, lifeExp),
+            sd_x = sd(gdpPercap),
+            sd_y = sd(lifeExp),
+            xbar = mean(gdpPercap),
+            ybar = mean(lifeExp),
+            hat_beta1 = cor_xy * sd_y / sd_x,
+            hat_beta0 = ybar - hat_beta1 * xbar)
+```
+
+### Inference
+
+```{r}
+summary(model_lm)
+```
+
+(ISLR 3.8):
+
+`se(beta hat) = sigma / sqrt(sum((x - mean(x))^2))`
+
+Estimated by:
+
+`se(beta hat) = sigma hat / sqrt(sum((x - mean(x))^2))`
+
+where (ISLR 3.15):
+
+`sigma hat = RSE = sqrt( RSS / (n-2) )`
+
+
+```{r}
+augment(model_lm) %>%
+  summarize(RSS = sum(.resid^2),
+            RSE = sqrt(RSS / (n() - 2)),
+            std.error = RSE / sqrt(sum( (gdpPercap - mean(gdpPercap))^2 ))  )
+```
+### Model diagnostics
+
+```{r}
+glance(model_lm)
+```
+$$
+R^2 = \text{cor}(x,y)^2
+$$
+
+```{r}
+cor(gm2007$gdpPercap, gm2007$lifeExp)^2
+```
+
+$$
+R^2 = 1 - \frac{\text{RSS}}{\text{TSS}}
+$$
+
+
+```{r}
+augment(model_lm) %>%
+  summarize(RSS = sum(.resid^2),
+            TSS = sum( (lifeExp - mean(lifeExp))^2),
+            R2 = 1 - RSS/TSS)
+```
+
+
+### Diagnostic plots
+
+Idea: look for patterns in residuals, which could indicate systemic error (bias)
+
+```{r}
+augment(model_lm) %>%
+  ggplot(aes(gdpPercap, .resid)) +
+  geom_point()
+```
+
+Other diagnostics:
+
+- Checking for (approximate) normality with quantile-quantile plot
+- Checking for influential observations
+
+[Cook's distance](https://en.wikipedia.org/wiki/Cook%27s_distance), `cooksd` in the plots, measures how much the predictions for all other observations change if we leave out one observation
+
+Point with high `cooksd` values 
+
+```{r}
+plot(model_lm)
+```
+
+```{r}
+library(GGally)
+ggnostic(model_lm)
+```
+
+
+
+**Question**: with flexible models, are influential observations more or less harmful, and in which ways?
+
+## Observation vs intervention
+
+By default, conditional expectation functions--and therefore the linear models we use to approximate them--can only tell us about *observational* relationships. To make conclusions about *causal* relationships requires additional assumptions, and those additional assumptions are usually (even more) unrealistic (than linearity)
+
+- Conditioning on `X = x` means we observe the subset of the data/population having a particular value of `X`
+
+- Intervening to set `X = x` for a particular observation means we actually do something in the world--not just in the dataset--to change the value of `X`
+
+This simple simulation shows the difference between these two kinds of relationships. In this simulation we know the true data generation process, so we know what would happen if we intervened to change the value of `X` for some observation: `Y` would be unchanged, because `Y` does not (functionally) depend on `X`
+
+```{r}
+n <- 100
+U <- 2*rnorm(n)
+X <- round(U + rnorm(n))
+Y <- U + rnorm(n)
+qplot(X,Y)
+```
+
+```{r}
+lm(Y ~ X)
+```
+Interpret the slope carefully! If we observe a different part of the population, having x values 1 larger than before, then these different part of the population has a larger (conditional) expected outcome
+
+This is *not* the same thing as changing one observation's x value, which is what people are probably most interested in.
+
+Change `x` below and see the comparisons of average `Y` values after conditioning on different `X` values. This is an observational comparison. The regression slope captures and summarizes all of these comparisons
+
+```{r}
+x <- 3
+mean(Y[X == x]) - mean(Y[X == x - 1])
+```
+
+
+Now consider what happens if we run the same code but intervene and change `X` before generating `Y`
+
+```{r}
+X1 <- which(X == 1)
+X1
+```
+
+
+```
+U <- 2*rnorm(n)
+X <- round(U + rnorm(n))
+# change X here, like e.g.
+X[X1] <- 2
+Y <- U + rnorm(n)
+```
+
+Would the `Y` values for these intervened observations be any different? Would their average be larger by an amount close to the regression slope?
+
+**Exercise**: Change the code generating the example above so that intervening on `X` results in a decrease in the average of `Y` for the observations whose `X` values are changed
+
+For our purposes an intervention on a given variable means to modify the values of that variable at some point in the data generation process.
+
+```{r}
+
+```
+
+
+**Question**: Suppose we could intervene and change a country's GDP per capita and increase it by some amount. Would this change life expectancy, and if so would the change be roughly the amount captured by the regression coefficient in that data? Why or why not?
+
+
+## Multiple regression
+
+```{r}
+candy <- fivethirtyeight::candy_rankings
+```
+
+
+### Estimation
+
+```{r}
+
+```
+
+
+### Inference
+
+```{r}
+
+```
+
+Hint: plot confidence intervals with `ggcoef` 
+
+### Diagnostics
+
+```{r}
+
+```
+
+### Problem: high dimensional plots...
+
+e.g. `ggpairs` shows many 2-dimensional projections of the data, but there is no guarantee that these projections together help us understand higher dimensional relationships... including possibly higher dimensional patterns in the residuals
+
+**Question**: What does this mean for diagnostic plots when our regression model is high dimensional (e.g. p > 3 predictors)
+

@@ -1,0 +1,113 @@
+---
+title: "Simple regression"
+author: "Joshua Loftus"
+date: "1/26/2021"
+output: html_document
+---
+
+```{r setup, message = FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(gapminder)
+library(broom)
+theme_set(theme_minimal(base_size = 22))
+```
+
+## Estimation
+
+```{r}
+gm2007 <- gapminder %>% filter(year == 2007)
+model_lm <- lm(lifeExp ~ gdpPercap, data = gm2007)
+model_lm
+```
+
+$$
+\hat \beta_1 = \text{cor}(x,y) \frac{\text{sd}(y)}{\text{sd}(x)}
+$$
+
+Regression line passes through
+
+$$
+(\bar x, \bar y)
+$$
+
+$$
+\bar y = \hat \beta_0 + \hat \beta_1 \bar x
+$$
+
+```{r}
+gm2007 %>%
+  summarize(cor_xy = cor(gdpPercap, lifeExp),
+            sd_x = sd(gdpPercap),
+            sd_y = sd(lifeExp),
+            xbar = mean(gdpPercap),
+            ybar = mean(lifeExp),
+            hat_beta1 = cor_xy * sd_y / sd_x,
+            hat_beta0 = ybar - hat_beta1 * xbar)
+```
+
+## Inference
+
+```{r}
+summary(model_lm)
+```
+
+(ISLR 3.8):
+
+$$
+\text{SE}(\hat \beta_1) = \sqrt{\frac{\sigma^2}{\sum_{}(x_i - \bar x)^2}}
+$$
+
+Estimated by:
+
+$$
+\text{se}(\hat \beta_1) = \frac{\hat \sigma}{\sqrt{\sum_{}(x_i - \bar x)^2}}
+$$
+
+where (ISLR 3.15):
+
+$$
+\hat \sigma = \text{RSE} = \sqrt{\frac{\text{RSS}}{n-2}}
+$$
+
+```{r}
+augment(model_lm) %>%
+  summarize(RSS = sum(.resid^2),
+            RSE = sqrt(RSS / (n() - 2)),
+            std.error = RSE / sqrt(sum( (gdpPercap - mean(gdpPercap))^2 ))  )
+```
+## Model diagnostics
+
+```{r}
+glance(model_lm)
+```
+$$
+R^2 = \text{cor}(x,y)^2
+$$
+
+```{r}
+cor(gm2007$gdpPercap, gm2007$lifeExp)^2
+```
+
+$$
+R^2 = 1 - \frac{\text{RSS}}{\text{TSS}}
+$$
+
+
+```{r}
+augment(model_lm) %>%
+  summarize(RSS = sum(.resid^2),
+            TSS = sum( (lifeExp - mean(lifeExp))^2),
+            R2 = 1 - RSS/TSS)
+```
+
+
+## Idea: look for patterns in residuals
+
+```{r}
+augment(model_lm) %>%
+  ggplot(aes(gdpPercap, .resid)) +
+  geom_point()
+```
+
+

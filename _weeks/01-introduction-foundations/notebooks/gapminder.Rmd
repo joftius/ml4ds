@@ -1,0 +1,84 @@
+---
+title: "Gapminder"
+author: "Joshua Loftus"
+date: "1/18/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## GDP and life expectancy
+
+What is the association?
+
+```{r}
+library(gapminder)
+library(tidyverse)
+```
+
+```{r}
+ggplot(gapminder, aes(x = gdpPercap, y = lifeExp)) + 
+  geom_point()
+```
+
+```{r}
+gapminder %>% 
+  filter(year == 2007) %>%
+  ggplot(aes(x = gdpPercap, y = lifeExp)) + 
+  geom_point() +
+  geom_smooth()
+```
+
+```{r}
+gm2007 <- gapminder %>% 
+  filter(year == 2007)
+
+model_lm <- lm(lifeExp ~ gdpPercap, data = gm2007)
+summary(model_lm)
+```
+
+```{r}
+library(broom)
+tidy(model_lm)
+```
+
+```{r}
+glance(model_lm)
+```
+
+```{r}
+augment(model_lm) %>%
+  ggplot(aes(gdpPercap, lifeExp)) +
+  geom_point() +
+  geom_line(aes(gdpPercap, .fitted))
+```
+
+```{r}
+model_loess <- loess(lifeExp ~ gdpPercap,
+                     span = .5,
+                     degree = 2,
+                     data = gm2007)
+```
+
+```{r}
+augment(model_loess) %>%
+  ggplot(aes(gdpPercap, lifeExp)) +
+  geom_point() +
+  geom_line(aes(gdpPercap, .fitted))
+```
+
+```{r}
+model_lm2 <- lm(lifeExp ~ gdpPercap + poly(gdpPercap, 2), data = gm2007)
+augment(model_lm2) %>%
+  ggplot(aes(gdpPercap, lifeExp)) +
+  geom_point() +
+  geom_line(aes(gdpPercap, .fitted))
+```
+
+
+
+```{include = FALSE}
+c(.2, .7) %>% map_dfr(~ loess(lifeExp ~ gdpPercap, span = .x, data = gapminder) %>% augment() %>% mutate(span = .x))
+```

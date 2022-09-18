@@ -1,0 +1,24 @@
+name: "ml4ds"
+title: "ml4ds"
+description: |
+  ml4ds
+output_dir: "docs"
+navbar:
+  right:
+    - text: "Home"
+      href: index.html
+orcid_id: "0000-0002-2905-1632"
+base_url: http://ml4ds.com/
+citations: false
+include: ["files"]
+creative_commons: CC BY
+twitter:
+  site: "@joftius"
+theme: theme.css
+cookie_consent:
+  style: simple
+  type: express
+  palette: light
+  lang: en
+  cookies_policy: url
+output: distill::distill_article      

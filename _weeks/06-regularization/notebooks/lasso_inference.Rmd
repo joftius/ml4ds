@@ -1,0 +1,87 @@
+---
+title: "Lasso inference experiments"
+author: "ST310"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse) 
+library(broom)     
+library(glmnet)    
+library(selectiveInference)
+theme_set(theme_minimal(base_size = 20))
+```
+
+## Inference for the lasso
+
+#### Generate data for a high-dimensional regression
+
+```{r}
+n <- 100
+p <- 200
+X <- matrix(rnorm(n*p), nrow = n)
+Y <- rnorm(n)
+```
+
+#### Fit the lasso solution path and choose a sparsity level automatically
+
+Note: this is an alternative method to cross-validation
+
+```{r}
+# Compute lasso path
+# while storing information required for
+# conditional (truncated) inference
+lasso_path <- lar(X, Y)
+# Use AIC/BIC to choose model size
+# and compute adjusted p-values
+# in higher dimensions change mult
+# to log(n) for BIC, log(p) for RIC
+lasso_inference <- larInf(lasso_path, mult = 2, type = "aic", ntimes = 1)
+```
+
+Selected predictors
+
+```{r}
+active_set <- lasso_inference$vars
+active_set
+```
+
+#### Fit an OLS model using only selected variables, compute p-values the classical way
+
+(Use `summary()` or `tidy()` from the `broom` package)
+
+```{r}
+OLS_fit <- lm(Y ~ X[, active_set] - 1)
+tidy(OLS_fit)
+```
+
+#### Adjusted inference
+
+These p-values (from the `larInf` function in the `selectiveInference` package above) are calculated from a conditional distribution, conditional on the model selection
+
+```{r}
+lasso_inference
+```
+
+#### How do the two sets of p-values compare? Which are "better", and why?
+
+
+#### Compare to p-values calculated on a new set of test data
+
+```{r}
+
+```
+
+
+#### Rerun the code several times and observe the variability
+
+
+#### Change `Y` to be generated from a coefficient vector where only the first 5 entries are nonzero and then run the code again a few more times
+
+
+
+
+
+
+

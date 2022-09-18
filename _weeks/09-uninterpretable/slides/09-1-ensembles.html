@@ -1,0 +1,933 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Machine learning</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Joshua Loftus" />
+    <script src="libs/header-attrs/header-attrs.js"></script>
+    <link href="libs/remark-css/default.css" rel="stylesheet" />
+    <link href="libs/tile-view/tile-view.css" rel="stylesheet" />
+    <script src="libs/tile-view/tile-view.js"></script>
+    <link href="libs/panelset/panelset.css" rel="stylesheet" />
+    <script src="libs/panelset/panelset.js"></script>
+    <link rel="stylesheet" href="xaringan-themer.css" type="text/css" />
+    <link rel="stylesheet" href="../../../theme.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: bottom, left, title-slide
+
+# Machine learning
+## Bagging, forests, boosting
+### Joshua Loftus
+
+---
+
+
+class: inverse
+
+
+
+
+
+
+
+
+
+&lt;style type="text/css"&gt;
+.remark-slide-content {
+    font-size: 1.2rem;
+    padding: 1em 4em 1em 4em;
+}
+&lt;/style&gt;
+
+## Regression and classification trees
+
+### More interpretable than linear models?
+
+- Sequence of simple questions about individual predictors
+
+- Growing and pruning
+
+### **Strategies for improving "weak" models**
+
+- Bagging
+
+- Random forests (similar to "dropout" -- future topic)
+
+- Boosting
+
+---
+
+### Data pre-processing, missing values
+
+
+
+
+```r
+pg &lt;- penguins %&gt;%
+  # not interested in classifying by time/island
+  select(-island, -year, -sex) %&gt;%
+  drop_na()
+```
+
+
+
+
+Inference/interpretation with missing data requires special [methods](https://gking.harvard.edu/amelia) like [multiple](https://stefvanbuuren.name/fimd/workflow.html) [imputation](https://recipes.tidymodels.org/reference/index.html#section-step-functions-imputation)
+
+---
+
+### Classification tree
+
+&lt;img src="09-1-ensembles_files/figure-html/penguintree-1.png" width="1008" style="display: block; margin: auto;" /&gt;
+
+Why splits with the same classifications in both sides?
+
+---
+### Multi-class AUC
+
+.pull-left[
+
+```r
+tree_hat &lt;- data.frame(
+  yhat = predict(fit_tree),
+  species = pg$species
+)
+roc_auc(tree_hat,
+        truth = species,
+        starts_with("yhat"))
+```
+
+```
+## # A tibble: 1 x 3
+##   .metric .estimator .estimate
+##   &lt;chr&gt;   &lt;chr&gt;          &lt;dbl&gt;
+## 1 roc_auc hand_till      0.981
+```
+
+Average the AUC of each one-vs-all binary classification
+
+`roc_auc` from `yardstick` or `tidymodels` packages
+]
+.pull-right[
+
+```r
+roc_curve(tree_hat,
+    truth = species,
+    starts_with("yhat")) %&gt;%
+  ggplot(aes(1-specificity,
+       sensitivity,
+       color = .level,
+       linetype = .level)) +
+  geom_line()
+```
+
+&lt;img src="09-1-ensembles_files/figure-html/unnamed-chunk-5-1.png" width="504" style="display: block; margin: auto;" /&gt;
+
+]
+
+---
+class: inverse
+
+### Three model improvement strategies
+
+Sacrifice simplicity/interpretability for prediction accuracy
+
+Can be used with other models too, not just trees
+
+#### **Bagging**: bootstrap aggregating
+
+- Resample training data, average resulting models
+
+#### **Random forest**: randomly drop predictors
+
+- Randomly drop predictors when resampling
+
+#### **Boosting**: iterative descent using residuals
+
+- Fit each new model to residual of previous fits
+
+---
+
+## Bagging: bootstrap aggregating
+
+**Problem**: a single tree model can have high variance (like many non-smooth or non-regularized models)
+
+1. **Bootstrap**: for each `\(b = 1, \ldots, B\)`  resamples (with replacement) of the training data, fit `\(\hat f^{*b}\)` on bootstrap sample `\(b\)` 
+
+2. **Aggregate**: combine the `\(B\)` models, using majority vote for classification or mean for regression
+
+`$$\hat f_\text{bag} = \frac{1}{B} \sum_{b=1}^B \hat f^{*b}$$`
+
+("Smoothing" useful for low-bias, high-variance models)
+
+---
+
+### Aggregating is... smoothing?
+
+.pull-left[
+
+&lt;img src="09-1-ensembles_files/figure-html/penguintreeL-1.png" width="1008" style="display: block; margin: auto;" /&gt;&lt;img src="09-1-ensembles_files/figure-html/penguintreeL-2.png" width="1008" style="display: block; margin: auto;" /&gt;
+Predictions for one penguin
+
+
+```
+ species flipper_length_mm
+  Adelie               190
+```
+
+```
+ bill_length_mm bill_depth_mm
+             42          20.2
+```
+]
+.pull-right[
+&lt;img src="09-1-ensembles_files/figure-html/penguintreeR-1.png" width="1008" style="display: block; margin: auto;" /&gt;&lt;img src="09-1-ensembles_files/figure-html/penguintreeR-2.png" width="1008" style="display: block; margin: auto;" /&gt;
+
+```
+##      Adelie  Chinstrap     Gentoo
+## 1 0.8809524 0.11904762 0.00000000
+## 2 0.8292683 0.17073171 0.00000000
+## 3 0.9767442 0.02325581 0.00000000
+## 4 0.8536585 0.04878049 0.09756098
+```
+]
+
+---
+
+## Out-of-bag predictions
+
+- Each bootstrap sample contains some subset of the training data
+
+- Roughly `\(1/e \approx 0.37\)` portion of the training samples will be left out of each bootstrap sample
+
+- Can use these to estimate test error (e.g. instead of `\(K\)`-fold cross-validation)
+
+Software implementations may do this automatically
+
+---
+
+## Random forest: dropping predictors
+
+**Problem**: aggregation does not increase information if the aggregates are highly correlated, e.g. averaging 1000 trees but each one uses the same small set of predictor variables
+
+`$$\text{Var}\left( \sum_{b=1}^B \hat f^{*b} \right) = 
+ \sum_{b=1}^B \text{Var}\left( \hat f^{*b} \right) + \sum_{b=1}^B \sum_{b'\neq b} \text{Cov}\left( \hat f^{*b}, \hat f^{*b'} \right)$$`
+
+--
+
+1. **Drop** predictors randomly during resampling
+
+  e.g. randomly include `\(\sqrt{p}\)` of the `\(p\)` predictors in each `\(\hat f^{*b}\)`
+
+2. **Aggregate** models which are now less correlated, achieving greater variance reduction
+
+---
+
+### Aggregating less-correlated models
+
+.pull-left[
+
+&lt;img src="09-1-ensembles_files/figure-html/penguinFL-1.png" width="1008" style="display: block; margin: auto;" /&gt;&lt;img src="09-1-ensembles_files/figure-html/penguinFL-2.png" width="1008" style="display: block; margin: auto;" /&gt;
+Predictions for one penguin
+
+
+```
+ species flipper_length_mm
+  Adelie               190
+```
+
+```
+ bill_length_mm bill_depth_mm
+             42          20.2
+```
+]
+.pull-right[
+&lt;img src="09-1-ensembles_files/figure-html/penguinFR-1.png" width="1008" style="display: block; margin: auto;" /&gt;&lt;img src="09-1-ensembles_files/figure-html/penguinFR-2.png" width="1008" style="display: block; margin: auto;" /&gt;
+
+```
+##      Adelie  Chinstrap    Gentoo
+## 1 0.8809524 0.11904762 0.0000000
+## 2 0.6274510 0.37254902 0.0000000
+## 3 0.8260870 0.04347826 0.1304348
+## 4 0.9000000 0.07500000 0.0250000
+```
+]
+
+---
+
+### Boosting: iterated fitting on residuals
+
+**Idea**: train models sequentially, decreasing residuals by a small amount each time. Each model contributes something different
+
+Can use **weak learners** -- e.g. trees with one split ("stumps") -- to grow an ensemble model gradually fitting closer to the training data
+
+--
+
+#### Relationship with gradient descent
+
+**Gradient descent**: small step in direction of negative gradient
+
+**Boosting**: small step in direction of *weak learner closest to negative gradient* (maximum inner product in function space)
+
+Optional additional reading: [ESL](https://web.stanford.edu/~hastie/ElemStatLearn/) Chapter 10 (non-examinable)
+
+---
+
+### Boosting in practice
+
+#### More tuning parameters
+
+Number of trees/steps `\(B\)`, complexity of each tree/model `\(d\)`, regularization/learning rate `\(\lambda\)`. **Warning**: can now overfit with large `\(B\)` (unlike bagging/r.f.)
+
+#### Choosing/optimizing tuning parameters
+
+Software may do something automatically. *No guarantee it's reasonable!* e.g. optimize over a grid of tuning parameters
+
+Two grid-tuning stages:
+
+1. Rough grid covering a large range (possibly orders of magnitude)
+2. Finer grid over a smaller range
+
+
+---
+class: inverse
+
+# Powerful ML tools/software
+
+Let's see these methods in action on the **penguins** dataset
+
+We'll use [`tidymodels`](https://rviews.rstudio.com/2019/06/19/a-gentle-intro-to-tidymodels/) to streamline the process
+
+![](https://rviews.rstudio.com/post/2019-06-14-a-gentle-intro-to-tidymodels_files/figure-html/tidymodels.png)
+
+---
+
+### `tidymodels` workflows
+
+#### Training and testing data
+
+Using `initial_split`
+
+
+```r
+library(tidymodels)
+pg_split &lt;- initial_split(pg, strata = species)
+pg_train &lt;- training(pg_split)
+pg_test &lt;- testing(pg_split)
+pg_cv &lt;- vfold_cv(pg_train, v = 10, strata = species)
+```
+
+10-fold cross-validation (`v = 10` is also the default) on training data
+
+(This just sets up the data, it doesn't fit any models yet)
+
+---
+
+### `tidymodels` workflows
+
+#### Pre-processing and model specification
+
+Using `recipe`
+
+
+```r
+pg_recipe &lt;- training(pg_split) %&gt;%
+  recipe(species ~ .) %&gt;%
+  prep()
+```
+
+I already did the pre-processing earlier. If your processing uses more `step`s, then you have to `juice()` the `testing` data to prepare it (apply the same preprocessing to test data)
+
+(Still setting up, no models fit yet)
+
+---
+class: middle, center
+
+#### Next: slides setting up 4 different models
+
+A single classification tree
+
+Bagged trees
+
+A random forest
+
+And boosted trees
+
+*There's a lot of code but I'll highlight what's important*
+
+---
+
+### Classification tree
+
+Specify fitting algorithm
+
+
+```r
+pg_tree &lt;- decision_tree(tree_depth = 6,
+*               cost_complexity = tune("C")) %&gt;%
+  set_engine("rpart") %&gt;% 
+  set_mode("classification") 
+```
+
+--
+
+
+```r
+pg_workflow_tree &lt;- workflow() %&gt;%
+  add_recipe(pg_recipe) %&gt;%
+  add_model(pg_tree)
+```
+
+
+```r
+pg_fit_tree  &lt;- tune_grid(
+  pg_workflow_tree,
+* grid = data.frame(C =  2^(-5:0)),
+  pg_cv,
+  metrics = metric_set(roc_auc)
+)
+```
+
+---
+
+### Tuning parameters with CV-error 
+
+
+```r
+pg_fit_tree %&gt;% autoplot()
+```
+
+&lt;img src="09-1-ensembles_files/figure-html/unnamed-chunk-14-1.png" width="576" style="display: block; margin: auto;" /&gt;
+
+---
+
+### Fit and test best tree model
+
+
+```r
+pg_tree_best &lt;- pg_fit_tree %&gt;%
+  select_best() # best tuning parameters
+```
+
+.pull-left[
+
+```r
+pg_tree_final &lt;- 
+  finalize_model(
+    pg_tree,
+    pg_tree_best)
+pg_tree_final
+```
+
+```
+## Decision Tree Model Specification (classification)
+## 
+## Main Arguments:
+##   cost_complexity = 0.03125
+##   tree_depth = 6
+## 
+## Computational engine: rpart
+```
+]
+.pull-right[
+
+```r
+pg_tree_test &lt;- 
+  pg_workflow_tree %&gt;%
+  update_model(pg_tree_final) %&gt;%
+  last_fit(split = pg_split) %&gt;%
+  collect_metrics() # test error
+pg_tree_test
+```
+
+```
+## # A tibble: 2 x 4
+##   .metric  .estimator .estimate .config             
+##   &lt;chr&gt;    &lt;chr&gt;          &lt;dbl&gt; &lt;chr&gt;               
+## 1 accuracy multiclass     0.905 Preprocessor1_Model1
+## 2 roc_auc  hand_till      0.912 Preprocessor1_Model1
+```
+]
+
+---
+
+### Bagging (bootstrap aggregating) trees
+
+
+```r
+library(baguette)
+pg_bag &lt;- bag_tree(tree_depth = 7,
+              cost_complexity = tune("C")) %&gt;%
+  set_mode("classification") %&gt;%
+  set_engine("C5.0", times = 5)
+```
+
+Specify data/`recipe` for fitting
+
+
+```r
+pg_workflow_bag &lt;- workflow() %&gt;%
+  add_recipe(pg_recipe) %&gt;%
+  add_model(pg_bag)
+```
+
+--
+
+
+```r
+pg_fit_bag  &lt;- tune_grid(
+  pg_workflow_bag,
+  grid = data.frame(C =  2^(-5:0)),
+  pg_cv,
+  metrics = metric_set(roc_auc)
+)
+```
+
+
+---
+
+### Fit and test best bagging model
+
+
+```r
+pg_bag_best &lt;- pg_fit_bag %&gt;%
+  select_best() # best tuning parameters
+```
+
+.pull-left[
+
+```r
+pg_bag_final &lt;- 
+  finalize_model(
+    pg_bag,
+    pg_bag_best)
+pg_bag_final
+```
+
+```
+## Bagged Decision Tree Model Specification (classification)
+## 
+## Main Arguments:
+##   cost_complexity = tune("C")
+##   tree_depth = 7
+##   min_n = 2
+## 
+## Engine-Specific Arguments:
+##   times = 5
+## 
+## Computational engine: C5.0
+```
+]
+.pull-right[
+
+```r
+pg_bag_test &lt;- 
+  pg_workflow_bag %&gt;%
+  update_model(pg_bag_final) %&gt;%
+  last_fit(split = pg_split) %&gt;%
+  collect_metrics() # test error
+pg_bag_test
+```
+
+```
+## # A tibble: 2 x 4
+##   .metric  .estimator .estimate .config             
+##   &lt;chr&gt;    &lt;chr&gt;          &lt;dbl&gt; &lt;chr&gt;               
+## 1 accuracy multiclass     0.952 Preprocessor1_Model1
+## 2 roc_auc  hand_till      0.975 Preprocessor1_Model1
+```
+]
+
+---
+
+### Random forests
+
+
+```r
+pg_rf &lt;- 
+  rand_forest(trees = 100, mtry = tune()) %&gt;%
+  set_mode("classification") %&gt;%
+  set_engine("randomForest") 
+```
+
+
+```r
+pg_workflow_rf &lt;- workflow() %&gt;%
+  add_recipe(pg_recipe) %&gt;%
+  add_model(pg_rf)
+```
+
+Run fitting algorithm with cross-validation on training data
+
+
+```r
+pg_fit_rf  &lt;- tune_grid(
+  pg_workflow_rf,
+  pg_cv,
+  metrics = metric_set(roc_auc)
+)
+```
+
+---
+
+### Fit and test best random forest model
+
+
+```r
+pg_rf_best &lt;- pg_fit_rf %&gt;%
+  select_best() # best tuning parameters
+```
+
+.pull-left[
+
+```r
+pg_rf_final &lt;- 
+  finalize_model(
+    pg_rf,
+    pg_rf_best)
+pg_rf_final
+```
+
+```
+## Random Forest Model Specification (classification)
+## 
+## Main Arguments:
+##   mtry = 1
+##   trees = 100
+## 
+## Computational engine: randomForest
+```
+]
+.pull-right[
+
+```r
+pg_rf_test &lt;- 
+  pg_workflow_rf %&gt;%
+  update_model(pg_rf_final) %&gt;%
+  last_fit(split = pg_split) %&gt;%
+  collect_metrics() # test error
+pg_rf_test
+```
+
+```
+## # A tibble: 2 x 4
+##   .metric  .estimator .estimate .config             
+##   &lt;chr&gt;    &lt;chr&gt;          &lt;dbl&gt; &lt;chr&gt;               
+## 1 accuracy multiclass     0.952 Preprocessor1_Model1
+## 2 roc_auc  hand_till      0.997 Preprocessor1_Model1
+```
+]
+
+---
+
+### Boosting classification trees
+
+
+```r
+pg_boost &lt;- 
+* boost_tree(trees = tune(),
+*            learn_rate = tune()) %&gt;%
+  set_mode("classification") %&gt;%
+  set_engine("xgboost", objective = "multi:softprob") 
+```
+
+
+```r
+pg_workflow_boost &lt;- workflow() %&gt;%
+  add_recipe(pg_recipe) %&gt;%
+  add_model(pg_boost)
+```
+
+Run fitting algorithm with cross-validation on training data
+
+
+```r
+pg_fit_boost  &lt;- tune_grid(
+  pg_workflow_boost,
+  pg_cv,
+  metrics = metric_set(roc_auc)
+)
+```
+
+
+---
+
+### Fit and test best boosted tree model
+
+
+```r
+pg_boost_best &lt;- pg_fit_boost %&gt;%
+  select_best() # best tuning parameters
+```
+
+.pull-left[
+
+```r
+pg_boost_final &lt;- 
+  finalize_model(
+    pg_boost,
+    pg_boost_best)
+pg_boost_final
+```
+
+```
+## Boosted Tree Model Specification (classification)
+## 
+## Main Arguments:
+##   trees = 189
+##   learn_rate = 0.0426202313921608
+## 
+## Engine-Specific Arguments:
+##   objective = multi:softprob
+## 
+## Computational engine: xgboost
+```
+]
+.pull-right[
+
+```r
+pg_boost_test &lt;- 
+  pg_workflow_boost %&gt;%
+  update_model(pg_boost_final) %&gt;%
+  last_fit(split = pg_split) %&gt;%
+  collect_metrics() # test error
+pg_boost_test
+```
+
+```
+## # A tibble: 2 x 4
+##   .metric  .estimator .estimate .config             
+##   &lt;chr&gt;    &lt;chr&gt;          &lt;dbl&gt; &lt;chr&gt;               
+## 1 accuracy multiclass     0.952 Preprocessor1_Model1
+## 2 roc_auc  hand_till      0.996 Preprocessor1_Model1
+```
+]
+
+---
+
+### Evaluate models
+
+Optimal cross-validation accuracy
+
+
+```r
+all_models &lt;- list(pg_tree_test, pg_bag_test,
+                   pg_rf_test, pg_boost_test) %&gt;%
+  map_dfr(bind_rows)
+```
+
+.pull-left[
+AUC
+
+```
+## # A tibble: 4 x 2
+##   model   .estimate
+##   &lt;chr&gt;       &lt;dbl&gt;
+## 1 tree        0.912
+## 2 bagging     0.975
+## 3 randf       0.997
+## 4 boost       0.996
+```
+]
+.pull-right[
+Accuracy
+
+```
+## # A tibble: 4 x 2
+##   model   .estimate
+##   &lt;chr&gt;       &lt;dbl&gt;
+## 1 tree        0.905
+## 2 bagging     0.952
+## 3 randf       0.952
+## 4 boost       0.952
+```
+]
+
+Which is best? Well, the full sample size is 342...
+
+---
+class: inverse
+
+### We're in dangerous territory
+
+- Uninterpretable models
+- Many tuning parameters
+- Increasingly sophisticated software with many defaults and/or automatically optimized tuning parameters
+
+--
+
+[Alfred North Whitehead](https://philosophicaldisquisitions.blogspot.com/2015/04/is-automation-making-us-stupid.html), pre-WW2:
+
+&gt; It is a profoundly erroneous truism, repeated by all copy-books and by eminent people when they are making speeches, that we should cultivate the habit of thinking of what we are doing. The precise opposite is the case. **Civilization advances by extending the number of important operations which we can perform without thinking about them**.
+
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "github",
+"highlightLines": true,
+"highlightSpans": true,
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+(function(time) {
+  var d2 = function(number) {
+    return ('0' + number).slice(-2); // left-pad 0 to minutes/seconds
+  },
+
+  time_format = function(total) {
+    var secs = Math.abs(total) / 1000;
+    var h = Math.floor(secs / 3600);
+    var m = Math.floor(secs % 3600 / 60);
+    var s = Math.round(secs % 60);
+    var res = d2(m) + ':' + d2(s);
+    if (h > 0) res = h + ':' + res;
+    return res;  // [hh:]mm:ss
+  },
+
+  slide_number_div = function(i) {
+    return document.getElementsByClassName('remark-slide-number').item(i);
+  },
+
+  current_page_number = function(i) {
+    return slide_number_div(i).firstChild.textContent;  // text "i / N"
+  };
+
+  var timer = document.createElement('span'); timer.id = 'slide-time-left';
+  var time_left = time, k = slideshow.getCurrentSlideIndex(),
+      last_page_number = current_page_number(k);
+
+  setInterval(function() {
+    time_left = time_left - 1000;
+    timer.innerHTML = ' ' + time_format(time_left);
+    if (time_left < 0) timer.style.color = 'red';
+  }, 1000);
+
+  slide_number_div(k).appendChild(timer);
+
+  slideshow.on('showSlide', function(slide) {
+    var i = slide.getSlideIndex(), n = current_page_number(i);
+    // reset timer when a new slide is shown and the page number is changed
+    if (last_page_number !== n) {
+      time_left = time; last_page_number = n;
+      timer.innerHTML = ' ' + time_format(time); timer.style.color = null;
+    }
+    slide_number_div(i).appendChild(timer);
+  });
+})(59000);
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>

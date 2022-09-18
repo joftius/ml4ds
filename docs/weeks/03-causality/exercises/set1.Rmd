@@ -1,0 +1,45 @@
+---
+title: "Exercise set 1"
+author: Joshua Loftus
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+knitr::opts_chunk$set(fig.retina = 3, warning = FALSE, message = FALSE)
+library(tidyverse)
+library(knitr)
+library(gapminder)
+theme_set(theme_minimal(base_size = 22))
+```
+
+## ISLR Chapter 2, Section 2.4
+
+Exercises 1, 2, 3, 5, and 6
+
+After loading the `ISLR` library you can access the `College` dataset to complete Exercise 8. Continue using this dataset to do the following:
+
+-   Choose a numeric variable to be an outcome variable in regression models
+-   Choose another numeric variable to be a predictor and fit a simple regression model. Show the model summary, confidence intervals for coefficients (hint: use the `ggcoef` function), and diagnostic plots. Comment on each of these with one or a few sentences describing your practical interpretation of the result.
+-   Next, the `loess` function to fit a non-linear model, and create a plot showing the prediction lines from both of these models. Compare the relative strengths and weaknesses of these models.
+-   Now repeat the simple linear regression step but with at least one more predictor so that the model is a multiple regression model.
+
+## ISLR Chapter 3, Section 3.6
+
+Read the `R` lab, especially Sections 3.6.3-3.6.6
+
+## ISLR Chapter 3, Section 3.7
+
+Exercises 1, 4
+
+Exercises 10, 11, 13, and 14
+
+## Mixtape Chapter 3
+
+Choose one of the datasets analyzed in previous exercises, lectures, or seminars, and pick 2 or 3 variables in this dataset. Invent an unobserved variable that you believe may also be important but not included in the dataset. Using these variables:
+
+-   Propose and draw a DAG that you believe to be importantly wrong compared to the real world, and explain why you think it does not accurately model the causal relationships that you believe to exist.
+
+-   Propose and draw a DAG that you believe to be an improvement compared to the previous one. Comment in one or a few sentences why this second DAG is better, and also what you believe is its most important remaining weakness as a model for the real world causal relationships.
+
+This is a conceptual exercise which would not be graded based on any kind of accuracy in relating to the real world, but only on your reasoning.

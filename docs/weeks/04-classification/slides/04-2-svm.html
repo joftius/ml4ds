@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Machine learning</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Joshua Loftus" />
+    <script src="libs/header-attrs/header-attrs.js"></script>
+    <link href="libs/remark-css/default.css" rel="stylesheet" />
+    <link href="libs/animate.css-xaringan/animate.slide_left.css" rel="stylesheet" />
+    <link href="libs/tile-view/tile-view.css" rel="stylesheet" />
+    <script src="libs/tile-view/tile-view.js"></script>
+    <link href="libs/panelset/panelset.css" rel="stylesheet" />
+    <script src="libs/panelset/panelset.js"></script>
+    <link rel="stylesheet" href="xaringan-themer.css" type="text/css" />
+    <link rel="stylesheet" href="../../../theme.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: top, right, title-slide
+
+# Machine learning
+## Classification, part 2
+### Joshua Loftus
+
+---
+
+
+class: inverse
+
+
+
+
+
+
+
+
+
+&lt;style type="text/css"&gt;
+.remark-slide-content {
+    font-size: 1.2rem;
+    padding: 1em 4em 1em 4em;
+}
+&lt;/style&gt;
+
+# Support Vector Machines
+
+### Classification with linear decision boundaries
+
+We already saw this with logistic regression
+
+$$
+\hat y = 1 \iff \hat p &gt; g^{-1}(c) \iff \color{lightgreen}{ \mathbf x^T \beta &gt; c}
+$$
+
+--
+
+But we also know that logistic regression fails, for example, if the classes are perfectly separable (zero classification error)
+
+What can we do in that case?
+
+---
+
+### Notation for linear classification
+
+Define a **linear classifier** `\(f(\mathbf x)\)` by
+
+$$
+f(\mathbf x) = \beta_0 + \mathbf x^T \beta
+$$
+
+with classification boundary `\(f(\mathbf x) = 0\)`, and decision rule
+
+$$
+G(\mathbf x) = \text{sign}[f(\mathbf x)]
+$$
+
+--
+
+**Notation change**: It's convenient to assume `\(y \in \{ \pm  1 \}\)` instead of 0-1
+
+$$
+\text{Misclassification } \leftrightarrow y \cdot G(\mathbf x) &lt; 0
+$$
+---
+
+## How to choose `\(\beta\)`?
+
+We just want a linear classification boundary
+
+Forget modeling the class probabilities
+
+Consider the separable case... The classification task should be "easy" but we can't do it with logistic regression
+
+
+---
+class: inverse, middle, center
+
+## First some geometric intuition
+
+### for the separable case 
+
+Then we'll figure out how to extend our new proposed solution to the non-separable case
+
+---
+
+### Geometric intuition: maximize distance
+
+.pull-left[
+![](islr9.2.png)
+Many linear classifiers with zero training error
+]
+.pull-right[
+![](islr9.3.png)
+Unique classifier with largest distance
+]
+
+
+
+.footnote[Figures from Chapter 9 of [ISLR](https://statlearning.com/)]
+
+---
+
+### Maximizing the "margin" (separable case)
+
+**Exercise**: Distance from `\(\mathbf x\)` to the decision boundary `\(\{ \mathbf z : f(\mathbf z) = 0 \}\)`, defined as the minimum distance to any point on the boundary,
+
+`$$\min \| \mathbf x - \mathbf  z \| \text{ s.t. } f(\mathbf z) = 0$$`
+
+is given by (hint: orthogonal projection)
+
+`$$\frac{| f(\mathbf x) | }{ \| \beta \|}$$`
+
+--
+
+and the smallest such distance in the training data is
+
+`$$\min_{1 \leq i \leq n} \frac{| f(\mathbf x_i) | }{ \| \beta \|}$$`
+
+---
+
+### Constrained maximisation (separable case)
+
+We could make the margin infinitely large by just sending the decision boundary `\(\to \infty\)` away from all the data... 🤪
+
+--
+
+Recall that we want to choose *from among those linear classifiers that have **zero** classification errors*
+
+--
+
+Solve the *constrained* optimization problem
+
+So there are infinitely many `\(\beta\)` where on our training data
+
+`$$\text{maximize}\left[ \min_{1 \leq i \leq n} \frac{| f(\mathbf x_i) | }{ \| \beta \|} \right]$$`
+subject to (s.t.)
+$$
+y_i f(\mathbf x_i) &gt; 0 \text{ for } 1 \leq i \leq n
+$$
+---
+class: inverse
+
+# Hey
+
+## Think about this
+
+`$$\max_\beta \left[ \color{lightgreen}{ \min_{1 \leq i \leq n} \frac{| f(\mathbf x_i) | }{ \| \beta \|} } \right]$$`
+$$
+\text{s.t.} \quad y_i f(\mathbf x_i) &gt; 0 \text{ for } 1 \leq i \leq n
+$$
+
+### Notice something?...
+
+--
+
+**Recurring theme**: model/optimization/fit depends most strongly (or in this case *only*) on point(s) closest to the boundary
+
+---
+
+### Reformulating optimization (separable case)
+
+**Exercise**: convince yourself this is equivalent to
+
+`$$\max_{M, \beta} M$$`
+`$$\text{s.t. }  y_i f(\mathbf x_i) / \| \beta \| \geq M  \text{ for } 1 \leq i \leq n$$`
+(we have introduced a new variable, `\(M\)`, to optimize over)
+
+--
+
+Then, use re-scaling to show it's equivalent to
+
+`$$\text{minimize } \| \beta \|$$`
+`$$\text{s.t. }  y_i (\beta_0 + \mathbf x_i^T \beta) \geq 1  \text{ for } 1 \leq i \leq n$$`
+
+--
+
+Since `\(\text{minimize } \| \beta \| \leftrightarrow \text{minimize } \| \beta \|^2\)` this is a quadratic program with linear inequality constraints
+
+---
+class: inverse
+
+## ML = optimization
+
+Can use standard **convex optimization** methods/software
+
+This is nice because there's a [whole field](https://en.wikipedia.org/wiki/Convex_optimization) of mathematical research dedicated to problemsl like these
+
+- Algorithms converging to *global* optimum
+
+- Guaranteed convergence rates
+
+To learn more check out LSE's MA333 which uses [this book](https://web.stanford.edu/~boyd/cvxbook/)
+
+--
+
+### Is this really necessary?
+
+Community now focused on non-convex (deep learning) methods. "It just works (better)"
+
+---
+
+### Non-separable case
+
+Idea: allow a "budget" for constraint violations
+
+If observation `\(i\)` is misclassified then let `\(\xi_i/\|\beta\|\)` be its distance from the boundary. Solve
+
+`$$\text{minimize } \| \beta \|^2$$`
+`$$\text{s.t. for } 1 \leq i \leq n,$$`
+`$$y_i (\beta_0 + \mathbf x_i^T \beta) \geq 1 \color{skyblue}{- \xi_i}$$`
+`$$\color{skyblue}{\xi_i \geq 0, \sum \xi_i \leq C}$$`
+
+**Complexity**: `\(C\)` is a tuning parameter (more about this in slide after next one)
+
+---
+
+### "Support vectors"
+
+(Warning: challenging, more advanced, not on the exam)
+
+**Exercise**: use [careful calculus](https://en.wikipedia.org/wiki/Karush%E2%80%93Kuhn%E2%80%93Tucker_conditions) to show the optimal `\(\hat \beta\)` can be written as a linear combination of the feature vectors `\(\mathbf x_i\)`.
+
+**Exercise**: also show that `\(\hat \beta\)` can be written as a *sparse* linear combination of `\(\mathbf x_i\)` (with nonzero coefficients only for those observations on or violating the constraint)
+
+(Hint: see ESL 12.2.1)
+
+--
+
+Exact mathematical statement related to our *recurring theme* -- solution depends only on a few observations
+
+---
+
+### Bias-variance trade off (ISLR 9.7)
+
+.pull-left[
+![](islr9.7a.png)
+.center[
+Budget `\(\uparrow\)` \# support vectors `\(\uparrow\)`
+
+Bias `\(\uparrow\)`  Variance `\(\downarrow\)`]
+]
+.pull-right[
+![](islr9.7b.png)
+.center[
+Budget `\(\downarrow\)` \# support vectors `\(\downarrow\)`
+
+Bias `\(\downarrow\)`  Variance `\(\uparrow\)`]
+]
+
+---
+
+### Non-linear classification boundaries
+
+.pull-left[
+&lt;img src="04-2-svm_files/figure-html/circle-eg-1.png" width="500px" style="display: block; margin: auto;" /&gt;
+]
+.pull-right[
+&lt;img src="04-2-svm_files/figure-html/poly-eg-1.png" width="500px" style="display: block; margin: auto;" /&gt;
+]
+
+
+What if the data looks like this? Game over 😱 for linear classifiers? (Piece of cake after we learn about **kernel methods**)
+
+---
+class: inverse
+
+### "Generative" supervised learning
+
+Some binary thinking...
+
+- **Science vs humanities**. C. P. Snow, *The Two Cultures and the Scientific Revolution* (1959)
+
+- **Intuition vs logic** or **fast vs slow** (Kahneman, 2011), **fox vs hedgehog** (Berlin, 1953 or Gould, 2003)
+
+- **Algorithm vs inference**, *Statistical Modeling: The Two Cultures* (Breiman, 2001) or *Computer Age Statistical Inference* (Efron and Hastie, 2016)
+
+- **Probabilistic** (generative, random, stochastic) vs **physical** (geometric, deterministic)
+
+(Of course, none of these binaries are "real")
+
+---
+class: inverse
+
+### Comparison
+
+Probability axioms = **constraints**
+
+#### Without probability
+
+- Prediction accuracy
+- Algorithm efficiency 
+
+--
+
+#### With probability
+
+- Inference: prediction/confidence intervals, hypothesis tests
+- Interpretation: coefficients might be meaningful
+- Model diagnostics
+
+History according to Efron and Hastie: algorithm first (possibly unconstrained), then inference gradually catches up
+
+---
+class: inverse
+
+### Coming soon: **non-linearity**
+
+## Summary of recent development
+
+#### Concretely
+
+- More details on logistic regression
+- Support Vector Machines
+
+--
+
+#### Abstractly
+
+- Optimization algorithms / fitting procedures depending more strongly on observations that are more difficult to classify
+- Same optimization problem can be written many different ways, can be more or less amenable to theory/algorithms
+
+
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "github",
+"highlightLines": true,
+"highlightSpans": true,
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+(function(time) {
+  var d2 = function(number) {
+    return ('0' + number).slice(-2); // left-pad 0 to minutes/seconds
+  },
+
+  time_format = function(total) {
+    var secs = Math.abs(total) / 1000;
+    var h = Math.floor(secs / 3600);
+    var m = Math.floor(secs % 3600 / 60);
+    var s = Math.round(secs % 60);
+    var res = d2(m) + ':' + d2(s);
+    if (h > 0) res = h + ':' + res;
+    return res;  // [hh:]mm:ss
+  },
+
+  slide_number_div = function(i) {
+    return document.getElementsByClassName('remark-slide-number').item(i);
+  },
+
+  current_page_number = function(i) {
+    return slide_number_div(i).firstChild.textContent;  // text "i / N"
+  };
+
+  var timer = document.createElement('span'); timer.id = 'slide-time-left';
+  var time_left = time, k = slideshow.getCurrentSlideIndex(),
+      last_page_number = current_page_number(k);
+
+  setInterval(function() {
+    time_left = time_left - 1000;
+    timer.innerHTML = ' ' + time_format(time_left);
+    if (time_left < 0) timer.style.color = 'red';
+  }, 1000);
+
+  slide_number_div(k).appendChild(timer);
+
+  slideshow.on('showSlide', function(slide) {
+    var i = slide.getSlideIndex(), n = current_page_number(i);
+    // reset timer when a new slide is shown and the page number is changed
+    if (last_page_number !== n) {
+      time_left = time; last_page_number = n;
+      timer.innerHTML = ' ' + time_format(time); timer.style.color = null;
+    }
+    slide_number_div(i).appendChild(timer);
+  });
+})(59000);
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>

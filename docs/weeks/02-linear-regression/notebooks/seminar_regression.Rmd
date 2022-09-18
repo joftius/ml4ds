@@ -1,0 +1,169 @@
+---
+title: "Seminar notebook"
+author: "Joshua Loftus"
+output: html_document
+---
+
+```{r setup, message = FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(gapminder)
+library(broom)
+theme_set(theme_minimal(base_size = 22))
+```
+
+# Linear regression
+
+## Simple linear regression
+
+### Estimation
+
+```{r}
+gm2007 <- gapminder %>% filter(year == 2007)
+model_lm <- lm(lifeExp ~ gdpPercap, data = gm2007)
+model_lm
+```
+
+
+### Demo dplyr::summarise function
+
+- Slope = `cor(x,y) * sd(y) / sd(x)`
+- Regression line passes through `(mean(x), mean(y))`
+
+
+```{r}
+gm2007 %>%
+  summarize(cor_xy = cor(gdpPercap, lifeExp),
+            sd_x = sd(gdpPercap),
+            sd_y = sd(lifeExp),
+            xbar = mean(gdpPercap),
+            ybar = mean(lifeExp),
+            hat_beta1 = cor_xy * sd_y / sd_x,
+            hat_beta0 = ybar - hat_beta1 * xbar)
+```
+
+### Inference
+
+```{r}
+summary(model_lm)
+```
+
+(ISLR 3.8):
+
+`se(beta hat) = sigma / sqrt(sum((x - mean(x))^2))`
+
+Estimated by:
+
+`se(beta hat) = sigma hat / sqrt(sum((x - mean(x))^2))`
+
+where (ISLR 3.15):
+
+`sigma hat = RSE = sqrt( RSS / (n-2) )`
+
+
+```{r}
+augment(model_lm) %>%
+  summarize(RSS = sum(.resid^2),
+            RSE = sqrt(RSS / (n() - 2)),
+            std.error = RSE / sqrt(sum( (gdpPercap - mean(gdpPercap))^2 ))  )
+```
+
+### Model diagnostics
+
+```{r}
+glance(model_lm)
+```
+
+"Portion of variance in outcome **explained** by simple linear regression model"
+
+$$
+R^2 = \text{cor}(x,y)^2
+$$
+
+```{r}
+cor(gm2007$gdpPercap, gm2007$lifeExp)^2
+```
+
+$$
+R^2 = 1 - \frac{\text{RSS}}{\text{TSS}}
+$$
+
+
+```{r}
+augment(model_lm) %>%
+  summarize(RSS = sum(.resid^2),
+            TSS = sum( (lifeExp - mean(lifeExp))^2),
+            R2 = 1 - RSS/TSS)
+```
+
+
+### Diagnostic plots
+
+Idea: look for patterns in residuals, which could indicate systemic error (bias)
+
+```{r}
+augment(model_lm) %>%
+  ggplot(aes(gdpPercap, .resid)) +
+  geom_point()
+```
+
+Other diagnostics:
+
+- Checking for (approximate) normality with quantile-quantile plot
+- Checking for influential observations
+
+[Cook's distance](https://en.wikipedia.org/wiki/Cook%27s_distance), `cooksd` in the plots, measures how much the predictions for all other observations change if we leave out one observation
+
+Point with high `cooksd` values 
+
+```{r}
+plot(model_lm)
+```
+
+```{r}
+library(GGally)
+ggnostic(model_lm)
+```
+
+
+
+**Question**: with flexible models, are influential observations more or less harmful, and in which ways?
+
+
+
+## Multiple regression
+
+```{r}
+# can use
+# candy <- fivethirtyeight::candy_rankings
+# or gapminder with gdpPercap^2 and/or continent terms, etc
+```
+
+
+### Estimation
+
+```{r}
+
+```
+
+
+### Inference
+
+```{r}
+
+```
+
+Hint: plot confidence intervals with `ggcoef` in `GGally` package
+
+### Diagnostics
+
+```{r}
+
+```
+
+### Problem: high dimensional plots...
+
+e.g. `ggpairs` shows many 2-dimensional projections of the data, but there is no guarantee that these projections together help us understand higher dimensional relationships... including possibly higher dimensional patterns in the residuals
+
+**Question**: What does this mean for diagnostic plots when our regression model is high dimensional (e.g. p > 3 predictors)
+

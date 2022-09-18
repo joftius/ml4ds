@@ -1,0 +1,314 @@
+---
+title: "Non-linear and local methods"
+author: "Joshua Loftus"
+date: "2/12/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse) # required
+library(broom)     # required
+library(modelr)    # for data_grid
+theme_set(theme_minimal(base_size = 22))
+```
+
+## 2d non-linear classification data
+
+```{r}
+# sample size
+n <- 800
+# function with zero set that
+# defines the perfect (Bayes) decision boundary
+true_boundary_function <- function(x1, x2) {
+  # experiment with changing this
+  thing <- x1^2*x2^3
+  (x1^2 + x2^2 - 1)^3 - thing
+}
+train <- data.frame(
+  # change the distribution
+  # or scale as needed
+  x1 = 1.5*(1 - 2*runif(n)),
+  x2 = 1.5*(1 - 2*runif(n))
+) %>% 
+  mutate(
+    # labels if classes were perfectly separated
+    separable = true_boundary_function(x1,x2) > 0,
+    # labels if classes are "noisy"
+    y = factor(rbinom(n, 1, 9/10 - (8/10) * as.numeric(separable)))
+  )
+```
+
+### Plot the data
+
+```{r}
+train_plot <-
+  ggplot(train, aes(x1, x2)) +
+  geom_point(aes(shape = y, color = y),
+             alpha = .5, show.legend = FALSE) +
+  xlab("") + ylab("")
+  
+train_plot
+```
+
+### Plot the Bayes decision boundary
+
+```{r}
+decision_surface <- 
+  data_grid(train,
+          x1 = seq_range(x1, 300, expand = .05),
+          x2 = seq_range(x2, 300, expand = .05)) %>%
+  mutate(z = true_boundary_function(x1, x2))
+
+boundary_plot <-
+  train_plot +
+  geom_contour(
+    data = decision_surface,
+    aes(x1, x2, z=z),
+    bins = 2,
+    size = 1,
+    color = "black",
+    alpha = .5)
+
+boundary_plot
+```
+
+### How well does linear classification do?
+
+Also try changing the formula to fit a logistic regression model with non-linear transformations of the predictors
+
+```{r}
+# Fit model
+logit_model <-  
+  glm(y ~ x1 + x2 + poly(x1,2) * poly(x2,2), family = "binomial", data = train)
+# try formula + poly(x1,2) * poly(x2,2)
+
+# Generate decision boundary
+logit_surface <- logit_model %>%
+   augment(type.predict = "response",
+              newdata = decision_surface)
+```
+
+Plot decision boundary of logistic model
+
+```{r}
+boundary_plot +
+  geom_contour(
+    data = logit_surface,
+    aes(x1, x2, z = .fitted),
+    size = 1,
+    color = "green",
+    bins = 2)
+```
+
+```{r}
+summary(logit_model)
+```
+
+## 1-d smooth regression example
+
+Generate a one-dimensional example with a non-linear relationship
+
+```{r}
+# change this function
+f <- function(x) sin(4*pi*x)
+n <- 200
+train1d <- 
+  data.frame(
+    x = rbeta(n, 1, 3)
+    ) %>%
+  # change the noise level sd
+  mutate(y = f(x) + rnorm(n, sd = .1))
+
+# plot data and loess curve
+ggplot(train1d, aes(x, y)) + 
+  geom_point() +
+  geom_smooth()
+```
+
+Linear regression with a polynomial transform of x
+
+```{r}
+model_lm <- lm(y ~ poly(x, 5), data = train1d)
+
+train1d_grid <- 
+  data_grid(train1d,
+          x = seq_range(c(x, .78), 1000, expand = .05))
+
+augment(model_lm,
+        newdata = train1d_grid) %>%
+  ggplot(aes(x, y)) +
+  geom_point(data = train1d) +
+  geom_line(aes(y = .fitted))
+```
+
+
+## Local methods
+
+
+### Local averages/regression for 1d example
+
+Write functions to compute:
+
+- Average of k-nearest neighbors
+
+- Local regression:
+
+1. Gather the fraction s = k/n of training points whose xi are closest
+to x0.
+2. Assign a weight Ki0 = K(xi,x0) to each point in this neighborhood, so that the point furthest from x0 has weight zero, and the closest has the highest weight. All but these k nearest neighbors get weight zero.
+3. Fit a weighted least squares regression of the yi on the xi using the aforementioned weights
+4. Use the weighted least squares model to predict for x0
+
+```{r}
+# assume input data has variables x and y
+# assume data is sorted on x from smallest to largest
+K <- function(x1, x2) {
+    # largest if x1 = x2
+  1/(1 + 2*abs(x1-x2))
+}
+local_regression <- function(data, x0, s = .1) {
+  n <- nrow(data)
+  k <- ceiling(n*s)
+  i <- 0
+  loop <- TRUE
+  while (loop) {
+    i <- i + 1
+    if (data$x[i] > x0) {
+      loop <- FALSE
+    }
+    if (i >= n) {
+      loop <- FALSE
+    }
+  }
+  # i such that
+  # data$x[i] > x0
+  # but data$x[i-1] <= x0
+  local_range <- (i - ceiling(k/2)) : (i + floor(k/2))
+  # weight function
+  if (min(local_range) < 1) {
+    local_range <- 1:k
+  } else if (max(local_range) > n) {
+    local_range <- (n-k):n
+  }
+  
+  local_lm <- lm(y ~ x,
+                 data = data[local_range, ],
+                weights = K(x0, data$x[local_range])
+                 )
+  sum(coef(local_lm) * c(1, x0))
+}
+```
+
+Generate predictions from these methods and plot them
+
+```{r}
+train_local <- train1d %>%
+  arrange(x)
+
+local_regression(train_local, x0 = .2)
+```
+
+
+Plot
+
+```{r}
+for (i in 1:nrow(train1d_grid)) {
+  train1d_grid$.fitted[i] <- local_regression(train_local, x0 = train1d_grid$x[i], s = .1)
+}
+
+  ggplot(train1d_grid, aes(x, y)) +
+  geom_point(data = train1d) +
+  geom_line(aes(y = .fitted))
+```
+
+### Classify 2d example with k-nearest neighbors
+
+Write a function to implement k-NN classification
+
+You may use matrix operations and simple functions like `sort` but not any more sophisticated built-in R functions (or libraries)
+
+Hint: https://en.wikipedia.org/wiki/Euclidean_distance_matrix#Relation_to_Gram_matrix
+
+```{r}
+Dist <- function(x1, x2) {
+  # Euclidean or L2
+  sqrt(sum(abs(x1-x2)^2))
+}
+# Requires a distance function D
+# to already be defined
+knn <- function(x0, k, x, y) {
+  n <- nrow(x)
+  distances <- rep(0, n)
+  for (i in 1:n) {
+    distances[i] <- Dist(x0, x[i,])
+  }
+  k_neighborhood <- order(distances, decreasing = FALSE)[1:k]
+  levels(y)[which.max(table(y[k_neighborhood]))]
+}
+```
+
+
+```{r}
+# Smaller dataset so code runs faster
+subsample <- sample(1:nrow(train), 300)
+x <- train[subsample, 1:2]
+y <- train$y[subsample]
+output <- knn(x0 = c(0,2), k = 5, x, y)
+output
+```
+
+Classify the training data
+
+```{r}
+knn <- function(k, x, y, progress = TRUE) {
+  n <- nrow(x)
+  distances <- matrix(0, nrow = n, ncol = n)
+  if (progress) pb <- txtProgressBar(style = 3)
+  for (i in 1:(n-1)) {
+    for (j in (i+1):n) {
+      distances[i,j] <- Dist(x[j,], x[i,])
+    }
+    if (progress) setTxtProgressBar(pb, i/(n-1))
+  }
+  classifications <- rep(NA, n)
+  for (i in 1:n) {
+    k_neighborhood <- order(distances[i,], decreasing = FALSE)[1:k]
+    max_class <- which.max(table(y[k_neighborhood]))
+    classifications[i] <- levels(y)[max_class]
+  }
+  classifications
+}
+```
+
+```{r}
+classifications <- knn(3, x, y, progress = F)
+```
+
+```{r}
+mean(y != classifications)
+```
+
+```{r}
+classifications <- knn(11, x, y, progress = F)
+```
+
+```{r}
+mean(y != classifications)
+```
+
+```{r}
+classifications <- knn(19, x, y, progress = F)
+```
+
+```{r}
+mean(y != classifications)
+```
+
+Plot the data and decision boundary for your k-NN classifier
+
+```{r}
+# need a faster implementation for this
+```
+
+

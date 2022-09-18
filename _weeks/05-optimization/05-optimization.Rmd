@@ -1,0 +1,38 @@
+---
+title: "5 Optimization and overfitting"
+description: |
+  Optimization is about finding the best model. With greater model complexity it becomes increasingly important to avoid overfitting: finding a model that is best for one specific dataset but does not generalize well to others.
+author:
+  - name: Joshua Loftus
+date: 10-07-2021
+output:
+  distill::distill_article:
+    self_contained: false
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+knitr::opts_chunk$set(fig.retina = 3, warning = FALSE, message = FALSE)
+library(tidyverse)
+library(knitr)
+library(gapminder)
+theme_set(theme_minimal(base_size = 22))
+```
+
+## Optimization
+
+## Overfitting
+
+## Slides, notebooks, exercises
+
+[Slides](slides/05-1-optimization.html) for optimization video ([PDF](slides/optimization.pdf))
+
+[Slides](slides/05-2-overfitting.html) for overfitting video ([PDF](slides/overfitting.pdf))
+
+[Notebook](notebooks/generalization.Rmd) for generalization ([partially complete](notebooks/generalization_incomplete.html))
+
+[Notebook](notebooks/optimization.Rmd) for optimization ([partially complete](notebooks/optimization_incomplete.html))
+
+[Notebook](notebooks/regularization.Rmd) for regularization ([partially complete](notebooks/regularization_incomplete.html))
+
+[Exercises](exercises/set2.html) 

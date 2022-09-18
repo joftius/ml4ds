@@ -1,0 +1,180 @@
+---
+title: "Non-linear and local methods"
+author: "Joshua Loftus"
+date: "2/12/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse) # required
+library(broom)     # required
+library(modelr)    # for data_grid
+theme_set(theme_minimal(base_size = 22))
+```
+
+## 2d non-linear classification data
+
+```{r}
+# sample size
+n <- 800
+# function with zero set that
+# defines the perfect (Bayes) decision boundary
+true_boundary_function <- function(x1, x2) {
+  # experiment with changing this
+  abs(x1-.5) - abs(2*x2+.5) + .3
+}
+train <- data.frame(
+  # change the distribution
+  # or scale as needed
+  x1 = 1.5*(1 - 2*runif(n)),
+  x2 = 1.5*(1 - 2*runif(n))
+) %>% 
+  mutate(
+    # labels if classes were perfectly separated
+    separable = true_boundary_function(x1,x2) > 0,
+    # labels if classes are "noisy"
+    y = factor(rbinom(n, 1, 9/10 - (8/10) * as.numeric(separable)))
+  )
+```
+
+### Plot the data
+
+```{r}
+train_plot <-
+  ggplot(train, aes(x1, x2)) +
+  geom_point(aes(shape = y, color = y),
+             alpha = .5, show.legend = FALSE) +
+  xlab("") + ylab("")
+  
+train_plot
+```
+
+### Plot the Bayes decision boundary
+
+```{r}
+decision_surface <- 
+  data_grid(train,
+          x1 = seq_range(x1, 300, expand = .05),
+          x2 = seq_range(x2, 300, expand = .05)) %>%
+  mutate(z = true_boundary_function(x1, x2))
+
+boundary_plot <-
+  train_plot +
+  geom_contour(
+    data = decision_surface,
+    aes(x1, x2, z=z),
+    bins = 2,
+    size = 1,
+    color = "black",
+    alpha = .5)
+
+boundary_plot
+```
+
+### How well does linear classification do?
+
+Also try changing the formula to fit a logistic regression model with non-linear transformations of the predictors
+
+```{r}
+# Fit model
+logit_model <-  
+  glm(y ~ x1 + x2, family = "binomial", data = train)
+# try formula + poly(x1,2) * poly(x2,2)
+
+# Generate decision boundary
+logit_surface <- logit_model %>%
+   augment(type.predict = "response",
+              newdata = decision_surface)
+```
+
+Plot decision boundary of logistic model
+
+```{r}
+boundary_plot +
+  geom_contour(
+    data = logit_surface,
+    aes(x1, x2, z = .fitted),
+    size = 1,
+    color = "green",
+    bins = 2)
+```
+
+```{r}
+summary(logit_model)
+```
+
+## 1-d smooth regression example
+
+Generate a one-dimensional example with a non-linear relationship
+
+```{r}
+# change this function
+f <- function(x) x * sin(1/x^2)
+n <- 50
+train1d <- 
+  data.frame(
+    x = rbeta(n, 1, 3)
+    ) %>%
+  # change the noise level sd
+  mutate(y = f(x) + rnorm(n, sd = .1))
+
+# plot data and loess curve
+ggplot(train1d, aes(x, y)) + 
+  geom_point() +
+  geom_smooth()
+```
+
+Linear regression with a polynomial transform of x
+
+```{r}
+
+```
+
+
+## Local methods
+
+
+### Local averages/regression for 1d example
+
+Write functions to compute:
+
+- Average of k-nearest neighbors
+
+- Local regression:
+
+1. Gather the fraction s = k/n of training points whose xi are closest
+to x0.
+2. Assign a weight Ki0 = K(xi,x0) to each point in this neighborhood, so that the point furthest from x0 has weight zero, and the closest has the highest weight. All but these k nearest neighbors get weight zero.
+3. Fit a weighted least squares regression of the yi on the xi using the aforementioned weights
+4. Use the weighted least squares model to predict for x0
+
+```{r}
+
+```
+
+Generate predictions from these methods and plot them
+
+```{r}
+
+```
+
+### Classify 2d example with k-nearest neighbors
+
+Write a function to implement k-NN classification
+
+You may use matrix operations but not any more sophisticated built-in R functions (or libraries)
+
+Hint: https://en.wikipedia.org/wiki/Euclidean_distance_matrix#Relation_to_Gram_matrix
+
+```{r}
+
+```
+
+Plot the data and decision boundary for your k-NN classifier
+
+```{r}
+
+```
+
+

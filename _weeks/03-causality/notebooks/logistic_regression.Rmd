@@ -1,0 +1,289 @@
+---
+title: "Logistic regression"
+author: "Joshua Loftus"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+library(tidyverse)
+library(broom)
+library(modeldata)
+data(attrition)
+```
+
+## Categorical outcome data
+
+Look at the data
+
+```{r}
+head(attrition)
+```
+
+
+Compare the distribution of a numeric predictor variable between the two outcome classes
+
+```{r}
+ggplot(attrition, aes(Attrition, TotalWorkingYears)) + 
+  geom_boxplot()
+```
+
+
+Test for difference in means
+
+```{r}
+t.test(TotalWorkingYears ~ Attrition, data = attrition)
+```
+
+Check class balance:
+
+```{r}
+attrition %>% count(Attrition) 
+table(attrition$Attrition) # base R
+```
+
+Create a balanced dataset with the same number of observations in both classes
+
+```{r}
+attr_No <- attrition %>%
+  filter(Attrition == "No") %>%
+  sample_n(size = 237)
+
+attr_Yes <- attrition %>%
+  filter(Attrition == "Yes")
+
+attr <- rbind(attr_No, attr_Yes)
+
+# or
+
+attr <- attrition %>% 
+  group_by(Attrition) %>%
+  slice_sample(n = 237)
+
+# transform outcome to numeric 0-1
+nattr <- attr %>% 
+  mutate(Y = as.numeric(Attrition) - 1) %>%
+  select(Y, TotalWorkingYears)
+```
+
+
+## Classification: linear regression?
+
+Plot linear regression line, change the threshold
+
+```{r}
+ggplot(nattr, aes(x = TotalWorkingYears, y = Y)) + 
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE) +
+  geom_hline(yintercept = .4) # or e.g. mean(nattr$Y)
+```
+
+Problems:
+
+- Can predict outside 0-1 range
+- Not directly interpretable as probabilities
+
+### Thresholding ideas
+
+Choose a threshold/cutoff value for predictor $X$, say $c$, and then classify
+
+- $\hat Y = 1$ if $X \geq c$
+- $\hat Y = 0$ otherwise
+
+Or if the association is negative, change the sign
+
+As we vary $c$, we trade-off between kinds of errors: false positives and false negatives
+
+In the simple case with thresholding one predictor, the classification/decision rules are all equivalent whether we use linear regression or logistic regression (as long as the fitted relationship is monotone)
+
+For **multiple** regression--when we have more predictors--we can then transform a numeric prediction from the model $\hat Y$ to a classification by using a threshold rule on the scale of the predictions (instead of on the scale of one predictor as before)
+
+- $\hat Y = 1$ if $x^T \hat \beta \geq c$
+- $\hat Y = 0$ otherwise
+
+## Logistic regression
+
+```{r}
+model_glm <- glm(Y ~ TotalWorkingYears, data = nattr, family = "binomial")
+summary(model_glm)
+```
+
+```{r}
+augment(model_glm, type.predict = "response") %>%
+  ggplot(aes(TotalWorkingYears, Y)) + 
+  geom_point() +
+  geom_line(aes(y = .fitted))
+```
+
+### Modeling assumption
+
+$$
+\text{logit}[P(Y = 1|X)] = \beta_0 + \beta_1 X
+$$
+
+$$
+P(Y = 1|X) = \frac{e^{\beta_0 + \beta_1 X}}{1 + e^{\beta_0 + \beta_1 X}}
+$$
+
+### Interpreting coefficients
+
+
+```{r}
+exp(coef(model_glm))
+```
+
+### Inference
+
+```{r}
+exp(confint(model_glm))
+```
+
+Model evaluation measures
+
+```{r}
+glance(model_glm)
+```
+
+Diagnostic plots: can do this but less common, harder to interpret "deviance residuals"
+
+(Warning: residual plots almost always show "patterns", can't be interpreted the same way as for linear regression)
+
+## Balance and (re)calibration
+
+What portion of data are classified using a given cutoff for the predicted probability?
+
+```{r}
+mean(predict(model_glm, type = "response") > 0.5)
+```
+
+Try different cutoffs
+
+```{r}
+c(.3, .4, .5, .6, 7) %>%
+  map_dbl(function(cutoff) mean(predict(model_glm, type = "response") > cutoff))
+```
+
+Tabulate a confusion matrix using dplyr functions
+
+```{r}
+conf_mat <- function(fitted_glm, cutoff = .5) {
+  augment(fitted_glm, type.predict = "response") %>%
+    mutate(Yhat = as.numeric(.fitted > cutoff)) %>%
+    count(Y, Yhat)
+}
+```
+
+```{r}
+conf_mat(model_glm)
+```
+
+Try another cutoff
+
+```{r}
+conf_mat(model_glm, .6)
+```
+
+
+## Multiple regression model
+
+(Complete outside of class time unless time permits)
+
+Pick a few predictors and repeat the above
+
+```{r}
+library(GGally)
+options(warnings= -1)
+attrition %>%
+  select(Attrition, Age, Gender, TotalWorkingYears,
+         DistanceFromHome, JobSatisfaction) %>%
+  ggpairs(progress = FALSE, lower = list(bins = 20))
+```
+
+
+### Modeling assumption
+
+$$
+\text{logit}[ P(Y = 1|X)] = X \beta
+$$
+(Matrix multiplication, has an intercept if $X$ has a constant column)
+
+
+## Simulation
+
+Write a function like `y = f(x) + noise` to generate data (with sample size as an input to the function)
+
+Start with a linear function and Gaussian noise
+
+```{r}
+f <- function(x) 1 - 2*x
+my_dgp <- function(n) {
+  x <- runif(n)
+  noise <- rnorm(n)
+  y <- f(x) + noise
+  return(data.frame(x = x, y = y))
+}
+```
+
+Simulate one dataset with a sample size of 20, fit a linear regression model, and extract the slope estimate
+
+```{r}
+coef(lm(y ~ x, data = my_dgp(n = 20)))[2]
+```
+
+Repeat this 100 times using `replicate()`, plot a histogram of the coefficient estimates, add a `geom_vline` at the true coefficient value. Increase the sample size and try again
+
+```{r}
+replicate(100, coef(lm(y ~ x, data = my_dgp(n = 20)))[2]) %>%
+  qplot() + geom_vline(xintercept = -2)
+```
+
+
+### Complexify the above
+
+(Complete outside of class time unless time permits)
+
+Now try making `f` a function of two variables, where `x1` and `x2` are both (possibly noisey) functions of a hidden variable `u`
+
+What are the true coefficients? How do we interpret them? What happens if we regress on only `x1` or only `x2`? What would be the change in outcome if we could intervene on `x1` (erasing the influence of `u` on `x1` but keeping it for `x2`)? What if we could intervene on `u`?
+
+```{r}
+beta1 <- -1
+beta2 <- -2
+f <- function(x1, x2) 1 + beta1 * x1 + beta2 * x2
+my_dgp <- function(n) {
+  u <- rnorm(n)
+  x1 <- 3*u + rnorm(n)
+  x2 <- 15 - 7*u + rnorm(n)
+  y <- f(x1, x2) + rnorm(n)
+  return(data.frame(x1 = x1, x2 = x2, y = y))
+}
+```
+
+```{r}
+replicate(100, coef(lm(y ~ x1 + x2, data = my_dgp(n = 1000)))[2]) %>%
+  qplot() + geom_vline(xintercept = beta1)
+```
+
+
+```{r}
+replicate(100, coef(lm(y ~ x1, data = my_dgp(n = 1000)))[2]) %>%
+  qplot() + geom_vline(xintercept = beta1)
+```
+
+If we regress on only one at a time the estimates can be biased (omitted variable bias)
+
+If we could intervene on `x1` directly then `beta1` (the true value, not the estimate) would tell us the causal effect on the outcome
+
+If we could intervene on `u` then the total effect on `y` would involve both `beta1` and `beta2`, as well as the coefficients of `u` on both `x1` and `x2`
+
+e.g. increasing `u` by 1 would make `x1` increase by 3 and `x2` decrease by 7, hence `y` would change by `3*beta - 7*beta2`
+
+### Extra practice
+
+(Complete outside of class time unless time permits)
+
+Repeat the previous simulations but generate a binary outcome and use logistic regression to estimate coefficients
+
+```{r}
+# y <- rbinom(n, 1, exp(f(x))/(1+exp(f(x))))
+```
+

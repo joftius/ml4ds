@@ -1,0 +1,53 @@
+---
+title: "Tree splitting rules"
+author: "Joshua Loftus"
+date: "2/12/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)  
+library(modelr)     
+library(gapminder)  
+theme_set(theme_minimal(base_size = 22))
+```
+
+## Numeric predictor
+
+Write a function that inputs a single numeric predictor and outcome, and outputs a splitting point that achieves the greatest reduction in RSS
+
+```{r}
+
+```
+
+Now change the function to include the case when the outcome variable is categorical, and allow different splitting rules using the Gini index or entropy
+
+## Categorical predictor
+
+Repeat the above for categorical predictors
+
+How does computation scale in number of levels?
+
+What if any levels have very few observations?
+
+```{r}
+
+```
+
+## Recursive splitting
+
+Write a function taking data and a maximum number of splits as inputs, and outputting a decision tree
+
+```{r}
+
+```
+
+Test the function on some `gapminder` data
+
+Try data from different years and see how the trees vary
+
+```{r}
+
+```
+

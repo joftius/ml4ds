@@ -1,0 +1,233 @@
+---
+title: "Logistic regression"
+author: "Joshua Loftus"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+library(tidyverse)
+library(broom)
+# package with data?
+```
+
+## Categorical outcome data
+
+Look at the data
+
+```{r}
+
+```
+
+
+Compare the distribution of a numeric predictor variable between the two outcome classes
+
+```{r}
+
+```
+
+
+Test for difference in means
+
+```{r}
+
+```
+
+Check class balance
+
+```{r}
+
+```
+
+Create a balanced dataset with the same number of observations in both classes
+
+```{r}
+
+```
+
+
+## Classification: linear regression?
+
+Plot linear regression line, use `geom_hline` to show a classification cutoff rule
+
+```{r}
+
+```
+
+Problems?
+
+
+
+### Thresholding ideas
+
+Choose a threshold/cutoff value for predictor $X$, say $c$, and then classify
+
+- $\hat Y = 1$ if $X \geq c$
+- $\hat Y = 0$ otherwise
+
+Or if the association is negative, change the sign
+
+As we vary $c$, we trade-off between kinds of errors: false positives and false negatives
+
+In the simple case with thresholding one predictor, the classification/decision rules are all equivalent whether we use linear regression or logistic regression (as long as the fitted relationship is monotone)
+
+For **multiple** regression--when we have more predictors--we can then transform a numeric prediction from the model $\hat Y$ to a classification by using a threshold rule on the scale of the predictions (instead of on the scale of one predictor as before)
+
+- $\hat Y = 1$ if $x^T \hat \beta \geq c$
+- $\hat Y = 0$ otherwise
+
+## Logistic regression
+
+Use `glm(..., family = "binomial")` to fit logistic regression (read the documentation: `?glm`)
+
+```{r}
+
+```
+
+Plot predicted class probabilities
+
+Base R: `predict(..., type = "response"`)`
+`broom` package: `augment(..., type.predict = "response")`
+
+```{r}
+
+```
+
+### Modeling assumption
+
+Do you remember an equation describing the logistic regression model?
+
+### Interpreting coefficients
+
+Consider `coef()` or `exp(coef())`
+
+```{r}
+
+```
+
+### Inference
+
+Confidence intervals?
+
+```{r}
+
+```
+
+Model evaluation measures
+
+Look at documentation for `?glance` and `?glance.glm`
+
+```{r}
+
+```
+
+Diagnostic plots: can do this but less common, harder to interpret "deviance residuals"
+
+(Warning: residual plots almost always show "patterns", can't be interpreted the same way as for linear regression)
+
+## Balance and (re)calibration
+
+What portion of data are classified using a given cutoff for the predicted probability?
+
+```{r}
+
+```
+
+Try different cutoffs
+
+```{r}
+
+```
+
+Make a function to tabulate a confusion matrix using dplyr functions
+
+```{r}
+
+```
+
+Try another cutoff with this function
+
+```{r}
+
+```
+
+
+## Multiple regression model
+
+(Complete outside of class time unless time permits)
+
+Pick a few predictors and repeat the above (can use `ggpairs` in the `GGally` package)
+
+```{r}
+
+```
+
+
+### Modeling assumption
+
+What equation describes this model?
+
+
+## Simulation
+
+Write a function like `y = f(x) + noise` to generate data (with sample size as an input to the function)
+
+Start with a linear function and Gaussian noise
+
+```{r}
+# e.g. f <- function(x) ...
+my_dgp <- function(n) {
+  # generate x
+  # generate y
+  # return data.frame
+}
+```
+
+Simulate one dataset with a sample size of 20, fit a linear regression model, and extract the slope estimate
+
+```{r}
+
+```
+
+Repeat this 100 times using `replicate()`, plot a histogram of the coefficient estimates, add a `geom_vline` at the true coefficient value. Increase the sample size and try again
+
+```{r}
+
+```
+
+
+### Complexify the above
+
+(Complete outside of class time unless time permits)
+
+Now try making `f` a function of two variables, where `x1` and `x2` are both (possibly noisey) functions of a hidden variable `u`
+
+What are the true coefficients? How do we interpret them? What happens if we regress on only `x1` or only `x2`? What would be the change in outcome if we could intervene on `x1` (erasing the influence of `u` on `x1` but keeping it for `x2`)? What if we could intervene on `u`?
+
+```{r}
+# e.g. beta1 <- -1
+# e.g. beta2 <- -2
+# e.g.  f <- function(x1, x2) 1 + beta1 * x1 + beta2 * x2
+my_dgp <- function(n) {
+  # generate u
+  # generate x1 and x2
+  # generate y
+  # return data.frame with x1, x2, y but not u
+}
+```
+
+```{r}
+
+```
+
+
+### Extra practice
+
+(Complete outside of class time unless time permits)
+
+Repeat the previous simulations but generate a binary outcome and use logistic regression to estimate coefficients
+
+```{r}
+# y <- rbinom(n, 1, exp(f(x))/(1+exp(f(x))))
+```
+
+

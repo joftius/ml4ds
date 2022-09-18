@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Machine learning</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Joshua Loftus" />
+    <script src="libs/header-attrs/header-attrs.js"></script>
+    <link href="libs/remark-css/default.css" rel="stylesheet" />
+    <link href="libs/animate.css-xaringan/animate.slide_left.css" rel="stylesheet" />
+    <link href="libs/tile-view/tile-view.css" rel="stylesheet" />
+    <script src="libs/tile-view/tile-view.js"></script>
+    <link href="libs/panelset/panelset.css" rel="stylesheet" />
+    <script src="libs/panelset/panelset.js"></script>
+    <link rel="stylesheet" href="xaringan-themer.css" type="text/css" />
+    <link rel="stylesheet" href="../../../theme.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: bottom, left, title-slide
+
+# Machine learning
+## Classification, part 1
+### Joshua Loftus
+
+---
+
+
+class: inverse
+
+
+
+
+
+
+
+
+
+&lt;style type="text/css"&gt;
+.remark-slide-content {
+    font-size: 1.2rem;
+    padding: 1em 4em 1em 4em;
+}
+&lt;/style&gt;
+
+## Classification
+
+- **Supervised learning** with categorical/qualitative outcomes
+
+(in contrast to regression, with numeric outcomes)
+
+--
+
+- Often called "labels", `\(K\)` = number of unique classes
+
+*Label names not mathematically important* - e.g. use `\(1, ..., K\)`
+--
+
+- Binary: positive/negative or 0/1 or yes/no or success/fail etc
+
+- Binary thinking easier `\(\rightarrow\)` bin / discretise other outcomes and do binary classification instead of regression or `\(K &gt; 2\)` classification (warning: information loss)
+
+- Plots with 2 predictors, use color/point shape for outcomes
+
+---
+
+## Interpretable classification
+
+### Logistic regression 
+
+`$$\mathbb E(Y| \mathbf X = \mathbf x) =  g^{-1}(\mathbf x^T \beta)$$`
+for
+`$$g(p) = \log{\left(\frac{p}{1-p}\right)}$$`
+
+--
+
+- Other GLMs have different "link" functions `\(g\)`
+- (Linear regression is a special case with `\(g = \text{id}\)`)
+- Multi-class / multinomial / "softmax" regression
+- Estimation/optimization: maximum-likelihood via Newton-Raphson / IRLS
+
+---
+
+
+
+### One predictor, "S curve"
+
+&lt;img src="04-1-classification_files/figure-html/logit-1dm-1.png" width="540px" style="display: block; margin: auto;" /&gt;
+
+---
+
+### Classifications/decisions: threshold probability
+
+&lt;img src="04-1-classification_files/figure-html/logit-1d-class-1.png" width="540px" style="display: block; margin: auto;" /&gt;
+
+---
+
+### Without giving `\(y\)` a spatial dimension
+
+&lt;img src="04-1-classification_files/figure-html/logit-0d-class-1.png" width="540px" style="display: block; margin: auto;" /&gt;
+
+
+---
+
+### Two predictors, binary outcome
+
+&lt;img src="04-1-classification_files/figure-html/logit-data-plot-1.png" width="540px" style="display: block; margin: auto;" /&gt;
+
+
+---
+
+### Contours of GLM-predicted class probabilities
+
+&lt;img src="04-1-classification_files/figure-html/logit-contour-1.png" width="540px" style="display: block; margin: auto;" /&gt;
+
+---
+class: middle, center
+
+**Classification boundaries** with
+
+## `\(p = 3\)` predictors
+
+### Boundary = plane
+
+## `\(p &gt; 3\)` predictors
+
+### Boundary = hyperplane
+
+(In practice, "high-dimensional" = can't easily plot it)
+
+---
+
+### Fitting/estimation
+
+How do we estimate `\(\beta\)`? **Maximum likelihood**:
+
+$$
+\text{maximize } L(\beta ; \mathbf y | \mathbf X) = \prod_{i=1}^n L(\beta ; y_i | \mathbf x_i)
+$$
+(assuming the data is i.i.d.)
+
+--
+
+It's good to have some understanding of what's involved (it's not magic)
+
+Next slide: consider a one-parameter case, one predictor and no intercept, so the calculus simplifies
+
+---
+
+### Logistic regression fitting: MLE 😱 jk 😎 
+
+$$
+L(\beta ; \mathbf y | \mathbf x) = \prod_{i=1}^n \left( \frac{1}{1+e^{-x_i \beta}} \right)^{y_i} \left(1- \frac{1}{1+e^{-x_i \beta}} \right)^{1-y_i}
+$$
+
+--
+
+$$
+\ell(\beta ; \mathbf y | \mathbf x) = \sum_{i=1}^n y_i \log \left( \frac{1}{1+e^{-x_i \beta}} \right) + (1-y_i) \log \left(1- \frac{1}{1+e^{- x_i \beta}} \right)
+$$
+
+--
+
+$$
+\frac{\partial}{\partial \beta} \ell(\beta ; \mathbf y | \mathbf x) = \sum_{i=1}^n y_i  \left( \frac{x_i e^{-x_i \beta}}{1+e^{-x_i \beta}} \right) + (1-y_i) \left(\frac{-x_i}{1+e^{- x_i \beta}} \right)
+$$
+
+`$$= \sum_{i=1}^n x_i \left[ y_i - \left(\frac{1}{1+e^{- x_i \beta}} \right) \right] = \color{skyblue}{\sum_{i=1}^n x_i [y_i - \hat p_i(\beta)]}$$`
+
+Set this equal to 0 and solve for `\(\beta\)` using Newton-Raphson
+
+---
+
+### Newton-Raphson
+
+- Find the roots of a function
+- Iteratively approximating the function by its tangent
+- Root of the tangent line is used as starting point for next approximation
+- See the animation on [Wikipedia](https://en.wikipedia.org/wiki/Newton%27s_method)
+
+--
+
+**Exercise**: using result from previous slide, compute the second derivative of `\(\ell\)` and derive the expressions needed to apply Newton-Raphson
+
+---
+
+### Logistic regression fitting: multivariate case
+
+Newton-IRLS (equivalent) steps:
+
+$$
+`\begin{eqnarray}
+\hat{\mathbf p}_t &amp; = &amp; g^{-1}(\mathbf X \hat \beta_t)
+&amp; \ \text{ update probs.} \\
+\mathbf W_t &amp; = &amp; \text{diag}[\hat{\mathbf p}_t (1 - \hat{\mathbf p}_t)]  
+&amp; \ \text{ update weights} \\
+\hat{\mathbf{y}}_t &amp; = &amp; g(\hat{\mathbf p}_t) + \mathbf W_t^{-1}(\mathbf y - \hat{\mathbf p}_t)
+&amp; \ \text{ update response}
+\end{eqnarray}`
+$$
+
+and then update parameter estimate:
+
+`$$\hat{\beta}_{t+1} = \arg \min_{\beta} (\hat{\mathbf{y}}_t - \mathbf X \beta)^T \mathbf W_t (\hat{\mathbf{y}}_t - \mathbf X \beta)$$` 
+
+--
+
+**Note**: larger weights on observations with `\(\hat p\)` closer to 1/2, i.e. the most difficult to classify (***look for variations of this theme***)
+
+.footnote[See Section 4.4.1 of [ESL](https://web.stanford.edu/~hastie/ElemStatLearn/)]
+
+---
+
+### Inference
+
+- MLEs `\(\to\)` asymptotic normality for intervals/tests
+
+`summary()`, `coef()`, `confint()`, `anova()`, etc in `R`
+
+- "Deviance" instead of RSS
+
+- Because `\(y\)` is 0 or 1, residual plots will show patterns, not as easy to interpret geometrically
+
+Reference: [CASI](https://web.stanford.edu/~hastie/CASI/) Chapter 4 for MLE theory, Chapter 8 for logistic regression and GLMs
+
+---
+
+###  Challenges
+
+#### Separable case (guaranteed if `\(p &gt; n\)`)
+
+If classes can be perfectly separated, the MLE is undefined, fitting algorithm diverges as `\(\hat \beta\)` coordinates `\(\to \pm \infty\)`
+
+Awkwardly, classification is *too easy*(!?) for this probabilistic approach
+
+--
+
+#### Curse of dimensionality
+
+Biased MLE and wrong variance/asymp. dist. if `\(n/p \to \text{const}\)`, even if `\(&gt; 1\)`
+
+.footnote[See [Sur and Candès, (2019)](https://www.pnas.org/content/116/29/14516)]
+
+---
+
+### Recap: numeric outcome `\(\to\)` categorical
+
+**Warning**: *arbitrary* binning may be unwise. "*Carve nature at its joints*"
+
+.pull-left[
+&lt;img src="04-1-classification_files/figure-html/bimodal-1.png" width="504" /&gt;
+]
+.pull-right[
+&lt;img src="04-1-classification_files/figure-html/unimodal-1.png" width="504" /&gt;
+]
+
+---
+class: inverse
+
+### Recap
+
+- Numeric prediction `\(\to\)` classification
+
+`$$\hat y = \mathbb I(\hat p &gt; c) = \begin{cases} 0 &amp; \text{ if } \hat y \leq c \\  1 &amp; \text{ if } \hat y &gt; c \end{cases}$$`
+
+--
+
+- Logistic regression
+
+Log-odds of `\(\hat p =\)` linear function of `\(x\)`, so `\(\hat p &gt; c \leftrightarrow x^T \beta &gt; c'\)`
+
+Linear classification boundary (hyperplanes)
+
+--
+
+- Optimization problems
+
+Iterative algorithms (e.g. Newton-Raphon)
+
+Adapting to "most interesting" (difficult to classify) data
+
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "github",
+"highlightLines": true,
+"highlightSpans": true,
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+(function(time) {
+  var d2 = function(number) {
+    return ('0' + number).slice(-2); // left-pad 0 to minutes/seconds
+  },
+
+  time_format = function(total) {
+    var secs = Math.abs(total) / 1000;
+    var h = Math.floor(secs / 3600);
+    var m = Math.floor(secs % 3600 / 60);
+    var s = Math.round(secs % 60);
+    var res = d2(m) + ':' + d2(s);
+    if (h > 0) res = h + ':' + res;
+    return res;  // [hh:]mm:ss
+  },
+
+  slide_number_div = function(i) {
+    return document.getElementsByClassName('remark-slide-number').item(i);
+  },
+
+  current_page_number = function(i) {
+    return slide_number_div(i).firstChild.textContent;  // text "i / N"
+  };
+
+  var timer = document.createElement('span'); timer.id = 'slide-time-left';
+  var time_left = time, k = slideshow.getCurrentSlideIndex(),
+      last_page_number = current_page_number(k);
+
+  setInterval(function() {
+    time_left = time_left - 1000;
+    timer.innerHTML = ' ' + time_format(time_left);
+    if (time_left < 0) timer.style.color = 'red';
+  }, 1000);
+
+  slide_number_div(k).appendChild(timer);
+
+  slideshow.on('showSlide', function(slide) {
+    var i = slide.getSlideIndex(), n = current_page_number(i);
+    // reset timer when a new slide is shown and the page number is changed
+    if (last_page_number !== n) {
+      time_left = time; last_page_number = n;
+      timer.innerHTML = ' ' + time_format(time); timer.style.color = null;
+    }
+    slide_number_div(i).appendChild(timer);
+  });
+})(59000);
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>

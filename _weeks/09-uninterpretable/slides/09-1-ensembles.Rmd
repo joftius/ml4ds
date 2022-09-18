@@ -1,0 +1,725 @@
+---
+title: "Machine learning"
+subtitle: "Bagging, forests, boosting"
+author: "Joshua Loftus"
+#institute: "LSE"
+#date: "`r Sys.Date()`"
+output:
+  xaringan::moon_reader:
+    css: ["default", "xaringan-themer.css", "../../../theme.css"]
+#    seal: false    
+    lib_dir: libs
+    nature:
+      titleSlideClass: ["bottom", "left"]
+      countdown: 59000
+      highlightStyle: github
+      highlightLines: true
+      highlightSpans: true
+      countIncrementalSlides: false
+---
+
+class: inverse
+
+```{r setup, include=FALSE}
+options(htmltools.dir.version = FALSE)
+knitr::opts_chunk$set(fig.retina = 3, warning = FALSE, message = FALSE)
+options(knitr.table.format = "html")
+```
+
+```{r xaringan-themer, include=FALSE, warning=FALSE}
+library(xaringanthemer)
+style_duo_accent(
+  primary_color = "#2d708e",
+  secondary_color = "#230433",
+  link_color = "#55c667",
+  text_bold_color = '#f68f46',
+  title_slide_background_color = "#ffffff", #"#042333",
+  title_slide_background_image = "../../../files/theme/LSE/spectra_wide.jpg",
+#    "https://upload.wikimedia.org/wikipedia/commons/1/1a/Workhouse_Nantwich.jpg",
+  title_slide_background_size = "cover",
+  ) #or contain
+```
+
+```{r xaringanextra, include=FALSE, warning=FALSE}
+library(xaringanExtra)
+#xaringanExtra::use_animate_all("slide_left")
+xaringanExtra::use_tile_view()
+xaringanExtra::use_panelset()
+xaringanExtra::style_panelset_tabs(font_family = "inherit")
+```
+
+```{r tidyverse, include=FALSE, warning=FALSE}
+library(tidyverse)
+library(knitr)
+theme_set(theme_minimal(base_size = 22))
+library(broom)
+library(modelr)
+```
+
+<style type="text/css">
+.remark-slide-content {
+    font-size: 1.2rem;
+    padding: 1em 4em 1em 4em;
+}
+</style>
+
+## Regression and classification trees
+
+### More interpretable than linear models?
+
+- Sequence of simple questions about individual predictors
+
+- Growing and pruning
+
+### **Strategies for improving "weak" models**
+
+- Bagging
+
+- Random forests (similar to "dropout" -- future topic)
+
+- Boosting
+
+---
+
+### Data pre-processing, missing values
+
+```{r echo = FALSE}
+library(palmerpenguins)
+library(randomForest)
+#library(plotmo)
+set.seed(12)
+```
+
+```{r}
+pg <- penguins %>%
+  # not interested in classifying by time/island
+  select(-island, -year, -sex) %>%
+  drop_na()
+```
+
+```{r echo = FALSE, eval=FALSE, include = FALSE}
+  # replace NAs with category level
+  mutate(sex = as.character(sex)) %>%
+  replace_na(list(sex  = "missing")) %>%
+  mutate(sex = as.factor(sex)) %>%
+  # drop observations with NAs assuming uninformative
+  # missingness for other variables
+  drop_na()
+```
+
+
+Inference/interpretation with missing data requires special [methods](https://gking.harvard.edu/amelia) like [multiple](https://stefvanbuuren.name/fimd/workflow.html) [imputation](https://recipes.tidymodels.org/reference/index.html#section-step-functions-imputation)
+
+---
+
+### Classification tree
+
+```{r penguintree, fig.height=7, fig.width=14, fig.align='center', echo = FALSE}
+library(tree)
+library(tidymodels)
+fit_tree <- tree(species ~ .,
+                 split = "gini",
+                 control = tree.control(nrow(pg), mincut = 40),
+                 data = pg)
+plot(fit_tree, type = "uniform")
+text(fit_tree, pretty = 0, cex = 1.1)
+```
+
+Why splits with the same classifications in both sides?
+
+---
+### Multi-class AUC
+
+.pull-left[
+```{r}
+tree_hat <- data.frame(
+  yhat = predict(fit_tree),
+  species = pg$species
+)
+roc_auc(tree_hat,
+        truth = species,
+        starts_with("yhat"))
+```
+
+Average the AUC of each one-vs-all binary classification
+
+`roc_auc` from `yardstick` or `tidymodels` packages
+]
+.pull-right[
+```{r fig.align='center', fig.height=4}
+roc_curve(tree_hat,
+    truth = species,
+    starts_with("yhat")) %>%
+  ggplot(aes(1-specificity,
+       sensitivity,
+       color = .level,
+       linetype = .level)) +
+  geom_line()
+```
+
+]
+
+---
+class: inverse
+
+### Three model improvement strategies
+
+Sacrifice simplicity/interpretability for prediction accuracy
+
+Can be used with other models too, not just trees
+
+#### **Bagging**: bootstrap aggregating
+
+- Resample training data, average resulting models
+
+#### **Random forest**: randomly drop predictors
+
+- Randomly drop predictors when resampling
+
+#### **Boosting**: iterative descent using residuals
+
+- Fit each new model to residual of previous fits
+
+---
+
+## Bagging: bootstrap aggregating
+
+**Problem**: a single tree model can have high variance (like many non-smooth or non-regularized models)
+
+1. **Bootstrap**: for each $b = 1, \ldots, B$  resamples (with replacement) of the training data, fit $\hat f^{*b}$ on bootstrap sample $b$ 
+
+2. **Aggregate**: combine the $B$ models, using majority vote for classification or mean for regression
+
+$$\hat f_\text{bag} = \frac{1}{B} \sum_{b=1}^B \hat f^{*b}$$
+
+("Smoothing" useful for low-bias, high-variance models)
+
+---
+
+### Aggregating is... smoothing?
+
+.pull-left[
+
+```{r penguintreeL, fig.height=7, fig.width=14, fig.align='center', echo = FALSE}
+plot(fit_tree, type = "uniform")
+text(fit_tree, pretty = 0, cex = 1.1)
+fit_tree2 <- tree(species ~ .,
+                 split = "gini",
+                 control = tree.control(nrow(pg), mincut = 40),
+                 data = sample_n(pg, nrow(pg), replace = TRUE))
+plot(fit_tree2, type = "uniform")
+text(fit_tree2, pretty = 0, cex = 1.1)
+```
+Predictions for one penguin
+
+```{r echo = FALSE, message = FALSE, comment = ""}
+i <- 9 # 17, 53
+pg[i,] %>% as.data.frame() %>%
+  select(species, flipper_length_mm) %>%
+  print.data.frame(row.names = FALSE)
+pg[i,] %>% as.data.frame() %>%
+  select(bill_length_mm, bill_depth_mm) %>%
+  print.data.frame(row.names = FALSE)
+```
+]
+.pull-right[
+```{r penguintreeR, fig.height=7, fig.width=14, fig.align='center', echo = FALSE}
+fit_tree3 <- tree(species ~ .,
+                 split = "gini",
+                 control = tree.control(nrow(pg), mincut = 40),
+                 data = sample_n(pg, nrow(pg), replace = TRUE))
+plot(fit_tree3, type = "uniform")
+text(fit_tree3, pretty = 0, cex = 1.1)
+fit_tree4 <- tree(species ~ .,
+                 split = "gini",
+                 control = tree.control(nrow(pg), mincut = 40),
+                 data = sample_n(pg, nrow(pg), replace = TRUE))
+plot(fit_tree4, type = "uniform")
+text(fit_tree4, pretty = 0, cex = 1.1)
+```
+```{r echo = FALSE}
+i <- 9 # 17, 53
+predictions <- rbind(
+predict(fit_tree, newdata = pg[i,]),
+predict(fit_tree2, newdata = pg[i,]),
+predict(fit_tree3, newdata = pg[i,]),
+predict(fit_tree4, newdata = pg[i,])) 
+rownames(predictions) <- 1:4
+predictions
+```
+]
+
+---
+
+## Out-of-bag predictions
+
+- Each bootstrap sample contains some subset of the training data
+
+- Roughly $1/e \approx 0.37$ portion of the training samples will be left out of each bootstrap sample
+
+- Can use these to estimate test error (e.g. instead of $K$-fold cross-validation)
+
+Software implementations may do this automatically
+
+---
+
+## Random forest: dropping predictors
+
+**Problem**: aggregation does not increase information if the aggregates are highly correlated, e.g. averaging 1000 trees but each one uses the same small set of predictor variables
+
+$$\text{Var}\left( \sum_{b=1}^B \hat f^{*b} \right) = 
+ \sum_{b=1}^B \text{Var}\left( \hat f^{*b} \right) + \sum_{b=1}^B \sum_{b'\neq b} \text{Cov}\left( \hat f^{*b}, \hat f^{*b'} \right)$$
+
+--
+
+1. **Drop** predictors randomly during resampling
+
+  e.g. randomly include $\sqrt{p}$ of the $p$ predictors in each $\hat f^{*b}$
+
+2. **Aggregate** models which are now less correlated, achieving greater variance reduction
+
+---
+
+### Aggregating less-correlated models
+
+.pull-left[
+
+```{r penguinFL, fig.height=7, fig.width=14, fig.align='center', echo = FALSE}
+plot(fit_tree, type = "uniform")
+text(fit_tree, pretty = 0, cex = 1.1)
+fit_tree2 <- tree(species ~ body_mass_g + bill_depth_mm,
+                 split = "gini",
+                 control = tree.control(nrow(pg), mincut = 40),
+                 data = sample_n(pg, nrow(pg), replace = TRUE))
+plot(fit_tree2, type = "uniform")
+text(fit_tree2, pretty = 0, cex = 1.1)
+```
+Predictions for one penguin
+
+```{r echo = FALSE, message = FALSE, comment = ""}
+i <- 9 # 17, 53
+pg[i,] %>% as.data.frame() %>%
+  select(species, flipper_length_mm) %>%
+  print.data.frame(row.names = FALSE)
+pg[i,] %>% as.data.frame() %>%
+  select(bill_length_mm, bill_depth_mm) %>%
+  print.data.frame(row.names = FALSE)
+```
+]
+.pull-right[
+```{r penguinFR, fig.height=7, fig.width=14, fig.align='center', echo = FALSE}
+fit_tree3 <- tree(species ~ bill_length_mm + body_mass_g,
+                 split = "gini",
+                 control = tree.control(nrow(pg), mincut = 40),
+                 data = sample_n(pg, nrow(pg), replace = TRUE))
+plot(fit_tree3, type = "uniform")
+text(fit_tree3, pretty = 0, cex = 1.1)
+fit_tree4 <- tree(species ~ bill_length_mm + bill_depth_mm,
+                 split = "gini",
+                 control = tree.control(nrow(pg), mincut = 40),
+                 data = sample_n(pg, nrow(pg), replace = TRUE))
+plot(fit_tree4, type = "uniform")
+text(fit_tree4, pretty = 0, cex = 1.1)
+```
+```{r echo = FALSE}
+i <- 9 # 17, 53
+predictions <- rbind(
+predict(fit_tree, newdata = pg[i,]),
+predict(fit_tree2, newdata = pg[i,]),
+predict(fit_tree3, newdata = pg[i,]),
+predict(fit_tree4, newdata = pg[i,])) 
+rownames(predictions) <- 1:4
+predictions
+```
+]
+
+---
+
+### Boosting: iterated fitting on residuals
+
+**Idea**: train models sequentially, decreasing residuals by a small amount each time. Each model contributes something different
+
+Can use **weak learners** -- e.g. trees with one split ("stumps") -- to grow an ensemble model gradually fitting closer to the training data
+
+--
+
+#### Relationship with gradient descent
+
+**Gradient descent**: small step in direction of negative gradient
+
+**Boosting**: small step in direction of *weak learner closest to negative gradient* (maximum inner product in function space)
+
+Optional additional reading: [ESL](https://web.stanford.edu/~hastie/ElemStatLearn/) Chapter 10 (non-examinable)
+
+---
+
+### Boosting in practice
+
+#### More tuning parameters
+
+Number of trees/steps $B$, complexity of each tree/model $d$, regularization/learning rate $\lambda$. **Warning**: can now overfit with large $B$ (unlike bagging/r.f.)
+
+#### Choosing/optimizing tuning parameters
+
+Software may do something automatically. *No guarantee it's reasonable!* e.g. optimize over a grid of tuning parameters
+
+Two grid-tuning stages:
+
+1. Rough grid covering a large range (possibly orders of magnitude)
+2. Finer grid over a smaller range
+
+
+---
+class: inverse
+
+# Powerful ML tools/software
+
+Let's see these methods in action on the **penguins** dataset
+
+We'll use [`tidymodels`](https://rviews.rstudio.com/2019/06/19/a-gentle-intro-to-tidymodels/) to streamline the process
+
+![](https://rviews.rstudio.com/post/2019-06-14-a-gentle-intro-to-tidymodels_files/figure-html/tidymodels.png)
+
+---
+
+### `tidymodels` workflows
+
+#### Training and testing data
+
+Using `initial_split`
+
+```{r}
+library(tidymodels)
+pg_split <- initial_split(pg, strata = species)
+pg_train <- training(pg_split)
+pg_test <- testing(pg_split)
+pg_cv <- vfold_cv(pg_train, v = 10, strata = species)
+```
+
+10-fold cross-validation (`v = 10` is also the default) on training data
+
+(This just sets up the data, it doesn't fit any models yet)
+
+---
+
+### `tidymodels` workflows
+
+#### Pre-processing and model specification
+
+Using `recipe`
+
+```{r}
+pg_recipe <- training(pg_split) %>%
+  recipe(species ~ .) %>%
+  prep()
+```
+
+I already did the pre-processing earlier. If your processing uses more `step`s, then you have to `juice()` the `testing` data to prepare it (apply the same preprocessing to test data)
+
+(Still setting up, no models fit yet)
+
+---
+class: middle, center
+
+#### Next: slides setting up 4 different models
+
+A single classification tree
+
+Bagged trees
+
+A random forest
+
+And boosted trees
+
+*There's a lot of code but I'll highlight what's important*
+
+---
+
+### Classification tree
+
+Specify fitting algorithm
+
+```{r}
+pg_tree <- decision_tree(tree_depth = 6,
+                cost_complexity = tune("C")) %>% #<<
+  set_engine("rpart") %>% 
+  set_mode("classification") 
+```
+
+--
+
+```{r}
+pg_workflow_tree <- workflow() %>%
+  add_recipe(pg_recipe) %>%
+  add_model(pg_tree)
+```
+
+```{r fit_tree, cache = TRUE}
+pg_fit_tree  <- tune_grid(
+  pg_workflow_tree,
+  grid = data.frame(C =  2^(-5:0)), #<<
+  pg_cv,
+  metrics = metric_set(roc_auc)
+)
+```
+
+---
+
+### Tuning parameters with CV-error 
+
+```{r fig.height=6, fig.width=8, fig.align='center'}
+pg_fit_tree %>% autoplot()
+```
+
+---
+
+### Fit and test best tree model
+
+```{r}
+pg_tree_best <- pg_fit_tree %>%
+  select_best() # best tuning parameters
+```
+
+.pull-left[
+```{r}
+pg_tree_final <- 
+  finalize_model(
+    pg_tree,
+    pg_tree_best)
+pg_tree_final
+```
+]
+.pull-right[
+```{r}
+pg_tree_test <- 
+  pg_workflow_tree %>%
+  update_model(pg_tree_final) %>%
+  last_fit(split = pg_split) %>%
+  collect_metrics() # test error
+pg_tree_test
+```
+]
+
+---
+
+### Bagging (bootstrap aggregating) trees
+
+```{r}
+library(baguette)
+pg_bag <- bag_tree(tree_depth = 7,
+              cost_complexity = tune("C")) %>%
+  set_mode("classification") %>%
+  set_engine("C5.0", times = 5)
+```
+
+Specify data/`recipe` for fitting
+
+```{r}
+pg_workflow_bag <- workflow() %>%
+  add_recipe(pg_recipe) %>%
+  add_model(pg_bag)
+```
+
+--
+
+```{r fit_bag, cache = TRUE}
+pg_fit_bag  <- tune_grid(
+  pg_workflow_bag,
+  grid = data.frame(C =  2^(-5:0)),
+  pg_cv,
+  metrics = metric_set(roc_auc)
+)
+```
+
+
+---
+
+### Fit and test best bagging model
+
+```{r}
+pg_bag_best <- pg_fit_bag %>%
+  select_best() # best tuning parameters
+```
+
+.pull-left[
+```{r}
+pg_bag_final <- 
+  finalize_model(
+    pg_bag,
+    pg_bag_best)
+pg_bag_final
+```
+]
+.pull-right[
+```{r}
+pg_bag_test <- 
+  pg_workflow_bag %>%
+  update_model(pg_bag_final) %>%
+  last_fit(split = pg_split) %>%
+  collect_metrics() # test error
+pg_bag_test
+```
+]
+
+---
+
+### Random forests
+
+```{r}
+pg_rf <- 
+  rand_forest(trees = 100, mtry = tune()) %>%
+  set_mode("classification") %>%
+  set_engine("randomForest") 
+```
+
+```{r}
+pg_workflow_rf <- workflow() %>%
+  add_recipe(pg_recipe) %>%
+  add_model(pg_rf)
+```
+
+Run fitting algorithm with cross-validation on training data
+
+```{r fit_rf, cache = TRUE}
+pg_fit_rf  <- tune_grid(
+  pg_workflow_rf,
+  pg_cv,
+  metrics = metric_set(roc_auc)
+)
+```
+
+---
+
+### Fit and test best random forest model
+
+```{r}
+pg_rf_best <- pg_fit_rf %>%
+  select_best() # best tuning parameters
+```
+
+.pull-left[
+```{r}
+pg_rf_final <- 
+  finalize_model(
+    pg_rf,
+    pg_rf_best)
+pg_rf_final
+```
+]
+.pull-right[
+```{r}
+pg_rf_test <- 
+  pg_workflow_rf %>%
+  update_model(pg_rf_final) %>%
+  last_fit(split = pg_split) %>%
+  collect_metrics() # test error
+pg_rf_test
+```
+]
+
+---
+
+### Boosting classification trees
+
+```{r}
+pg_boost <- 
+  boost_tree(trees = tune(),  #<<
+             learn_rate = tune()) %>% #<<
+  set_mode("classification") %>%
+  set_engine("xgboost", objective = "multi:softprob") 
+```
+
+```{r}
+pg_workflow_boost <- workflow() %>%
+  add_recipe(pg_recipe) %>%
+  add_model(pg_boost)
+```
+
+Run fitting algorithm with cross-validation on training data
+
+```{r fit_boost, cache = TRUE}
+pg_fit_boost  <- tune_grid(
+  pg_workflow_boost,
+  pg_cv,
+  metrics = metric_set(roc_auc)
+)
+```
+
+
+---
+
+### Fit and test best boosted tree model
+
+```{r}
+pg_boost_best <- pg_fit_boost %>%
+  select_best() # best tuning parameters
+```
+
+.pull-left[
+```{r}
+pg_boost_final <- 
+  finalize_model(
+    pg_boost,
+    pg_boost_best)
+pg_boost_final
+```
+]
+.pull-right[
+```{r}
+pg_boost_test <- 
+  pg_workflow_boost %>%
+  update_model(pg_boost_final) %>%
+  last_fit(split = pg_split) %>%
+  collect_metrics() # test error
+pg_boost_test
+```
+]
+
+---
+
+### Evaluate models
+
+Optimal cross-validation accuracy
+
+```{r}
+all_models <- list(pg_tree_test, pg_bag_test,
+                   pg_rf_test, pg_boost_test) %>%
+  map_dfr(bind_rows)
+```
+
+.pull-left[
+AUC
+```{r echo = FALSE}
+all_models %>%
+  filter(.metric == "roc_auc") %>%
+  mutate(model =  c("tree", "bagging", "randf", "boost")) %>%
+  select(model, .estimate)
+```
+]
+.pull-right[
+Accuracy
+```{r echo = FALSE}
+all_models %>%
+  filter(.metric == "accuracy") %>%
+  mutate(model =  c("tree", "bagging", "randf", "boost")) %>%
+  select(model, .estimate)
+```
+]
+
+Which is best? Well, the full sample size is `r nrow(pg)`...
+
+---
+class: inverse
+
+### We're in dangerous territory
+
+- Uninterpretable models
+- Many tuning parameters
+- Increasingly sophisticated software with many defaults and/or automatically optimized tuning parameters
+
+--
+
+[Alfred North Whitehead](https://philosophicaldisquisitions.blogspot.com/2015/04/is-automation-making-us-stupid.html), pre-WW2:
+
+> It is a profoundly erroneous truism, repeated by all copy-books and by eminent people when they are making speeches, that we should cultivate the habit of thinking of what we are doing. The precise opposite is the case. **Civilization advances by extending the number of important operations which we can perform without thinking about them**.
+

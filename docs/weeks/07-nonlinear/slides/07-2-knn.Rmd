@@ -1,0 +1,484 @@
+---
+title: "Machine learning"
+subtitle: "Nearest neighbors"
+author: "Joshua Loftus"
+#institute: "LSE"
+#date: "`r Sys.Date()`"
+output:
+  xaringan::moon_reader:
+    css: ["default", "xaringan-themer.css", "../../../theme.css"]
+#    seal: false    
+    lib_dir: libs
+    nature:
+      titleSlideClass: ["bottom", "left"]
+      countdown: 59000
+      highlightStyle: github
+      highlightLines: true
+      highlightSpans: true
+      countIncrementalSlides: false
+---
+
+class: inverse
+
+```{r setup, include=FALSE}
+options(htmltools.dir.version = FALSE)
+knitr::opts_chunk$set(fig.retina = 3, warning = FALSE, message = FALSE)
+options(knitr.table.format = "html")
+```
+
+```{r xaringan-themer, include=FALSE, warning=FALSE}
+library(xaringanthemer)
+style_duo_accent(
+  primary_color = "#2d708e",
+  secondary_color = "#230433",
+  link_color = "#55c667",
+  text_bold_color = '#f68f46',
+  title_slide_background_color = "#ffffff", #"#042333",
+  title_slide_background_image = "../../../files/theme/LSE/aerial2.jpg",
+#    "https://upload.wikimedia.org/wikipedia/commons/1/1a/Workhouse_Nantwich.jpg",
+  title_slide_background_size = "cover",
+  ) #or contain
+```
+
+```{r xaringanextra, include=FALSE, warning=FALSE}
+library(xaringanExtra)
+#xaringanExtra::use_animate_all("slide_left")
+xaringanExtra::use_tile_view()
+xaringanExtra::use_panelset()
+xaringanExtra::style_panelset_tabs(font_family = "inherit")
+```
+
+```{r tidyverse, include=FALSE, warning=FALSE}
+library(tidyverse)
+library(knitr)
+theme_set(theme_minimal(base_size = 22))
+set.seed(1)
+library(broom)
+library(modelr)
+library(ggvoronoi)
+```
+
+<style type="text/css">
+.remark-slide-content {
+    font-size: 1.2rem;
+    padding: 1em 4em 1em 4em;
+}
+</style>
+
+## Nearest neighbors
+
+"Literally just predict using the $k$ nearest training points"
+
+- Exemplar of local + "model-free" machine learning
+
+- Not generative (no underlying probability model)
+
+- Non-parametric
+
+- Requires specifying a **distance metric** defining "near"
+
+  - Common choices: your favorite norms, e.g. $L^1$, $L^2$, $L^\infty$, Mahalanobis (standardizing $\mathbf X$ first then doing $L^2$)
+  
+  - Probably not obvious which to choose, in practice may try several
+
+---
+
+
+## Voronoi diagrams: $k$-NN with $k = 1$
+
+```{r circle-eg, echo = FALSE, fig.align='center'}
+n <- 150
+true_boundary_function <- function(x1, x2) {
+  # experiment with changing this
+  sqrt(x1^2 + x2^2) - .7
+}
+circle <- data.frame(
+  x1 = 1 - 2*runif(n),
+  x2 = 1 - 2*runif(n)
+) %>% 
+  mutate(
+    separable = true_boundary_function(x1,x2) > 0,
+    # labels if classes are "noisy"
+    y = factor(rbinom(n, 1, 9/10 - (8/10) * as.numeric(separable)))
+  )
+decision_surface <- 
+  data_grid(circle,
+          x1 = seq_range(x1, 500, expand = .05),
+          x2 = seq_range(x2, 500, expand = .05)) %>%
+  mutate(z = true_boundary_function(x1, x2))
+circle_plot <-
+  ggplot(circle, aes(x1, x2)) +
+  geom_point(aes(shape = y, fill = y),
+             color = "black", size = 2, stroke = 1,
+             show.legend = FALSE, alpha =  .7) +
+  scale_shape_manual(values=c(21, 22)) + 
+  scale_fill_viridis_d(direction = 1, end = .8)
+circle_plot + 
+  stat_voronoi(aes(x1, x2, fill = y),
+               alpha = .5,
+               geom = "path",
+               show.legend = F) +
+  geom_contour(
+    data = decision_surface,
+    aes(x1, x2, z=z),
+    bins = 2,
+    size = 1.5,
+    color = "black",
+    alpha = .9)
+```
+
+---
+
+### Geometric intuition for $k > 1$
+
+- Voronoi diagram shows 1-nearest neighbor regions
+
+  - Each of these is an intersection<sup>1</sup>.footnote[intersection preserves convexity, union does not]  of half-spaces, i.e. a convex polytope 
+  
+  - But contiguous classification regions are unions<sup>2</sup> of these, hence non-convex (see next slide)
+
+- Within each region, remove the training point in that region and draw the Voronoi diagram in that region, finding the 2nd nearest neighbor subregions
+
+- Repeat
+
+---
+
+### $k$-NN classification regions with $k = 1$
+
+```{r poly-eg, echo = FALSE, fig.align='center'}
+n <- 150
+true_boundary_function <- function(x1, x2) {
+  # experiment with changing this
+  1 - x1/4 - x1^2 + 5*x1*x2 - .5
+}
+circle <- data.frame(
+  x1 = 1 - 2*runif(n),
+  x2 = 1 - 2*runif(n)
+) %>% 
+  mutate(
+    separable = true_boundary_function(x1, x2) > 0,
+    y = factor(rbinom(n, 1, 9/10 - 8*as.numeric(separable)/10 ))
+  )
+decision_surface <- 
+  data_grid(circle,
+          x1 = seq_range(x1, 300, expand = .2),
+          x2 = seq_range(x2, 300, expand = .2)) %>%
+  mutate(z = true_boundary_function(x1, x2))
+circle_plot <-
+  ggplot(circle, aes(x1, x2)) +
+  stat_voronoi(data = circle,
+               aes(x1, x2, fill = y),
+             #  geom = "path",
+             show.legend = FALSE,
+                alpha = .5) +
+       geom_point(aes(shape = y, fill = y),
+              color = "black", size = 2, stroke = 1,
+              show.legend = FALSE, alpha =  .7) +
+   scale_shape_manual(values=c(21, 22)) + 
+   scale_fill_viridis_d(direction = 1, end = .8) +
+  geom_contour(
+    data = decision_surface,
+    aes(x1, x2, z=z),
+    bins = 2,
+    size = 1.5,
+    color = "black",
+    alpha = .9) 
+
+circle_plot
+```
+
+---
+
+### $k$-NN classification regions with $k = 3$
+
+```{r echo = FALSE}
+library(class)
+train <- circle %>%
+  select(x1, x2)
+cl <- circle$y
+test <- decision_surface %>%
+  select(x1, x2)
+knn_fit <- class::knn(train, test, cl, k=3, prob=TRUE)
+```
+
+```{r poly-eg3, fig.align='center', echo = FALSE}
+probs <- attr(knn_fit, "prob")
+class_balance <- max(prop.table(table(circle$y)))
+decision_surface$phat <- 
+  factor(as.numeric(ifelse(knn_fit == 1, probs, 1 - probs) >= 0.5))
+circle_plot <-
+  ggplot(circle, aes(x1, x2)) +
+   scale_shape_manual(values=c(21, 22)) + 
+   scale_fill_viridis_d(direction = 1, end = .8) +
+    geom_point(aes(shape = y, fill = y),
+              color = "black", size = 2, stroke = 1,
+              show.legend = FALSE, alpha =  .7) +
+  geom_tile(
+    data = decision_surface,
+    aes(x=x1, y=x2, fill=phat),
+   show.legend = FALSE,
+    size = 1,
+    alpha = .5) +
+  geom_contour(
+    data = decision_surface,
+    aes(x1, x2, z=z),
+    bins = 2,
+    size = 1.5,
+    color = "black",
+    alpha = .9) 
+
+circle_plot
+```
+
+---
+
+### $k$-NN classification regions with $k = 5$
+
+```{r echo = FALSE}
+knn_fit <- class::knn(train, test, cl, k=5, prob=TRUE)
+```
+
+```{r poly-eg5, fig.align='center', echo = FALSE}
+probs <- attr(knn_fit, "prob")
+class_balance <- max(prop.table(table(circle$y)))
+decision_surface$phat <- 
+  factor(as.numeric(ifelse(knn_fit == 1, probs, 1 - probs) >= 0.5))
+circle_plot <-
+  ggplot(circle, aes(x1, x2)) +
+   scale_shape_manual(values=c(21, 22)) + 
+   scale_fill_viridis_d(direction = 1, end = .8) +
+    geom_point(aes(shape = y, fill = y),
+              color = "black", size = 2, stroke = 1,
+              show.legend = FALSE, alpha =  .7) +
+  geom_tile(
+    data = decision_surface,
+    aes(x=x1, y=x2, fill=phat),
+   show.legend = FALSE,
+    size = 1,
+    alpha = .5) +
+  geom_contour(
+    data = decision_surface,
+    aes(x1, x2, z=z),
+    bins = 2,
+    size = 1.5,
+    color = "black",
+    alpha = .9) 
+
+circle_plot
+```
+
+---
+
+### $k$-NN classification regions with $k = 7$
+
+```{r echo = FALSE}
+knn_fit <- class::knn(train, test, cl, k=7, prob=TRUE)
+```
+
+```{r poly-eg7, fig.align='center', echo = FALSE}
+probs <- attr(knn_fit, "prob")
+class_balance <- max(prop.table(table(circle$y)))
+decision_surface$phat <- 
+  factor(as.numeric(ifelse(knn_fit == 1, probs, 1 - probs) >= 0.5))
+circle_plot <-
+  ggplot(circle, aes(x1, x2)) +
+   scale_shape_manual(values=c(21, 22)) + 
+   scale_fill_viridis_d(direction = 1, end = .8) +
+    geom_point(aes(shape = y, fill = y),
+              color = "black", size = 2, stroke = 1,
+              show.legend = FALSE, alpha =  .7) +
+  geom_tile(
+    data = decision_surface,
+    aes(x=x1, y=x2, fill=phat),
+   show.legend = FALSE,
+    size = 1,
+    alpha = .5) +
+  geom_contour(
+    data = decision_surface,
+    aes(x1, x2, z=z),
+    bins = 2,
+    size = 1.5,
+    color = "black",
+    alpha = .9) 
+
+circle_plot
+```
+
+
+---
+
+### $k$-NN classification regions with $k = 11$
+
+```{r echo = FALSE}
+knn_fit <- class::knn(train, test, cl, k=11, prob=TRUE)
+```
+
+```{r poly-eg11, fig.align='center', echo = FALSE}
+probs <- attr(knn_fit, "prob")
+class_balance <- max(prop.table(table(circle$y)))
+decision_surface$phat <- 
+  factor(as.numeric(ifelse(knn_fit == 1, probs, 1 - probs) >= 0.5))
+circle_plot <-
+  ggplot(circle, aes(x1, x2)) +
+   scale_shape_manual(values=c(21, 22)) + 
+   scale_fill_viridis_d(direction = 1, end = .8) +
+    geom_point(aes(shape = y, fill = y),
+              color = "black", size = 2, stroke = 1,
+              show.legend = FALSE, alpha =  .7) +
+  geom_tile(
+    data = decision_surface,
+    aes(x=x1, y=x2, fill=phat),
+   show.legend = FALSE,
+    size = 1,
+    alpha = .5) +
+  geom_contour(
+    data = decision_surface,
+    aes(x1, x2, z=z),
+    bins = 2,
+    size = 1.5,
+    color = "black",
+    alpha = .9) 
+
+circle_plot
+```
+
+
+---
+
+### $k$-NN classification regions with $k = 49$
+
+```{r echo = FALSE}
+knn_fit <- class::knn(train, test, cl, k=49, prob=TRUE)
+```
+
+```{r poly-eg49, fig.align='center', echo = FALSE}
+probs <- attr(knn_fit, "prob")
+class_balance <- max(prop.table(table(circle$y)))
+decision_surface$phat <- 
+  factor(as.numeric(ifelse(knn_fit == 1, probs, 1 - probs) >= 0.5))
+circle_plot <-
+  ggplot(circle, aes(x1, x2)) +
+   scale_shape_manual(values=c(21, 22)) + 
+   scale_fill_viridis_d(direction = 1, end = .8) +
+    geom_point(aes(shape = y, fill = y),
+              color = "black", size = 2, stroke = 1,
+              show.legend = FALSE, alpha =  .7) +
+  geom_tile(
+    data = decision_surface,
+    aes(x=x1, y=x2, fill=phat),
+   show.legend = FALSE,
+    size = 1,
+    alpha = .5) +
+  geom_contour(
+    data = decision_surface,
+    aes(x1, x2, z=z),
+    bins = 2,
+    size = 1.5,
+    color = "black",
+    alpha = .9) 
+
+circle_plot
+```
+
+
+---
+
+### $k$-NN classification regions with $k = 51$
+
+```{r echo = FALSE}
+knn_fit <- class::knn(train, test, cl, k=51, prob=TRUE)
+```
+
+```{r poly-eg51, fig.align='center', echo = FALSE}
+probs <- attr(knn_fit, "prob")
+class_balance <- max(prop.table(table(circle$y)))
+decision_surface$phat <- 
+  factor(as.numeric(ifelse(knn_fit == 1, probs, 1 - probs) >= 0.5))
+circle_plot <-
+  ggplot(circle, aes(x1, x2)) +
+   scale_shape_manual(values=c(21, 22)) + 
+   scale_fill_viridis_d(direction = 1, end = .8) +
+    geom_point(aes(shape = y, fill = y),
+              color = "black", size = 2, stroke = 1,
+              show.legend = FALSE, alpha =  .7) +
+  geom_tile(
+    data = decision_surface,
+    aes(x=x1, y=x2, fill=phat),
+   show.legend = FALSE,
+    size = 1,
+    alpha = .5) +
+  geom_contour(
+    data = decision_surface,
+    aes(x1, x2, z=z),
+    bins = 2,
+    size = 1.5,
+    color = "black",
+    alpha = .9) 
+
+circle_plot
+```
+
+---
+
+### Complexity and consistency
+
+Assuming a generative (probability) model, it can be shown
+
+- Degrees of freedom $= n/k$
+
+  - Most complex if $k = 1$
+  - Often use $1/k$ as complexity measure
+  - One global constant if $k = n$
+
+- Consistency as $n \to \infty$ with $p$ fixed
+
+  - For $k = 1$, $1$-NN achieves $2 (\text{Bayes error rate})$
+  - If $k \to \infty$ but $k/n \to 0$ then $k$-NN achieves Bayes rate
+
+---
+
+###  Computational complexity
+
+For **a single new test point**:
+
+1. Compute $p$-dimensional distances to all $n$ training points
+2. Select training points with smallest $k$ distances
+3. Compute the average for regression, or tally votes for class probability estimates
+
+--
+
+Step 1 is about $o(np)$ time (for most distance metrics)
+
+Step 2 is $o(n\log(n))$ or $o(nk)$ time (full sort, or smallest $k$)
+
+Step 3 is $o(pk)$ time
+
+If $n \gg p$ then the cost is roughly $o(n(p+k))$
+
+If $n \not\gg p$ then nearest neighbors might be a bad idea
+
+---
+
+### Extensions and limitations
+
+- Distance: learn a distance metric using some training data
+- *Curse of dimensionality*: in high dimensions, the "nearest" points are still far away `r emo::ji("cry")`
+  - **Exercise**: prove some example of this
+  - Not just $k$-NN, all local methods suffer. Need to aggregate information in a more global model/parameters  
+- Combine with other steps/methods:
+  - e.g. first do dimension reduction (select top few principal components), then $k$-NN
+  - e.g. use weights other than $1/k$ (maybe smoother)
+- *Interpretability*: no coefficients or model summaries, purely focused on prediction
+- Memory-based methods: need to store and re-use entire training data for each new prediction
+
+---
+class: inverse
+
+## Simplicity 
+
+Localized predictions from using nearest training points -- good for intuition about local methods in general
+
+## Baseline for comparison
+
+If you do a lot of theoretical/computational work to develop another predictive ML method and it doesn't predict as well as $k$-NN... then it better at least have some other advantages (like interpretability or out-of-distribution generalization)
+

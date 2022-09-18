@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Machine learning</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Joshua Loftus" />
+    <link href="libs/remark-css/default.css" rel="stylesheet" />
+    <link href="libs/animate.css-xaringan/animate.slide_left.css" rel="stylesheet" />
+    <link href="libs/tile-view/tile-view.css" rel="stylesheet" />
+    <script src="libs/tile-view/tile-view.js"></script>
+    <link href="libs/panelset/panelset.css" rel="stylesheet" />
+    <script src="libs/panelset/panelset.js"></script>
+    <link rel="stylesheet" href="xaringan-themer.css" type="text/css" />
+    <link rel="stylesheet" href="../../../theme.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: left, bottom, title-slide
+
+# Machine learning
+## Introductory remarks
+### Joshua Loftus
+
+---
+
+
+
+
+
+
+
+
+
+
+&lt;style type="text/css"&gt;
+.remark-slide-content {
+    font-size: 1.2rem;
+    padding: 1em 4em 1em 4em;
+}
+&lt;/style&gt;
+
+![](../../../files/theme/LSE_stats_banner.jpg)
+
+### ST 310: Machine Learning (for Data Science)
+
+Lent term 2021
+
+Lecturer: Joshua Loftus
+
+Co-instructor: Phil Chan
+
+Website: [ml4ds.com](https://ml4ds.com)
+
+???
+
+This is the very first, introductory video for week 1
+
+Provide context
+
+Set expectations
+
+
+---
+
+# About the course
+
+- Course info
+- Quick preview
+- Teaching/course philosophy
+![](../../../files/lasso.gif)
+
+???
+
+Animation shows lasso, a method we'll learn about later
+
+---
+class: inverse, center, middle
+
+# Course info
+
+---
+
+# Format
+
+- *Mostly* self-contained -- ask if you need help!
+- Videos on Moodle each week
+- Seminars: pre-work, Zoom links on Moodle
+- Course page (links, slides, misc. notes)
+  - http://ml4ds.com/
+- Forum (participation = learning)
+  - http://discourse.ml4ds.com/
+- Readings / supplemental references
+  - **ISLR** [Introduction to Statistical Learning](https://statlearning.com/) 
+  - **ESL** [Elements of Statistical Learning](https://web.stanford.edu/~hastie/ElemStatLearn/)
+  - **CASI** [Computer Age Statistical Inference](https://web.stanford.edu/~hastie/CASI/)
+  - **Mixtape** [Causal Inference: The Mixtape](https://mixtape.scunning.com/index.html)
+  - **R4DS** [R for Data Science](https://r4ds.had.co.nz/)
+
+---
+
+# Assessments
+
+As described in the [course listing](https://www.lse.ac.uk/resources/calendar2020-2021/courseGuides/ST/2020_ST310.htm)
+
+- Formative
+  - Problem sets every 2 weeks
+- Summative
+  - Final project (30%)
+  - Summer exam (70%)
+
+(I believe the summer exams may be remote?)
+
+(Whatever the university decides, that's what we're doing)
+
+### Let's all do our best, and be understanding!
+
+---
+class: inverse, center, middle
+
+# Quick preview
+
+Don't worry about following all the details now
+
+We'll introduce R coding gradually
+
+---
+
+.panelset[
+  .panel[.panel-name[Data]
+
+```r
+library(gapminder)
+gapminder %&gt;% head() %&gt;% kable()
+```
+
+&lt;table&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:left;"&gt; country &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; continent &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; year &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; lifeExp &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; pop &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; gdpPercap &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Afghanistan &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Asia &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1952 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 28.801 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 8425333 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 779.4453 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Afghanistan &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Asia &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1957 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 30.332 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 9240934 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 820.8530 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Afghanistan &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Asia &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1962 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 31.997 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 10267083 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 853.1007 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Afghanistan &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Asia &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1967 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 34.020 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 11537966 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 836.1971 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Afghanistan &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Asia &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1972 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 36.088 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 13079460 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 739.9811 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Afghanistan &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Asia &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1977 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 38.438 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 14880372 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 786.1134 &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+  
+  ]
+  .panel[.panel-name[Code]
+  
+
+```r
+gdp_data &lt;- gapminder %&gt;%
+  `filter`(year == max(year))
+
+life_exp_plot &lt;- 
+  ggplot(gdp_data, `aes`(x = gdpPercap, y = lifeExp)) +
+  `geom_point`(aes(color = continent,
+                   shape = continent,
+                   size = pop)) +
+  scale_color_viridis_d(option = "magma",
+                        direction = -1,
+                        begin = .2, end = .8)
+
+life_exp_plot +
+  `stat_smooth`(formula = y ~ x, method = "loess", span = 1)
+```
+  
+  
+  ]
+  .panel[.panel-name[Plot]
+&lt;img src="01-1-introduction_files/figure-html/unnamed-chunk-1-1.png" width="648" /&gt;
+  
+  ]
+
+  .panel[.panel-name[Modify]
+  
+
+```r
+life_exp_plot +
+  scale_x_log10() +
+  stat_smooth(formula = y ~ x, method = "lm") +
+  xlab("GDP per capita") +
+  ylab("Life expectancy")
+```
+  
+  
+  ]
+  .panel[.panel-name[Plot again]
+&lt;img src="01-1-introduction_files/figure-html/unnamed-chunk-2-1.png" width="648" /&gt;
+  
+  ]
+]
+
+???
+
+Preview of some R
+
+
+Model complexity: nonlinear vs relatively simple (linear) model
+
+Linear model: may not fit the data as well
+
+But! interpretable, one slope to summarize relationship
+
+But! reliable/stable, 
+
+
+Machine learning allows us to find models with just the right amount of complexity
+
+---
+class: bottom
+
+
+.pull-left[
+![xkcd 2048](https://imgs.xkcd.com/comics/curve_fitting_2x.png)
+Source: [xkcd](https://xkcd.com/2048/)
+]
+
+.pull-right[
+
+&amp;nbsp; 
+
+&amp;nbsp; 
+
+&amp;nbsp; 
+
+&amp;nbsp; 
+
+&amp;nbsp; 
+
+Yes, there will be memes, [videos](https://twitter.com/Reza_Zadeh/status/1045124253006192640), etc...
+
+]
+
+---
+class: inverse, center, middle
+
+# Teaching/course philosophy
+
+???
+
+Not just math, also my opinions
+
+Textbooks are excellent, read them!
+
+But! Value added by lectures
+
+---
+
+# Recurring themes
+
+- Human-centric ML
+  - Tools for us to control, not conversely...
+  - Ethics of data science
+
+--
+
+- Interpretability
+  - Philosophy of science
+  - Causality vs "curve fitting"
+
+--
+
+- Social learning
+  - Come post on the forum!
+  - (More on this later)
+
+???
+
+Examples with ethical aspects
+
+Explicit consideration of ethics and professional responsibilities of data scientists
+
+Future lectures include a dose of philosophy, vaccinating against mindless application of tools
+
+Don't be a zombie data scientist
+
+Learn from each other, from people who we think are trustworthy...
+
+---
+class: inverse, center, middle
+
+# Please allow me
+
+# to introduce
+
+# myself
+
+I'm Joshua Loftus
+
+???
+
+I'm the lecturer
+
+For seminars, help from the very capable Phil Chan
+
+Am I trustworthy? Why should you listen to me? You decide!
+
+---
+class: bottom
+
+.pull-left[
+
+![](https://i.ytimg.com/vi/bQhEALoxoGE/maxresdefault.jpg)
+
+![](../../../files/brooklynbridge.jpg)
+]
+
+.pull-right[
+
+&amp;nbsp; 
+
+&amp;nbsp; 
+&amp;nbsp; 
+
+- New to LSE! 
+- Used to teach at NYU
+- Cambridge postdoc
+- Stats PhD from Stanford
+- Reproducibility, fairness
+
+![](https://statweb.stanford.edu/~joftius/yosemite.jpg)
+]
+
+???
+
+I am a person in the world, not just on lecture slides!
+
+I look forward to getting to meet you!
+
+---
+class: inverse, center, middle
+
+# The end of the beginning
+
+I hope you're as excited about the course as I am!
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "github",
+"highlightLines": true,
+"highlightSpans": true,
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+(function(time) {
+  var d2 = function(number) {
+    return ('0' + number).slice(-2); // left-pad 0 to minutes/seconds
+  },
+
+  time_format = function(total) {
+    var secs = Math.abs(total) / 1000;
+    var h = Math.floor(secs / 3600);
+    var m = Math.floor(secs % 3600 / 60);
+    var s = Math.round(secs % 60);
+    var res = d2(m) + ':' + d2(s);
+    if (h > 0) res = h + ':' + res;
+    return res;  // [hh:]mm:ss
+  },
+
+  slide_number_div = function(i) {
+    return document.getElementsByClassName('remark-slide-number').item(i);
+  },
+
+  current_page_number = function(i) {
+    return slide_number_div(i).firstChild.textContent;  // text "i / N"
+  };
+
+  var timer = document.createElement('span'); timer.id = 'slide-time-left';
+  var time_left = time, k = slideshow.getCurrentSlideIndex(),
+      last_page_number = current_page_number(k);
+
+  setInterval(function() {
+    time_left = time_left - 1000;
+    timer.innerHTML = ' ' + time_format(time_left);
+    if (time_left < 0) timer.style.color = 'red';
+  }, 1000);
+
+  slide_number_div(k).appendChild(timer);
+
+  slideshow.on('showSlide', function(slide) {
+    var i = slide.getSlideIndex(), n = current_page_number(i);
+    // reset timer when a new slide is shown and the page number is changed
+    if (last_page_number !== n) {
+      time_left = time; last_page_number = n;
+      timer.innerHTML = ' ' + time_format(time); timer.style.color = null;
+    }
+    slide_number_div(i).appendChild(timer);
+  });
+})(59000);
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>

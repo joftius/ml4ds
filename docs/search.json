@@ -1,0 +1,21 @@
+{
+  "articles": [
+    {
+      "path": "about.html",
+      "title": "About this site",
+      "description": "Some additional details about the website",
+      "author": [],
+      "contents": "\n\n\n\n",
+      "last_modified": "2022-09-18T15:05:40+01:00"
+    },
+    {
+      "path": "index.html",
+      "title": "Machine Learning 4 Data Science",
+      "description": "Introducing a core set of commonly used machine learning tools and practicing them in the R statistical programming language to understand their mathematical foundations, statistical limitations, and proper interpretation.\n",
+      "author": [],
+      "contents": "\n \nReferences: ISLR + ESL\n+ CASI\n+ Mixtape\n+ R4DS + MLstory\n\n\n\n",
+      "last_modified": "2022-09-18T15:05:41+01:00"
+    }
+  ],
+  "collections": ["weeks/weeks.json"]
+}

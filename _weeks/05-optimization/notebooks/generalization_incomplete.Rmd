@@ -1,0 +1,183 @@
+---
+title: "Generalisation"
+author: "LSE ST310"
+output: html_document
+---
+
+```{r setup, message = FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(broom)
+# install.packages("glmnet") # if necessary
+library(glmnet)
+```
+
+# High-dimensional regression
+
+Generate some data from a high-dimensional model (increase p below)
+
+```{r}
+#set.seed(1)
+n <- 100
+p <- 20
+X <- matrix(rnorm(n*p), nrow = n)
+beta <- rpois(p, lambda = 1)
+#beta <- c(-1, 1, rep(0, p - 2))
+y <- X %*% beta + rnorm(n)
+```
+
+## Ridge regression with glmnet
+
+We will study ridge regression in more detail soon. For now you only need to know it's a method we can use for fitting high-dimensional regression models. It also involves a tuning parameter called "lambda," and **larger values of lambda result in simpler fitted models**. (We'll learn about how they are simpler soon when we study penalized regression)
+
+Use the `glmnet` package to fit a ridge regression model on the same data as in the previous part. Hint: read about the `alpha` input to the `glmnet` function in the documentation.
+
+```{r message = FALSE}
+model_ridge <- glmnet(X, y,
+                      intercept = FALSE,
+                      alpha = 0,
+                      lambda = 10^(-3:3))
+```
+
+What does plotting the model object show?
+
+```{r}
+plot(model_ridge, xvar = "lambda")
+```
+
+## Estimation error
+
+Compute the mean-squared error of the coefficient estimates at different values of lambda
+
+```{r}
+lambda <- 10^0
+beta_hat <- coef(model_ridge, s = lambda)[-1] # leave out intercept
+mean((beta - beta_hat)^2)
+```
+
+## Prediction error
+
+Compute predictions using the estimated coefficients and the mean-squared prediction error
+
+```{r}
+y_hat <- X %*% beta_hat
+mean((y - y_hat)^2)
+```
+
+## Discussion
+
+#### In a real data analysis (rather than simulation), which of the above things could we not compute, and why?
+
+#### How do the results change depending on lambda?
+
+#### How do the results change depending on dimension? (e.g. if p > n)
+
+# Overfitting to variance and ID generalisation
+
+Generate a new sample from the same distribution (which things stay fixed?) and calculate the prediction error on this new sample at different values of lambda
+
+```{r}
+X_ID <- matrix(rnorm(n*p), nrow = n)
+y_ID <- X_ID %*% beta + rnorm(n)
+```
+
+```{r}
+y_ID_hat <- predict(model_ridge, newx = X_ID, s = lambda)
+mean((y_ID - y_ID_hat)^2)
+```
+
+```{r}
+y_hat <- predict(model_ridge, newx = X, s = 10*lambda)
+mean((y - y_hat)^2)
+```
+
+## Discussion
+
+#### Compare to prediction error on the original (training) sample
+
+#### How do these compare if we increase the original (training) sample size?
+
+# "Overfitting to bias" and OOD generalisation
+
+There are many ways to change the distribution for a new sample
+
+- Change beta (maybe add a small amount of noise)
+- Change the CEF some other way (e.g. add a non-linear term)
+- Change the distribution of X and/or the errors
+
+Pick one of these and test OOD generalisation (prediction error on new, different sample)
+
+```{r}
+beta_new_D <- beta + rnorm(p, sd = .1)
+X_OOD <- matrix(rnorm(n*p), nrow = n)
+y_OOD <- X_OOD %*% beta_new_D + rnorm(n)
+```
+
+```{r}
+y_OOD_hat <- predict(model_ridge, newx = X_OOD, s = 10*lambda)
+mean((y_OOD - y_OOD_hat)^2)
+```
+
+## Discussion
+
+#### How do these compare if we increase the original (training) sample size?
+
+#### What are the similarities/differences in your conclusions between ID/OOD generalisation?
+
+# Comparison with gradient descent
+
+Copy/paste your gradient descent (or stochastic version) code for ordinary linear regression here. Does it converge? If so, to what? Check distance (MSE) from the true beta and from the ridge estimate of beta (at different values of lambda, or a very small lambda close to zero)
+
+(Also consider generating data with p larger than n, so the least squares estimator is undefined)
+
+```{r}
+# Gradient of the loss function
+least_squares_gradient <- function(x, y, beta) {
+  -2 * t(x) %*% (y - x %*% beta) #+ 2 * beta
+}
+
+# Loss function
+least_squares_loss <- function(x, y, beta) {
+  sum((y - x %*% beta)^2)
+}
+
+beta_prev2 <- rep(0, p) # or random start point
+grad_prev2 <- least_squares_gradient(X, y, beta_prev2)
+beta_prev1 <- beta_prev2 + 0.1 * grad_prev2 / sqrt(sum(grad_prev2^2))
+grad_prev1 <- least_squares_gradient(X, y, beta_prev1)
+previous_loss <- least_squares_loss(X, y, beta_prev2)
+next_loss <- least_squares_loss(X, y, beta_prev1)
+steps <- 1
+
+while (abs(previous_loss - next_loss) > 0.001) {
+  grad_diff <- grad_prev1 - grad_prev2
+  step_BB <- sum((beta_prev1 - beta_prev2) * grad_diff) / sum(grad_diff^2)
+  
+  beta_prev2 <- beta_prev1
+  beta_prev1 <- beta_prev1 - step_BB * grad_prev1
+  
+  grad_prev2 <- grad_prev1
+  grad_prev1 <- least_squares_gradient(X, y, beta_prev1)  
+  
+  previous_loss <- next_loss
+  next_loss <- least_squares_loss(X, y, beta_prev1)
+  
+  #if (round(steps/10) == steps/10)
+  print(previous_loss)
+  steps <- steps + 1
+}
+
+beta_final <- beta_prev1 
+```
+
+```{r}
+mean((beta_final - beta)^2)
+```
+
+```{r}
+beta_zero <- coef(model_ridge, s = 10^(-3))[-1]
+mean((beta_final - beta_zero)^2)
+```
+
+
+

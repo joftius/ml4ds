@@ -1,0 +1,845 @@
+---
+title: "Machine learning"
+subtitle: "Interpreting ML models"
+author: "Joshua Loftus"
+#institute: "LSE"
+#date: "`r Sys.Date()`"
+output:
+  xaringan::moon_reader:
+    css: ["default", "xaringan-themer.css", "../../../theme.css"]
+#    seal: false    
+    lib_dir: libs
+    nature:
+      titleSlideClass: ["bottom", "left"]
+      countdown: 59000
+      highlightStyle: github
+      highlightLines: true
+      highlightSpans: true
+      countIncrementalSlides: false
+---
+
+class: inverse
+
+```{r setup, include=FALSE}
+options(htmltools.dir.version = FALSE)
+knitr::opts_chunk$set(fig.retina = 3, warning = FALSE, message = FALSE)
+options(knitr.table.format = "html")
+```
+
+```{r xaringan-themer, include=FALSE, warning=FALSE}
+library(xaringanthemer)
+style_duo_accent(
+  primary_color = "#2d708e",
+  secondary_color = "#230433",
+  link_color = "#55c667",
+  text_bold_color = '#f68f46',
+#  title_slide_text_color = "#444444",
+  title_slide_background_color = "#ffffff", #"#042333",
+  title_slide_background_image = "../../../files/theme/LSE/world_upside_down1.jpg",
+#    "https://upload.wikimedia.org/wikipedia/commons/1/1a/Workhouse_Nantwich.jpg",
+  title_slide_background_size = "cover",
+  ) #or contain
+```
+
+```{r xaringanextra, include=FALSE, warning=FALSE}
+library(xaringanExtra)
+#xaringanExtra::use_animate_all("slide_left")
+xaringanExtra::use_tile_view()
+xaringanExtra::use_panelset()
+xaringanExtra::style_panelset_tabs(font_family = "inherit")
+```
+
+```{r tidyverse, include=FALSE, warning=FALSE}
+library(tidyverse)
+library(knitr)
+theme_set(theme_minimal(base_size = 22))
+set.seed(1)
+library(broom)
+library(modelr)
+```
+
+<style type="text/css">
+.remark-slide-content {
+    font-size: 1.2rem;
+    padding: 1em 4em 1em 4em;
+}
+</style>
+
+## **Storytelling** with ML models
+
+Suppose we tuned a model to have good predictions on test data
+
+We often want to interpret/explain the model, not just predict
+
+- Why does the model predict a certain outcome for a given value of the predictors?
+
+- How does the model depend on a specific variable or set of variables?
+
+- Which variables does the model depend on most?
+
+- Can we create plots/visuals to answer any of these, even if $p$ is large?
+
+---
+
+## Interpretation/communication limits
+
+- Human cognition: plots, simple models, **1 or 2 variables**
+
+- Audience: simpler interpretation $\to$ broader audience
+
+- People are usually thinking about **causality**
+
+"Abstract: This paper studies the *association* of $X$ and $Y$..." *influence* - *tied to* - *drives* - just because you don't use the word "cause" doesn't mean you are communicating clearly or honestly
+
+--
+
+**Danger**: part of the audience will interpret wrongly/causally no matter how careful we are (but we still must try our best)
+
+**Danger**: can't choose audience, information escapes context
+
+---
+class: inverse
+
+
+## Conditioning / observation
+
+$\mathbb P(\mathbf y | \mathbf X = \mathbf x)$, coefficients, dependence plots, CEF, etc
+
+## Manipulating / intervention
+
+$\mathbb P(\mathbf y | \text{do}(\mathbf X = \mathbf x))$, ATE, [CATE](https://en.wikipedia.org/wiki/Average_treatment_effect#Heterogenous_treatment_effects), etc
+
+
+#### All interpretations are non-causal by default
+
+Without explicit causal assumptions there are no causal conclusions
+
+"[No causes in, no causes out](https://oxford.universitypressscholarship.com/view/10.1093/0198235070.001.0001/acprof-9780198235071-chapter-3)"
+
+
+
+---
+
+## Plots instead of coefficients
+
+- Plot predictor $\mathbf x_j$ vs $\hat f(\mathbf x)$
+
+- We saw this with GAMs, which we could interpret this way: slope in plot shows (locally) $\frac{\partial}{\partial x_j}$ of CEF
+
+--
+
+#### Simulated examples
+
+Next we'll walk-through two examples
+
+First when the true CEF is additive, and second when it is not
+
+We'll see how **partial dependence plots** interpret models in both cases, including when an additive model is fit to a truly non-additive relationship
+
+---
+
+### True model is additive
+
+```{r}
+library(tidyverse) 
+f1 <- function(x) x^2  #<<
+f2 <- function(x) cos(pi*x/2) #<<
+set.seed(1)
+n <- 800
+df <- data.frame(
+  x1 = 2*(runif(n)-1/2),
+  x2 = 2*sort(sample(-100:100 / 50,  n, replace = TRUE))
+) %>%
+  mutate(
+    CEF = f1(x1) + f2(x2), #<<
+    y = CEF + rnorm(n) 
+)
+```
+
+**Note**: these simple examples have only 2 predictors so 3d-plot can show everything. In higher-dimensional models we may not be able to visualize the interactions we see here
+
+
+---
+
+### Correctly specified GAM
+
+```{r df_plot, message = FALSE, fig.height=6, fig.width=12, fig.align='center'}
+library(gam)
+fit_gam <- gam(y ~ s(x1) + s(x2), data = df)
+par(mfrow = c(1,2))
+plot(fit_gam, se = TRUE, ylim = c(-1,1))
+points(df$x2, f2(df$x2),
+       type = "l", col = "green", lwd = 10)
+```
+
+
+---
+
+### Can plot entire model since $p = 2$
+
+.pull-left[
+
+```{r echo = FALSE, message = FALSE}
+library(plotly)
+p3d <- plot_ly(
+  data = df %>% select(-CEF),
+        x = ~x1,
+        y = ~x2,
+        z = ~y,
+        type = "scatter3d",
+  #mode = "markers",
+  size = 1)
+
+N <- 120
+xy_plane <- data_grid(data = df,
+                        x1 = seq_range(x1, N),
+                        x2 = seq_range(x2, N)
+                      )
+
+lm_plane <- xy_plane %>% 
+  mutate(CEF = f1(x1) + f2(x2)) %>%
+  pull(CEF)
+
+CEF <- matrix(lm_plane, nrow = N, ncol = N)
+
+p3d_wcef <- p3d %>%
+  add_surface(
+          x = ~seq_range(x1, N),
+          y = ~seq_range(x2, N),
+          z = ~CEF) 
+
+  f <- paste0("p3d_wcef.html")
+  htmlwidgets::saveWidget(p3d_wcef, f)
+  htmltools::tags$iframe(
+    src=f,
+    width="100%", 
+    height="400",
+    scrolling="no", 
+    seamless="seamless", 
+    frameBorder="0"
+  )
+```
+True CEF
+]
+.pull-right[
+
+```{r echo = FALSE, message = FALSE}
+gam_plane <- predict(fit_gam, newdata = xy_plane)
+
+fitted_gam <- matrix(gam_plane, nrow = N, ncol = N)
+
+p3d_gam <- p3d %>%
+  add_surface(
+          x = ~seq_range(x1, N),
+          y = ~seq_range(x2, N),
+          z = ~fitted_gam) 
+
+
+  f <- paste0("p3d_gam.html")
+  htmlwidgets::saveWidget(p3d_gam, f)
+  htmltools::tags$iframe(
+    src=f,
+    width="100%", 
+    height="400",
+    scrolling="no", 
+    seamless="seamless", 
+    frameBorder="0"
+  )
+```
+GAM estimated
+]
+
+---
+
+### Now true model is **not** additive
+
+Univariate dependence plots are easily interpreted under **additivity assumption** -- like GAMs
+
+**Danger**: does not show associations between predictors, interactions
+
+e.g.
+
+```{r}
+df_int <- df %>%
+  mutate(
+    CEF = f1(x1) * f2(x2), #<<
+    y = CEF + rnorm(n)
+)
+```
+
+Additivity assumption is now (importantly) wrong
+
+---
+
+### Misspecified GAM
+
+```{r dfi_plot, message = FALSE, fig.height=4, fig.width=8, fig.align='center'}
+fit_gam_wrong <- gam(y ~ s(x1) + s(x2), data = df_int)
+par(mfrow = c(1,2))
+plot(fit_gam_wrong, ylim = c(-1,1))
+```
+
+Partial dependence on $x_1$ is a parabola opening upward when $\cos(x_2) > 0$ but downward when $\cos(x_2) < 0$ (cancellation)
+
+---
+
+### GAM summaries
+
+```{r}
+gam_summary <- summary(fit_gam)
+wrong_summary <- summary(fit_gam_wrong)
+wrong_summary$anova
+```
+
+.pull-left[
+```{r}
+gam_summary$null.deviance
+gam_summary$deviance
+```
+]
+.pull-right[
+```{r}
+wrong_summary$null.deviance
+wrong_summary$deviance
+```
+]
+
+
+---
+
+### Strong modeling assumption restricts learning
+
+.pull-left[
+
+```{r echo = FALSE, message = FALSE}
+N <- 120
+df_int_noCEF <- df_int %>% select(-CEF)
+df_subsample <- df_int_noCEF %>% sample_frac(.3)
+xy_plane <- data_grid(data = df_int_noCEF,
+                        x1 = seq_range(x1, N),
+                        x2 = seq_range(x2, N)
+                      )
+
+lm_plane <- xy_plane %>% 
+  mutate(CEF = f1(x1) * f2(x2)) %>%
+  pull(CEF)
+
+CEF <- matrix(lm_plane, nrow = N, ncol = N)
+
+
+p3d_int <- plot_ly(
+  data = df_subsample,
+        x = ~x1,
+        y = ~x2,
+        z = ~y,
+        type = "scatter3d",
+  #mode = "markers",
+  size = 1)
+
+
+p3d_int_wcef <- p3d_int %>%
+  add_surface(
+          x = ~seq_range(x1, N),
+          y = ~seq_range(x2, N),
+          z = ~CEF) 
+
+  f <- paste0("p3d_int_wcef.html")
+  htmlwidgets::saveWidget(p3d_int_wcef, f)
+  htmltools::tags$iframe(
+    src=f,
+    width="100%", 
+    height="400",
+    scrolling="no", 
+    seamless="seamless", 
+    frameBorder="0"
+  )
+```
+True CEF (non-additive)
+]
+.pull-right[
+
+```{r echo = FALSE, message = FALSE}
+gam_wrong_plane <- predict(fit_gam_wrong, newdata = xy_plane)
+
+fitted_gam <- matrix(gam_wrong_plane, nrow = N, ncol = N)
+
+p3d_gam_wrong <- p3d_int %>%
+  add_surface(
+          x = ~seq_range(x1, N),
+          y = ~seq_range(x2, N),
+          z = ~fitted_gam) 
+
+  f <- paste0("p3d_gam_wrong.html")
+  htmlwidgets::saveWidget(p3d_gam_wrong, f)
+  htmltools::tags$iframe(
+    src=f,
+    width="100%", 
+    height="400",
+    scrolling="no", 
+    seamless="seamless", 
+    frameBorder="0"
+  )
+```
+GAM estimate
+]
+
+---
+class: center, middle
+
+### Danger of interpreting misspecified models
+
+These plots and interaction tests interpret the fitted model
+
+They do not check the model fitting assumptions
+
+#### If we fit models that are importantly wrong, our interpretations can also be importantly wrong
+
+---
+
+### `iml` package
+
+```{r df_pdp, message = FALSE, fig.height=5, fig.width=9, fig.align='center'}
+library(iml) # methods for interpretation
+pred_gam <- Predictor$new(fit_gam,
+              data = df_subsample, y = df_subsample$y)
+pdp <- FeatureEffects$new(pred_gam,
+      features = c("x1", "x2"), method = "pdp+ice")
+plot(pdp) + stat_function(fun = f2, color = "green", size = 2)  + ylim(-1,1)
+```
+
+---
+
+### Checking for interactions in the predictions
+
+```{r}
+ia <- Interaction$new(pred_gam)
+```
+
+.pull-left[
+
+```{r comment=NA}
+ia
+```
+]
+
+.pull-right[
+```{r message = FALSE}
+plot(ia) + xlim(0,1)
+```
+]
+
+---
+
+
+```{r df_pdp_int, message = FALSE, fig.height=5, fig.width=9, fig.align='center'}
+pred_gamw <- Predictor$new(fit_gam_wrong, data = df_subsample,
+                y = df_subsample$y)
+pdp <- FeatureEffects$new(pred_gamw,
+      features = c("x1", "x2"),
+      method = "pdp+ice")
+plot(pdp) + ylim(-1,1)
+```
+
+---
+
+### Checking for interactions **in the predictions**
+
+```{r}
+ia <- Interaction$new(pred_gamw)
+```
+
+.pull-left[
+
+```{r comment=NA}
+ia
+```
+]
+
+.pull-right[
+```{r message=FALSE}
+plot(ia) + xlim(0,1)
+```
+
+
+]
+
+---
+
+### Regression trees + bagging
+
+```{r dfi_plot2, message = FALSE, fig.height=6, fig.width=12, fig.align='center'}
+library(randomForest)
+fit_rf <- randomForest(y ~ ., ntree = 100, mtry = 2,
+                  minsize = 20, data = df_int_noCEF)
+pred_rf <- Predictor$new(fit_rf, data = df_subsample, y = df_subsample$y)
+pdp <- FeatureEffects$new(pred_rf,
+      features = c("x1", "x2"), method = "pdp+ice")
+plot(pdp) + ylim(-1,1)
+```
+
+---
+
+### Tree methods can fit interactions
+
+```{r}
+ia <- Interaction$new(pred_rf)
+```
+
+.pull-left[
+
+```{r comment=NA}
+ia
+```
+]
+
+.pull-right[
+```{r message=FALSE}
+plot(ia) + xlim(0,1)
+```
+]
+
+---
+
+### Tree methods aren't smooth
+
+.pull-left[
+
+```{r echo = FALSE, message = FALSE}
+  htmltools::tags$iframe(
+    src="p3d_int_wcef.html",
+    width="100%", 
+    height="400",
+    scrolling="no", 
+    seamless="seamless", 
+    frameBorder="0"
+  )
+```
+True CEF
+]
+.pull-right[
+
+```{r echo = FALSE, message = FALSE}
+rf_plane <- predict(fit_rf, newdata = xy_plane)
+#rf_plane <- predict(fit_boost, newdata = as.matrix(df_x))
+
+fitted_rf <- matrix(rf_plane, nrow = N, ncol = N)
+
+p3d_rf <- p3d_int %>%
+  add_surface(
+          x = ~seq_range(x1, N),
+          y = ~seq_range(x2, N),
+          z = ~fitted_rf) 
+
+  f <- paste0("p3d_rf.html")
+  htmlwidgets::saveWidget(p3d_rf, f)
+  htmltools::tags$iframe(
+    src=f,
+    width="100%", 
+    height="400",
+    scrolling="no", 
+    seamless="seamless", 
+    frameBorder="0"
+  )
+```
+Bagged trees estimate
+]
+
+
+
+
+
+
+
+
+
+---
+
+### Smooth and non-additive approach
+
+```{r dfi_plot3, message = FALSE, fig.height=6, fig.width=12, fig.align='center'}
+library(kernlab)
+fit_ksvm <- ksvm(y ~ ., kernel = rbfdot(sigma = 2), data = df_int_noCEF)
+pred_ksvm <- Predictor$new(fit_ksvm, data = df_subsample %>% select(-y), y = df_subsample$y,
+  predict.fun=function(object, newdata) predict(object, newdata))
+pdp <- FeatureEffects$new(pred_ksvm,
+      features = c("x1", "x2"), method = "pdp+ice")
+plot(pdp) + ylim(-1,1)
+```
+
+---
+
+### RBF kernel-SVM model fits interactions
+
+```{r}
+ia <- Interaction$new(pred_ksvm)
+```
+
+.pull-left[
+
+```{r comment=NA}
+ia
+```
+]
+
+.pull-right[
+```{r message=FALSE}
+plot(ia) + xlim(0,1)
+```
+]
+
+---
+
+### Best fit (for this example)?
+
+.pull-left[
+
+```{r echo = FALSE, message = FALSE}
+  htmltools::tags$iframe(
+    src="p3d_int_wcef.html",
+    width="100%", 
+    height="400",
+    scrolling="no", 
+    seamless="seamless", 
+    frameBorder="0"
+  )
+```
+True CEF
+]
+.pull-right[
+
+```{r echo = FALSE, message = FALSE}
+ksvm_plane <- predict(fit_ksvm, newdata = xy_plane)
+
+fitted_ksvm <- matrix(ksvm_plane, nrow = N, ncol = N)
+
+p3d_ksvm <- p3d_int %>%
+  add_surface(
+          x = ~seq_range(x1, N),
+          y = ~seq_range(x2, N),
+          z = ~fitted_ksvm) 
+
+  f <- paste0("p3d_ksvm.html")
+  htmlwidgets::saveWidget(p3d_ksvm, f)
+  htmltools::tags$iframe(
+    src=f,
+    width="100%", 
+    height="400",
+    scrolling="no", 
+    seamless="seamless", 
+    frameBorder="0"
+  )
+```
+RBF kernel-SVM estimate
+]
+
+
+
+---
+
+### What to do about other variables?
+
+For models with multiple predictors, partial dependence plots can hide model structure
+
+**Danger**: simple interpretation methods can be misleading, e.g. simple 2d-plots when the model is not additive
+
+Options
+
+- Hold other variables fixed (e.g. at medians), `plotmo` default
+
+- Average over them, `pdp` method
+
+- Plot a curve for each observation, `ice` method
+
+Each has pros/cons, no satisfactory answer for dependence
+
+---
+
+### Higher dimensions
+
+- When $p > 2$...
+
+Many plots: $p$ univariate plots, $\binom{p}{2}$ 3d plots, and 3d plots no longer show the whole model...
+
+Focus on one (or few) predictors of interest
+
+Simpler, fewer opportunities for interpretation errors
+
+But *each plot now potentially hides more of the model's complexity*
+
+- If $n$ is (too) large
+
+Computational complexity, very busy plots (e.g. `ice` plots)
+
+Downsample, use a random fraction of data
+
+---
+class: inverse
+
+###  (Local) surrogate/explanatory models
+
+Fit simple models to explain the predictions of a complex one
+
+From a **class of simple models**, let $\hat g$ be the closest model to $\hat f$
+
+- **Local**: explanation for an individual prediction
+
+Different simple models $\hat g$ for different parts of the predictor space, more complicated interpretation
+
+- **Global**: explanation for the overall model
+
+Simpler interpretation, but usually less fidelity to $\hat f$
+
+---
+
+### Calculus analogy (warning: only an analogy)
+
+Taylor expansion: approximate a differentiable function (locally) by a linear one (or polynomial). Image from [Wikipedia](https://en.wikipedia.org/wiki/Tangent_space)
+
+![](https://upload.wikimedia.org/wikipedia/commons/e/e7/Tangentialvektor.svg)
+
+
+---
+
+### Models for different purposes
+
+| Prediction      | Interpretation |
+| ----------- | ----------- |
+| $\hat f(\mathbf x)$ complex, fit to $\mathbf y$ | $\hat g(\mathbf  z)$ simple, fit to $\hat f(\mathbf x)$ |
+| Accuracy on test data | Why did $\hat f$ predict this value? |
+| Original features $\mathbf x$ | Simplified features $\mathbf z = \mathbf z(\mathbf x)$ |
+
+Fit $\hat g$ using e.g. lasso, or a simple tree
+
+For text/image data, $\mathbf z$ could be indicators for specific words or regions of an image
+
+---
+
+### LIME
+
+#### Local Interpretable Model-Agnostic Explanations
+
+
+```{r}
+x_local <- data.frame(x1 = 0.9, x2 = 0)
+lime_ksvm <- LocalModel$new(pred_ksvm, k = 2, x.interest = x_local,
+                      dist.fun = "euclidean", kernel.width = .5)
+lime_ksvm$results
+```
+
+
+```{r echo = FALSE}
+x_local <- data.frame(x1 = .9, x2 = 1)
+lime_ksvm <- LocalModel$new(pred_ksvm, k = 2, x.interest = x_local,
+                      dist.fun = "euclidean", kernel.width = .5)
+lime_ksvm$results
+```
+
+
+```{r echo = FALSE}
+x_local <- data.frame(x1 = .9, x2 = 2)
+lime_ksvm <- LocalModel$new(pred_ksvm, k = 2, x.interest = x_local,
+                      dist.fun = "euclidean", kernel.width = .5)
+x_local <- data.frame(x1 = .9, x2 = 0)
+lime_ksvm$results
+```
+
+Recall the CEF $= x_1^2 \cos(\pi x_2 / 2)$
+
+---
+class: inverse
+
+## Feature/variable "importance"
+
+- Which predictors are *used most* by the model?
+
+- Does not necessarily tell us about **causation** (none of these methods do, but an important reminder)
+
+#### Tree-specific importance
+
+When $x_j$ is used for a split, how much does the accuracy improve? Average over all splits (across all bagged trees)
+
+#### Permutation importance
+
+Permute values of predictor $x_j$. How much does the accuracy of the model decrease?
+
+---
+
+### Local + "fair" importance
+
+Prediction is payoff, predictors are players, **Shapley values** distribute the payoff in a [fair](https://en.wikipedia.org/wiki/Shapley_value#Characterization) way
+
+Change in prediction when adding variable $x_j$ to another other subset of predictors, averaged over all subsets
+
+```{r}
+ksvm_shapley <- Shapley$new(pred_ksvm, x.interest = x_local)
+ksvm_shapley$results
+```
+
+```{r echo = FALSE}
+ksvm_shapley <- Shapley$new(pred_ksvm, x.interest = x_local)
+ksvm_shapley$results
+```
+
+```{r echo = FALSE}
+x_local <- data.frame(x1 = 0, x2 = 1)
+shapley <- Shapley$new(pred_ksvm, x.interest = x_local)
+shapley$results
+```
+
+
+---
+class: inverse
+
+## Interpretation challenges
+
+### Tuning
+
+**Trading off complexity of interpretation**: fidelity to the model vs simplicity of explanations
+
+How simple (e.g. sparse)?
+
+For local explanations, how local?
+
+---
+class: inverse
+
+## Interpretation challenges
+
+### Error
+
+**Inaccurate interpretation of a good model**: reach wrong conclusions about why model generalizes well
+
+Univariate plots or local surrogate may be too simple, poorly fitting to $\hat f$. Model explanations can even be optimized to be misleading (e.g. to give appearance of compliance with regulations, see "[fairwashing](http://proceedings.mlr.press/v97/aivodji19a.html)")
+
+**Accurate interpretation of a bad model**: understanding the model may increase confidence, leading to greater surprise when the model fails
+
+e.g. model with poor OOD generalization used in a context where DGP changes
+
+---
+class: inverse
+
+## Interpretation challenges
+
+### Communication
+
+Some of these methods are still quite technical
+
+Variable importance measures with randomized computation, values can change
+
+Many of these tools are popular because software makes it easy to get simple output, but may not understand the method they are using (*ask someone using Shapley values how to compute them...*)
+
+**Exercise**: explain to different audiences why variable importance cannot be interpreted as strength of a causal relationship
+
+---
+
+## Additional reading
+
+- [Free online textbook](https://christophm.github.io/interpretable-ml-book/) on interpretability by Christoph Molnar
+
+- [Vignette](https://cran.r-project.org/web/packages/iml/vignettes/intro.html) for `iml` package by Molnar
+
+- [Vignette](https://cran.r-project.org/web/packages/lime/vignettes/Understanding_lime.html) for `lime` package
+
+- [R tutorial](https://uc-r.github.io/lime) on lime
+
+- [lime homepage](https://homes.cs.washington.edu/~marcotcr/blog/lime/) with links to Python package

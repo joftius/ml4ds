@@ -1,0 +1,134 @@
+---
+title: "Optimization"
+author: "LSE ST310"
+date: "18/02/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+#library(tidyverse)
+```
+
+## Seminar note
+
+During the live seminar we'll implement the following for ordinary least squares. Completing the implementation for ridge regression might be on the next problem set (and/or some simple mathematical analysis of it could be examinable, so this is good practice)
+
+## Ridge regression 
+
+(You can delete this section if you get error messages about LaTeX)
+
+Consider the loss function
+
+$$L(\beta) = \| \mathbf y - \mathbf X \beta \|^2 + \lambda \| \beta \|^2$$
+You might also want to consider writing it this way
+
+$$L(\beta) = \sum_{i=1}^n (y_i - \mathbf x_i^T \beta)^2 + \sum_{j=1}^p \beta_j^2$$
+Compute the gradient $\nabla L$ of this loss function, and use your answer to write an `R` function below that inputs $(X, y, \beta, \lambda)$ and outputs the value of the gradient. Also write a function that takes the same inputs and outputs the value of the ridge loss.
+
+(Don't delete below here)
+
+```{r}
+# Gradient of the ridge loss
+least_squares_gradient <- function(x, y, beta) {
+  -2 * t(x) %*% (y - x %*% beta)
+}
+
+# Loss function
+least_squares_loss <- function(x, y, beta) {
+  sum((y - x %*% beta)^2)
+}
+```
+
+## Simulate data
+
+Write a function that inputs a coefficient vector beta and design matrix, and uses these the generate a vector of outcomes from a linear model with normal noise
+
+```{r}
+set.seed(1)
+n <- 100
+p <- 10
+X <- matrix(rnorm(n*p), nrow = n)
+beta <- rpois(p, lambda = 3)
+y <- X %*% beta + rnorm(n)
+```
+
+```{r}
+least_squares_gradient(X, y, beta)
+```
+
+
+Now generate a design matrix and coefficient vector and use these with the previous function to generate an outcome
+
+```{r}
+# Choose n and p, consider making p large, maybe even larger than n
+# Also think about the size of the coefficients, and sparsity
+
+```
+
+## Gradient descent
+
+- Implement gradient descent to optimize the ridge loss function
+- Apply your implementation to the data you generated in the previous section
+- Compare the estimated coefficients to the true coefficients
+
+```{r}
+beta0 <- rep(0, p)
+previous_loss <- least_squares_loss(X, y, beta0)
+grad0 <- least_squares_gradient(X, y, beta0)
+beta1 <- beta0 - 0.0001 * grad0
+next_loss <- least_squares_loss(X, y, beta1)
+previous_beta <- beta1
+steps <- 1
+
+while (abs(previous_loss - next_loss) > 0.0001) {
+  gradn <- least_squares_gradient(X, y, previous_beta)
+  next_beta <- previous_beta - (0.99)^steps * gradn / sqrt(sum(gradn^2))
+  if (steps %% 10 == 0) print(previous_loss)
+  steps <- steps + 1
+  previous_beta <- next_beta
+  previous_loss <- next_loss
+  next_loss <- least_squares_loss(X, y, next_beta)
+}
+```
+
+
+
+```{r}
+c(steps, previous_loss, next_loss)
+```
+
+```{r}
+beta - previous_beta
+```
+
+```{r}
+mean((beta - previous_beta)^2)
+```
+
+
+```{r}
+coef(lm(y ~ X - 1)) - previous_beta
+```
+
+
+```{r}
+
+```
+
+
+- Now change the value of lambda and repeat the previous steps
+- Which value of lambda produced estimates closer to the truth?
+
+Optional:
+
+- Does your answer to the previous question change depending on something about the data you generated, for example the size or sparsity of the true coefficients?
+
+## Stochastic gradient descent
+
+Find a problem scale (n and p) large enough so that your previous implementation is running slow (maybe taking a few minutes to converge). Implement mini-batch gradient descent with a smaller subset size and apply it to the new data. Compare running times and estimation accuracy of the two implementations
+
+```{r}
+
+```
+

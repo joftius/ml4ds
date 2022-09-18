@@ -1,0 +1,601 @@
+---
+title: "Machine learning"
+subtitle: "Overfitting"
+author: "Joshua Loftus"
+#institute: "LSE"
+#date: "`r Sys.Date()`"
+output:
+  xaringan::moon_reader:
+    css: ["default", "xaringan-themer.css", "../../../theme.css"]
+#    seal: false    
+    lib_dir: libs
+    nature:
+      titleSlideClass: ["top", "left"]
+      countdown: 59000
+      highlightStyle: github
+      highlightLines: true
+      highlightSpans: true
+      countIncrementalSlides: false
+---
+
+class: inverse, middle, center
+
+```{r setup, include=FALSE}
+options(htmltools.dir.version = FALSE)
+knitr::opts_chunk$set(fig.retina = 3, warning = FALSE, message = FALSE)
+options(knitr.table.format = "html")
+```
+
+```{r xaringan-themer, include=FALSE, warning=FALSE}
+library(xaringanthemer)
+style_duo_accent(
+  primary_color = "#2d708e",
+  secondary_color = "#230433",
+  link_color = "#55c667",
+  text_bold_color = '#f68f46',
+  title_slide_text_color = "#292929",
+  title_slide_background_color = "#ffffff", #"#042333",
+  title_slide_background_image = "../../../files/theme/LSE/spiral_stairs.jpg",
+#    "https://upload.wikimedia.org/wikipedia/commons/1/1a/Workhouse_Nantwich.jpg",
+  title_slide_background_size = "cover",
+  ) #or contain
+```
+
+```{r xaringanextra, include=FALSE, warning=FALSE}
+library(xaringanExtra)
+#xaringanExtra::use_animate_all("slide_left")
+xaringanExtra::use_tile_view()
+xaringanExtra::use_panelset()
+xaringanExtra::style_panelset_tabs(font_family = "inherit")
+```
+
+```{r tidyverse, include=FALSE, warning=FALSE}
+library(tidyverse)
+library(knitr)
+theme_set(theme_minimal(base_size = 22))
+set.seed(1)
+library(broom)
+library(modelr)
+```
+
+<style type="text/css">
+.remark-slide-content {
+    font-size: 1.2rem;
+    padding: 1em 4em 1em 4em;
+}
+</style>
+
+# What *is* overfitting?
+
+### You've probably heard about it
+
+### Almost halfway through the term...
+
+--
+
+### I've avoided it intentionally
+
+I wanted to do justice to this extremely important, central concept of machine learning
+
+And I'm dissatisfied with the usual definitions!
+
+---
+class: inverse, center, middle
+
+# Machine learning
+
+## is about algorithms
+
+### that allow us to increase model complexity
+
+and optimize
+
+on larger datasets
+
+over larger sets of parameters
+
+and even infinite-dimensional function spaces
+
+
+`r emo::ji("chart_with_upwards_trend")`
+`r emo::ji("abacus")`
+`r emo::ji("chart_with_upwards_trend")`
+`r emo::ji("desktop_computer")`
+`r emo::ji("chart_with_upwards_trend")`
+`r emo::ji("computer")`
+`r emo::ji("chart_with_upwards_trend")`
+`r emo::ji("mobile_phone_with_arrow")`
+`r emo::ji("chart_with_upwards_trend")`
+`r emo::ji("satellite_antenna")`
+`r emo::ji("chart_with_upwards_trend")`
+
+
+---
+
+### With great fitting comes great responsibility
+
+ML increases danger of this specific kind of modeling problem
+
+"[I know it when I see it](https://www.youtube.com/watch?v=sIlNIVXpIns)" not good enough!
+
+.pull-left[
+![](https://upload.wikimedia.org/wikipedia/commons/thumb/1/19/Overfitting.svg/600px-Overfitting.svg.png)
+Source: [Wikipedia](https://en.wikipedia.org/wiki/Overfitting)
+]
+.pull-right[
+![](https://joshualoftus.com/ml4ds/01-introduction-foundations/slides/01-2-foundations_files/figure-html/gapminder-loess-1.png)
+Example in week 1
+]
+
+???
+
+
+difficult to give one precise definition of overfitting that correctly captures all cases
+
+instead, we'll try out a few definitions and consider different types of overfitting
+
+
+---
+class: inverse
+
+## Defining/exploring overfitting
+
+We'll consider several approaches to defining/using the term
+
+- **Validation**: typical machine learning definition
+
+- **Generalization**: simple probabilistic definition
+
+--
+
+- **Bias-variance**: statistical distinctions
+
+- **Causality**: scientific/philosophical applications
+
+- **Anthropology**: human learning and overfitting IRL (*non-examinable but brief and useful for life in general?*)
+
+???
+
+ML def: wikipedia, most textbooks, learn anything more than this and a bit about the bias-variance trade off and you'll be above average
+
+
+---
+class: inverse, center, middle
+
+# Typical ML definition of overfitting
+
+Motivating idea: assume the model will be "deployed"
+
+--
+
+I.e. Some time after fitting the model will be used on new data
+
+> "It is difficult to make predictions, especially about the future" - [Danish saying](https://quoteinvestigator.com/tag/niels-bohr/)
+
+---
+
+# Overfitting the "training data"
+
+Using a model that is *too complex*
+
+Specifically, one where the complexity is larger than the optimal complexity for predicting on a *new observation* or *new sample* of **test/validation data**
+
+--
+
+- $\hat f_\lambda$ model fitted/estimated on **training data**
+
+- $\lambda$ tuning parameter that *penalizes* complexity
+  - larger $\lambda$, simpler model
+
+--
+
+- $\lambda^*$ optimal param. value for predicting/classifying *new data*
+
+- Overfitting: using $\hat f_\lambda$ for some $\lambda < \lambda^*$
+
+---
+
+## ISLR Figure 2.10
+
+.pull-left[
+True model is simple
+]
+.pull-right[
+High complexity overfits
+]
+
+![](islr2.10.png)
+
+---
+
+
+## ISLR Figure 2.11
+
+
+.pull-left[
+True model is complex
+]
+.pull-right[
+Low complexity underfits
+]
+
+![](islr2.11.png)
+
+
+---
+
+# The end
+
+Some discussions of overfitting end there
+
+--
+
+.pull-left[
+Some go on a little more, relating it to **bias-variance** trade-off
+
+Overfitting: *low bias but overwhelmingly high-variance*
+
+(we'll do that soon)
+]
+.pull-right[
+![](https://i.kym-cdn.com/photos/images/newsfeed/000/531/557/a88.jpg)
+]
+
+---
+class: inverse, center, middle
+
+# Generalization
+
+and a
+
+## probabilistic definition
+
+Motivation: what is the *probability distribution* of the test data?
+
+---
+
+# Two kinds of generalization
+
+ML/AI books/courses talk about "generalization error"
+
+Over-used term, same word / *importantly different* meanings
+
+--
+
+### Generalization to a new observation from...
+
+- the same distribution or DGP
+- a different (but related) distribution
+
+and *corresponding reasons for doing poorly* 
+
+- variance ("random/unstructured error", high entropy)
+- bias ("systematic/structured error", low entropy)
+
+---
+
+### Think about distributions
+
+Suppose the training data is sampled i.i.d. from
+$(\mathbf X_1, y_1), (\mathbf X_2, y_2), \ldots, (\mathbf X_n, y_n) \sim F$
+
+and the test data is sampled i.i.id from $(\mathbf X'_1, y'_1), (\mathbf X'_2, y'_2), \ldots, (\mathbf X'_{n'}, y'_{n'}) \sim F'$
+
+--
+
+#### In-distribution (ID) generalization: $F = F'$
+
+Under/overfitting, **variability problem**, larger $n$ allows more complex models to be fit
+
+--
+
+#### Out-of-distribution (OOD) generalization: $F \neq F'$
+
+"Covariate/distribution/dataset shift", **bias problem**, larger $n$ may not help. Need modeling **assumptions** like $F' \approx F$
+
+---
+
+## Optimism and ID generalization
+
+Observation: training error generally appears lower than test/validation error. Why?
+
+--
+
+Risk vs *empirical* risk minimization
+
+$$R(g) = \mathbb E_F[L(\mathbf X,Y,g)]$$
+
+$$\hat f =  \arg \min_g \hat R(g) = \arg \min_g \frac{1}{n} \sum_{i=1}^n L(\mathbf x_i, y_i, g)$$
+--
+
+**Fact**: for some $\text{df}(\hat f) > 0$ (depends on problem/fun. class)
+
+$$\mathbb E_{Y|\mathbf x_1, \ldots, \mathbf x_n}[R(\hat f) - \hat R(\hat f)] = \frac{2\sigma^2_\varepsilon}{n} \text{df}(\hat f) > 0$$
+
+---
+
+### Optimism, ID gen., and degrees of freedom
+
+#### Linear case
+
+If $\hat f$ is linear with $p$ predictors (or $p$ basis function transformations of original predictors) then
+
+$$
+\text{df}(\hat f) = p
+$$
+--
+
+#### Fairly general case
+
+For many ML tasks and fitting procedures
+
+$$\text{df}(\hat f) \text{ increases as } \frac{1}{n \sigma^2_\varepsilon} \sum_{i=1}^n \text{Cov}(\hat f (\mathbf x_i), y_i) \text{ increases}$$
+
+---
+
+### Take-aways about optimism and ID gen.
+
+- Empirical risk *underestimates* actual risk (ID generalization error)
+
+- The magnitude of this bias is called **optimism**
+
+--
+
+- Optimism generally increases with function class complexity
+
+  - e.g. for linear functions, increases linearly in $p$
+
+- For a fixed function class, optimism decreases linearly in $n$
+
+--
+
+- Too much optimization $\to$ overfitting $\to$ more optimism
+
+---
+
+## Two kinds of overfitting?
+
+Many sources identify overfitting as a threat to generalization
+
+Typically only apply this to **ID generalization**, and have solution strategies to avoid the **variability problems** due to overfitting
+
+--
+
+#### But overfitting is also a threat to **OOD generalization**! 
+
+This kind of generalization is often what we practically want
+
+There are serious **bias problems** due to overfitting
+
+--
+
+#### Let's start using new terminology
+
+*Overfitting to variation* and *overfitting to bias*
+
+---
+
+### Now let's jump from probability to statistics
+
+And talk about why we always need to care about *both kinds of generalization*
+
+![](https://i.redd.it/9mlfg9ums0911.jpg)
+
+(Feel free to take a break while pondering overfitting to variation vs bias)
+
+---
+class: inverse, center, middle
+
+# Statistical aspects of overfitting
+
+Motivation: all models are wrong, including $F$ and $F'$
+
+or
+
+Motivation: overfitting to noise... what's noise?
+
+---
+
+# What *is* noise?
+
+The effect of all (causal?) factors not captured by the model
+
+Could be different reasons for failing to capture
+
+- Measurement issues
+- Wrong functional relationship
+- Variables excluded (maybe not even measured or defined)
+
+*Does not require physical randomness* (which maybe doesn't exist...)
+
+--
+
+Something considered **noise** in one setting, or by one modeler, could be **signal** to a different observer
+
+---
+
+### Noise and residuals in regression
+
+(*One of the most "agnostic" or minimal-theory ways of defining regression is as estimation of a conditional expectation function, without assuming any specific functional form like linearity*). The "noise" in regression is defined as
+
+$$
+\varepsilon = y - \mathbb E_F[y | \mathbf x]
+$$
+--
+
+But this is math, not applied data analysis! Requires assuming a probability distribution $F$ / random variable model
+
+Otherwise, how do we define expectation?
+
+--
+
+We never observe $\varepsilon$, only residuals $r_i = y_i - \hat f(\mathbf x_i)$ of some model $\hat f$ *fit with specific assumptions/algorithms*
+
+---
+
+# What is bias/variability?
+
+Two analysts start with different assumptions
+
+e.g. linearity vs flexible non-parametric methods
+
+Fit different regression functions
+
+Compute different residuals
+
+See different patterns (or lack thereof) in residuals
+
+--
+
+Something considered **variation** in one setting, or by one modeler, could be **bias** to a different observer
+
+---
+
+## Data science
+
+In the "real world" there is a data generation process (DGP)
+
+We *assume* this can be modeled as an i.i.d. sample from a probability distribution $F$
+
+Probability model / mathematical justification for our methods
+
+#### All models are wrong
+
+--
+
+Could model DGP as a mixture of distributions $F$ and $F'$ (heterogeneity), or time-varying $F^t$
+
+Training/test data randomly shuffled?
+
+Generalization in/out of distribution?
+
+---
+
+## Two data scientists diverged...
+
+Starting with different assumptions about DGP
+
+Use different strategies to avoid overfitting
+
+e.g. different ways of splitting into training and test data
+
+Something considered **ID generalization** in one setting, or by one modeler, could be **OOD generalization** to a different observer
+
+---
+
+## Statistical take-aways
+
+Mathematical distinctions between ID and OOD generalization rely on assumptions (as do statistical distinctions between bias and variability)
+
+ML methods for avoiding overfitting are motivated by ID generalization, guard against **overfitting to variability**
+
+--
+
+In applications, ID/OOD distinctions break down. If we probe them a bit we find it's more gray area / ambiguous 
+
+Most scientists and decision-makers care about [external validity](https://en.wikipedia.org/wiki/External_validity), conceptually related to OOD generalization
+
+**Overfitting to bias** is a serious, widely neglected problem!
+
+---
+class: inverse, center, middle
+
+# Considerations
+
+of the 
+
+## scientific and philosophic variety
+
+### with respect to overfitting
+
+Motivation: does science overfit? Can philosophy of science help us understand how to prevent it? What about causality?
+
+---
+
+### Stability, invariance, and causality
+
+**Idea**: causal relationships should persist despite (some) [changes](https://plato.stanford.edu/entries/causation-counterfactual/#ConInv) in "[background](https://static1.squarespace.com/static/54023011e4b00d99c7bb97f9/t/547b5b1fe4b0464e56d755b4/1417370399799/PoS1997.pdf) [conditions](https://static1.squarespace.com/static/54023011e4b00d99c7bb97f9/t/5445ceb4e4b06ae793389dad/1413861044101/BandP2010.pdf)"
+
+[Bradford Hill criteria](https://en.wikipedia.org/wiki/Bradford_Hill_criteria) for causation
+
+> **Consistency**: Has [the observed association] been repeatedly observed by different persons, in different places, circumstances and times? 
+
+--
+
+Apparently [people think about causality](https://onlinelibrary.wiley.com/doi/pdf/10.1111/cogs.12605) this way
+
+Can use the idea to motivate [statistical methods](https://rss.onlinelibrary.wiley.com/doi/full/10.1111/rssb.12167) for causal inference
+
+---
+
+### Overfitting as a threat to causal inference
+
+[Bradford Hill criteria](https://en.wikipedia.org/wiki/Bradford_Hill_criteria) for causation
+
+> "the larger the association, the more likely that it is causal." - Wikipedia, not Hill
+
+Hill:
+
+> the death rate from cancer of the lung in cigarette smokers is nine to ten times the rate in non-smokers
+
+--
+
+**Problem**: overfitting can make associations appear stronger
+
+e.g. proportion of variation in `lifeExp` explained by `gdpPercap`
+
+Increase flexibility, explain higher proportion... stronger evidence of causality? `r emo::ji("thinking")`
+
+---
+
+### Generalization, novelty, and severity
+
+[Philosophy of science](https://plato.stanford.edu/entries/prediction-accommodation/): prediction vs "accommodation"
+
+Prediction: happens in time before observation/measurement
+
+Accommodation: theory built to explain past observation/data
+
+Accurate prediction is better evidence in favor of a scientific theory than mere accommodation
+
+ML: What's better evidence in favor of the model?
+
+--
+
+Popper and Lakatos: **temporal novelty**
+
+Zahar, Gardner, Worrall: **use-novelty** (or problem novelty)
+
+[Mayo](http://bactra.org/reviews/error/): novelty is not necessary. **Severity** is necessary
+
+---
+class: inverse, center, middle
+
+# Anthropology?
+
+## ie. overfitting IRL
+
+(in real life)
+
+Motivation: do *we* overfit? ("Are we the baddies?")
+
+Disclaimer: I am not an anthropologist *or* self-help author
+
+---
+
+## How/why are humans different?
+
+We seem to better at *learning* than other animals
+
+[Human eyes are different](https://en.wikipedia.org/wiki/Cooperative_eye_hypothesis), allowing us to see where others are looking
+
+--
+
+### Social learning
+
+#### "Monkey see, monkey do"
+
+Lots of animals learn by [imitation](https://en.wikipedia.org/wiki/Imitation#Over-imitation), but [humans specifically](https://psycnet.apa.org/fulltext/1993-44247-001.pdf) take imitation to a [whole](https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0159920) [different](https://www.pnas.org/content/104/50/19751) level
+
+#### Over-imitation, causal opacity, cultural evolution...
+

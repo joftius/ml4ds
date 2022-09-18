@@ -1,0 +1,847 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Machine learning</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Joshua Loftus" />
+    <script src="libs/header-attrs/header-attrs.js"></script>
+    <link href="libs/remark-css/default.css" rel="stylesheet" />
+    <link href="libs/animate.css-xaringan/animate.slide_left.css" rel="stylesheet" />
+    <link href="libs/tile-view/tile-view.css" rel="stylesheet" />
+    <script src="libs/tile-view/tile-view.js"></script>
+    <link href="libs/panelset/panelset.css" rel="stylesheet" />
+    <script src="libs/panelset/panelset.js"></script>
+    <link rel="stylesheet" href="xaringan-themer.css" type="text/css" />
+    <link rel="stylesheet" href="../../../theme.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: left, bottom, title-slide
+
+# Machine learning
+## Multiple linear regression
+### Joshua Loftus
+
+---
+
+
+class: inverse
+
+
+
+
+
+
+
+
+
+&lt;style type="text/css"&gt;
+.remark-slide-content {
+    font-size: 1.2rem;
+    padding: 1em 4em 1em 4em;
+}
+&lt;/style&gt;
+
+### From the stars to "Poor Law Statistics"
+
+- Almost a century after Gauss
+- Scientists correlating/regressing anything
+- Problem: what does it mean?
+
+--
+
+e.g. [Francis Galton](https://www.theguardian.com/education/2020/jun/19/ucl-renames-three-facilities-that-honoured-prominent-eugenicists) correlated numeric traits between generations of organisms...
+
+But *why*? "Nature versus nurture" debate never ends?
+
+--
+
+e.g. [Udny Yule](https://en.wikipedia.org/wiki/Udny_Yule) and others correlated poverty ("pauperism") with welfare ("out-relief")...
+
+But *why*? The "[welfare](http://economistjourney.blogspot.com/2014/08/the-crazy-dream-of-george-udny-yule-is.html) [trap](https://en.wikipedia.org/wiki/Welfare_trap)" debate never ends?
+
+---
+class: inverse
+
+# Origin of multiple regression
+
+.pull-left[
+- Udny Yule (1871-1951)
+
+- Studied this poverty question
+
+- First paper using multiple regression in 1897
+
+- Association between poverty and welfare while "controlling for" age
+]
+.pull-right[
+![Udny Yule](https://upload.wikimedia.org/wikipedia/en/4/4a/George_Udny_Yule.jpg)
+]
+
+---
+class: inverse
+
+## Yule, in 1897:
+
+&gt; Instead of speaking of "causal relation," ... we will use the terms "correlation," ...
+
+- Variables, roughly:
+  - `\(Y =\)` prevalence of poverty
+  - `\(X_1 =\)` generosity of welfare policy
+  - `\(X_2 =\)` age
+- Positive correlations:
+  - `\(\text{cor}(Y, X_1) &gt; 0\)`
+  - `\(\text{cor}(X_2, X_1) &gt; 0\)`
+
+--
+
+Do more people enter/stay in poverty if welfare is more generous?
+
+Or is this association "due to" age?
+
+---
+class: inverse
+
+## Yule, in 1897:
+
+&gt; The investigation of **causal relations** between economic phenomena presents many problems of peculiar difficulty, and offers many opportunities for fallacious conclusions.
+
+--
+
+&gt; Since the statistician can seldom or never make experiments for himself, he has to accept the data of daily experience, and discuss as best he can the relations of a whole group of changes; he **cannot, like the physicist, narrow down the issue to the effect of one variation at a time. The problems of statistics are in this sense far more complex than the problems of physics**.
+
+---
+
+### When `\(p &gt; 1\)`
+
+.pull-left[
+- Instead of a regression line, we fit a regression (hyper)plane
+
+- Among all possible such planes, find the one minimizing sum of squared errors (represented by vertical lines in ISLR Fig 3.4)
+
+- How to find the coefficients? Calculus?
+]
+.pull-right[
+![](islr3.4.png)
+]
+
+
+---
+
+### Regression estimates when `\(p = 3\)`
+
+![](yule4.jpg)
+
+---
+class: inverse
+
+### Progress(?) in regression
+
+`\(p\)` variables `\(\to\)` `\(\binom{p}{2}\)` "product sums" to compute by hand...
+
+Yule:
+&gt; ... if we wished to discuss the causality [note: correlation?! -JL] of pauperism on the basis of as many as eight variables, the **work** involved would be something like twenty-eight times as much as that necessary for the example taken on pp. 824-831. The **labour** would, in fact, be almost impossible for a single individual.
+
+- 1958: Ted Anderson *An Introduction to Multivariate Analysis*
+
+- 1960's: **Electric** desktop calculators made it easier
+
+- Present: linear algebra notation and computers (R, etc)
+
+---
+
+# Notation
+
+Writing the same thing in various ways
+
+- For observation `\(i\)`:
+
+`$$y_i = \beta_0 + \beta_1 x_{i1} + \beta_2 x_{i2} + \cdots + \beta_p x_{ip} + \varepsilon_i$$`
+
+or using the [inner product](https://en.wikipedia.org/wiki/Dot_product) (of column vectors)
+
+`$$y_i = x_i^T \beta + \varepsilon_i$$`
+- Random variable version:
+
+`$$Y = X^T \beta + \varepsilon$$`
+---
+
+# Notation, continued
+
+- For all `\(n\)` observations
+
+$$
+`\begin{pmatrix}
+y_1 \\
+y_2 \\
+\vdots \\
+y_n
+\end{pmatrix}`
+=
+`\begin{pmatrix}
+1 &amp; x_{11} &amp; x_{12} &amp; \cdots &amp; x_{1p}\\
+1 &amp; x_{21} &amp; x_{22} &amp; \cdots &amp; x_{2p}\\
+\vdots &amp; \vdots &amp; \vdots &amp; \ddots &amp; \vdots \\
+1 &amp; x_{n1} &amp; x_{n2} &amp; \cdots &amp; x_{np}\\
+\end{pmatrix}`
+`\begin{pmatrix}
+\beta_0 \\
+\beta_1 \\
+\vdots \\
+\beta_p
+\end{pmatrix}`
++
+`\begin{pmatrix}
+\varepsilon_1 \\
+\varepsilon_2 \\
+\vdots \\
+\varepsilon_n
+\end{pmatrix}`
+$$
+
+or
+
+`$$\mathbf{y} = \mathbf{X} \beta + \mathbf{\varepsilon}$$`
+
+Note: column of 1's for intercept term. Sometimes omitted by assuming `\(\mathbf y\)` is already "centered"
+
+---
+
+## Notational conventions
+
+We'll use common conventions in this course
+
+- Bold for vectors, bold and upper case for matrices
+- Otherwise upper case denotes random variable
+- Error terms `\(\varepsilon = y - \mathbf x^T \beta\)` never truly observed
+- Residuals `\(r = y - \mathbf x^T \hat \beta\)` used as a proxy for errors
+- Greek letters like `\(\beta, \theta, \sigma, \Sigma\)` usually *unknown parameters*
+- Greek letters with hats like `\(\hat \beta\)` are estimates computed from data
+- Roman letters that usually denote functions with hats, like `\(\hat f\)` are also estimates
+- Other Roman letters with hats like `\(\hat y\)` are predictions
+
+---
+
+# Matrices and vectors in `R`
+
+
+```r
+# byrow = FALSE default
+x &lt;- matrix(1:9, nrow = 3, ncol = 3)
+x
+```
+
+```
+##      [,1] [,2] [,3]
+## [1,]    1    4    7
+## [2,]    2    5    8
+## [3,]    3    6    9
+```
+
+
+```r
+beta &lt;- rep(1,3)
+beta
+```
+
+```
+## [1] 1 1 1
+```
+
+---
+
+### Multiplication: %*% (yes, really)
+
+- Beware "Error: non-conformable arguments"
+- Always remember to check dimensions
+- If dimension of one object divides dimension of another, `R` may "conveniently" (unintuitively) repeat the smaller one
+
+
+```r
+dim(x)
+```
+
+```
+## [1] 3 3
+```
+
+
+```r
+dim(beta) # frustrating
+```
+
+```
+## NULL
+```
+
+
+```r
+x %*% beta
+```
+
+```
+##      [,1]
+## [1,]   12
+## [2,]   15
+## [3,]   18
+```
+
+---
+
+### Transpose and symmetry
+
+Recall: even if a matrix `\(\mathbf A\)` is not square, both `\(\mathbf A^T\mathbf A\)` and `\(\mathbf A \mathbf A^T\)` are square and symmetric (often one is invertible)
+
+
+```r
+A &lt;- matrix(c(rep(1,4), 0,0), nrow = 3, byrow = FALSE)
+A
+```
+
+```
+##      [,1] [,2]
+## [1,]    1    1
+## [2,]    1    0
+## [3,]    1    0
+```
+
+
+
+```r
+t(A) %*% A
+```
+
+```
+##      [,1] [,2]
+## [1,]    3    1
+## [2,]    1    1
+```
+
+Note: this matrix is even invertible! (But `\(\mathbf A \mathbf A^T\)` is not)
+
+---
+
+# Pseudoinversion
+
+
+```r
+# ginv() function in MASS library
+Ainv &lt;- MASS::ginv(A)
+Ainv
+```
+
+```
+##              [,1] [,2] [,3]
+## [1,] 1.578934e-16  0.5  0.5
+## [2,] 1.000000e+00 -0.5 -0.5
+```
+
+
+
+```r
+Ainv %*% A
+```
+
+```
+##      [,1]         [,2]
+## [1,]    1 1.578934e-16
+## [2,]    0 1.000000e+00
+```
+
+The `\(2 \times 2\)` identity matrix
+
+---
+
+# Pseudoinversion
+
+Why does this work?
+
+Let `\(\mathbf A^\dagger = (\mathbf A^T\mathbf A)^{-1} \mathbf A^T\)`, then
+
+$$
+\mathbf A^\dagger \mathbf A = (\mathbf A^T\mathbf A)^{-1} \mathbf A^T \mathbf A = (\mathbf A^T\mathbf A)^{-1} (\mathbf A^T \mathbf A) = \mathbf I
+$$
+
+--
+
+`ginv` in the library `MASS` apparently computes the left or right pseudoinverse, whichever one works
+
+
+```r
+A %*% Ainv # not a right inverse
+```
+
+```
+##              [,1]         [,2]         [,3]
+## [1,] 1.000000e+00 5.551115e-17 5.551115e-17
+## [2,] 1.578934e-16 5.000000e-01 5.000000e-01
+## [3,] 1.578934e-16 5.000000e-01 5.000000e-01
+```
+
+---
+
+### Least-squares solutions in matrix notation
+
+Instead of those long expressions that Yule found were already very complicated with `\(p = 3\)`, we can always write very simply:
+
+$$
+\hat {\mathbf \beta} = (\mathbf X^T\mathbf X)^{-1}\mathbf X^T \mathbf y = \mathbf X^\dagger \mathbf y
+$$
+
+--
+
+This assumes `\(\mathbf X^T\mathbf X\)` to be invertible, i.e. the *columns* of `\(\mathbf X\)` have full rank (columns = variables)
+
+- That's often true if `\(n &gt; p\)`, unless some problem like one variable is a copy of another
+
+--
+
+- Impossible if `\(p &gt; n\)`. "High-dimensional" regression requires special methods, covered soon in this course!
+
+---
+
+### Linear algebra and geometric intuition
+
+Predictions from the linear model:
+
+`$$\hat{\mathbf y} = \mathbf {X} \hat{\mathbf \beta} = \mathbf X (\mathbf X^T\mathbf X)^{-1}\mathbf X^T \mathbf y = \mathbf H y$$`
+if we define
+
+`$$\mathbf H = \mathbf X (\mathbf X^T\mathbf X)^{-1}\mathbf X^T$$`
+
+--
+
+COOL FACTS about `\(\mathbf H\)`:
+
+- `\(\mathbf H\)` is a projection: `\(\mathbf H^2 = \mathbf H\)`
+- For any `\(n\)`-vector `\(\mathbf v\)`, the `\(n\)`-vector `\(\mathbf {Hv}\)` is the orthogonal projection of `\(\mathbf v\)` onto the column space of `\(\mathbf X\)`
+- Of all linear combinations of columns of `\(\mathbf X\)`, `\(\mathbf {Hv}\)` is the one closest (in Euclidean distance) to `\(\mathbf v\)`. 
+
+---
+
+## Exercise: do the calculus
+
+We have the loss function
+
+`$$L(\mathbf X, \mathbf y, \mathbf \beta) = (\mathbf y - \mathbf X \beta)^T(\mathbf y - \mathbf X \beta)$$`
+
+(just a different way of writing sum of squared errors)
+
+- Consider each coordinate separately and take univariate partial derivatives
+- Use vector calculus and compute the gradient
+- (Or even use matrix calculus identities)
+
+--
+
+Reach the same conclusion: at a stationary point of `\(L\)`,
+
+`$$\mathbf X^T \mathbf X \hat \beta = \mathbf X^T \mathbf y$$`
+
+---
+
+### Categorical predictors
+
+This is an interesting/practically important special case
+
+
+.pull-left[
+
+```r
+x &lt;- as.factor(
+  sample(c("A", "B", "C"),
+         10,
+         replace = TRUE))
+x
+```
+
+```
+##  [1] A C A B A C C B B C
+## Levels: A B C
+```
+
+Categorical predictor with 3 levels, what does the **design matrix** (common terminology in regression) `\(\mathbf X\)` look like?
+]
+.pull-right[
+
+```r
+model.matrix(~x)
+```
+
+```
+##    (Intercept) xB xC
+## 1            1  0  0
+## 2            1  0  1
+## 3            1  0  0
+## 4            1  1  0
+## 5            1  0  0
+## 6            1  0  1
+## 7            1  0  1
+## 8            1  1  0
+## 9            1  1  0
+## 10           1  0  1
+## attr(,"assign")
+## [1] 0 1 1
+## attr(,"contrasts")
+## attr(,"contrasts")$x
+## [1] "contr.treatment"
+```
+
+]
+
+---
+
+
+```r
+X &lt;- model.matrix(~x-1) # take out intercept
+head(X)
+```
+
+```
+##   xA xB xC
+## 1  1  0  0
+## 2  0  0  1
+## 3  1  0  0
+## 4  0  1  0
+## 5  1  0  0
+## 6  0  0  1
+```
+
+```r
+round(head(X %*% MASS::ginv(X)), 3) # hat matrix
+```
+
+```
+##    [,1] [,2]  [,3]  [,4]  [,5] [,6] [,7]  [,8]  [,9] [,10]
+## 1 0.333 0.00 0.333 0.000 0.333 0.00 0.00 0.000 0.000  0.00
+## 2 0.000 0.25 0.000 0.000 0.000 0.25 0.25 0.000 0.000  0.25
+## 3 0.333 0.00 0.333 0.000 0.333 0.00 0.00 0.000 0.000  0.00
+## 4 0.000 0.00 0.000 0.333 0.000 0.00 0.00 0.333 0.333  0.00
+## 5 0.333 0.00 0.333 0.000 0.333 0.00 0.00 0.000 0.000  0.00
+## 6 0.000 0.25 0.000 0.000 0.000 0.25 0.25 0.000 0.000  0.25
+```
+
+```r
+which(x == "C") # predicting within-group averages!
+```
+
+```
+## [1]  2  6  7 10
+```
+
+---
+
+## Differences from simple regression
+
+- **Interpreting coefficients**: "*ceteris paribus*" -- all other things being equal
+
+The status quo is *ridiculous*, but I must tell you... (I will also tell you about better ways)
+
+--
+
+- **Diagnostic plots**: can't see higher dimensional relationships
+
+Plot residuals vs fitted values, and/or various pair plots
+
+`GGally` package 👍
+
+--
+
+- **Inference**: testing multiple coefficients
+
+See ISLR's discussion of `\(F\)`-tests, beginning of Section 3.2.2
+
+---
+
+### Interpreting coefficients
+
+People *want* these two things to be true:
+
+1. `$$\frac{\partial}{\partial x_j} \mathbb E[\mathbf y | \mathbf X] = \beta_j \approx \hat \beta_j$$`
+
+2. `\(\beta_j\)` is a causal parameter, i.e. **intervening**  to increase `\(x_j\)` by 1 unit would result in conditional average of `\(y\)` changing by `\(\beta_j\)` units
+
+--
+
+Both of these can be *importantly wrong*! Always remember:
+
+- Think about *general* conditional expectation functions vs the **linear model assumption** (strength of ML!)
+- Think about **relationships between predictors** (causal or associations)
+- Consider **unobserved variables** not in the dataset
+
+
+---
+
+## Non-linear example
+
+Suppose there is one predictor `\(x\)`, and a (global) non-linear model fits the CEF:
+
+`$$\mathbb E[\mathbf y |X = x] = \beta_0 + \beta_1 x + \beta_2 x^2$$`
+
+--
+
+We don't know the `\(\beta\)`'s but we have some data, and we use multiple linear regression to fit the coefficients
+
+
+```r
+x2 &lt;- x^2
+lm(y ~ x + x2)
+```
+--
+But, there's a **problem**:
+
+`$$\frac{\partial}{\partial x} \mathbb E[\mathbf y | x] = \beta_1 + 2\beta_2 x \neq \beta_1 \approx \hat \beta_1$$`
+---
+
+## What went wrong?
+
+In this simple example we know the problem is that `\(x_2\)` is actually a function of `\(x\)`. **Solution**: interpret `\(\frac{\partial}{\partial x}\)` locally as a function of `\(x\)`, not as a global constant
+
+--
+
+Sometimes simplifying assumptions are **importantly wrong**, and we must reject simple interpretations
+
+Machine learning provides tools for fitting more complex models, like non-linear models
+
+
+---
+
+## Interpreting causality
+
+- In the real world when is it true that one predictor variable *does not depend* on any of the other ones?
+
+- Or when is it true that there are no important **unobserved confounders**, variables that are related to both the predictor and the outcome?
+
+--
+
+Consider Yule's regression analysis of poverty
+
+Other important but unobserved variables?
+
+Reverse causation? Simultaneity (feedback loop)?
+
+
+---
+class: inverse, center, middle
+
+## In the real world
+
+### *ceteris* is never *paribus*
+
+Fortunately, we will also study "causal inference" - a field with methods specialized for interpreting coefficients the way *people generally want to*
+
+Remember Yule!
+
+&gt; *[We] cannot, like the physicist, narrow down the issue to the effect of **one variation at a time***
+
+---
+
+### Collinearity between predictors
+
+Another important difference from simple regression
+
+Related to problems with interpreting coefficients
+
+For a set of predictors, the more closely they are mutually linearly dependent the more difficult it is to estimate their separate coefficients
+
+If the problem is bad enough, can result in numerical instability
+
+--
+
+#### Assessing if it's a problem
+
+- For each predictor `\(x_j\)`, treat it as an outcome in a regression model using all the other predictors
+- `\(R^2\)` of this model: closer to 1, worse collinearity
+
+
+---
+
+# Concluding points
+
+One of the most commonly used methods, even with more complex ML often compare to regression as a "baseline"
+
+Perhaps the most complex method that is still considered relatively interpretable. But interpretation is actually trickier than most understand! *Ceteris paribus* and causality...
+
+Always remember bias, even if sample is large our estimates could be far from truth
+
+Could be estimating the wrong thing, using a model that's importantly wrong, asking the wrong question, analyzing/collecting the wrong data, including wrong predictors, etc
+
+---
+class: inverse
+
+# the end
+
+Wisdom from one of the great early statistical explorers
+
+[Udny Yule](https://mathshistory.st-andrews.ac.uk/Biographies/Yule/quotations/):
+
+&gt; Measurement does not necessarily mean progress. Failing the possibility of measuring that which you desire, the lust for measurement may, for example, merely result in your measuring something else - and perhaps forgetting the difference - or in your ignoring some things because they cannot be measured.
+
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "github",
+"highlightLines": true,
+"highlightSpans": true,
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+(function(time) {
+  var d2 = function(number) {
+    return ('0' + number).slice(-2); // left-pad 0 to minutes/seconds
+  },
+
+  time_format = function(total) {
+    var secs = Math.abs(total) / 1000;
+    var h = Math.floor(secs / 3600);
+    var m = Math.floor(secs % 3600 / 60);
+    var s = Math.round(secs % 60);
+    var res = d2(m) + ':' + d2(s);
+    if (h > 0) res = h + ':' + res;
+    return res;  // [hh:]mm:ss
+  },
+
+  slide_number_div = function(i) {
+    return document.getElementsByClassName('remark-slide-number').item(i);
+  },
+
+  current_page_number = function(i) {
+    return slide_number_div(i).firstChild.textContent;  // text "i / N"
+  };
+
+  var timer = document.createElement('span'); timer.id = 'slide-time-left';
+  var time_left = time, k = slideshow.getCurrentSlideIndex(),
+      last_page_number = current_page_number(k);
+
+  setInterval(function() {
+    time_left = time_left - 1000;
+    timer.innerHTML = ' ' + time_format(time_left);
+    if (time_left < 0) timer.style.color = 'red';
+  }, 1000);
+
+  slide_number_div(k).appendChild(timer);
+
+  slideshow.on('showSlide', function(slide) {
+    var i = slide.getSlideIndex(), n = current_page_number(i);
+    // reset timer when a new slide is shown and the page number is changed
+    if (last_page_number !== n) {
+      time_left = time; last_page_number = n;
+      timer.innerHTML = ' ' + time_format(time); timer.style.color = null;
+    }
+    slide_number_div(i).appendChild(timer);
+  });
+})(59000);
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>

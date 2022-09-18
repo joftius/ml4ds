@@ -1,0 +1,149 @@
+---
+title: "Candy rankings"
+author: "Joshua Loftus"
+date: "1/19/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+```
+
+```{r message = FALSE}
+library(tidyverse)
+library(broom)
+library(fivethirtyeight) # for data
+candy_rankings
+```
+
+```{r}
+ggplot(candy_rankings, aes(x = pricepercent, y = winpercent)) +
+  geom_point()
+```
+```{r}
+model_lm <- lm(winpercent ~ pricepercent, data = candy_rankings)
+tidy(model_lm)
+```
+
+
+```{r}
+augment(model_lm) %>%
+  ggplot(aes(x = pricepercent, y = winpercent)) +
+  geom_point() +
+  geom_line(aes(y = .fitted))
+```
+
+
+```{r}
+model_lm <- lm(winpercent ~ pricepercent + chocolate, data = candy_rankings)
+tidy(model_lm)
+```
+
+```{r}
+augment(model_lm) %>%
+  ggplot(aes(x = pricepercent, y = winpercent,
+             color = chocolate,
+             shape = chocolate,
+             linetype = chocolate)) +
+  geom_point() +
+  geom_line(aes(y = .fitted))
+```
+
+
+```{r}
+candy <- candy_rankings
+library(plotly)
+candy3d <- plot_ly(data = candy_rankings,
+        x = ~pricepercent,
+        y = ~sugarpercent,
+        z = ~winpercent,
+        type = "scatter3d")
+candy3d
+```
+```{r}
+model_lm <- lm(winpercent ~ pricepercent + sugarpercent, data = candy_rankings)
+
+xy_plane <- expand.grid(0:100, 0:100)/100
+
+ps_plane <- xy_plane %>%
+  rename(pricepercent = Var1,
+         sugarpercent = Var2) 
+
+lm_plane <- augment(model_lm, newdata = ps_plane)
+
+lm_matrix <- matrix(lm_plane$.fitted, nrow = 101, ncol = 101)
+
+candy3d %>%
+  add_surface(
+          x = ~(0:100)/100,
+          y = ~(0:100)/100,
+          z = ~lm_matrix) 
+```
+
+```{r}
+tidy(model_lm)
+```
+
+```{r}
+chocolate3d <- plot_ly(data = candy_rankings,
+                   x = ~pricepercent,
+                   y = ~sugarpercent,
+                   z = ~winpercent,
+                   color = ~chocolate,
+                   colors = c("#2d708e", "#d8576b"),
+                   mode = "markers",
+                   symbol = ~chocolate,
+                   symbols = c("o", "circle"),
+                   type = "scatter3d",
+                   showlegend = FALSE)
+chocolate3d
+```
+```{r}
+candy <- candy_rankings
+model_lm <- lm(winpercent ~ pricepercent + sugarpercent + chocolate, data = candy)
+
+ps_plane <- ps_plane %>%
+  mutate(chocolate = TRUE)
+
+lm_plane <- augment(model_lm, newdata = ps_plane)
+
+lm_matrix_true <- matrix(lm_plane$.fitted, nrow = 101, ncol = 101)
+
+ps_plane <- ps_plane %>%
+  mutate(chocolate = FALSE)
+
+lm_plane <- augment(model_lm, newdata = ps_plane)
+
+lm_matrix_false <- matrix(lm_plane$.fitted, nrow = 101, ncol = 101)
+
+chocolate3d %>%
+  add_surface(
+    x = ~(0:100)/100,
+    y = ~(0:100)/100,
+    z = ~lm_matrix_true,
+    showscale = FALSE,
+    inherit = FALSE,
+    colorscale = list(c(0, 1), c("#f0f921", "#7201a8"))) %>%
+  add_surface(
+    x = ~(0:100)/100,
+    y = ~(0:100)/100,
+    z = ~lm_matrix_false,
+    showscale = FALSE,
+    inherit = FALSE,
+    colorscale = list(c(0, 1), c("#3cbb75", "#481567"))) 
+
+```
+```{r}
+tidy(model_lm)
+```
+
+```{r}
+model_lm_all <- lm(winpercent ~ ., candy_rankings %>% select(-competitorname))
+tidy(model_lm_all)
+```
+
+```{r}
+rbind(glance(model_lm), glance(model_lm_all))
+```
+

@@ -1,0 +1,32 @@
+---
+title: "4 Classification"
+description: |
+  Categorical or qualitative outcome variables are ubiquitous. We review some supervised learning methods for classification, and see how these may be applied to observational causal inference.
+author:
+  - name: Joshua Loftus
+date: 10-08-2021
+output:
+  distill::distill_article:
+    self_contained: false
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+knitr::opts_chunk$set(fig.retina = 3, warning = FALSE, message = FALSE)
+library(tidyverse)
+library(knitr)
+library(gapminder)
+theme_set(theme_minimal(base_size = 22))
+```
+
+## Carving nature at its joints
+
+> "A good cook gets a new knife every year; he chops! Mediocre cooks change knives monthly; they hack. My knife now has 19 years on it; it’s carved several thousand oxen and the edge is as if I had just taken it from the sharpener. Those joints have gaps, and the knife’s edge no thickness, to put something infinitesimally thin in an empty space?! Effortless! It even allows the edge wander in with ample room to play. That is why, with 19 years on it, this knife’s edge is grindstone fresh." - Butcher Ding, [the Zhuangzi](https://plato.stanford.edu/entries/zhuangzi/#PonP)
+
+## Slides, notebooks, exercises
+
+[Slides](slides/04-1-classification.html) for logistic regression lecture ([PDF](slides/classification_logistic.pdf))
+
+[Slides](slides/04-2-svm.html) for SVM lecture ([PDF](slides/classification_svm.pdf))
+
+[Notebook](notebooks/optimization.html) for seminar

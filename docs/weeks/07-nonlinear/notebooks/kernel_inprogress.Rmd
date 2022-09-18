@@ -1,0 +1,288 @@
+---
+title: "Nonlinearity with kernel methods"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)  
+library(tidymodels) 
+library(modelr)     
+library(kernlab)    
+library(gapminder)  
+theme_set(theme_minimal(base_size = 22))
+```
+
+# Non-linear classification toy example
+
+#### Run the complete code chunks below, read the comments
+
+#### Experiment with changing the data generation process and re-running them all in the same order
+
+## 2d non-linear classification data
+
+```{r}
+set.seed(1) # optional: delete this line
+# sample size
+n <- 500
+# function with zero set that
+# defines the perfect (Bayes) decision boundary
+true_boundary_function <- function(x1, x2) {
+  # experiment with changing this
+  #(x1^2 + x2^2 - 1)^3 - x1^2*x2^3
+  abs(x1*x2) - x1
+}
+train <- data.frame(
+  # change the distribution
+  # or scale as needed
+  x1 = 1.5*(1 - 2*runif(n)),
+  x2 = 1.5*(1 - 2*runif(n))
+) %>% 
+  mutate(
+    # labels if classes were perfectly separated
+    separable = true_boundary_function(x1,x2) > 0,
+    # labels if classes are "noisy"
+    y = factor(rbinom(n, 1, 9/10 - (8/10) * as.numeric(separable)))
+  )
+```
+
+### Plot of training data
+
+```{r}
+train_plot <-
+  ggplot(train, aes(x1, x2)) +
+  geom_point(aes(shape = y, color = y),
+             alpha = .5, show.legend = FALSE) +
+  xlab("") + ylab("")
+  
+train_plot
+```
+
+### Plot of Bayes decision boundary
+
+```{r}
+decision_surface <- 
+  data_grid(train,
+          x1 = seq_range(x1, 300, expand = .05),
+          x2 = seq_range(x2, 300, expand = .05)) %>%
+  mutate(z = true_boundary_function(x1, x2))
+
+boundary_plot <-
+  train_plot +
+  geom_contour(
+    data = decision_surface,
+    aes(x1, x2, z=z),
+    bins = 2,
+    size = 1,
+    color = "black",
+    alpha = .5)
+
+boundary_plot
+```
+
+### How well does linear classification do?
+
+Also try changing the formula to fit a logistic regression model with non-linear transformations of the predictors
+
+```{r}
+# Fit model
+logit_model <-  
+  glm(y ~ x1 + x2, family = "binomial", data = train)
+# try formula + poly(x1,2) * poly(x2,2)
+
+# Generate decision boundary
+logit_surface <- logit_model %>%
+   augment(type.predict = "response",
+              newdata = decision_surface)
+```
+
+Plot of decision boundary of logistic model
+
+```{r}
+boundary_plot +
+  geom_contour(
+    data = logit_surface,
+    aes(x1, x2, z = .fitted),
+    size = 1,
+    color = "green",
+    bins = 2)
+```
+
+# Kernel SVM
+
+#### Use the `ksvm` function from the `kernlab` package to fit a non-linear classification models and plot them (install the package if you have not already)
+
+#### Try different kinds of kernels
+
+#### Experiment with cost/complexity parameters
+
+#### Optional: change the decision boundary function, noise level, sample size, etc, in the training data
+
+```{r}
+k_fit <- ksvm(y ~ x2 + x1,
+                  kernel = polydot(degree = 2),
+                  C = 20,
+                  data = train)
+k_fit
+```
+
+#### Plot decision regions, compare to original data. What's different?
+
+
+
+```{r}
+
+```
+
+#### Use the `nSV()` and `alphaindex()` functions to find the number of support vectors and their indexes in the training data. What proportion of the training data is used by the classifier?
+
+```{r}
+
+```
+
+
+# 1-d smooth regression example
+
+#### Generate a one-dimensional example with a non-linear relationship
+
+#### Experiment with changing `f`, `n`, `s2`, and `noise_sd`
+
+The `beta` distribution is closer to uniform if `s2` is closer to 1, so increasing `s2` creates a region of the predictor space that has relatively less training data
+
+```{r}
+# change this function
+f <- function(x) sin(4*pi*x)
+n <- 400
+s1 <- 1
+s2 <- 3
+noise_sd <- .4
+train1d <- 
+  data.frame(
+    x = rbeta(n, s1, s2)
+    ) %>%
+  mutate(y = f(x) + rnorm(n, sd = noise_sd))
+
+# make sure this is the same as above
+test1d_ID <- 
+  data.frame(
+    x = rbeta(n, s1, s2) 
+    ) %>%
+  mutate(y = f(x) + rnorm(n, sd = noise_sd))
+
+# make this slightly different from above to experiment with OOD
+test1d_OOD <- 
+  data.frame(
+    x = rbeta(n, s1, s2/2) # more data with larger x values
+    ) %>%
+  # slightly different CEF
+  mutate(y = f(x) + .1*cos(4*pi*x) + rnorm(n, sd = noise_sd))
+
+# grid for plotting predictions
+train1d_grid <- 
+  data_grid(train1d,
+          x = seq_range(c(.05, .95), 2000, expand = .05))
+```
+
+#### Read `?geom_smooth` and change the `span` manually for a better fit
+
+```{r}
+# plot data and loess curve
+ggplot(train1d, aes(x, y)) + 
+  geom_point() +
+  geom_smooth()
+```
+
+### Linear regression with a polynomial transform of x
+
+```{r}
+model_lm <- lm(y ~ poly(x, 5), data = train1d)
+
+augment(model_lm,
+        newdata = train1d_grid) %>%
+  ggplot(aes(x, y)) +
+  geom_point(data = train1d) +
+  geom_line(aes(y = .fitted)) #+ ylim(c(-3,3))
+```
+
+### Kernel regression
+
+Use the `ksvm` function to fit non-linear kernel regression models and plot the predictions on `train1d_grid`
+
+
+```{r}
+k_1fit <- ksvm(y ~ x,
+     #kernel = rbfdot(sigma = 10),
+     kernel = polydot(degree = 2),
+     data = train1d)
+k_1fit
+```
+
+```{r}
+svm_predictions <- train1d_grid %>%
+      mutate(.fitted = predict(k_1fit, newdata = train1d_grid))
+
+train1d %>%
+  ggplot(aes(x, y)) +
+  geom_point(data = train1d) +
+  geom_line(
+    data = svm_predictions,
+    aes(y = .fitted)) #+ylim(c(-2,2))
+```
+
+### Comparisons
+
+```{r}
+fits <- list(
+augment(model_lm,
+        newdata = test1d_ID) %>%
+  mutate(generalization = "ID", model = "lm"),
+
+test1d_ID %>%
+      mutate(.fitted = predict(k_1fit, newdata = test1d_ID),
+             generalization = "ID", model = "ksvm"),
+
+augment(model_lm,
+        newdata = test1d_OOD) %>%
+  mutate(generalization = "OOD", model = "lm"),
+
+test1d_OOD %>%
+      mutate(.fitted = predict(k_1fit, newdata = test1d_OOD),
+             generalization = "OOD", model = "ksvm")) 
+
+map_dfr(fits, rbind) %>%
+  mutate(resid = y - .fitted) %>%
+  group_by(generalization, model) %>%
+  summarize(MSE = mean(resid^2), .groups = "keep")
+```
+
+
+#### What happens to the local accuracy for larger values of x if `s2` is increased? Why?
+
+
+
+#### What happens as `sd` is increased? Or if `n` is decreased? How is this different from the previous question?
+
+
+
+#### What happens if you increase `sigma` in `rbfdot`?
+
+
+
+#### How would ID generalization vs OOD vary depending on the above trade-offs? Consider OOD for values of x slightly both outside the left and right range of the training data
+
+
+
+## Optional extra practice: gapminder
+
+Fit a kernel regression model on `gapminder` data, plot the predictions, calculate the MSE
+
+```{r}
+
+```
+
+Calculate the MSE using a different year as test data to check OOD performance
+
+```{r}
+
+```
+

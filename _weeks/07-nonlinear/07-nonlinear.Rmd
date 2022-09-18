@@ -1,0 +1,36 @@
+---
+title: "7 Nonlinear methods"
+description: |
+  Non-linearity may result in models that trade interpretability for increased predictive accuracy. These notes discuss the challenges of non-linearity and introduce nearest neighbors and kernel methods.
+author:
+  - name: Joshua Loftus
+date: 10-05-2021
+output:
+  distill::distill_article:
+    self_contained: false
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+knitr::opts_chunk$set(fig.retina = 3, warning = FALSE, message = FALSE)
+library(tidyverse)
+library(knitr)
+library(gapminder)
+theme_set(theme_minimal(base_size = 22))
+```
+
+## Nearest neighbors
+
+## Kernel methods
+
+## Slides, notebooks
+
+[Slides](slides/07-1-nonlinearity.html) for non-linearity video ([PDF])
+
+[Slides](slides/07-2-knn.html) for $k$-NN video ([PDF])
+
+[Slides](slides/07-3-kernels.html) for kernel video ([PDF])
+
+[Notebook](notebooks/kernel.Rmd) for kernels
+
+[Notebook](notebooks/knn.Rmd) for $k$-NN

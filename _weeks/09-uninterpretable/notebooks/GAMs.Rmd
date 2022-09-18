@@ -1,0 +1,123 @@
+---
+title: "Generalized additive models"
+author: "ST310"
+date: "3/26/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(broom)
+library(modelr)
+library(gam)
+theme_set(theme_minimal(base_size = 20))
+```
+
+## Simulate data from an additive model
+
+Change the functions, add other predictors with their own functions which could be linear or nonlinear, change the sample size or the `sd` of the `rnorm` noise (or the distribution of the noise if you're interested in robustness)
+
+```{r}
+f1 <- function(x) -1 + 2*x + x^2
+f2 <- function(x) sin(pi*x)
+f3 <- function(x) 2 + exp(-5*(x-1)^2)
+
+set.seed(1)
+n <- 400
+df <- data.frame(
+  x1 = 2*(runif(n)-1/2),
+  x2 = sample(1:100 / 50,  n, replace = TRUE),
+  x3 = 2*runif(n)
+) %>%
+  mutate(
+    y = f1(x1) + f2(x2) + f3(x3) + rnorm(n, sd = 1)
+)
+```
+
+Fit a GAM, show the partial dependence plots
+
+```{r}
+fit_gam <- gam(...)
+```
+
+Try `plot`, and if you have the `plotmo` library try `plotmo` with `all2 = TRUE`
+
+```{r}
+
+```
+
+Don't need to change anything in this code chunk
+
+```{r}
+# predict for range of xj values
+partial_predict <- function(j, df, obj) {
+  xj <- paste0("x", j)
+  newdf <- df %>% 
+    mutate(across(starts_with("x") & -xj, mean))
+  predict(obj, newdata = newdf)
+}
+
+# plot y vs xj
+partial_plot <- function(j) {
+  xj <- paste0("x", j)
+  fj <- paste0("f", j)
+  ggplot(df, aes(get(xj), y)) +
+    geom_point(alpha = .5) +
+    geom_smooth() +
+    geom_line(aes(y = partial_predict(j, df, fit_gam)), color = "red") + 
+    xlab(xj) + ylab("") +
+    geom_function(fun = get(fj),
+                  size = 1,
+                  color = "green") +
+    theme(axis.text.x=element_blank(),
+          axis.ticks.x=element_blank())
+}
+```
+
+Might want to change below if you add more predictors
+
+```{r}
+p1 <- partial_plot(1) + ylab("y")
+p2 <- partial_plot(2)
+p3 <- partial_plot(3)
+```
+
+Side by side plots by adding with the `patchwork` library
+
+```{r message = FALSE}
+library(patchwork)
+p1 + p2 + p3
+```
+
+
+Why might some of the estimated functions be shifted up/down?
+
+## Breaking assumptions
+
+Try generating data that does not satisfy the additivity assumption
+
+```{r}
+
+```
+
+## Sparse additive non-linear models
+
+Generate more predictors which are just noise
+
+Use the `gamsel` package to select which variables to include, and which variables are modeled linearly vs non-linearly
+
+```{r}
+library(gamsel) # install.packages("gamsel")
+
+```
+
+
+## Test several models using tidymodels
+
+```{r}
+library(tidymodels)
+
+```
+
+

@@ -1,0 +1,47 @@
+---
+title: "Exercise set 1"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+knitr::opts_chunk$set(fig.retina = 3, warning = FALSE, message = FALSE)
+library(tidyverse)
+library(knitr)
+library(gapminder)
+theme_set(theme_minimal(base_size = 22))
+```
+
+## ISLR Chapter 2, Section 2.4
+
+#### Exercises 1, 3, 5, and 6
+
+## ISLR Chapter 3, Section 3.6
+
+#### Read the `R` lab, especially Sections 3.6.3-3.6.6
+
+## ISLR Chapter 3, Section 3.7
+
+#### Exercises 1, 4
+
+#### Exercises 10, 11, 13, and 14
+
+## Mathematical practice
+
+*These exercises are **optional** but highly recommended as practice, particularly for the exam*.
+
+It may help to also review your notes from one of the prerequisite courses like MA100.
+
+#### CEFs and [partial derivatives](https://en.wikipedia.org/wiki/Partial_derivative)
+
+- Suppose the conditional expectation function $f(x) := \mathbb E[Y | X = x]$ is linear as a function of $x = (x_1, \ldots, x_p)$. Find a simple formula for the partial derivative of $f$ with respect to predictor $x_j$ and interpret this geometrically.
+
+- Repeat the above but for an example function (you can invent the example) where $f(x)$ is non-linear. If we had a sample of data from this model and fit a linear regression, would we get an unbiased estimate of $\partial f/\partial x_j$ from $\hat \beta_j$? Explain.
+
+- Now suppose again that $f(x)$ is linear. Also assume that $x_1 = g_1(u)$ and $x_2 = g_2(u)$ for some variable $u$ and functions $g_1, g_2$. Find simple formulas for $\partial f/\partial x_1$, $\partial f/\partial x_2$, and $\partial f/\partial u$. Which of these can we interpret as "effects, holding all other variables constant"? Explain.
+
+#### Regression and linear algebra
+
+- Consider the column space, row space, and null space of the predictor matrix $X$. For each of these, what can we say about the least squares coefficients for regressing $Y$ on $X$ if we know that $Y$ is in the corresponding subspace (e.g. if $Y$ is in the null space of $X$)?
+
+- Suppose the third predictor is in the span of the first two $X_3 \in \text{span}(X_1, X_2)$ (interpreting $X_j$ as a column vector). Consider the regression models $M_0: Y \sim X_1 + X_2$ and $M_A : Y \sim X_1 + X_2 + X_3$. Show these two models yield the same predictions of $Y$ but may not have the same coefficients for $X_1$ and $X_2$. 

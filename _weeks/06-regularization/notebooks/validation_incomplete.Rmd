@@ -1,0 +1,258 @@
+---
+title: "Validation experiments"
+author: "ST310"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse) 
+library(broom)     
+library(modelr)    
+library(glmnet)    
+theme_set(theme_minimal(base_size = 20))
+```
+
+## Choose one of these datasets
+
+```{r}
+library(modeldata)
+data("attrition")
+# in console: View(attrition)
+dim(attrition) # observations, variables
+```
+
+```{r}
+library(AppliedPredictiveModeling)
+data("permeability")
+head(permeability) # numeric outcome
+length(permeability) # n
+fingerprints %>% dim() # n by p
+```
+
+```{r}
+library(caret)
+data("cox2")
+head(cox2Class) # binary outcome
+length(cox2Class) # n
+dim(cox2Descr) # n by p
+```
+
+#### Preprocess attrition data
+
+```{r}
+x_variables  <- attrition %>% 
+  dplyr::select(-Attrition) 
+X <- model.matrix(~. -1, data = x_variables) 
+Y <- attrition %>% pull(Attrition)
+```
+
+Since this dataset has a binary outcome we'll use penalized logistic regression instead of penalized linear regression, we do this with the `family = "binomial"` option in the `glmnet` function below (ignore this comment if your data has a numeric outcome)
+
+## Split data into training/test sets
+
+#### Use the `sample()` and `setdiff()` functions to split the data into two random subsets
+
+(Why random subsets instead of 1,...k, and k+1,...n?)
+
+```{r}
+n <- length(Y) # nrow(X)
+train <- sample(1:n, floor(4*n/5), replace = FALSE)
+test <- setdiff(1:n, train)
+c(length(train), length(test))
+X_train <- X[train, ]
+X_test <- X[test, ]
+Y_train <- Y[train]
+Y_test <- Y[test]
+```
+
+## Regularized regression models
+
+#### Fit models using `glmnet` on the **training data** for lasso and ridge regression (see `?glmnet`)
+
+```{r}
+ridge_fit <- glmnet(X_train,
+                    Y_train,
+                    family = "binomial",
+                    alpha = 0)
+
+lasso_fit <- glmnet(X_train,
+                    Y_train,
+                    family = "binomial")
+```
+
+
+#### Choose some arbitrary value of `lambda` and check the `coef()` of the resulting models, compare the coefficient estimates between lasso and ridge (hint: check `?coef.glmnet`)
+
+```{r}
+lam <- 1/20
+cbind(coef(ridge_fit, s = lam),
+      coef(lasso_fit, s = lam))
+```
+
+
+#### At the same value of `lambda` above, calculate the accuracy of prediction on both training and test data (use mean-squared error for numeric outcome and misclassification rate for binary, use the option `predict(..., type = "class")` for binary outcome)
+
+Training accuracy for ridge
+
+```{r}
+mean(predict(ridge_fit,
+        type = "class",
+        s = lam,
+        newx = X_train) == Y_train)
+```
+
+Test accuracy for ridge
+
+```{r}
+mean(predict(ridge_fit,
+        type = "class",
+        s = lam,
+        newx = X_test) == Y_test)
+```
+
+
+Training accuracy for lasso
+
+```{r}
+mean(predict(lasso_fit,
+        type = "class",
+        s = lam,
+        newx = X_train) == Y_train)
+```
+
+Test accuracy for lasso
+
+```{r}
+mean(predict(lasso_fit,
+        type = "class",
+        s = lam,
+        newx = X_test) == Y_test)
+```
+
+#### Experiment with changing the value of `lambda` in the above code
+
+#### Plot the fitted coefficients as a function of `lambda`
+
+Hint: just `plot()` the model object, or build the plot manually using `tidy` from the `broom` package
+
+```{r}
+plot(ridge_fit, xvar = "lambda")
+```
+
+```{r}
+tidy(lasso_fit) %>%
+  ggplot(aes(x = lambda, y = estimate, group = term)) + 
+  geom_line() + scale_x_log10()
+```
+
+(Does `glmnet` penalize the intercept term by default?)
+
+#### Plot accuracy on training and test data as a function of `lambda`
+
+Calculating error
+
+```{r}
+yhats_train <- predict(ridge_fit, type = "class", newx = X_train)
+yhats_test <- predict(ridge_fit, type = "class", newx = X_test)
+plot_data <- data.frame(
+  train_error = colMeans(yhats_train != Y_train),
+  # or colMeans((yhats_train - Y_train)^2) for numeric outcome
+  test_error = colMeans(yhats_test != Y_test),
+  lambda = ridge_fit$lambda
+) 
+```
+
+
+```{r}
+ggplot(plot_data, aes(lambda, train_error)) +
+ geom_line() + theme_minimal() +
+  geom_line(aes(y = test_error),
+            linetype = "dotted",
+            color = "orange", size = 1) +
+ scale_x_log10()
+```
+
+#### Repeat for lasso
+
+```{r}
+yhats_train <- predict(lasso_fit, type = "class", newx = X_train)
+yhats_test <- predict(lasso_fit, type = "class", newx = X_test)
+plot_data <- data.frame(
+  train_error = colMeans(yhats_train != Y_train),
+  # or colMeans((yhats_train - Y_train)^2) for numeric outcome
+  test_error = colMeans(yhats_test != Y_test),
+  lambda = lasso_fit$lambda
+) 
+```
+
+```{r}
+ggplot(plot_data, aes(lambda, train_error)) +
+ geom_line() + theme_minimal() +
+  geom_line(aes(y = test_error),
+            linetype = "dotted",
+            color = "orange", size = 1) +
+ scale_x_log10()
+```
+
+#### What do you notice about these plots? Similarities and differences?
+
+- Test error is almost always higher than training error
+
+#### For lasso, examine `coef()` at the value of `lambda` which minimizes test error
+
+You can roughly guess the value of `lambda` by looking at the plot
+
+```{r}
+beta_hat <- coef(lasso_fit, s = 0.005)
+beta_hat
+```
+
+What is the sparsity (number/proportion of nonzero coefficients)?
+
+```{r}
+mean(beta_hat[-1] != 0) # -1 to leave out intercept
+```
+
+## Cross-validation
+
+#### Use the `cv.glmnet` function to iterate the above process over several train/test splits and automatically find the value of `lambda` minimizing test accuracy (see `?cv.glmnet`)
+
+Do this for lasso and/or ridge, time permitting
+
+```{r}
+lasso_cv <- cv.glmnet(X_train, Y_train, family = "binomial")
+```
+
+#### Compare the values of `lambda.min` and `lambda.1se` (see `?cv.glmnet`)
+
+```{r}
+lmin <- lasso_cv$lambda.min
+l1se <- lasso_cv$lambda.1se
+c(lmin, l1se)
+```
+
+#### Compute the test error accuracy at these two values
+
+Test accuracy for lasso
+
+```{r}
+mean(predict(lasso_fit,
+        type = "class",
+        s = lmin,
+        newx = X_test) == Y_test)
+```
+
+```{r}
+mean(predict(lasso_fit,
+        type = "class",
+        s = l1se,
+        newx = X_test) == Y_test)
+```
+
+## Reflections
+
+#### Think back on all the results you've seen and take notes here
+
+#### Can you think of any questions?
+

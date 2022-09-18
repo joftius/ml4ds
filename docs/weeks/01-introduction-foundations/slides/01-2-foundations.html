@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Machine learning</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Joshua Loftus" />
+    <script src="libs/header-attrs/header-attrs.js"></script>
+    <link href="libs/remark-css/default.css" rel="stylesheet" />
+    <link href="libs/animate.css-xaringan/animate.slide_left.css" rel="stylesheet" />
+    <link href="libs/tile-view/tile-view.css" rel="stylesheet" />
+    <script src="libs/tile-view/tile-view.js"></script>
+    <link href="libs/panelset/panelset.css" rel="stylesheet" />
+    <script src="libs/panelset/panelset.js"></script>
+    <link rel="stylesheet" href="xaringan-themer.css" type="text/css" />
+    <link rel="stylesheet" href="../../../theme.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: left, bottom, title-slide
+
+# Machine learning
+## The big picture
+### Joshua Loftus
+
+---
+
+
+class: center, middle, inverse
+
+
+
+
+
+
+
+
+
+&lt;style type="text/css"&gt;
+.remark-slide-content {
+    font-size: 1.2rem;
+    padding: 1em 4em 1em 4em;
+}
+&lt;/style&gt;
+
+# What is "Machine Learning"?
+
+## Or rather, *why* is it?
+
+---
+class: inverse
+
+## Machine learning applications
+
+Can you think of an example? (Write it down)
+
+--
+
+- Electronic health records to predict which patients will require more care
+--
+
+- Genome sequence data for tissue samples to detect different kinds of cancer
+--
+
+- Text scraped from social media to predict events of social unrest, or track spread of misinformation
+--
+
+- Tech platform user data to target relevant content, or detect policy/regulation violations
+--
+
+- Learning adaptive control of robot prosthesis 
+
+etc...
+
+---
+class: inverse
+
+# Machine learning, proper
+
+These *application* examples help motivate the value of ML
+
+(Actually, much of the value comes from work specific to the application, like the creation/gathering/processing of the data, and the real world *actions* taken based on the output of ML)
+
+--
+
+We'll use "ML" to refer to the *theory and general methods*
+
+(Skills like gathering and cleaning data are very useful--and we'll practice them a little--but they're not the main focus of this course)
+
+---
+class: inverse
+
+## What is "artificial intelligence"?
+
+(Don't tell anyone I said this, but) It's a collection of computational tools that people use to create mathematically structured data out of non-mathematically structured data
+
+e.g. a (possibly randomized) function from `\(\{ \text{some image file type} \} \to \mathbb R^d\)` for some `\(d\)`.
+
+.pull-left[
+e.g. [word embedding](https://en.wikipedia.org/wiki/Word_embedding) for text data. ([Image credit](https://corpling.hypotheses.org/495))
+
+*We'll usually assume our data is already mathematically structured*
+]
+
+.pull-right[
+&lt;img src="https://f-origin.hypotheses.org/wp-content/blogs.dir/4190/files/2018/04/3dplot-768x586.jpg" width="99%" /&gt;
+]
+
+
+---
+
+# Abstraction and notation
+
+Along came some data which someone formats as a collection of `\(p\)` distinct variables
+
+$$
+X = (X_1, X_2, \ldots, X_p) \in \mathbb R^p
+$$
+We assume **each observation is a point in a vector space** (which we also implicitly assumed is finite-dimensional, and that's OK by any practical standard)
+
+--
+
+### Question: is there a `\(Y\)` variable?
+
+Think about your application example (the one you wrote down) 
+
+---
+
+# Categories of ML tasks
+
+**Supervised learning** (most of the term)
+
+Often we focus on one variables, name it `\(Y\)`, and give it the special status of being an "outcome"/"response"
+
+**Unsupervised learning** (a bit of this)
+
+If there is no obvious choice of an outcome variable, we may just wish to "find structure" in the `\(X\)` variables. Clustering, dimension reduction
+
+**Other** tasks (probably not these)
+
+Ranking, anomaly detection, network data, embeddings, correspondence, recsys, multi-armed bandit, etc...
+
+---
+
+# Supervised ML sub-categories
+
+If `\(Y\)` is numeric: **regression**
+
+- Concentration levels of a protein (disease status/severity)
+- Selling price of a house
+
+If `\(Y\)` is categorical: **classification**
+
+- Should this item be flagged for (human) review? yes/no
+- Identify type of cancer: lymphoma, sarcoma, neuroblastoma, etc
+
+Special cases
+
+- `\(Y\)` is binary with rare cases, e.g. anomaly detection
+- `\(Y\)` is a time to event, survival analysis
+- Multi-class, hierarchical classes, etc
+
+---
+
+# Focus on regression
+
+.pull-left[
+- Simpler math (orthogonal projection, Euclidean geometry)
+
+- Intuition pump for other cases
+
+- Often underlies other cases 
+]
+.pull-right[
+![](https://i.imgflip.com/4unpnl.jpg)
+]
+
+- e.g. binary classification by thresholding a numeric **score**, or ranking (ordinal outcome) / set selection (select items with `\(\text{top-}k\)` scores)
+
+---
+
+# How to predict `\(Y\)` from `\(X\)`?
+
+- Would be sweet if `\(\exists f\)` such that the graph of the function `\(y = f(x)\)` fit the data perfectly
+
+- **Problem**: what if `\((x_1, y_1) = (1, 0)\)` and `\((x_2, y_2) = (1, 1)\)`?
+
+- **Problem**: even our most tested and verified physical laws won't fit data *[perfectly](https://en.wikipedia.org/wiki/Measurement_uncertainty)*
+
+--
+
+#### Solution: applied mathematics
+
+For any function `\(f\)` we can always write `\(\varepsilon \equiv y - f(x)\)`. Look for an `\(f\)` which makes these "errors" "small" for the observed data
+
+---
+
+### Uncertainty opens the door for probability
+
+- Assume a probability distribution (adequately) models the data/errors
+
+Define a good function as one that minimizes
+
+$$
+\mathbb E[\varepsilon^2] = \mathbb E\\{[Y - f(X)]^2\\}
+$$
+
+--
+
+- Assume the data/error is sampled independently
+
+Motivates the **plug-in principle**: compute an estimate `\(\hat f\)` of the good function `\(f\)` by solving the corresponding problem on the dataset, i.e.
+
+$$
+\text{minimize} \sum_{i=1}^n \left[y_i - \hat f(x_i)\right]^2
+$$
+
+---
+class: inverse
+
+# Very useful assumptions!
+
+## The *why* of machine learning
+
+### "it works"
+
+- Squared error `\(\rightarrow\)` simpler math
+
+(we'll come back to this and consider other loss functions)
+
+- i.i.d. sampling `\(\rightarrow\)` simpler estimation, justifies generalisation
+
+(we'll come back to this too)
+
+---
+class: inverse, center
+
+Minimizing expected squared-error also gives us...
+
+# One of the most powerful ideas in all of statistics
+
+--
+
+`$$\mathbb E\{[Y - \hat f(X)]^2\} = \text{Var}(\hat f) + \text{Bias}(\hat f)^2 + \text{const.}$$`
+
+## the bias-variance trade-off
+
+Are the errors systematic (bias) or not (variance)?
+
+---
+
+# With model complexity:
+
+Typically, more complex models have lower bias and higher variance
+
+And typically, there is a "right amount" of complexity
+
+- Too low? Little variance, but overwhelming bias
+- Too high? Little bias, but overwhelming variance
+- Just Right: [insert happy statistician meme]
+
+---
+class: inverse, bottom, center
+background-image: url("../../../files/theme/LSE/LSE_stats_graduation.jpg")
+background-size: contain
+
+statisticians celebrate finding the right model complexity
+---
+
+# gapminder example
+
+
+.pull-left[
+
+&lt;img src="01-2-foundations_files/figure-html/gapminder-lm-1.png" width="504" /&gt;
+  
+  ]
+  .pull-right[
+
+&lt;img src="01-2-foundations_files/figure-html/gapminder-loess-1.png" width="504" /&gt;
+
+]
+
+---
+
+# candy ranking example
+
+.pull-left[
+&lt;img src="01-2-foundations_files/figure-html/candy_lm-1.png" width="504" /&gt;
+]
+.pull-right[
+&lt;img src="01-2-foundations_files/figure-html/candy_lm_multiple-1.png" width="504" /&gt;
+
+]
+
+---
+
+## Evaluation: mean squared error
+
+`gapminder` models
+
+```r
+c(mean(residuals(gm_simple)^2),
+mean(residuals(gm_complex)^2))
+```
+
+```
+## [1] 54.47218 41.08507
+```
+
+`candy_rankings` models
+
+```r
+c(mean(residuals(candy_simple)^2),
+mean(residuals(candy_complex)^2))
+```
+
+```
+## [1] 188.4498 127.1098
+```
+
+### A victory for machine learning!
+
+... or is it? Find out in our first seminar
+
+
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "github",
+"highlightLines": true,
+"highlightSpans": true,
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+(function(time) {
+  var d2 = function(number) {
+    return ('0' + number).slice(-2); // left-pad 0 to minutes/seconds
+  },
+
+  time_format = function(total) {
+    var secs = Math.abs(total) / 1000;
+    var h = Math.floor(secs / 3600);
+    var m = Math.floor(secs % 3600 / 60);
+    var s = Math.round(secs % 60);
+    var res = d2(m) + ':' + d2(s);
+    if (h > 0) res = h + ':' + res;
+    return res;  // [hh:]mm:ss
+  },
+
+  slide_number_div = function(i) {
+    return document.getElementsByClassName('remark-slide-number').item(i);
+  },
+
+  current_page_number = function(i) {
+    return slide_number_div(i).firstChild.textContent;  // text "i / N"
+  };
+
+  var timer = document.createElement('span'); timer.id = 'slide-time-left';
+  var time_left = time, k = slideshow.getCurrentSlideIndex(),
+      last_page_number = current_page_number(k);
+
+  setInterval(function() {
+    time_left = time_left - 1000;
+    timer.innerHTML = ' ' + time_format(time_left);
+    if (time_left < 0) timer.style.color = 'red';
+  }, 1000);
+
+  slide_number_div(k).appendChild(timer);
+
+  slideshow.on('showSlide', function(slide) {
+    var i = slide.getSlideIndex(), n = current_page_number(i);
+    // reset timer when a new slide is shown and the page number is changed
+    if (last_page_number !== n) {
+      time_left = time; last_page_number = n;
+      timer.innerHTML = ' ' + time_format(time); timer.style.color = null;
+    }
+    slide_number_div(i).appendChild(timer);
+  });
+})(59000);
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>

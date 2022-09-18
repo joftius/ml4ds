@@ -1,0 +1,80 @@
+---
+title: "Validation experiments"
+author: "ST310"
+date: "3/05/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse) 
+library(broom)     
+library(modelr)    
+library(glmnet)    
+theme_set(theme_minimal(base_size = 20))
+```
+
+## Choose one of these datasets
+
+```{r}
+library(modeldata)
+data("attrition")
+# in console: View(attrition)
+dim(attrition) # observations, variables
+```
+
+```{r}
+library(AppliedPredictiveModeling)
+data("permeability")
+head(permeability) # numeric outcome
+length(permeability) # n
+dim(fingerprints) # n by p
+```
+
+```{r}
+library(caret)
+data("cox2")
+head(cox2Class) # binary outcome
+length(cox2Class) # n
+dim(cox2Descr) # n by p
+```
+
+## Split data into training/test sets
+
+- Use the `sample()` and `setdiff()` functions to split the data into two random subsets
+
+(Why random subsets instead of 1,...k, and k+1,...n?)
+
+```{r}
+
+```
+
+## Regularized regression models
+
+- Fit models using `glmnet` on the **training data**
+
+- Plot **test error** as a function of `lambda`
+
+- Plot the fitted coefficients as a function of `lambda`
+
+- For lasso and elastic net, examine `coef()` at the value of `lambda` which minimizes test error
+
+### Ridge regression
+
+```{r}
+
+```
+
+### Lasso regression
+
+```{r}
+
+```
+
+### Elastic net regression
+
+```{r}
+
+```
+
+### Coefficients

@@ -1,0 +1,174 @@
+---
+title: "Nonlinearity and nearest neighbours"
+author: "Joshua Loftus"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse) # required
+library(broom)     # required
+library(modelr)    # for data_grid
+theme_set(theme_minimal(base_size = 20))
+```
+
+## 2d non-linear classification data
+
+```{r}
+# sample size
+n <- 800
+# function with zero set that
+# defines the perfect (Bayes) decision boundary
+true_boundary_function <- function(x1, x2) {
+  # experiment with changing this
+  thing <- x1^2*x2^3
+  (x1^2 + x2^2 - 1)^3 - thing^2
+}
+train <- data.frame(
+  # change the distribution
+  # or scale as needed
+  x1 = 1.5*(1 - 2*runif(n)),
+  x2 = 1.5*(1 - 2*runif(n))
+) %>% 
+  mutate(
+    # labels if classes were perfectly separated
+    separable = true_boundary_function(x1,x2) > 0,
+    # labels if classes are "noisy"
+    y = factor(rbinom(n, 1, 9/10 - (8/10) * as.numeric(separable)))
+  )
+```
+
+### Plot the data
+
+```{r}
+train_plot <-
+  ggplot(train, aes(x1, x2)) +
+  geom_point(aes(shape = y, color = y),
+             alpha = .5, show.legend = FALSE) +
+  xlab("") + ylab("")
+  
+train_plot
+```
+
+### Plot the Bayes decision boundary
+
+```{r}
+decision_surface <- 
+  data_grid(train,
+          x1 = seq_range(x1, 300, expand = .05),
+          x2 = seq_range(x2, 300, expand = .05)) %>%
+  mutate(z = true_boundary_function(x1, x2))
+
+boundary_plot <-
+  train_plot +
+  geom_contour(
+    data = decision_surface,
+    aes(x1, x2, z=z),
+    bins = 2,
+    size = 1,
+    color = "black",
+    alpha = .5)
+
+boundary_plot
+```
+
+### How well does linear classification do?
+
+Also try changing the formula to fit a logistic regression model with non-linear transformations of the predictors
+
+```{r}
+# Fit model
+logit_model <-  
+  glm(y ~ x1 + x2 + poly(x1,2) * poly(x2,2), family = "binomial", data = train)
+# try formula + poly(x1,2) * poly(x2,2)
+
+# Generate decision boundary
+logit_surface <- logit_model %>%
+   augment(type.predict = "response",
+              newdata = decision_surface)
+```
+
+Plot decision boundary of logistic model
+
+```{r}
+boundary_plot +
+  geom_contour(
+    data = logit_surface,
+    aes(x1, x2, z = .fitted),
+    size = 1,
+    color = "green",
+    bins = 2) 
+```
+
+### Classify 2d example with k-nearest neighbors
+
+Write a function to implement k-NN classification
+
+You may use matrix operations and simple functions like `sort` but not any more sophisticated built-in R functions (or libraries)
+
+#### Write a function that computes some distance between two points
+
+You can choose which notion of distance you want to use
+
+```{r}
+# Euclidean or L2 distance
+Dist <- function(x1, x2) {
+  sum((x1-x2)^2) # sqrt doesn't change which points are nearest
+}
+```
+
+#### Write a function that outputs the y values for the k-nearest nearest neighbors of a point x0
+
+```{r}
+# Requires a distance function D
+# to already be defined
+nearest_y_values <- function(x0, k, x, y) {
+  n <- nrow(x)
+  distances <- rep(0, n)
+  for (i in 1:n) {
+    distances[i] <- Dist(x0, x[i,])
+  }
+  k_neighborhood <- order(distances, decreasing = FALSE)[1:k]
+  y[k_neighborhood]
+}
+```
+
+#### Write a function that outputs a classification using majority vote
+
+```{r}
+knn <- function(x0, k, x, y) {
+  votes <- nearest_y_values(x0, k, x, y)
+  levels(y)[which.max(table(votes))]
+}
+```
+
+
+#### Evaluate your function at various points, using various values of k, and compare the output to the plotted training data
+
+Try points where the nearest neighbors are clearly majority 0 or 1, and a point where the portion is relatively even. Run the code below a few times and see if the answers change, then pick a different `K` and try again
+
+```{r}
+K <- 1
+bootstrap_sample <- sample(1:nrow(train), replace = TRUE)
+x <- train[bootstrap_sample, 1:2]
+y <- train$y[bootstrap_sample]
+```
+
+
+In a majority 1 region
+
+```{r}
+knn(x0 = c(0,0), k = K, x, y)
+```
+
+In a majority 0 region
+
+```{r}
+knn(x0 = c(0,1.2), k = K, x, y)
+```
+
+In a relatively even region
+
+```{r}
+knn(x0 = c(1,1), k = K, x, y)
+```

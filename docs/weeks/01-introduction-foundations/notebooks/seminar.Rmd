@@ -1,0 +1,147 @@
+---
+title: "Week 1 seminar"
+author: "Joshua Loftus"
+date: "1/22/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(gapminder)
+library(broom)
+theme_set(theme_minimal()) # or whatever you prefer
+```
+
+## Repeating the gapminder analysis
+
+Let's start easy by just repeating some steps but with data from a different year.
+
+### Create the `gapminder` scatterplot using data from the year 2002
+
+```{r}
+gm2002 <- gapminder %>%
+  filter(year == 2002)
+```
+
+```{r}
+gm_scatterplot <- 
+  ggplot(gm2002,
+         aes(x = gdpPercap, y = lifeExp)) +
+  geom_point()
+gm_scatterplot
+```
+
+#### Create an lm model to predict lifeExp
+
+```{r}
+model_lm <- lm(lifeExp ~ gdpPercap, data = gm2002)
+predictions_lm <- augment(model_lm)
+```
+
+#### Create a loess model to predict lifeExp
+
+```{r}
+model_loess <- loess(lifeExp ~ gdpPercap, span = .75, data = gm2002)
+predictions_loess <- augment(model_loess)
+```
+
+#### Plot showing the two models
+
+```{r}
+gm_scatterplot +
+  geom_line(data = predictions_lm, size = 1,
+            color = "blue",
+            linetype = "dashed",
+            aes(y = .fitted)) +
+  geom_line(data = predictions_loess, size = 1,
+            color = "green",
+            aes(y = .fitted))  
+```
+```{r}
+mean(residuals(model_lm)^2)
+mean(residuals(model_loess)^2)
+```
+## Predicting on new data
+
+Models are supposed to capture/use structure in the data that corresponds to structure in the real world. And if the real world isn't misbehaving, that structure should be somewhat stable.
+
+For example, suppose the relationship changed dramatically from one time period to another time period. Then it would be less useful/interesting to have a model fit on data at one time period, because the same model might have a poor fit on data from a different time period.
+
+Let's explore this with our `gapminder` models
+
+#### Predictions on different years
+
+Create datasets for the desired years
+
+```{r}
+gm2007 <- gapminder %>% filter(year == 2007) 
+gm1997 <- gapminder %>% filter(year == 1997) 
+```
+
+Predict using `newdata` argument, then `pull` the residuals from the resulting data.frame
+
+```{r}
+lm_resid2007 <- augment(model_lm, newdata = gm2007) %>%
+  pull(.resid)
+lm_resid1997 <- augment(model_lm, newdata = gm1997) %>%
+  pull(.resid)
+loess_resid2007 <- augment(model_loess, newdata = gm2007) %>%
+  pull(.resid)
+loess_resid1997 <- augment(model_loess, newdata = gm1997) %>%
+  pull(.resid)
+```
+
+#### Check 1997
+
+```{r}
+mean(lm_resid1997^2)
+mean(loess_resid1997^2)
+```
+
+
+#### Check 2007
+
+```{r}
+mean(lm_resid2007^2)
+mean(loess_resid2007^2, na.rm = TRUE)
+```
+
+One trade-off we see here: the `loess` function does not have any default way of extrapolating to observations outside the range of the original data (values of `gdpPercap` in 2007 that are larger than the maximum in 2002).
+
+## Conclusion/notes
+
+The more complex, `loess` model performs better than the linear model even when tested on data from 5 years earlier or later.
+
+Sometimes a more complex model really is better!
+
+**Question**: Can we break it? Let's change the `span` parameter in the `loess` function to make it even more complex and see if we keep reaching the same conclusion.
+
+**Answer**: Even after decreasing to `span = 0.1` the more complex model was still better!
+
+**Question**: How can we change this setup so that the linear model isn't always worse?
+
+**Answer**: Try a logarithmic transformation on the `gdpPercap` variable to improve the fit of the linear model first, then maybe the linear model will do better on data from a different year than `loess` with a low `span` value.
+
+```{r}
+gm2002 <- gapminder %>%
+  filter(year == 2002) %>%
+  mutate(log_gdpPercap = log10(gdpPercap))
+```
+
+```{r}
+gm2007 <- gapminder %>% filter(year == 2007) %>%
+  mutate(log_gdpPercap = log10(gdpPercap))
+gm1997 <- gapminder %>% filter(year == 1997) %>%
+  mutate(log_gdpPercap = log10(gdpPercap))
+```
+
+Now repeat other code changing `gdpPercap` to `log_gdpPercap`.
+
+It seems that:
+
+- More complex models (almost) always have lower MSE *when the errors are computed on the same data as the model fitting function*
+- More complex models can also have lower MSE *when the errors are computed on new data that the model fitting function did not access*
+- But, sometimes simpler models have lower MSE on new data
+
+

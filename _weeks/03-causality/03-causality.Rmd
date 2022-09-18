@@ -1,0 +1,36 @@
+---
+title: "3 Multiple regression and causality"
+description: |
+  Multiple linear regression does not, by default, tell us anything about causality. But with the right data and careful interpretation we might be able to learn some causal relationships.
+author:
+  - name: Joshua Loftus
+date: 10-09-2021
+output:
+  distill::distill_article:
+    self_contained: false
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+knitr::opts_chunk$set(fig.retina = 3, warning = FALSE, message = FALSE)
+library(tidyverse)
+library(knitr)
+library(gapminder)
+theme_set(theme_minimal(base_size = 22))
+```
+
+## Rerum cognoscere causas
+
+[Virgil](https://en.wikipedia.org/wiki/Felix,_qui_potuit_rerum_cognoscere_causas):
+
+> Fortunate, who can know the causes of things
+
+## Slides, notebooks, exercises
+
+[Slides](slides/03-1-causality.html) for first causality video ([PDF](slides/causality.pdf))
+
+[Slides](../10-action/slides/10-2-changetheworld.html) for second causality video
+
+[Slides](../04-classification/slides/04-1-classification.html) for logistic regression video
+
+[Notebook](notebooks/logistic_regression.html) from seminar

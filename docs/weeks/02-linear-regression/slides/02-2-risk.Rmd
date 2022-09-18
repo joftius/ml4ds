@@ -1,0 +1,205 @@
+---
+title: "Machine learning"
+subtitle: "Risk: probability and loss"
+author: "Joshua Loftus"
+#institute: "LSE"
+#date: "`r Sys.Date()`"
+output:
+  xaringan::moon_reader:
+    css: ["default", "xaringan-themer.css", "../../../theme.css"]
+#    seal: false    
+    lib_dir: libs
+    nature:
+      titleSlideClass: ["left", "bottom"]
+      countdown: 59000
+      highlightStyle: github
+      highlightLines: true
+      highlightSpans: true
+      countIncrementalSlides: false
+---
+
+```{r setup, include=FALSE}
+options(htmltools.dir.version = FALSE)
+knitr::opts_chunk$set(fig.retina = 3, warning = FALSE, message = FALSE)
+options(knitr.table.format = "html")
+```
+
+```{r xaringan-themer, include=FALSE, warning=FALSE}
+library(xaringanthemer)
+style_duo_accent(
+  primary_color = "#2d708e",
+  secondary_color = "#230433",
+  link_color = "#55c667",
+  text_bold_color = '#f68f46',
+  title_slide_background_color = "#ffffff", #"#042333",
+  title_slide_background_image = "https://upload.wikimedia.org/wikipedia/commons/3/34/Wreck_of_The_Queen_Victoria_Dublin_Mail_Steam_Packet_in_a_snowstorm_on_the_Howth_Rocks%2C_Coast_of_Ireland%2C_between_2_and_3_o%27clock_on_Tuesday_Morning%2C_February_15th_1853%2C_when_80_of_the_unfortunate_Passengers_and_Crew_RMG_PU6699.jpg",
+  title_slide_background_size = "cover",
+  ) #or contain
+```
+
+```{r xaringanextra, include=FALSE, warning=FALSE}
+library(xaringanExtra)
+xaringanExtra::use_animate_all("slide_left")
+xaringanExtra::use_tile_view()
+xaringanExtra::use_panelset()
+xaringanExtra::style_panelset_tabs(font_family = "inherit")
+```
+
+```{r tidyverse, include=FALSE, warning=FALSE}
+library(tidyverse)
+library(knitr)
+theme_set(theme_minimal(base_size = 22))
+```
+
+<style type="text/css">
+.remark-slide-content {
+    font-size: 1.2rem;
+    padding: 1em 4em 1em 4em;
+}
+</style>
+
+# Randomness
+
+- Minimizing squared error *on observed data*
+
+$$
+\text{minimize } \frac{1}{n} \sum_{i=1}^n (y_i - \alpha - \beta x_i)^2
+$$
+
+- Plug-in principle: assuming a probability model, i.e. some joint distribution $p_{X,Y}(x,y)$
+
+$$
+\text{minimize } \mathbb E[(Y - \alpha - \beta X)^2]
+$$
+---
+
+# Generative ML
+
+- Some machine learning methods do not explicitly use probability distributions
+- Those that do use probability are sometimes called "generative models" because they
+  1. Model the "data generation process" (DGP)
+  2. Can be used to generate (synthetic) "data" (sampling with a random number generator)
+  
+This course is mainly focused on methods that do use probability, and we will always try to do so explicitly/transparently (not hiding our assumptions)
+
+---
+
+# Conditional distributions
+
+Within generative machine learning, supervised learning is broadly about modeling the *conditional distribution of the outcome given the features* 
+
+$$p_{Y|X}(y|x) =  p_{X,Y}(x,y) / p_{X}(x)$$
+
+Some methods try to learn this entire distribution, others focus on some summary/functional, e.g.
+
+.pull-left[
+conditional expectation
+
+$$
+\mathbb E_{Y|X}[Y|X]
+$$
+]
+.pull-right[
+or conditional quantile
+
+$$
+Q_{Y|X}(\tau)
+$$
+(for the $\tau$th quantile)
+]
+
+---
+
+![A scatterplot showing some conditional density functions](conditionaldist.png)
+
+[Curves showing](https://stats103.com/regression-inference-part-i/) $p_{Y|X}(y|x)$ at two values of $x$
+
+---
+
+# A variety of objectives
+
+It can be shown (another good **Exercise**!) that
+
+- The conditional expectation function (CEF)
+
+$$f(x) = \mathbb E_{Y|X}[Y|X = x]$$
+minimizes the expected squared loss
+
+$$f(x) = \arg \min_g \mathbb E_{X,Y} \{ [ Y - g(X) ]^2 \}$$
+
+--
+
+- Similarly, **quantile regression** is about, e.g.
+
+$$Q_{Y|X}(0.5) = \arg \min_g \mathbb E_{X,Y} [ |Y - g(X)| ]$$
+
+(for other quantiles, "tilt" the absolute value loss function)
+
+---
+
+# Risk = expected loss
+
+Other examples also fit into this broad framework
+
+For a given **loss function** $L(x,y,g)$, find the optimal "regression" function $f(x)$ that minimizes the risk, i.e.
+
+$$
+R(g) = \mathbb E_{X,Y}[L(X,Y,g)]
+$$
+
+$$f(x) = \arg \min_g R(g)$$
+
+--
+
+*Statistical* machine learning:
+
+$$
+\mathbb E \longleftrightarrow \frac{1}{n} \sum
+$$
+Algorithms can leverage LLN, CLT, subsampling, etc...
+---
+
+# Our focus
+
+- For now, squared error. Other cases similar! (Bias-variance)
+- Later: categorical outcome loss functions (classification)
+
+## Additional modeling assumptions
+
+Linear regression is based on an *assumption* that the conditional expectation function (CEF) is (*or can be adequately approximated as*) linear
+
+$$
+f(x) := \mathbb E_{Y|X}(Y|X) = \beta_0 + \beta_1 X_1 + \cdots + \beta_p X_p
+$$
+
+(**Question**: why no $\varepsilon$ errors in this equation?)
+
+---
+
+# Statistical wisdom
+
+Sometimes this assumption works marvelously
+
+Other times it breaks spectacularly
+
+Often, it's somewhere in the gray area
+
+--
+
+### "All models are wrong, but some are useful"
+
+Always, always, *always* remember [George Box](https://en.wikipedia.org/wiki/All_models_are_wrong):
+
+> Since all models are wrong *the scientist must be alert to what is **importantly wrong***. It is inappropriate to be concerned about mice when there are tigers abroad.
+
+---
+
+# Strengths of machine learning
+
+- Relaxing the linearity assumption and using flexible, non-linear models
+
+- Specialized methods for high-dimensional linear regression, where there are many predictor variables, possibly even $p > n$
+
+- Beating other approaches at pure prediction accuracy, trading off simplicity/interpretability for better predictions
+
+Recently, people have started caring more about interpretability again -- an emphasis in this course

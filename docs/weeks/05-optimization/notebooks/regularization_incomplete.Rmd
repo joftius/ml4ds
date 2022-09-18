@@ -1,0 +1,102 @@
+---
+title: "Regularization"
+author: "LSE ST310"
+date: "18/02/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+#library(tidyverse)
+```
+
+## Ridge regression with glmnet
+
+Use the `glmnet` package to fit a ridge regression model on the same data as in the previous part. Hint: read about the `alpha` input to the `glmnet` function in the documentation.
+
+```{r message = FALSE}
+# install.packages("glmnet") # if necessary
+library(glmnet)
+```
+
+```{r}
+set.seed(1)
+n <- 100
+p <- 1000
+X <- matrix(rnorm(n*p), nrow = n)
+beta <- rpois(p, lambda = 1)
+y <- X %*% beta + rnorm(n)
+
+model_ridge <- glmnet(X, y, intercept = FALSE, alpha = 0)
+```
+
+What does plotting the model object show?
+
+```{r}
+plot(model_ridge, xvar = "lambda")
+```
+
+Try the functions in the `broom` package on the model object
+
+```{r}
+#beta
+```
+
+```{r}
+beta_ridge <- coef(model_ridge, s = 0.000001)[-1,]
+```
+
+## Early stopping
+
+Copy/paste your gradient descent (or stochastic version) code for ordinary linear regression here and use it to try regularization via early stopping
+
+Consider generating data with p larger than n, so the least squares estimator is undefined
+
+
+```{r}
+# Gradient of the ridge loss
+least_squares_gradient <- function(x, y, beta) {
+  -2 * t(x) %*% (y - x %*% beta)
+}
+
+# Loss function
+least_squares_loss <- function(x, y, beta) {
+  sum((y - x %*% beta)^2)
+}
+
+beta0 <- rep(0, p)
+previous_loss <- least_squares_loss(X, y, beta0)
+grad0 <- least_squares_gradient(X, y, beta0)
+beta1 <- beta0 - 0.0001 * grad0
+next_loss <- least_squares_loss(X, y, beta1)
+previous_beta <- beta1
+steps <- 1
+
+while (abs(previous_loss - next_loss) > 0.0001) {
+  gradn <- least_squares_gradient(X, y, previous_beta)
+  next_beta <- previous_beta - (0.99)^steps * gradn / sqrt(sum(gradn^2))
+  if (round(steps/10) == steps/10) print(previous_loss)
+  steps <- steps + 1
+  previous_beta <- next_beta
+  previous_loss <- next_loss
+  next_loss <- least_squares_loss(X, y, next_beta)
+}
+```
+
+```{r}
+mean((previous_beta - beta)^2)
+```
+
+```{r}
+mean((previous_beta - beta_ridge)^2)
+```
+
+
+## Cross-validation
+
+Write a function to randomly split the data into subsets and implement k-fold cross-validation. You can use the `glmnet` function, `broom` functions, but do not use `cv.glmnet` or any other packages that implement cross-validation. The point is to manually implement iterating over the different subsets, computing RSS, and averaging the results
+
+```{r}
+
+```
+

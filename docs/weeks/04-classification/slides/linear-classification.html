@@ -1,0 +1,967 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Machine learning</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Joshua Loftus" />
+    <script src="libs/header-attrs/header-attrs.js"></script>
+    <link href="libs/remark-css/default.css" rel="stylesheet" />
+    <link href="libs/animate.css-xaringan/animate.slide_left.css" rel="stylesheet" />
+    <link href="libs/tile-view/tile-view.css" rel="stylesheet" />
+    <script src="libs/tile-view/tile-view.js"></script>
+    <link href="libs/panelset/panelset.css" rel="stylesheet" />
+    <script src="libs/panelset/panelset.js"></script>
+    <link rel="stylesheet" href="xaringan-themer.css" type="text/css" />
+    <link rel="stylesheet" href="../../../theme.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: bottom, left, title-slide
+
+# Machine learning
+## Linear classification
+### Joshua Loftus
+
+---
+
+
+class: inverse
+
+
+
+
+
+
+
+
+
+&lt;style type="text/css"&gt;
+.remark-slide-content {
+    font-size: 1.2rem;
+    padding: 1em 4em 1em 4em;
+}
+&lt;/style&gt;
+
+
+This lecture is about
+
+# Linearity
+
+in
+
+## supervised machine learning
+
+and especially
+
+### Support Vector Machines
+
+along with other context
+
+
+---
+class: inverse
+
+### Classification
+
+Supervised learning with categorical/qualitative outcomes
+
+"Labels"
+
+Binary thinking might be easier `\(\rightarrow\)` bin / discretise numeric outcomes and do classification instead of regression (warning: information loss)
+
+---
+
+### Mental warm-up: logistic regression 
+
+`$$\mathbb E(Y| \mathbf X = \mathbf x) =  g^{-1}(\mathbf x^T \beta)$$`
+for
+`$$g(p) = \log{\left(\frac{p}{1-p}\right)}$$`
+
+- Other GLMs have different "link" functions `\(g\)`
+- (Linear regression is a special case with `\(g = \text{id}\)`)
+- Multi-class / multinomial / "softmax" regression
+- Estimation/optimization: maximum-likelihood via Newton-Raphson / IRLS
+
+---
+
+
+
+### One predictor, binary outcome
+
+&lt;img src="linear-classification_files/figure-html/logit-1dm-1.png" width="540px" style="display: block; margin: auto;" /&gt;
+
+---
+
+### Classifications/decisions: threshold probability
+
+&lt;img src="linear-classification_files/figure-html/logit-1d-class-1.png" width="540px" style="display: block; margin: auto;" /&gt;
+
+---
+
+### Without giving `\(y\)` a spatial dimension
+
+&lt;img src="linear-classification_files/figure-html/logit-0d-class-1.png" width="540px" style="display: block; margin: auto;" /&gt;
+
+
+---
+
+### Two predictors, binary outcome
+
+&lt;img src="linear-classification_files/figure-html/logit-data-plot-1.png" width="540px" style="display: block; margin: auto;" /&gt;
+
+
+---
+
+### Contours of GLM-predicted class probabilities
+
+&lt;img src="linear-classification_files/figure-html/logit-contour-1.png" width="540px" style="display: block; margin: auto;" /&gt;
+
+---
+class: middle, center
+
+**Classification boundaries** with
+
+## `\(p = 3\)` predictors
+
+### Boundary = plane
+
+## `\(p &gt; 3\)` predictors
+
+### Boundary = hyperplane
+
+(In practice, "high-dimensional" = can't easily plot it)
+
+---
+
+### Logistic regression fitting
+
+Newton-IRLS (equivalent) steps:
+
+$$
+`\begin{eqnarray}
+\hat{\mathbf p}_t &amp; = &amp; g^{-1}(\mathbf X \hat \beta_t)
+&amp; \ \text{ update probs.} \\
+\mathbf W_t &amp; = &amp; \text{diag}[\hat{\mathbf p}_t (1 - \hat{\mathbf p}_t)]  
+&amp; \ \text{ update weights} \\
+\hat{\mathbf{y}}_t &amp; = &amp; g(\hat{\mathbf p}_t) + \mathbf W_t^{-1}(\mathbf y - \hat{\mathbf p}_t)
+&amp; \ \text{ update response}
+\end{eqnarray}`
+$$
+
+and then update parameter estimate:
+
+`$$\hat{\beta}_{t+1} = \arg \min_{\beta} (\hat{\mathbf{y}}_t - \mathbf X \beta)^T \mathbf W_t (\hat{\mathbf{y}}_t - \mathbf X \beta)$$` 
+
+**Note**: larger weights on observations with `\(\hat p\)` closer to 1/2, i.e. the most difficult to classify (*look for variations of this theme*)
+
+.footnote[See Section 4.4.1 of [ESL](https://web.stanford.edu/~hastie/ElemStatLearn/)]
+
+---
+
+###  Challenges
+
+#### Separable case (guaranteed if `\(p &gt; n\)`)
+
+If classes can be perfectly separated, the MLE is undefined, fitting algorithm diverges as `\(\hat \beta\)` coordinates `\(\to \pm \infty\)`
+
+Awkwardly, classification is *too easy*(!?) for this probabilistic approach
+
+--
+
+#### Curse of dimensionality
+
+Biased MLE and wrong variance/asymp. dist. if `\(n/p \to \text{const}\)`, even if `\(&gt; 1\)`
+
+.footnote[See [Sur and Candès, (2019)](https://www.pnas.org/content/116/29/14516)]
+
+---
+class: inverse
+
+### "Generative" supervised learning
+
+Some binary thinking...
+
+- **Science vs humanities**. C. P. Snow, *The Two Cultures and the Scientific Revolution* (1959)
+
+- **Intuition vs logic** or **fast vs slow** (Kahneman, 2011), **fox vs hedgehog** (Berlin, 1953 or Gould, 2003)
+
+- **Algorithm vs inference**, *Statistical Modeling: The Two Cultures* (Breiman, 2001) or *Computer Age Statistical Inference* (Efron and Hastie, 2016)
+
+- **Probabilistic** (generative, random, stochastic) vs physical (geometric, deterministic)
+
+(Of course, none of these binaries are "real")
+
+---
+class: inverse
+
+### Comparison
+
+Probability axioms = **constraints**
+
+#### Without probability
+
+- Prediction accuracy
+- Algorithm efficiency 
+
+--
+
+#### With probability
+
+- Inference: prediction/confidence intervals, hypothesis tests
+- Interpretation: coefficients might be meaningful
+- Model diagnostics
+
+History according to Efron and Hastie: algorithm first (possibly unconstrained), then inference gradually catches up
+
+---
+
+### Support Vector Machines
+
+What if we just want a linear classification boundary?
+
+Forget modeling the class probabilities (maybe inference can catch up later)
+
+Consider the separable case... Classification should be easy!
+
+---
+
+### Support Vector Machines
+
+Define a **linear classifier** `\(f(\mathbf x)\)` by
+
+$$
+f(\mathbf x) = \beta_0 + \mathbf x^T \beta
+$$
+
+with classification boundary `\(f(\mathbf x) = 0\)`, and decision rule
+
+$$
+G(\mathbf x) = \text{sign}[f(\mathbf x)]
+$$
+
+**Notation change**: It's convenient to assume `\(y \in \{ \pm  1 \}\)` instead of 0-1
+
+$$
+\text{Misclassification } \leftrightarrow y \cdot G(\mathbf x) &lt; 0
+$$
+
+--
+
+#### How to choose `\(\beta\)`?
+
+---
+class: inverse, middle
+
+## First some geometric intuition
+
+### Then an interesting tour of generally useful optimization ideas
+
+After SVMs we'll connect these ideas to other methods like ridge regression and lasso (i.e. `\(\ell^1\)`-penalized regression)
+
+---
+
+### Geometric intuition: maximize distance
+
+.pull-left[
+![](islr9.2.png)
+Many linear classifiers with zero training error
+]
+.pull-right[
+![](islr9.3.png)
+Unique classifier with largest distance
+]
+
+
+
+.footnote[Figures from Chapter 9 of [ISLR](https://statlearning.com/)]
+
+---
+
+### Maximizing the "margin" (separable case)
+
+Distance from `\(\mathbf x\)` to the decision boundary `\(\{ \mathbf z : f(\mathbf z) = 0 \}\)` 
+
+`$$\min \| \mathbf x - \mathbf  z \| \text{ s.t. } f(\mathbf z) = 0$$`
+
+is (by orthogonal projection)
+
+`$$\frac{| f(\mathbf x) | }{ \| \beta \|}$$`
+and the smallest such distance in the training data is
+
+`$$\min_{1 \leq i \leq n} \frac{| f(\mathbf x_i) | }{ \| \beta \|}$$`
+
+---
+
+### SVM estimation/optimization (separable case)
+
+So there are infinitely many `\(\beta\)` where on our training data
+
+$$
+y_i f(\mathbf x_i) &gt; 0 \text{ for } 1 \leq i \leq n
+$$
+and we want to find the unique one of these solving
+
+`$$\text{maximize}\left[ \min_{1 \leq i \leq n} \frac{| f(\mathbf x_i) | }{ \| \beta \|} \right]$$`
+
+(*Recurring theme*: optimization/fit depends (more strongly / only) on point(s) closest to the boundary)
+
+---
+
+### Reformulating optimization (separable case)
+
+**Exercise**: convince yourself this is equivalent to
+
+`$$\text{maximize } M$$`
+`$$\text{s.t. }  y_i f(\mathbf x_i) / \| \beta \| \geq M  \text{ for } 1 \leq i \leq n$$`
+
+--
+
+Then, use re-scaling to show it's equivalent to
+
+`$$\text{minimize } \| \beta \|$$`
+`$$\text{s.t. }  y_i (\beta_0 + \mathbf x_i^T \beta) \geq 1  \text{ for } 1 \leq i \leq n$$`
+
+--
+
+Since `\(\text{minimize } \| \beta \| \leftrightarrow \text{minimize } \| \beta \|^2\)` this is a quadratic program with linear inequality constraints, i.e. can use **convex optimization** methods
+
+---
+
+### Non-separable case
+
+Idea: allow a "budget" for constraint violations
+
+If observation `\(i\)` is misclassified then let `\(\xi_i/\|\beta\|\)` be its distance from the boundary. Solve ("soft" SVM in the UML book)
+
+`$$\text{minimize } \| \beta \|^2$$`
+`$$\text{s.t. for } 1 \leq i \leq n,$$`
+`$$y_i (\beta_0 + \mathbf x_i^T \beta) \geq 1 - \xi_i$$`
+`$$\xi_i \geq 0, \sum \xi_i \leq C$$`
+
+**Complexity**: `\(C\)` is a tuning parameter (more about this in a moment)
+
+---
+
+### "Support vectors"
+
+**Exercise**: use any formulation of the SVM optimization problem and [careful calculus](https://en.wikipedia.org/wiki/Karush%E2%80%93Kuhn%E2%80%93Tucker_conditions) to show the optimal `\(\hat \beta\)` can be written as a linear combination of the feature vectors `\(\mathbf x_i\)`.
+
+**Exercise**: also show that `\(\hat \beta\)` can be written as a *sparse* linear combination of `\(\mathbf x_i\)` (with nonzero coefficients only for those observations on or violating the constraint)
+
+(Hint: see ESL 12.2.1)
+
+--
+
+This formalizes part of the *recurring theme* -- solution depends only on a few observations, those closest to the boundary
+
+#### Could provide significant dimension reduction!
+
+---
+
+### Bias-variance trade off (ISLR 9.7)
+
+.pull-left[
+![](islr9.7a.png)
+.center[
+Budget `\(\uparrow\)` \# support vectors `\(\uparrow\)`
+
+Bias `\(\uparrow\)`  Variance `\(\downarrow\)`]
+]
+.pull-right[
+![](islr9.7b.png)
+.center[
+Budget `\(\downarrow\)` \# support vectors `\(\downarrow\)`
+
+Bias `\(\downarrow\)`  Variance `\(\uparrow\)`]
+]
+
+---
+
+### Non-linear classification boundaries
+
+.pull-left[
+&lt;img src="linear-classification_files/figure-html/circle-eg-1.png" width="500px" style="display: block; margin: auto;" /&gt;
+]
+.pull-right[
+&lt;img src="linear-classification_files/figure-html/poly-eg-1.png" width="500px" style="display: block; margin: auto;" /&gt;
+]
+
+
+What if the data looks like this? Game over 😱 for linear classifiers?
+
+---
+
+### Feature transformation
+
+- First, embed predictors in a higher-dimensional space
+
+$$
+\mathbf x \mapsto h(\mathbf x)
+$$
+
+.center[*unsupervised step, without using the outcome*]
+
+--
+
+- Then solve classification (or regression) problem optimizing over much larger(?) space of functions
+
+e.g., this doubles the number of parameters
+
+$$
+(x_1, x_2) \mapsto (x_1, x_2, x_1^2, x_2^2, x_1x_2)
+$$
+$$
+f(\mathbf x) = \beta_0 + \beta_1 x_1 + \beta_2 x_2 + \beta_3 x_1^2 + \beta_4 x_2^2 + \beta_5 x_1x_2
+$$
+is **linear** in the higher-dimensional features
+
+---
+
+### But... which transformations?
+
+- If original feature space has `\(p &gt; 3\)` may not be able to "see" any obvious choices (like previous circle example)
+
+--
+
+- Some choices with nice mathematical and computational properties, and often good performance in practice: **kernels**
+
+--
+
+Background reading on related mathematical concepts/results: [Linear duality](https://en.wikipedia.org/wiki/Dual_space), [Riesz representation theorem](https://en.wikipedia.org/wiki/Riesz_representation_theorem), [RKHSs](https://en.wikipedia.org/wiki/Reproducing_kernel_Hilbert_space), "[Kernel trick](https://en.wikipedia.org/wiki/Kernel_method)", [Representer theorem](https://en.wikipedia.org/wiki/Representer_theorem)
+
+Two key ingredients:
+
+1. Algorithm/optimization depends on transformed features *only through inner products evaluated on training data*
+2. Aforementioned inner products can be computed fast
+
+---
+
+### Kernel methods
+
+I think of these as something like a "parametric version of nearest neighbors"
+
+A **kernel function** is just a generalization of a positive definite matrix, i.e. also an inner product or similar measure
+
+e.g. (in ESL), for any inner product `\(\langle \cdot, \cdot \rangle\)`
+
+- `\(K(\mathbf x, \mathbf x') = \langle \mathbf x, \mathbf x' \rangle\)` is a kernel, and so are
+
+--
+
+- `\(K(\mathbf x, \mathbf x') = (1 + \langle \mathbf x, \mathbf x' \rangle )^d\)` - degree `\(d\)` polynomial
+
+- `\(K(\mathbf x, \mathbf x') = \exp(-\gamma \| \mathbf x - \mathbf x' \|^\alpha)\)` - radial basis, `\(\alpha = 1\)` or `\(2\)`
+
+- `\(K(\mathbf x, \mathbf x') = \tanh(\kappa_1 \langle \mathbf x, \mathbf x' \rangle + \kappa_2)\)` - neural network
+
+---
+
+### OK but what do these give us?
+
+- Fairly automatic way to vastly expand feature space, possibly achieving perfect separation of classes in higher dimensions
+
+e.g. For degree `\(d\)` polynomial, dimension `\(p \mapsto \binom{p+d}{d}\)`
+
+--
+
+- Fast algorithms for trading off complexity
+
+Vary cost parameter, tune with (cross)validation data
+
+Computational complexity depends `\(n\)` and not `\(p\)`, between `\(o(n^3)\)` and `\(o(n^2)\)` depending on problem specifics
+
+--
+
+- Theory of RKHSs 
+
+Provide guarantees, write papers...
+
+---
+
+## Some cool theorems
+
+**Theorem** (Moore–Aronszajn)
+
+For any kernel `\(K\)`, there is a (unique) corresponding Hilbert space of functions [for which `\(K\)` defines the inner product], and a natural norm `\(\| \mathbf x \| = \langle \mathbf x, \mathbf x \rangle^{1/2} = K(\mathbf x, \mathbf x)^{1/2}\)`
+
+---
+
+## Representer theorems
+
+**Theorem** (Wahba, 1990)
+
+For certain loss functions `\(V\)`, and any kernel `\(K\)`, the minimizer of
+
+`$$\sum_{i=1}^n V(y_i - f(\mathbf x_i)) + \lambda \| f \|$$`
+where `\(\| \cdot \|\)` is the norm associated with `\(K\)`, has the form
+
+$$
+\hat f(\cdot) = \sum_{i=1}^n \hat a_i K(\cdot, \mathbf x_i)
+$$
+
+Potentially infinite dimensional problem? *Nope, at most* `\(n\)`
+
+---
+
+## Representer theorems
+
+**Theorem** (Scholkopf, Herbrich, Smola, 2001)
+
+Extended Wahba's result to more general loss functions and penalties of the form
+
+$$
+g(\| f \|)
+$$
+for any strictly increasing `\(g(\cdot)\)`
+
+--
+
+#### Intuition?
+
+Penalized ERM over a function class that's infinite dimensional...
+
+but we only have `\(n\)` observations and it is the *empirical* risk over these `\(n\)`...
+
+---
+
+### Algorithms other than SVM?
+
+Yes, a few...
+
+- Smoothing splines
+- Ridge/lasso regression
+- Gaussian processes
+- PCA/CCA
+- Spectral clustering
+
+Versions of all of these can be combined with feature map and kernel combinations that allow fast evaluation and optimization
+
+---
+
+### Recent kernel usefulness
+
+*To understand deep learning we need to understand kernel learning.* (Belkin, Ma, and Mandal, [ICML 2018](https://arxiv.org/abs/1802.01396))
+
+&gt; ... Certain key phenomena of deep learning are manifested similarly in kernel methods in the modern "overfitted" regime. ...
+
+e.g. Zero training error but not overfit... not surprising!
+
+---
+
+### What about logistic regression?
+
+![](islr9.12.png)
+
+---
+
+### SVM vs logistic regression
+
+
+- SVM preferable if classes separated
+
+- KLR comparable to kernel SVM
+
+- Support vector property: SVM robust to outliers
+
+- It is, apparently, somewhat of a *historical accident* 🙄 that the kernel method became associated with SVMs
+
+---
+class: inverse
+
+### Winner's curse?
+
+Algorithm `\(\to\)` inference, history rhyming
+
+1. New algorithm drops, impressive results
+2. Grandiose claims about algorithm's novelty and "secret sauce"
+3. People start realizing what isn't new, and that the secret sauce [can be used](https://xkcd.com/1838/) as an ingredient in other algorithms 
+
+ESL:
+
+&gt; *In the early literature on support vectors, there were claims that the kernel property of the support vector machine is unique to it and allows one to finesse the curse of dimensionality. Neither of these claims is true...*
+
+
+---
+
+![](googletrends.png)
+
+Why am I telling you this?
+
+---
+
+
+### Some things are (relatively) timeless...
+
+# Mathematical foundations!
+
+Linear algebra and functional analysis: linearity, orthogonality, additivity, basis expansions, duality, etc
+
+Optimization: regularization, equivalent/similar problems, sparsity (primal/dual or observations/parameters), etc
+
+
+(*Maybe you'll see this history rhyming again when we talk about neural networks, or for some not-yet invented new thing...*)
+
+---
+
+### Lasting impacts of SVM/kernels
+
+- Support Vectors
+
+Solution typically depends on only a fraction of training data
+
+Sparsity in observations, robustness
+
+--
+
+- "Automatic" feature engineering
+
+Outside low-dimensional motivating examples, typically don't choose type of kernel very carefully
+
+Ultra-algorithmic supervised ML philosophy: focus on expanding **expressivity** of the function class, let efficient optimization algorithms do the work of "respecting the structure in the data"
+
+Influential idea `\(\to\)` deep learning
+
+
+---
+class: inverse
+
+## End of SVM part
+
+### Time for break
+
+Then: a kernel bridge to high-dimensional regression
+
+and sparsity in features, rather than training examples
+
+---
+
+### General kernel usefulness
+
+Consider e.g. kernel ridge regression
+
+`$$\text{minimize } \sum_{i=1}^n (y_i - f(\mathbf x_i))^2 + \lambda \| f \|^2$$`
+minimizing over an RKHS with norm `\(\| \cdot \|\)`. Then, good things happen, e.g.
+
+$$
+\hat f(\mathbf x) = \mathbf k(\mathbf x)^T (\mathbf K + \lambda n \mathbf I)^{-1} \mathbf y
+$$
+where `\(\mathbf k(\cdot)^T = [K(\mathbf x_1, \cdot ), \ldots, K(\mathbf x_n, \cdot)]\)` and `\(\mathbf K_{ij} = K(\mathbf x_i, \mathbf x_j)\)`
+
+--
+
+**Bayesian interpretation**: MAP estimator for a *Gaussian Process prior on function space* with GP covariance `\(K\)`
+
+.footnote[Adapted from [these](https://en.wikipedia.org/wiki/Bayesian_interpretation_of_kernel_regularization) [notes](https://arxiv.org/abs/1106.6251)]
+
+
+---
+
+### Ridge regression
+
+Also called [Tikhonov regularization](https://en.wikipedia.org/wiki/Tikhonov_regularization) or `\(L^2\)`-penalized regression
+
+#### Problem: 
+
+Design matrix `\(\mathbf X\)` is ill-conditioned or rank deficient, OLS estimator 
+
+$$
+\hat \beta = 
+(\mathbf X^T \mathbf X)^{-1} \mathbf X^T  \mathbf y
+$$
+may be highly variable or undefined because `\(\mathbf X^T \mathbf X\)` is (close to being) uninvertible
+
+--
+
+Guaranteed to happen in **high-dimensional regression** where number of predictors `\(p &gt; n\)`, the sample size
+
+---
+
+### High-dimensional regression
+
+#### Problem:
+
+With `\(p &gt; n\)`, there are generally infinitely many `\(\beta\)` satisfying
+
+$$
+y = \mathbf X \beta
+$$
+Least squares has no unique solution
+
+--
+
+#### Ridge solution
+
+Solve a different, penalized optimization problem
+
+`$$\text{minimize} \| y - \mathbf X \beta \|^2 + \lambda \| \beta \|^2$$`
+for some `\(\lambda &gt; 0\)`.
+
+---
+
+### Ridge solution
+
+It's basically calculus to show this has solution
+
+$$
+\hat \beta = (\mathbf X^T \mathbf X + \lambda \mathbf I)^{-1} \mathbf X^T \mathbf y
+$$
+where `\(\mathbf I\)` is the `\(n \times n\)` identity matrix.
+
+--
+
+**Linearity**: similarly to OLS, the solution is linear in `\(\mathbf y\)`.
+
+**Bayesian interpretation**: MAP estimate for a prior `\(\beta \sim N(0, \tau^2 \mathbf I)\)` with likelihood `\(\mathbf y | \mathbf X, \beta \sim N(\mathbf X \beta, \sigma^2 \mathbf I)\)`
+
+---
+
+### Lasso solution
+
+Notationally similar, just replace the 2-norm penalty with a 1-norm
+
+`$$\| \beta \|_1 = \sum_{j=1}^p |\beta_j|$$`
+and solve
+
+`$$\text{minimize} \| y - \beta_0 - \mathbf X \beta \|^2 + \lambda \| \beta \|_1$$`
+
+--
+
+**No closed-form**: optimization requires iterative algorithms
+
+**Sparsity**: solutions `\(\hat \beta\)` usually have few nonzero entries
+
+Sparse linear models may be considered simpler and more interpretable
+
+
+---
+
+### Lasso regularization solution path
+
+![](http://joshualoftus.com/files/lasso.gif)
+
+---
+
+### Optimization 
+
+Like SVMs, `\(\exists\)` different formulations. *Re-parametrizations*
+
+#### Constrained form (entire solution path)
+
+`$$\text{minimize} \| y - \beta_0 - \mathbf X \beta \|^2$$`
+`$$\text{s.t. } \| \beta \|_1 \leq t$$`
+--
+
+Solve this for some `\(t\)` `\(\leftrightarrow\)` solve the **Lagrangian form** for some `\(\lambda\)`
+
+#### Square-root lasso (alternative to cross-validation)
+
+`$$\text{minimize} \| y - \beta_0 - \mathbf X \beta \| + \lambda \| \beta \|_1$$`
+
+Solve this for deterministic `\(\lambda\)` `\(\leftrightarrow\)` solve lasso at *random* `\(\hat \lambda\)`
+
+---
+
+### Sparsity in feature space
+
+Constrained form + this famous picture (ESL 3.1, lasso vs ridge)
+
+![](sparsity.png)
+
+---
+class: inverse
+
+## The end, for now
+
+In the next part, lecture 6 of the term
+
+- First we'll resume studying the lasso and high-dimensional inference
+
+- Then we'll turn to neural networks
+
+---
+
+### References
+
+- [ESL](https://web.stanford.edu/~hastie/ElemStatLearn/) Chapter 12 for SVMs, 3.4 for ridge and lasso. Supplementary: 5.8 for RKHS in the splines context, and 6 on kernel regression
+
+- [SLS](https://web.stanford.edu/~hastie/StatLearnSparsity/) Chapter 2 on the lasso
+
+#### Other kernel method readings
+
+- [AoS paper](https://projecteuclid.org/euclid.aos/1211819561) with solid definition-theorem presentation for statisticians ([arxiv version](https://arxiv.org/abs/math/0701907))
+
+- R package vignettes for [`kernlab`](https://cran.r-project.org/web/packages/kernlab/vignettes/kernlab.pdf) and/or [`e1071`](https://cran.r-project.org/web/packages/e1071/vignettes/svmdoc.pdf)
+
+- Python scikit learn documentation for [kernel ridge](https://scikit-learn.org/stable/modules/kernel_ridge.html) and [svm](https://scikit-learn.org/stable/modules/svm.html)
+
+
+
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "github",
+"highlightLines": true,
+"highlightSpans": true,
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+(function(time) {
+  var d2 = function(number) {
+    return ('0' + number).slice(-2); // left-pad 0 to minutes/seconds
+  },
+
+  time_format = function(total) {
+    var secs = Math.abs(total) / 1000;
+    var h = Math.floor(secs / 3600);
+    var m = Math.floor(secs % 3600 / 60);
+    var s = Math.round(secs % 60);
+    var res = d2(m) + ':' + d2(s);
+    if (h > 0) res = h + ':' + res;
+    return res;  // [hh:]mm:ss
+  },
+
+  slide_number_div = function(i) {
+    return document.getElementsByClassName('remark-slide-number').item(i);
+  },
+
+  current_page_number = function(i) {
+    return slide_number_div(i).firstChild.textContent;  // text "i / N"
+  };
+
+  var timer = document.createElement('span'); timer.id = 'slide-time-left';
+  var time_left = time, k = slideshow.getCurrentSlideIndex(),
+      last_page_number = current_page_number(k);
+
+  setInterval(function() {
+    time_left = time_left - 1000;
+    timer.innerHTML = ' ' + time_format(time_left);
+    if (time_left < 0) timer.style.color = 'red';
+  }, 1000);
+
+  slide_number_div(k).appendChild(timer);
+
+  slideshow.on('showSlide', function(slide) {
+    var i = slide.getSlideIndex(), n = current_page_number(i);
+    // reset timer when a new slide is shown and the page number is changed
+    if (last_page_number !== n) {
+      time_left = time; last_page_number = n;
+      timer.innerHTML = ' ' + time_format(time); timer.style.color = null;
+    }
+    slide_number_div(i).appendChild(timer);
+  });
+})(59000);
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>

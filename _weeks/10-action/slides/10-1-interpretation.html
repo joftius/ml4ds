@@ -1,0 +1,967 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Machine learning</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Joshua Loftus" />
+    <script src="libs/header-attrs/header-attrs.js"></script>
+    <link href="libs/remark-css/default.css" rel="stylesheet" />
+    <link href="libs/tile-view/tile-view.css" rel="stylesheet" />
+    <script src="libs/tile-view/tile-view.js"></script>
+    <link href="libs/panelset/panelset.css" rel="stylesheet" />
+    <script src="libs/panelset/panelset.js"></script>
+    <link rel="stylesheet" href="xaringan-themer.css" type="text/css" />
+    <link rel="stylesheet" href="../../../theme.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: bottom, left, title-slide
+
+# Machine learning
+## Interpreting ML models
+### Joshua Loftus
+
+---
+
+
+class: inverse
+
+
+
+
+
+
+
+
+
+&lt;style type="text/css"&gt;
+.remark-slide-content {
+    font-size: 1.2rem;
+    padding: 1em 4em 1em 4em;
+}
+&lt;/style&gt;
+
+## **Storytelling** with ML models
+
+Suppose we tuned a model to have good predictions on test data
+
+We often want to interpret/explain the model, not just predict
+
+- Why does the model predict a certain outcome for a given value of the predictors?
+
+- How does the model depend on a specific variable or set of variables?
+
+- Which variables does the model depend on most?
+
+- Can we create plots/visuals to answer any of these, even if `\(p\)` is large?
+
+---
+
+## Interpretation/communication limits
+
+- Human cognition: plots, simple models, **1 or 2 variables**
+
+- Audience: simpler interpretation `\(\to\)` broader audience
+
+- People are usually thinking about **causality**
+
+"Abstract: This paper studies the *association* of `\(X\)` and `\(Y\)`..." *influence* - *tied to* - *drives* - just because you don't use the word "cause" doesn't mean you are communicating clearly or honestly
+
+--
+
+**Danger**: part of the audience will interpret wrongly/causally no matter how careful we are (but we still must try our best)
+
+**Danger**: can't choose audience, information escapes context
+
+---
+class: inverse
+
+
+## Conditioning / observation
+
+`\(\mathbb P(\mathbf y | \mathbf X = \mathbf x)\)`, coefficients, dependence plots, CEF, etc
+
+## Manipulating / intervention
+
+`\(\mathbb P(\mathbf y | \text{do}(\mathbf X = \mathbf x))\)`, ATE, [CATE](https://en.wikipedia.org/wiki/Average_treatment_effect#Heterogenous_treatment_effects), etc
+
+
+#### All interpretations are non-causal by default
+
+Without explicit causal assumptions there are no causal conclusions
+
+"[No causes in, no causes out](https://oxford.universitypressscholarship.com/view/10.1093/0198235070.001.0001/acprof-9780198235071-chapter-3)"
+
+
+
+---
+
+## Plots instead of coefficients
+
+- Plot predictor `\(\mathbf x_j\)` vs `\(\hat f(\mathbf x)\)`
+
+- We saw this with GAMs, which we could interpret this way: slope in plot shows (locally) `\(\frac{\partial}{\partial x_j}\)` of CEF
+
+--
+
+#### Simulated examples
+
+Next we'll walk-through two examples
+
+First when the true CEF is additive, and second when it is not
+
+We'll see how **partial dependence plots** interpret models in both cases, including when an additive model is fit to a truly non-additive relationship
+
+---
+
+### True model is additive
+
+
+```r
+library(tidyverse) 
+*f1 &lt;- function(x) x^2
+*f2 &lt;- function(x) cos(pi*x/2)
+set.seed(1)
+n &lt;- 800
+df &lt;- data.frame(
+  x1 = 2*(runif(n)-1/2),
+  x2 = 2*sort(sample(-100:100 / 50,  n, replace = TRUE))
+) %&gt;%
+  mutate(
+*   CEF = f1(x1) + f2(x2),
+    y = CEF + rnorm(n) 
+)
+```
+
+**Note**: these simple examples have only 2 predictors so 3d-plot can show everything. In higher-dimensional models we may not be able to visualize the interactions we see here
+
+
+---
+
+### Correctly specified GAM
+
+
+```r
+library(gam)
+fit_gam &lt;- gam(y ~ s(x1) + s(x2), data = df)
+par(mfrow = c(1,2))
+plot(fit_gam, se = TRUE, ylim = c(-1,1))
+points(df$x2, f2(df$x2),
+       type = "l", col = "green", lwd = 10)
+```
+
+&lt;img src="10-1-interpretation_files/figure-html/df_plot-1.png" width="864" style="display: block; margin: auto;" /&gt;
+
+
+---
+
+### Can plot entire model since `\(p = 2\)`
+
+.pull-left[
+
+<iframe src="p3d_wcef.html" width="100%" height="400" scrolling="no" seamless="seamless" frameBorder="0"></iframe>
+True CEF
+]
+.pull-right[
+
+<iframe src="p3d_gam.html" width="100%" height="400" scrolling="no" seamless="seamless" frameBorder="0"></iframe>
+GAM estimated
+]
+
+---
+
+### Now true model is **not** additive
+
+Univariate dependence plots are easily interpreted under **additivity assumption** -- like GAMs
+
+**Danger**: does not show associations between predictors, interactions
+
+e.g.
+
+
+```r
+df_int &lt;- df %&gt;%
+  mutate(
+*   CEF = f1(x1) * f2(x2),
+    y = CEF + rnorm(n)
+)
+```
+
+Additivity assumption is now (importantly) wrong
+
+---
+
+### Misspecified GAM
+
+
+```r
+fit_gam_wrong &lt;- gam(y ~ s(x1) + s(x2), data = df_int)
+par(mfrow = c(1,2))
+plot(fit_gam_wrong, ylim = c(-1,1))
+```
+
+&lt;img src="10-1-interpretation_files/figure-html/dfi_plot-1.png" width="576" style="display: block; margin: auto;" /&gt;
+
+Partial dependence on `\(x_1\)` is a parabola opening upward when `\(\cos(x_2) &gt; 0\)` but downward when `\(\cos(x_2) &lt; 0\)` (cancellation)
+
+---
+
+### GAM summaries
+
+
+```r
+gam_summary &lt;- summary(fit_gam)
+wrong_summary &lt;- summary(fit_gam_wrong)
+wrong_summary$anova
+```
+
+```
+## Anova for Nonparametric Effects
+##             Npar Df Npar F     Pr(F)    
+## (Intercept)                             
+## s(x1)             3 0.4497 0.7175862    
+## s(x2)             3 6.9832 0.0001221 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+```
+
+.pull-left[
+
+```r
+gam_summary$null.deviance
+```
+
+```
+## [1] 1316.843
+```
+
+```r
+gam_summary$deviance
+```
+
+```
+## [1] 931.711
+```
+]
+.pull-right[
+
+```r
+wrong_summary$null.deviance
+```
+
+```
+## [1] 726.0882
+```
+
+```r
+wrong_summary$deviance
+```
+
+```
+## [1] 703.4611
+```
+]
+
+
+---
+
+### Strong modeling assumption restricts learning
+
+.pull-left[
+
+<iframe src="p3d_int_wcef.html" width="100%" height="400" scrolling="no" seamless="seamless" frameBorder="0"></iframe>
+True CEF (non-additive)
+]
+.pull-right[
+
+<iframe src="p3d_gam_wrong.html" width="100%" height="400" scrolling="no" seamless="seamless" frameBorder="0"></iframe>
+GAM estimate
+]
+
+---
+class: center, middle
+
+### Danger of interpreting misspecified models
+
+These plots and interaction tests interpret the fitted model
+
+They do not check the model fitting assumptions
+
+#### If we fit models that are importantly wrong, our interpretations can also be importantly wrong
+
+---
+
+### `iml` package
+
+
+```r
+library(iml) # methods for interpretation
+pred_gam &lt;- Predictor$new(fit_gam,
+              data = df_subsample, y = df_subsample$y)
+pdp &lt;- FeatureEffects$new(pred_gam,
+      features = c("x1", "x2"), method = "pdp+ice")
+plot(pdp) + stat_function(fun = f2, color = "green", size = 2)  + ylim(-1,1)
+```
+
+&lt;img src="10-1-interpretation_files/figure-html/df_pdp-1.png" width="648" style="display: block; margin: auto;" /&gt;
+
+---
+
+### Checking for interactions in the predictions
+
+
+```r
+ia &lt;- Interaction$new(pred_gam)
+```
+
+.pull-left[
+
+
+```r
+ia
+```
+
+```
+Interpretation method:  Interaction 
+
+
+Analysed predictor: 
+Prediction task: unknown 
+
+
+Analysed data:
+Sampling from data.frame with 240 rows and 3 columns.
+
+Head of results:
+   .feature .interaction
+1:       x1 7.552791e-17
+2:       x2 1.445957e-16
+3:        y 0.000000e+00
+```
+]
+
+.pull-right[
+
+```r
+plot(ia) + xlim(0,1)
+```
+
+&lt;img src="10-1-interpretation_files/figure-html/unnamed-chunk-12-1.png" width="504" /&gt;
+]
+
+---
+
+
+
+```r
+pred_gamw &lt;- Predictor$new(fit_gam_wrong, data = df_subsample,
+                y = df_subsample$y)
+pdp &lt;- FeatureEffects$new(pred_gamw,
+      features = c("x1", "x2"),
+      method = "pdp+ice")
+plot(pdp) + ylim(-1,1)
+```
+
+&lt;img src="10-1-interpretation_files/figure-html/df_pdp_int-1.png" width="648" style="display: block; margin: auto;" /&gt;
+
+---
+
+### Checking for interactions **in the predictions**
+
+
+```r
+ia &lt;- Interaction$new(pred_gamw)
+```
+
+.pull-left[
+
+
+```r
+ia
+```
+
+```
+Interpretation method:  Interaction 
+
+
+Analysed predictor: 
+Prediction task: unknown 
+
+
+Analysed data:
+Sampling from data.frame with 240 rows and 3 columns.
+
+Head of results:
+   .feature .interaction
+1:       x1 1.222305e-16
+2:       x2 1.674288e-16
+3:        y 0.000000e+00
+```
+]
+
+.pull-right[
+
+```r
+plot(ia) + xlim(0,1)
+```
+
+&lt;img src="10-1-interpretation_files/figure-html/unnamed-chunk-15-1.png" width="504" /&gt;
+
+
+]
+
+---
+
+### Regression trees + bagging
+
+
+```r
+library(randomForest)
+fit_rf &lt;- randomForest(y ~ ., ntree = 100, mtry = 2,
+                  minsize = 20, data = df_int_noCEF)
+pred_rf &lt;- Predictor$new(fit_rf, data = df_subsample, y = df_subsample$y)
+pdp &lt;- FeatureEffects$new(pred_rf,
+      features = c("x1", "x2"), method = "pdp+ice")
+plot(pdp) + ylim(-1,1)
+```
+
+&lt;img src="10-1-interpretation_files/figure-html/dfi_plot2-1.png" width="864" style="display: block; margin: auto;" /&gt;
+
+---
+
+### Tree methods can fit interactions
+
+
+```r
+ia &lt;- Interaction$new(pred_rf)
+```
+
+.pull-left[
+
+
+```r
+ia
+```
+
+```
+Interpretation method:  Interaction 
+
+
+Analysed predictor: 
+Prediction task: unknown 
+
+
+Analysed data:
+Sampling from data.frame with 240 rows and 3 columns.
+
+Head of results:
+   .feature .interaction
+1:       x1    0.7504087
+2:       x2    0.7715073
+3:        y    0.0000000
+```
+]
+
+.pull-right[
+
+```r
+plot(ia) + xlim(0,1)
+```
+
+&lt;img src="10-1-interpretation_files/figure-html/unnamed-chunk-18-1.png" width="504" /&gt;
+]
+
+---
+
+### Tree methods aren't smooth
+
+.pull-left[
+
+<iframe src="p3d_int_wcef.html" width="100%" height="400" scrolling="no" seamless="seamless" frameBorder="0"></iframe>
+True CEF
+]
+.pull-right[
+
+<iframe src="p3d_rf.html" width="100%" height="400" scrolling="no" seamless="seamless" frameBorder="0"></iframe>
+Bagged trees estimate
+]
+
+
+
+
+
+
+
+
+
+---
+
+### Smooth and non-additive approach
+
+
+```r
+library(kernlab)
+fit_ksvm &lt;- ksvm(y ~ ., kernel = rbfdot(sigma = 2), data = df_int_noCEF)
+pred_ksvm &lt;- Predictor$new(fit_ksvm, data = df_subsample %&gt;% select(-y), y = df_subsample$y,
+  predict.fun=function(object, newdata) predict(object, newdata))
+pdp &lt;- FeatureEffects$new(pred_ksvm,
+      features = c("x1", "x2"), method = "pdp+ice")
+plot(pdp) + ylim(-1,1)
+```
+
+&lt;img src="10-1-interpretation_files/figure-html/dfi_plot3-1.png" width="864" style="display: block; margin: auto;" /&gt;
+
+---
+
+### RBF kernel-SVM model fits interactions
+
+
+```r
+ia &lt;- Interaction$new(pred_ksvm)
+```
+
+.pull-left[
+
+
+```r
+ia
+```
+
+```
+Interpretation method:  Interaction 
+
+
+Analysed predictor: 
+Prediction task: unknown 
+
+
+Analysed data:
+Sampling from data.frame with 240 rows and 2 columns.
+
+Head of results:
+   .feature .interaction
+1:       x1    0.7838063
+2:       x2    0.8538608
+```
+]
+
+.pull-right[
+
+```r
+plot(ia) + xlim(0,1)
+```
+
+&lt;img src="10-1-interpretation_files/figure-html/unnamed-chunk-23-1.png" width="504" /&gt;
+]
+
+---
+
+### Best fit (for this example)?
+
+.pull-left[
+
+<iframe src="p3d_int_wcef.html" width="100%" height="400" scrolling="no" seamless="seamless" frameBorder="0"></iframe>
+True CEF
+]
+.pull-right[
+
+<iframe src="p3d_ksvm.html" width="100%" height="400" scrolling="no" seamless="seamless" frameBorder="0"></iframe>
+RBF kernel-SVM estimate
+]
+
+
+
+---
+
+### What to do about other variables?
+
+For models with multiple predictors, partial dependence plots can hide model structure
+
+**Danger**: simple interpretation methods can be misleading, e.g. simple 2d-plots when the model is not additive
+
+Options
+
+- Hold other variables fixed (e.g. at medians), `plotmo` default
+
+- Average over them, `pdp` method
+
+- Plot a curve for each observation, `ice` method
+
+Each has pros/cons, no satisfactory answer for dependence
+
+---
+
+### Higher dimensions
+
+- When `\(p &gt; 2\)`...
+
+Many plots: `\(p\)` univariate plots, `\(\binom{p}{2}\)` 3d plots, and 3d plots no longer show the whole model...
+
+Focus on one (or few) predictors of interest
+
+Simpler, fewer opportunities for interpretation errors
+
+But *each plot now potentially hides more of the model's complexity*
+
+- If `\(n\)` is (too) large
+
+Computational complexity, very busy plots (e.g. `ice` plots)
+
+Downsample, use a random fraction of data
+
+---
+class: inverse
+
+###  (Local) surrogate/explanatory models
+
+Fit simple models to explain the predictions of a complex one
+
+From a **class of simple models**, let `\(\hat g\)` be the closest model to `\(\hat f\)`
+
+- **Local**: explanation for an individual prediction
+
+Different simple models `\(\hat g\)` for different parts of the predictor space, more complicated interpretation
+
+- **Global**: explanation for the overall model
+
+Simpler interpretation, but usually less fidelity to `\(\hat f\)`
+
+---
+
+### Calculus analogy (warning: only an analogy)
+
+Taylor expansion: approximate a differentiable function (locally) by a linear one (or polynomial). Image from [Wikipedia](https://en.wikipedia.org/wiki/Tangent_space)
+
+![](https://upload.wikimedia.org/wikipedia/commons/e/e7/Tangentialvektor.svg)
+
+
+---
+
+### Models for different purposes
+
+| Prediction      | Interpretation |
+| ----------- | ----------- |
+| `\(\hat f(\mathbf x)\)` complex, fit to `\(\mathbf y\)` | `\(\hat g(\mathbf  z)\)` simple, fit to `\(\hat f(\mathbf x)\)` |
+| Accuracy on test data | Why did `\(\hat f\)` predict this value? |
+| Original features `\(\mathbf x\)` | Simplified features `\(\mathbf z = \mathbf z(\mathbf x)\)` |
+
+Fit `\(\hat g\)` using e.g. lasso, or a simple tree
+
+For text/image data, `\(\mathbf z\)` could be indicators for specific words or regions of an image
+
+---
+
+### LIME
+
+#### Local Interpretable Model-Agnostic Explanations
+
+
+
+```r
+x_local &lt;- data.frame(x1 = 0.9, x2 = 0)
+lime_ksvm &lt;- LocalModel$new(pred_ksvm, k = 2, x.interest = x_local,
+                      dist.fun = "euclidean", kernel.width = .5)
+lime_ksvm$results
+```
+
+```
+##           beta x.recoded     effect x.original feature feature.value
+## x1 0.016956854       0.9 0.01526117        0.9      x1        x1=0.9
+## x2 0.008163716       0.0 0.00000000          0      x2          x2=0
+```
+
+
+
+```
+##           beta x.recoded      effect x.original feature feature.value
+## x1 -0.02745069       0.9 -0.02470562        0.9      x1        x1=0.9
+## x2 -0.04194215       1.0 -0.04194215          1      x2          x2=1
+```
+
+
+
+```
+##           beta x.recoded      effect x.original feature feature.value
+## x1 -0.21064259       0.9 -0.18957833        0.9      x1        x1=0.9
+## x2 -0.02547879       2.0 -0.05095757          2      x2          x2=2
+```
+
+Recall the CEF `\(= x_1^2 \cos(\pi x_2 / 2)\)`
+
+---
+class: inverse
+
+## Feature/variable "importance"
+
+- Which predictors are *used most* by the model?
+
+- Does not necessarily tell us about **causation** (none of these methods do, but an important reminder)
+
+#### Tree-specific importance
+
+When `\(x_j\)` is used for a split, how much does the accuracy improve? Average over all splits (across all bagged trees)
+
+#### Permutation importance
+
+Permute values of predictor `\(x_j\)`. How much does the accuracy of the model decrease?
+
+---
+
+### Local + "fair" importance
+
+Prediction is payoff, predictors are players, **Shapley values** distribute the payoff in a [fair](https://en.wikipedia.org/wiki/Shapley_value#Characterization) way
+
+Change in prediction when adding variable `\(x_j\)` to another other subset of predictors, averaged over all subsets
+
+
+```r
+ksvm_shapley &lt;- Shapley$new(pred_ksvm, x.interest = x_local)
+ksvm_shapley$results
+```
+
+```
+##   feature        phi    phi.var feature.value
+## 1      x1 0.09011933 0.07374733        x1=0.9
+## 2      x2 0.35289048 0.16499725          x2=0
+```
+
+
+```
+##   feature        phi   phi.var feature.value
+## 1      x1 0.04709425 0.1306717        x1=0.9
+## 2      x2 0.45565173 0.2050496          x2=0
+```
+
+
+```
+##   feature          phi    phi.var feature.value
+## 1      x1 -0.009760708 0.05625744          x1=0
+## 2      x2  0.046407324 0.03980042          x2=1
+```
+
+
+---
+class: inverse
+
+## Interpretation challenges
+
+### Tuning
+
+**Trading off complexity of interpretation**: fidelity to the model vs simplicity of explanations
+
+How simple (e.g. sparse)?
+
+For local explanations, how local?
+
+---
+class: inverse
+
+## Interpretation challenges
+
+### Error
+
+**Inaccurate interpretation of a good model**: reach wrong conclusions about why model generalizes well
+
+Univariate plots or local surrogate may be too simple, poorly fitting to `\(\hat f\)`. Model explanations can even be optimized to be misleading (e.g. to give appearance of compliance with regulations, see "[fairwashing](http://proceedings.mlr.press/v97/aivodji19a.html)")
+
+**Accurate interpretation of a bad model**: understanding the model may increase confidence, leading to greater surprise when the model fails
+
+e.g. model with poor OOD generalization used in a context where DGP changes
+
+---
+class: inverse
+
+## Interpretation challenges
+
+### Communication
+
+Some of these methods are still quite technical
+
+Variable importance measures with randomized computation, values can change
+
+Many of these tools are popular because software makes it easy to get simple output, but may not understand the method they are using (*ask someone using Shapley values how to compute them...*)
+
+**Exercise**: explain to different audiences why variable importance cannot be interpreted as strength of a causal relationship
+
+---
+
+## Additional reading
+
+- [Free online textbook](https://christophm.github.io/interpretable-ml-book/) on interpretability by Christoph Molnar
+
+- [Vignette](https://cran.r-project.org/web/packages/iml/vignettes/intro.html) for `iml` package by Molnar
+
+- [Vignette](https://cran.r-project.org/web/packages/lime/vignettes/Understanding_lime.html) for `lime` package
+
+- [R tutorial](https://uc-r.github.io/lime) on lime
+
+- [lime homepage](https://homes.cs.washington.edu/~marcotcr/blog/lime/) with links to Python package
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "github",
+"highlightLines": true,
+"highlightSpans": true,
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+(function(time) {
+  var d2 = function(number) {
+    return ('0' + number).slice(-2); // left-pad 0 to minutes/seconds
+  },
+
+  time_format = function(total) {
+    var secs = Math.abs(total) / 1000;
+    var h = Math.floor(secs / 3600);
+    var m = Math.floor(secs % 3600 / 60);
+    var s = Math.round(secs % 60);
+    var res = d2(m) + ':' + d2(s);
+    if (h > 0) res = h + ':' + res;
+    return res;  // [hh:]mm:ss
+  },
+
+  slide_number_div = function(i) {
+    return document.getElementsByClassName('remark-slide-number').item(i);
+  },
+
+  current_page_number = function(i) {
+    return slide_number_div(i).firstChild.textContent;  // text "i / N"
+  };
+
+  var timer = document.createElement('span'); timer.id = 'slide-time-left';
+  var time_left = time, k = slideshow.getCurrentSlideIndex(),
+      last_page_number = current_page_number(k);
+
+  setInterval(function() {
+    time_left = time_left - 1000;
+    timer.innerHTML = ' ' + time_format(time_left);
+    if (time_left < 0) timer.style.color = 'red';
+  }, 1000);
+
+  slide_number_div(k).appendChild(timer);
+
+  slideshow.on('showSlide', function(slide) {
+    var i = slide.getSlideIndex(), n = current_page_number(i);
+    // reset timer when a new slide is shown and the page number is changed
+    if (last_page_number !== n) {
+      time_left = time; last_page_number = n;
+      timer.innerHTML = ' ' + time_format(time); timer.style.color = null;
+    }
+    slide_number_div(i).appendChild(timer);
+  });
+})(59000);
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>

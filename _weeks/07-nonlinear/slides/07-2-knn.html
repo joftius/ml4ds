@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Machine learning</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Joshua Loftus" />
+    <script src="libs/header-attrs/header-attrs.js"></script>
+    <link href="libs/remark-css/default.css" rel="stylesheet" />
+    <link href="libs/tile-view/tile-view.css" rel="stylesheet" />
+    <script src="libs/tile-view/tile-view.js"></script>
+    <link href="libs/panelset/panelset.css" rel="stylesheet" />
+    <script src="libs/panelset/panelset.js"></script>
+    <link rel="stylesheet" href="xaringan-themer.css" type="text/css" />
+    <link rel="stylesheet" href="../../../theme.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: bottom, left, title-slide
+
+# Machine learning
+## Nearest neighbors
+### Joshua Loftus
+
+---
+
+
+class: inverse
+
+
+
+
+
+
+
+
+
+&lt;style type="text/css"&gt;
+.remark-slide-content {
+    font-size: 1.2rem;
+    padding: 1em 4em 1em 4em;
+}
+&lt;/style&gt;
+
+## Nearest neighbors
+
+"Literally just predict using the `\(k\)` nearest training points"
+
+- Exemplar of local + "model-free" machine learning
+
+- Not generative (no underlying probability model)
+
+- Non-parametric
+
+- Requires specifying a **distance metric** defining "near"
+
+  - Common choices: your favorite norms, e.g. `\(L^1\)`, `\(L^2\)`, `\(L^\infty\)`, Mahalanobis (standardizing `\(\mathbf X\)` first then doing `\(L^2\)`)
+  
+  - Probably not obvious which to choose, in practice may try several
+
+---
+
+
+## Voronoi diagrams: `\(k\)`-NN with `\(k = 1\)`
+
+&lt;img src="07-2-knn_files/figure-html/circle-eg-1.png" width="504" style="display: block; margin: auto;" /&gt;
+
+---
+
+### Geometric intuition for `\(k &gt; 1\)`
+
+- Voronoi diagram shows 1-nearest neighbor regions
+
+  - Each of these is an intersection&lt;sup&gt;1&lt;/sup&gt;.footnote[intersection preserves convexity, union does not]  of half-spaces, i.e. a convex polytope 
+  
+  - But contiguous classification regions are unions&lt;sup&gt;2&lt;/sup&gt; of these, hence non-convex (see next slide)
+
+- Within each region, remove the training point in that region and draw the Voronoi diagram in that region, finding the 2nd nearest neighbor subregions
+
+- Repeat
+
+---
+
+### `\(k\)`-NN classification regions with `\(k = 1\)`
+
+&lt;img src="07-2-knn_files/figure-html/poly-eg-1.png" width="504" style="display: block; margin: auto;" /&gt;
+
+---
+
+### `\(k\)`-NN classification regions with `\(k = 3\)`
+
+
+
+&lt;img src="07-2-knn_files/figure-html/poly-eg3-1.png" width="504" style="display: block; margin: auto;" /&gt;
+
+---
+
+### `\(k\)`-NN classification regions with `\(k = 5\)`
+
+
+
+&lt;img src="07-2-knn_files/figure-html/poly-eg5-1.png" width="504" style="display: block; margin: auto;" /&gt;
+
+---
+
+### `\(k\)`-NN classification regions with `\(k = 7\)`
+
+
+
+&lt;img src="07-2-knn_files/figure-html/poly-eg7-1.png" width="504" style="display: block; margin: auto;" /&gt;
+
+
+---
+
+### `\(k\)`-NN classification regions with `\(k = 11\)`
+
+
+
+&lt;img src="07-2-knn_files/figure-html/poly-eg11-1.png" width="504" style="display: block; margin: auto;" /&gt;
+
+
+---
+
+### `\(k\)`-NN classification regions with `\(k = 49\)`
+
+
+
+&lt;img src="07-2-knn_files/figure-html/poly-eg49-1.png" width="504" style="display: block; margin: auto;" /&gt;
+
+
+---
+
+### `\(k\)`-NN classification regions with `\(k = 51\)`
+
+
+
+&lt;img src="07-2-knn_files/figure-html/poly-eg51-1.png" width="504" style="display: block; margin: auto;" /&gt;
+
+---
+
+### Complexity and consistency
+
+Assuming a generative (probability) model, it can be shown
+
+- Degrees of freedom `\(= n/k\)`
+
+  - Most complex if `\(k = 1\)`
+  - Often use `\(1/k\)` as complexity measure
+  - One global constant if `\(k = n\)`
+
+- Consistency as `\(n \to \infty\)` with `\(p\)` fixed
+
+  - For `\(k = 1\)`, `\(1\)`-NN achieves `\(2 (\text{Bayes error rate})\)`
+  - If `\(k \to \infty\)` but `\(k/n \to 0\)` then `\(k\)`-NN achieves Bayes rate
+
+---
+
+###  Computational complexity
+
+For **a single new test point**:
+
+1. Compute `\(p\)`-dimensional distances to all `\(n\)` training points
+2. Select training points with smallest `\(k\)` distances
+3. Compute the average for regression, or tally votes for class probability estimates
+
+--
+
+Step 1 is about `\(o(np)\)` time (for most distance metrics)
+
+Step 2 is `\(o(n\log(n))\)` or `\(o(nk)\)` time (full sort, or smallest `\(k\)`)
+
+Step 3 is `\(o(pk)\)` time
+
+If `\(n \gg p\)` then the cost is roughly `\(o(n(p+k))\)`
+
+If `\(n \not\gg p\)` then nearest neighbors might be a bad idea
+
+---
+
+### Extensions and limitations
+
+- Distance: learn a distance metric using some training data
+- *Curse of dimensionality*: in high dimensions, the "nearest" points are still far away 😢
+  - **Exercise**: prove some example of this
+  - Not just `\(k\)`-NN, all local methods suffer. Need to aggregate information in a more global model/parameters  
+- Combine with other steps/methods:
+  - e.g. first do dimension reduction (select top few principal components), then `\(k\)`-NN
+  - e.g. use weights other than `\(1/k\)` (maybe smoother)
+- *Interpretability*: no coefficients or model summaries, purely focused on prediction
+- Memory-based methods: need to store and re-use entire training data for each new prediction
+
+---
+class: inverse
+
+## Simplicity 
+
+Localized predictions from using nearest training points -- good for intuition about local methods in general
+
+## Baseline for comparison
+
+If you do a lot of theoretical/computational work to develop another predictive ML method and it doesn't predict as well as `\(k\)`-NN... then it better at least have some other advantages (like interpretability or out-of-distribution generalization)
+
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "github",
+"highlightLines": true,
+"highlightSpans": true,
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+(function(time) {
+  var d2 = function(number) {
+    return ('0' + number).slice(-2); // left-pad 0 to minutes/seconds
+  },
+
+  time_format = function(total) {
+    var secs = Math.abs(total) / 1000;
+    var h = Math.floor(secs / 3600);
+    var m = Math.floor(secs % 3600 / 60);
+    var s = Math.round(secs % 60);
+    var res = d2(m) + ':' + d2(s);
+    if (h > 0) res = h + ':' + res;
+    return res;  // [hh:]mm:ss
+  },
+
+  slide_number_div = function(i) {
+    return document.getElementsByClassName('remark-slide-number').item(i);
+  },
+
+  current_page_number = function(i) {
+    return slide_number_div(i).firstChild.textContent;  // text "i / N"
+  };
+
+  var timer = document.createElement('span'); timer.id = 'slide-time-left';
+  var time_left = time, k = slideshow.getCurrentSlideIndex(),
+      last_page_number = current_page_number(k);
+
+  setInterval(function() {
+    time_left = time_left - 1000;
+    timer.innerHTML = ' ' + time_format(time_left);
+    if (time_left < 0) timer.style.color = 'red';
+  }, 1000);
+
+  slide_number_div(k).appendChild(timer);
+
+  slideshow.on('showSlide', function(slide) {
+    var i = slide.getSlideIndex(), n = current_page_number(i);
+    // reset timer when a new slide is shown and the page number is changed
+    if (last_page_number !== n) {
+      time_left = time; last_page_number = n;
+      timer.innerHTML = ' ' + time_format(time); timer.style.color = null;
+    }
+    slide_number_div(i).appendChild(timer);
+  });
+})(59000);
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>

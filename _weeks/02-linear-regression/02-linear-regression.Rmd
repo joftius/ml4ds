@@ -1,0 +1,43 @@
+---
+title: "2 Linear regression"
+description: |
+  Reviewing linear regression and framing it as a prototypical example and source of intuition for other machine learning methods.
+author:
+  - name: Joshua Loftus
+date: 10-10-2021
+output:
+  distill::distill_article:
+    self_contained: false
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+knitr::opts_chunk$set(fig.retina = 3, warning = FALSE, message = FALSE)
+library(tidyverse)
+library(knitr)
+library(gapminder)
+theme_set(theme_minimal(base_size = 22))
+```
+
+## Machine learning before the information age
+
+## Multiple regression
+
+Regression, when conditioning on more than one predictor variable.
+
+## Slides and notebooks
+
+[Slides](slides/02-1-regression.html) for simple regression video ([PDF](slides/simple_regression.pdf))
+
+[Notebook](notebooks/gapminder-simple.html) for `gapminder` example
+
+[Slides](slides/02-2-risk.html) for risk and CEFs video ([PDF](slides/risk_CEFs.pdf))
+
+[Slides](slides/02-3-multiple.html) for multiple regression
+
+[Notebook](notebooks/seminar_regression.html) for seminar
+
+[Exercises](exercises/set1.html) 
+
+

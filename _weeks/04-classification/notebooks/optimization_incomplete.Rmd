@@ -1,0 +1,177 @@
+---
+title: "Optimization for machine learning"
+author: "Joshua Loftus"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse) # required
+library(broom)     # required
+library(modelr)    # for data_grid
+library(GGally)
+theme_set(theme_minimal(base_size = 22))
+```
+
+
+# 1-d smooth regression example
+
+## Example data
+
+Generate a one-dimensional example with a non-linear relationship
+
+```{r}
+# change this function
+f <- function(x) sin(4*pi*x)
+n <- 200
+train1d <- 
+  data.frame(
+    x = rbeta(n, 1, 3)
+    ) %>%
+  # change the noise level sd
+  mutate(y = f(x) + rnorm(n, sd = .1))
+
+# plot data and loess curve
+ggplot(train1d, aes(x, y)) + 
+  geom_point() +
+  geom_smooth()
+```
+
+Linear regression with a polynomial transform of x
+
+```{r}
+model_lm <- lm(y ~ poly(x, 5), data = train1d)
+
+train1d_grid <- 
+  data_grid(train1d,
+          x = seq_range(c(x, 1), 500, expand = .05))
+
+augment(model_lm,
+        newdata = train1d_grid) %>%
+  ggplot(aes(x, y)) +
+  geom_point(data = train1d) +
+  geom_line(aes(y = .fitted))
+```
+
+## Gradient descent
+
+Goal: implement gradient descent and use it to solve for the coefficients of the above linear model
+
+Hint: `model.matrix(model_lm)` can give you the predictor matrix
+
+### Step 1: write functions to output the least squares loss and its gradient
+
+```{r}
+
+```
+
+### Step 2: write a loop to take multiple steps in the direction of the negative gradient, keeping step size fixed
+
+```{r}
+
+```
+
+### Step 3: write a function to step in the direction of the negative gradient until the loss function no longer decreases by a certain amount, keeping step size fixed
+
+```{r}
+
+```
+
+### Step 4: experiment with manually decreasing the stepsize and convergence threshold
+
+```{r}
+
+```
+
+### Step 5: use the Barzilai-Borwein method to choose step size
+
+See https://en.wikipedia.org/wiki/Gradient_descent
+
+```{r}
+
+```
+
+# Classification example
+
+## Generate data
+
+Which predictors have nonzero coefficients?
+
+```{r}
+n <- 100; p <- 4; sparsity <- 2
+x <- matrix(rnorm(n*p), nrow = n)
+true_beta <- c(rep(1, sparsity), rep(0, p - sparsity))
+mu <- x %*% true_beta
+px <- exp(mu)/(1+exp(mu))
+y <- rbinom(n, 1, px)
+train_hd <- data.frame(y = as.factor(y), x = x)
+```
+
+```{r}
+train_hd %>% 
+  select(y, num_range("x.", 1:4)) %>%
+  ggpairs(progress = F)
+```
+## Implement gradient descent
+
+First try this with logistic loss function
+
+### Step 1: use numerical differential to approximate gradient
+
+(see references below)
+
+```{r}
+
+```
+
+### Step 5: full implementation
+
+```{r}
+
+```
+
+### Check answer with results from `glm` (if possible, when p < n)
+
+```{r}
+glm(y ~ x, family = "binomial") %>%
+  ggcoef()
+```
+# High dimensional regression and SGD
+
+## Generate data
+
+```{r}
+n <- 100; p <- 200; sparsity <- 3
+x <- matrix(rnorm(n*p), nrow = n)
+true_beta <- c(rep(1, sparsity), rep(0, p - sparsity))
+y <- x %*% true_beta
+train_hd <- data.frame(y = y, x = x)
+```
+
+```{r}
+train_hd %>% 
+  select(y, num_range("x.", 1:6)) %>%
+  ggpairs(progress = F)
+```
+
+## Implement SGD for least squares
+
+See the references for hints
+
+```{r}
+
+```
+
+Question: does it converge? There is no unique solution for least squares in high dimensional regression.
+
+# Extra practice
+
+- Modify the least squares loss function by adding a penalty on the coefficients, e.g. loss = MSE + L*beta^2, where L is a non-negative constant. Compute the new gradient and implement SGD with this loss function. Try various values of L on the same dataset, and implement "tuning" to find the best value of L 
+
+- Implement SGD for logistic and hinge loss functions, and try it out on some examples of data that you generate where you know the true answer
+
+# References
+
+- https://mlstory.org/optimization.html for gradient descent, stochastic gradient descent, SGD quick start guide
+- https://en.wikipedia.org/wiki/Numerical_differentiation for symmetric difference quotient, step size
+- Type `.Machine` in the console and look for `double.eps`

@@ -1,0 +1,39 @@
+---
+title: "10 From prediction to action"
+description: |
+  Supervised machine learning methods excel at predicting an outcome. But being able to predict an outcome does not mean we know how to change it, or that we should.
+author:
+  - name: Joshua Loftus
+date: 10-02-2021
+output:
+  distill::distill_article:
+    self_contained: false
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+knitr::opts_chunk$set(fig.retina = 3, warning = FALSE, message = FALSE)
+library(tidyverse)
+library(knitr)
+library(gapminder)
+theme_set(theme_minimal(base_size = 22))
+```
+
+## Interpretation
+
+Why did the model *predict* this outcome?
+
+Why did this outcome *occur*?
+
+## Professional ethics
+
+Why are we doing any of this?
+
+## (not active yet) Slides, notebooks, exercises
+
+[Slides](slides/10-1-interpretation.html) for interpretation ([PDF])
+
+[Slides](slides/10-2-changetheworld.html) for ethics ([PDF])
+
+[Notebook](notebooks/iml.html) for interpretation methods
+

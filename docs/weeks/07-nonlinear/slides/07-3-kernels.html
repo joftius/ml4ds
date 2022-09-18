@@ -1,0 +1,685 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Machine learning</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Joshua Loftus" />
+    <script src="libs/header-attrs/header-attrs.js"></script>
+    <link href="libs/remark-css/default.css" rel="stylesheet" />
+    <link href="libs/tile-view/tile-view.css" rel="stylesheet" />
+    <script src="libs/tile-view/tile-view.js"></script>
+    <link href="libs/panelset/panelset.css" rel="stylesheet" />
+    <script src="libs/panelset/panelset.js"></script>
+    <link rel="stylesheet" href="xaringan-themer.css" type="text/css" />
+    <link rel="stylesheet" href="../../../theme.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: bottom, left, title-slide
+
+# Machine learning
+## Kernel methods
+### Joshua Loftus
+
+---
+
+
+class: inverse
+
+
+
+
+
+
+
+
+
+&lt;style type="text/css"&gt;
+.remark-slide-content {
+    font-size: 1.2rem;
+    padding: 1em 4em 1em 4em;
+}
+&lt;/style&gt;
+
+# Kernel methods
+
+Distances in higher-dimensional/functional spaces
+
+- Like a **smoother** version of nearest neighbors
+
+- **Feature embedding**: fairly automatic way to embed predictors in higher-dimensional spaces
+
+- Computational speed-ups in special cases allow high-dimensions and large datasets ("**kernel trick**")
+
+- Close mathematical ties to **penalized optimization over function spaces**
+
+---
+
+### Preview: `\(k\)`-NN vs kSVM decision boundaries
+
+.pull-left[
+![](07-2-knn_files/figure-html/poly-eg11-1.png)
+.center[
+`\(k\text{-NN}\)` with `\(k = 11\)`
+]
+]
+.pull-right[
+
+
+
+
+
+
+&lt;img src="07-3-kernels_files/figure-html/poly-svm-plot-1.png" width="504" /&gt;
+.center[SVM with poly. kernel]
+]
+
+---
+
+### e.g. Polynomial embedding
+
+Consider this polynomial transformation:
+
+$$
+h(x_1, x_2) = (x_1, x_2, x_1^2, x_2^2, x_1x_2)
+$$
+This function `\(f\)` is **linear** in the higher-dimensional features
+
+
+$$
+f(\mathbf x) = \color{green}{\beta_0} + \color{green}{\beta_1} x_1 + \color{green}{\beta_2} x_2 + \color{purple}{\beta_3} x_1^2 + \color{purple}{\beta_4} x_2^2 + \color{purple}{\beta_5} x_1x_2
+$$
+$$
+= \beta_0 + \beta^T h(\mathbf x)
+$$
+
+---
+
+### Separating hyperplane
+
+[Wikipedia](https://en.wikipedia.org/wiki/Kernel_method) example showing a non-linear decision boundary in 2-dimensions, and separation with a linear decision boundary (plane) in 3-dimensions after using polynomial embedding
+
+![](https://upload.wikimedia.org/wikipedia/commons/c/cc/Kernel_trick_idea.svg)
+---
+
+### Feature (predictor) transformation
+
+- First, embed predictors in a higher-dimensional space
+
+$$
+\mathbf x \mapsto h(\mathbf x)
+$$
+
+.center[*unsupervised step, without using the outcome*]
+
+- Then solve supervised problem optimizing over higher dimensional space
+
+--
+
+- Make it **local**: when predicting at `\(\mathbf x_0\)`, weight each training point by some measure of similarity with `\(\mathbf x_0\)`, e.g.
+
+$$
+K(\mathbf x_0, \mathbf x_i) = \mathbf x_0^T \mathbf x_i
+$$
+
+**Euclidean inner product**: `\(\langle \mathbf x, \mathbf x' \rangle_2= \mathbf x^T \mathbf x' = \sum_{j=1}^p x_j x'_j\)`
+
+*Kernels: one elegant mathematical framework for all this and more*
+
+---
+
+### Inner products (and Hilbert spaces)
+
+For a real vector space `\(V\)`, an **inner product** is any function
+
+$$
+\langle \cdot, \cdot \rangle : V \times V \to \mathbb R
+$$
+which satisfies these conditions
+
+1. Symmetry: `\(\langle \mathbf x, \mathbf x' \rangle = \langle \mathbf x', \mathbf x \rangle\)`
+2. Linearity: `\(\langle \alpha_1 \mathbf x_1 + \alpha_2 \mathbf x_2, \mathbf x \rangle =  \alpha_1 \langle \mathbf x_1, \mathbf x \rangle + \alpha_2 \langle \mathbf x_2, \mathbf x \rangle\)`
+3. Positive definiteness: `\(\langle \mathbf x, \mathbf x \rangle &gt; 0\)` for all `\(\mathbf x \neq 0\)`
+
+*Abstraction of measuring signed angle and magnitude*
+
+Non-examinable: a **Hilbert space** is an inner product space which is complete, i.e. limits of converging sequences are also in the space (like `\(\mathbb R\)` instead of `\(\mathbb Q\)`). Many spaces of functions useful in ML are Hilbert spaces
+
+---
+
+### What is a "kernel"?
+
+A symmetric, **positive definite** matrix `\(\mathbf A\)` satisfies `\(\mathbf x^T \mathbf {Ax} &gt; 0\)` for all `\(\mathbf x \neq 0\)`. Any such matrix can be used to define an inner product
+
+$$
+\langle \mathbf x, \mathbf x' \rangle_{\mathbf A} := \mathbf x^T \mathbf {Ax}'
+$$
+
+--
+
+Any inner product `\(\langle \cdot, \cdot \rangle_*\)`, combined with any set of basis vectors `\(\mathbf e_1, \mathbf e_2, \ldots\)` (not necessarily orthogonal), can be used to create a positive definite matrix
+
+`$$\mathbf A_{ij} := \langle \mathbf e_i, \mathbf e_j \rangle_*$$`
+
+
+A **kernel function** is just a generalization of a positive definite matrix, i.e. also an inner product or similarity measure
+
+---
+
+## Examples (from ESL)
+
+For any inner product `\(\langle \cdot, \cdot \rangle\)`
+
+- `\(K(\mathbf x, \mathbf x') = \langle \mathbf x, \mathbf x' \rangle\)` is a kernel, and so are
+
+- `\(K(\mathbf x, \mathbf x') = (1 + \langle \mathbf x, \mathbf x' \rangle )^d\)` - degree `\(d\)` polynomial
+
+- `\(K(\mathbf x, \mathbf x') = \exp(-\gamma \| \mathbf x - \mathbf x' \|^2)\)` - radial basis, Gaussian
+
+- `\(K(\mathbf x, \mathbf x') = \tanh(\kappa_1 \langle \mathbf x, \mathbf x' \rangle + \kappa_2)\)` - neural network
+
+Next slides: visualizations to help with understanding
+
+---
+
+### Kernel matrix on a 1d regular grid
+
+
+
+.pull-left[
+&lt;img src="07-3-kernels_files/figure-html/grid1d_rbf-1.png" width="504" style="display: block; margin: auto;" /&gt;
+]
+.pull-right[
+&lt;img src="07-3-kernels_files/figure-html/grid1d_poly-1.png" width="504" style="display: block; margin: auto;" /&gt;
+]
+
+For `\(p = 1\)`, can plot similarity `\(K(x_{i1}, x_{j1})\)` contours on 2d-plot with `\(x_{i1}\)` on horizontal axis and `\(x_{j1}\)` on vertical axis
+
+---
+
+### Kernels without a sorted `\(x\)`-axis
+
+
+
+
+.pull-left[
+&lt;img src="07-3-kernels_files/figure-html/grid1d_rbf_ij-1.png" width="504" style="display: block; margin: auto;" /&gt;
+]
+.pull-right[
+&lt;img src="07-3-kernels_files/figure-html/grid1d_poly_ij-1.png" width="504" style="display: block; margin: auto;" /&gt;
+]
+
+
+---
+
+### Kernel matrix on a 2d regular grid
+
+
+
+.pull-left[
+&lt;img src="07-3-kernels_files/figure-html/grid2d_facet-1.png" width="504" style="display: block; margin: auto;" /&gt;
+]
+.pull-right[
+&lt;img src="07-3-kernels_files/figure-html/grid2d_ij-1.png" width="504" style="display: block; margin: auto;" /&gt;
+]
+
+Within each facet (block), predictor 2 is fixed and we vary predictor 1 across observations
+
+---
+
+### Kernel matrix on a regular 3d grid
+
+
+
+.pull-left[
+&lt;img src="07-3-kernels_files/figure-html/grid3d_facet-1.png" width="504" style="display: block; margin: auto;" /&gt;
+]
+.pull-right[
+&lt;img src="07-3-kernels_files/figure-html/grid3d_ij-1.png" width="504" style="display: block; margin: auto;" /&gt;
+]
+
+Within each facet, variables 2 and 3 are fixed for observation `\(i\)`, and we vary variable 1 across observations
+
+---
+
+### Kernel matrix on training data
+
+
+
+
+&lt;img src="07-3-kernels_files/figure-html/train_ij-1.png" width="504" style="display: block; margin: auto;" /&gt;
+
+---
+
+### Kernel matrix on training data
+
+&lt;img src="07-3-kernels_files/figure-html/train_facet-1.png" width="504" style="display: block; margin: auto;" /&gt;
+
+---
+
+### `\(k\)`-NN vs radial basis kernel
+
+.pull-left[
+![](07-2-knn_files/figure-html/poly-eg-1.png)
+.center[
+`\(k\text{-NN}\)` with `\(\text{small } k\)`
+]
+]
+.pull-right[
+&lt;img src="07-3-kernels_files/figure-html/rbf-svm-plot-1.png" width="504" /&gt;
+.center[
+kSVM-rbf with `\(\text{small } \gamma\)`
+]
+]
+
+Mixture of Gaussian densities centered at each training point
+
+
+---
+
+### Kernels, inner products, norms, distances...
+
+- Norm from any inner product `\(\langle \cdot, \cdot \rangle\)`
+
+`$$\| \mathbf x \| = \langle \mathbf x, \mathbf x \rangle ^{1/2}$$`
+
+- Inner products and norms [Polarization identity](https://en.wikipedia.org/wiki/Polarization_identity)
+
+`$$\langle \mathbf x, \mathbf x' \rangle = 
+\frac{1}{4} \left( \| \mathbf x + \mathbf x' \| - \| \mathbf x - \mathbf x' \|  \right)$$`
+
+- Distance (metrics) and norms
+
+`$$d(\mathbf x, \mathbf x') = \| \mathbf x - \mathbf x' \|$$`
+- Kernel functions and inner products
+
+`$$K(\mathbf x, \mathbf x') = \langle \mathbf x, \mathbf x' \rangle$$`
+
+---
+
+## Kernels and feature embeddings
+
+**Exercise**: consider an original feature space `\(\mathbb R^p\)` with `\(p = 2\)`, and the polynomial kernel `\(K\)` with degree 2. For two points `\(\mathbf x_i, \mathbf x_j \in \mathbb R^p\)`, expand `\(K(\mathbf x_i, \mathbf x_j)\)` and find an embedding function `\(h(\mathbf x)\)` so that
+`$$K(\mathbf x_i, \mathbf x_j) = \langle h(\mathbf x_i), h(\mathbf x_j) \rangle$$`
+What dimension is `\(h(\mathbf x)\)`? Can you extend this to `\(p &gt; 2\)`?
+
+**Exercise**: [read](https://en.wikipedia.org/wiki/Radial_basis_function_kernel) about how the radial kernel can be represented as an inner product in an infinite dimensional space
+
+---
+
+### "Kernel trick"
+
+Avoid computing `\(h(\mathbf x)\)`, which may be high (infinite) dimensional
+
+e.g. For degree `\(d\)` polynomial, dimension `\(p \mapsto \binom{p+d}{d}\)`, but
+
+$$
+\langle h(\mathbf x_i), h(\mathbf x_j) \rangle 
+= K(\mathbf x_i, \mathbf x_j) = (1 + \mathbf x_i^T \mathbf x_j)^d
+$$
+.pull-left[
+much higher dimensional inner product
+]
+.pull-right[
+`\(p\)`-dimensional inner product followed by power of scalar
+]
+
+**Pros**: fast computation despite high-dimensional embedding
+
+**Cons**: memory-based, like `\(k\)`-NN, "memorize the training data"
+
+---
+
+### Many ML methods can use kernels
+
+- Kernel SVM is the most popular / commonly known, but...
+
+Versions of all of these can be combined with feature map and kernel combinations
+
+- Ridge/lasso regression
+- Gaussian processes
+- PCA/CCA
+- Spectral clustering
+- and more
+
+e.g. lasso on kernel basis expansion (but no kernel trick)
+
+`$$\text{minimize } \frac{1}{2n} \| \mathbf y - h(\mathbf x)^T \beta \|_2^2 + \lambda \| \beta \|_1$$`
+---
+
+### But some go with kernels more nicely
+
+- Any method that can be computed using only pairwise inner products can also use the kernel trick. This includes all examples on previous slide except for lasso
+
+- For any method where the kernel trick works, combine with ridge regularization and the kernel trick still works! 
+
+- Kernel methods are generally "memory-based" like `\(k\)`-NN, but SVM can save memory by reducing to a few "support vectors." Instead of storing entire training data, may only need a fraction of it (usually those observations closer to the decision boundary in classification)
+
+- Structured data: text, images, "convolutional kernels" -- inner product of *local averages within a moving window*
+
+---
+
+### Kernel trick: regression with ridge penalty
+
+Let `\(\mathbf H = h(\mathbf X)\)` be the embedded predictor matrix, potentially with `\(\text{dim}(\mathbf H) \gg \text{dim}(\mathbf X)\)`
+
+Then, using our formula for the ridge solution, we get predictions this way:
+
+$$
+\mathbf H \hat \beta_\lambda = \mathbf{H}(\mathbf{H}^T\mathbf{H} + \lambda \mathbf I)^{-1}\mathbf{H}^T\mathbf y
+$$
+Using the [SVD](https://en.wikipedia.org/wiki/Singular_value_decomposition) matrix factorization (non-examinable), can rewrite this as
+
+$$
+\mathbf H \hat \beta_\lambda = (\mathbf{HH}^T + \lambda \mathbf I)^{-1}\mathbf{HH}^T\mathbf y
+$$
+Trick: the `\(ij\)` entry of `\(\mathbf{HH}^T = \langle h(\mathbf x_i), h(\mathbf x_j) \rangle = K(\mathbf x_i, \mathbf x_j)\)`
+
+---
+class: inverse
+
+## Summary so far
+
+- Definitions: inner products, kernels, etc
+
+- Ways to think about kernels
+
+  - Generalization of positive definite matrix / inner product
+  
+  - Measure of non-normalized similarity, like **covariance**
+  
+  - (Non-examinable: actually any `\(K\)` can be used as a covariance function defining a Gaussian process)
+
+- Kernel methods
+
+  - Smoothed/weighted versions of `\(n\)`-nearest neighbors
+  
+  - Trick: high-dim embedding, original dim. computation
+
+---
+
+### Non-examinable section on function spaces
+
+Instead of minimizing squared error over the set of all linear predictor functions, why not optimize over other function spaces?
+
+`$$\hat f = \arg \min_\mathcal H \| \mathbf y - f(\mathbf x) \|_2^2$$`
+For some function space `\(\mathcal H\)`, e.g. continuous or differentiable
+
+--
+
+Many spaces we commonly use are Hilbert spaces, they have an inner product `\(\langle \cdot, \cdot \rangle_\mathcal{H}\)` and a norm `\(\| \cdot \|_\mathcal{H}\)` defined by that inner product. So we can also add the ridge-like penalty
+
+`$$\hat f = \arg \min_\mathcal H \| \mathbf y - f(\mathbf x) \|_2^2 + \lambda \| f \|^2_\mathcal{H}$$`
+
+
+---
+
+### RKHS optimization
+
+For many function spaces `\(\mathcal H\)` (which are Hilbert spaces), the solution to the ridge penalized optimization
+
+`$$\text{minimize } \sum_{i=1}^n (y_i - f(\mathbf x_i))^2 + \lambda \| f \|^2_\mathcal{H}$$`
+*always has the form*(!)
+
+$$
+\hat f(\mathbf x) = \mathbf k(\mathbf x)^T (\mathbf K + \lambda n \mathbf I)^{-1} \mathbf y
+$$
+where `\(\mathbf k(\cdot)^T = [K(\mathbf x_1, \cdot ), \ldots, K(\mathbf x_n, \cdot)]\)`,
+
+and `\(\mathbf K_{ij} = K(\mathbf x_i, \mathbf x_{j})\)`
+
+---
+class: inverse
+
+## Why this is so sweet
+
+
+Potentially infinite dimensional problem (Hilbert space optimization)? *Nope, at most* `\(n\)`, after all we are minimizing the *empirical* risk with only `\(n\)` observations...
+
+
+To predict at `\(\mathbf x\)`:
+
+1. Transform input to vector `\(\mathbf k(\mathbf x)\)` of **similarities** with training `\(\mathbf x_i\)`'s
+
+2. Weighted sum of `\(\mathbf y_i\)`'s, weights `\((\mathbf K + \lambda n \mathbf I)^{-1}\)` based on similarities among training points
+
+
+---
+
+### Extremely cool theorems
+
+This is a special case of **representer theorem** (Wahba, 1990)
+
+$$
+\hat f(\cdot) = \sum_{i=1}^n \hat a_i K(\cdot, \mathbf x_i)
+$$
+
+Hilbert space minimizers of empirical risk are just linear combinations of the kernel function evaluated at training points
+
+**Theorem** (Moore–Aronszajn) [kernels 🤝 Hilbert spaces]
+
+For any kernel `\(K\)`, there is a (unique) corresponding Hilbert space of functions `\(\mathcal H_K\)` for which `\(K\)` defines the inner product and norm `\(\| \mathbf x \|_K = \langle \mathbf x, \mathbf x \rangle_K^{1/2} = K(\mathbf x, \mathbf x)^{1/2}\)`
+
+---
+
+### Extremely optional reading
+
+- [Linear duality](https://en.wikipedia.org/wiki/Dual_space)
+
+- [Riesz representation theorem](https://en.wikipedia.org/wiki/Riesz_representation_theorem)
+
+- [RKHSs](https://en.wikipedia.org/wiki/Reproducing_kernel_Hilbert_space)
+
+- "[Kernel trick](https://en.wikipedia.org/wiki/Kernel_method)" 
+
+- [Representer theorem](https://en.wikipedia.org/wiki/Representer_theorem)
+
+(This is all very cool but remember it is also non-examinable)
+
+---
+class: center, middle
+
+and now, back to our regularly examinable content
+
+---
+class: inverse
+
+### Kernels
+
+- Data: similarity between observations
+
+- Geometric: signed angle and magnitude
+
+- Linear algebra: symmetric positive definite &lt;a href="https://en.wikipedia.org/wiki/James_Mercer_(mathematician)"&gt;function&lt;/a&gt;
+
+- Probabilistic: covariance
+
+### Useful for
+
+- Higher dimensional feature embedding
+
+- Fast computation when combined with learning algorithms that only depend on inner products (and ridge penalties)
+
+---
+class: inverse
+
+### Lasting impacts of kernels
+
+- "Automatic" feature engineering
+
+- Outside low-dimensional motivating examples, typically don't choose type of kernel very carefully
+
+- Ultra-algorithmic supervised ML philosophy: focus on expanding **expressivity** of the function class, let efficient optimization algorithms do the work of "respecting the structure in the data"
+
+- Influential idea `\(\to\)` deep learning
+
+
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "github",
+"highlightLines": true,
+"highlightSpans": true,
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+(function(time) {
+  var d2 = function(number) {
+    return ('0' + number).slice(-2); // left-pad 0 to minutes/seconds
+  },
+
+  time_format = function(total) {
+    var secs = Math.abs(total) / 1000;
+    var h = Math.floor(secs / 3600);
+    var m = Math.floor(secs % 3600 / 60);
+    var s = Math.round(secs % 60);
+    var res = d2(m) + ':' + d2(s);
+    if (h > 0) res = h + ':' + res;
+    return res;  // [hh:]mm:ss
+  },
+
+  slide_number_div = function(i) {
+    return document.getElementsByClassName('remark-slide-number').item(i);
+  },
+
+  current_page_number = function(i) {
+    return slide_number_div(i).firstChild.textContent;  // text "i / N"
+  };
+
+  var timer = document.createElement('span'); timer.id = 'slide-time-left';
+  var time_left = time, k = slideshow.getCurrentSlideIndex(),
+      last_page_number = current_page_number(k);
+
+  setInterval(function() {
+    time_left = time_left - 1000;
+    timer.innerHTML = ' ' + time_format(time_left);
+    if (time_left < 0) timer.style.color = 'red';
+  }, 1000);
+
+  slide_number_div(k).appendChild(timer);
+
+  slideshow.on('showSlide', function(slide) {
+    var i = slide.getSlideIndex(), n = current_page_number(i);
+    // reset timer when a new slide is shown and the page number is changed
+    if (last_page_number !== n) {
+      time_left = time; last_page_number = n;
+      timer.innerHTML = ' ' + time_format(time); timer.style.color = null;
+    }
+    slide_number_div(i).appendChild(timer);
+  });
+})(59000);
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>

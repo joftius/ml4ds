@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Machine learning</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Joshua Loftus" />
+    <script src="libs/header-attrs/header-attrs.js"></script>
+    <link href="libs/remark-css/default.css" rel="stylesheet" />
+    <link href="libs/tile-view/tile-view.css" rel="stylesheet" />
+    <script src="libs/tile-view/tile-view.js"></script>
+    <link href="libs/panelset/panelset.css" rel="stylesheet" />
+    <script src="libs/panelset/panelset.js"></script>
+    <link rel="stylesheet" href="xaringan-themer.css" type="text/css" />
+    <link rel="stylesheet" href="../../../theme.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: top, left, title-slide
+
+# Machine learning
+## Regularization
+### Joshua Loftus
+
+---
+
+
+class: inverse
+
+
+
+
+
+
+
+
+
+&lt;style type="text/css"&gt;
+.remark-slide-content {
+    font-size: 1.2rem;
+    padding: 1em 4em 1em 4em;
+}
+&lt;/style&gt;
+
+# Benefits of shrinkage/bias
+
+### In "high-dimensions" (p &gt; 2)
+
+Shrinking estimates/models toward a pre-specified point
+
+# (Adaptive) regularization
+
+### Tuning `\(\lambda\)` with cross-validation
+
+Splitting data into training and testing subsets
+
+---
+class: inverse, center, middle
+
+# Bias *can* be good, actually
+
+### Especially in higher dimensions
+
+---
+
+### Stein "paradox" and bias
+
+Estimating `\(\mu \in \mathbb R^p\)` from an i.i.d. sample `\(\mathbf Y_1, \ldots, \mathbf Y_n \sim N(\mathbf{\mu}, \sigma^2 I)\)`
+- The MLE is `\(\mathbf{\bar Y}\)` (obvious and best, right?)
+
+--
+
+- [Charles Stein](https://news.stanford.edu/2016/12/01/charles-m-stein-extraordinary-statistician-anti-war-activist-dies-96/) discovered in the 1950's that the MLE is *[inadmissible](https://en.wikipedia.org/wiki/Admissible_decision_rule)* if `\(p &gt; 2\)` 🤯
+
+- The [James-Stein estimator](https://en.wikipedia.org/wiki/Stein%27s_example) **shrinks** `\(\mathbf{\bar Y}\)` toward some other point, any other point, chosen *a priori*, e.g. 0
+
+`$$\text{MSE}(\mathbf{\hat \mu}_{\text{JS}}) &lt; \text{MSE}(\mathbf{\bar Y}) \text{ for all } \mathbf \mu, \text{ if } p &gt; 2$$`
+`$$\mathbf{\hat \mu}_{\text{JS}} = \left(1 - \frac{(p-2)\sigma^2/n}{\|\mathbf{\bar Y}\|^2} \right) \mathbf{\bar Y}$$`
+
+---
+
+### Shrinkage: less variance, more bias
+
+.pull-left[
+&lt;img src="06-1-regularization_files/figure-html/unnamed-chunk-1-1.png" width="504" /&gt;
+Solid points are improved by shrinking, hollow red points do worse
+]
+.pull-right[
+If `\(\bar Y\)` is between `\(\mu\)` and 0 then shrinking does worse
+
+In higher dimensions, a greater portion of space is *not* between `\(\mu\)` and 0
+
+e.g. `\(2^p\)` orthants in `\(p\)`-dimensional space, and only 1 contains `\(\mu - 0\)`
+
+(*Not meant to be a [proof](https://statweb.stanford.edu/~candes/teaching/stats300c/Lectures/Lecture18.pdf)*)
+]
+
+---
+
+## Historical significance
+
+Statisticians (particularly frequentists) emphasized unbiasedness
+
+But after Stein's example, we must admit bias is not always bad
+
+Opens the doors to many interesting methods
+
+Most (almost all?) ML methods use bias this way
+
+(Even if some famous CS profs say otherwise on twitter 🤨)
+
+---
+
+### Regularized (i.e. penalized) regression
+
+Motivation: If the JS estimator can do better than the MLE at estimating a sample mean, does a similar thing happen when estimating regression coefficients?
+
+--
+
+For some penalty function `\(\mathcal P_\lambda\)`, which depends on a tuning parameter `\(\lambda\)`, the estimator
+
+`$$\hat \beta_\lambda = \arg \min_\beta \| \mathbf y - \mathbf X \beta \|^2_2 + \mathcal P_\lambda(\beta)$$`
+is "regularized" or shrunk (shranken?) toward values that decrease the penalty. Often `\(\mathcal P_\lambda = \lambda \| \cdot \|\)` for some norm
+
+--
+
+Many ML methods are optimizing "loss + penalty"
+
+---
+
+### Ridge (i.e. L2 penalized) regression
+
+- Originally motivated by problems where `\(\mathbf X^T \mathbf X\)` is uninvertible (or badly conditioned, i.e. almost uninvertible)
+
+- If `\(p &gt; n\)` then this always happens
+
+- Least squares estimator is undefined or numerically unstable
+
+For some constant `\(\lambda &gt; 0\)`,
+`$$\text{minimize } \| \mathbf y - \mathbf X \beta \|^2_2 + \lambda \| \beta \|^2$$`
+**Shrinks** coefficients `\(\hat \beta\)` toward 0
+
+Larger coefficients are penalized more (squared penalty)
+
+---
+
+### High-dimensional simulation
+
+Parameters in covariate space (rather than outcome space)
+
+
+1. Simulate a high-dimensional linear model
+$$
+\mathbf y = \mathbf X \beta + \varepsilon, \text{ for } \varepsilon \sim N(0, \sigma^2  I) 
+$$
+2. Fit **ridge regression** on a grid of `\(\lambda\)` values
+3. Iterate over multiple realizations of `\(\varepsilon\)`
+4. Plot the MSE of estimated coefficients as a function of `\(\lambda\)`, with one line for each iterate
+
+$$
+\text{MSE}(\hat \beta_\text{ridge}(\lambda))
+$$
+Simulation is "cheating" -- can only compute MSE because we know true `\(\beta\)`
+
+
+
+
+---
+
+#### MSE(ridge) lower-dimensional
+
+
+```r
+high_dim_MSE_MC(n = 100, p = 10, instances = 20)
+```
+
+&lt;img src="06-1-regularization_files/figure-html/ridgen100p10-1.png" width="66%" /&gt;
+
+---
+
+#### MSE(ridge) higher-dimensional
+
+
+```r
+high_dim_MSE_MC(n = 100, p = 100, instances = 50)
+```
+
+&lt;img src="06-1-regularization_files/figure-html/ridgen100p100_1-1.png" width="66%" /&gt;
+---
+
+#### MSE(ridge) higher-dimensional
+
+
+```r
+high_dim_MSE_MC(n = 100, p = 100, instances = 50)
+```
+
+&lt;img src="06-1-regularization_files/figure-html/ridgen100p100_2-1.png" width="66%" /&gt;
+---
+
+#### MSE(ridge) higher-dimensional
+
+
+```r
+high_dim_MSE_MC(n = 100, p = 100, instances = 100)
+```
+
+&lt;img src="06-1-regularization_files/figure-html/ridgen100p100_3-1.png" width="66%" /&gt;
+---
+
+#### MSE(ridge) higher-dimensional
+
+
+```r
+high_dim_MSE_MC(n = 100, p = 100, instances = 100)
+```
+
+&lt;img src="06-1-regularization_files/figure-html/ridgen100p100_4-1.png" width="66%" /&gt;
+
+---
+
+#### MSE(ridge) higher-dimensional
+
+
+```r
+high_dim_MSE_MC(n = 100, p = 150, instances = 20)
+```
+
+&lt;img src="06-1-regularization_files/figure-html/ridgen100p150-1.png" width="66%" /&gt;
+
+---
+
+#### MSE(ridge) much higher-dimensional
+
+
+```r
+high_dim_MSE_MC(n = 100, p = 200, instances = 20)
+```
+
+&lt;img src="06-1-regularization_files/figure-html/ridgen100p200_1-1.png" width="66%" /&gt;
+---
+
+#### MSE(ridge) much higher-dimensional
+
+
+```r
+high_dim_MSE_MC(n = 100, p = 200, instances = 20)
+```
+
+&lt;img src="06-1-regularization_files/figure-html/ridgen100p200_2-1.png" width="66%" /&gt;
+
+---
+
+### Lessons about bias
+
+#### Bias can help
+
+- Even in such a basic problem as **estimating the multivariate normal mean** (JS)
+- More important in higher dimensions
+
+--
+
+#### But it depends! Task-specific
+
+  - What's the scientific question?
+  - Which estimator(s) are we evaluating?
+  - How will the estimator / ML pipeline be used? For what?
+
+e.g. If `\(\hat \sigma\)` underestimates `\(\sigma\)` it may have lower MSE, but do we care about estimating `\(\sigma\)`? Or do we care about C.I. coverage?
+
+---
+class: inverse, middle, center
+
+# Regularization can help
+
+# us to avoid overfitting
+
+### But we have to choose the *amount* of regularization
+
+e.g. norm-penalized regression, choose `\(\lambda\)`
+
+Maybe use formula for `\(\text{df}(\hat \beta_\lambda)\)`
+
+Is there another way? What if we don't have a formula?
+
+---
+class: inverse, center, middle
+
+# Validation
+
+## Estimate test error directly
+
+### using "**validation data**" / "**test data**"
+
+--
+
+#### i.e. a new set of data, "unseen" by `\(\hat f\)`
+
+Indep. samples `\(D = \{  (\mathbf x_i, y_i) \}_{i=1}^n\)` and `\(D' = \{ (\mathbf x_i', y_i') \}_{i=1}^{n'}\)`
+
+Estimate `\(\hat f\)` on `\(D\)`, evaluate `\(\hat f\)` on `\(D'\)`
+
+---
+
+## Motives
+
+- Debiasing risk estimate. Since `\(\hat f\)` does not depend on `\(D'\)`, it is not **overfit to the variability** in `\(D'\)`
+
+- If `\(\hat f\)` is overfit to `\(D\)` then its test error on `\(D'\)` will be large (complexity too high, variability too high)
+
+--
+
+- Actual practice: analogous to "deploying an ML model in production"
+
+- Philosophy of science: use novelty, actual prediction (not accommodation)
+
+- Tukey: [Exploratory Data Analysis](https://en.wikipedia.org/wiki/Exploratory_data_analysis) vs Confirmatory
+
+- Use test error to choose **model complexity** / **amount of regularization**
+
+---
+
+# Choosing model complexity
+
+## Using test/validation data
+
+Indep. samples `\(D = \{  (\mathbf x_i, y_i) \}_{i=1}^n\)` and `\(D' = \{ (\mathbf x_i', y_i') \}_{i=1}^{n'}\)`
+
+- Estimate `\(\hat f_\lambda\)` on `\(D\)` for a "path" or grid of `\(\lambda\)` values
+
+- Evaluate `\(\hat f_\lambda\)` on `\(D'\)` and choose `\(\hat \lambda\)` accordingly (e.g. with minimum loss)
+
+- Refit `\(\hat f_{\hat \lambda}\)` on full data `\(D \cup D'\)`, this is our final model
+
+*Common when computational cost of fitting one model is high*
+
+---
+
+## Cross-validation
+
+*When computational cost of fitting one model is not too high*
+
+**Idea**: swap `\(D\)` and `\(D'\)` in previous process and get two estimates, `\(\hat R(\hat f_\lambda)\)` and `\(\hat R(\hat f_\lambda')\)`
+
+Average these and choose `\(\hat \lambda\)` using the average (e.g. minimizer)
+
+--
+
+**Idea**: apply the same process with multiple independent "folds" of data
+
+#### `\(K\)`-fold cross-validation
+
+Each subset used once as test set, and `\(K-1\)` times for training
+
+Minimize `\(\hat R_{K\text{-cv}}(\lambda) = \frac{1}{K} \sum_{k=1}^K \hat R_k(\hat f^{(k)}_\lambda)\)`
+
+---
+
+## Cross-validation cartoon
+
+![](cv.wikipedia.svg.png)
+
+Gives `\(K\)` estimates of test error (risk) at each `\(\lambda\)`
+
+Credit: [Wikipedia](https://en.wikipedia.org/wiki/Cross-validation)
+
+---
+
+## `\(K\)`-fold cross-validation
+
+Each subset used once as test set, and `\(K-1\)` times for training
+
+Choose `\(\hat \lambda\)` to minimize
+
+`$$\hat R_{K\text{-cv}}(\lambda) = \frac{1}{K} \sum_{k=1}^K \hat R_k(\hat f^{(k)}_\lambda)$$`
+where `\(\hat f^{(k)}_\lambda\)` is fit on the dataset that "holds out" the `\(k\)`th fold
+
+Then refit model `\(\hat f_{\hat \lambda}\)` at that value of `\(\hat \lambda\)` on the entire dataset
+
+---
+
+## plot(cv.glmnet) and plot(glmnet)
+
+
+
+
+.pull-left[
+
+```r
+cv_ridge &lt;- 
+ cv.glmnet(X, Y, alpha = 0)
+plot(cv_ridge)
+```
+
+&lt;img src="06-1-regularization_files/figure-html/unnamed-chunk-4-1.png" width="504" /&gt;
+]
+.pull-right[
+
+```r
+ridge_fit &lt;- 
+ glmnet(X, Y, alpha = 0)
+plot_glmnet(ridge_fit,
+ s = cv_ridge$lambda.1se)
+```
+
+&lt;img src="06-1-regularization_files/figure-html/unnamed-chunk-5-1.png" width="504" /&gt;
+]
+
+---
+
+### Lessons about cross-validation
+
+- Think of it as a way to **choose model complexity**
+
+- **Beware** common cross-validation errors! From Duda and Hart quoted in [MLstory](https://mlstory.org/data.html)
+
+&gt; ... the same data were often used for designing and testing the classifier. This mistake is frequently referred to as "testing on the training data." A related but less obvious problem arises *when a classifier undergoes a long series of refinements guided by the results of repeated testing on the same data. This form of "**training on the testing data**" often escapes attention until new test samples are obtained*.
+
+---
+
+### Lessons about cross-validation
+
+- **Beware** common cross-validation errors! From ESL:
+
+&gt; Ideally, the test set should be kept in a "vault," and be brought out only at the end of the data analysis. *Suppose instead that we use the test-set repeatedly, choosing the model with smallest test-set error. Then the test set error of the final chosen model will underestimate the true test error*, sometimes substantially.
+
+- Cross-validate entire model building pipeline (not just one step), and only do it once -- or at *least* not many times
+
+- Choosing `\(K\)`: larger `\(\to\)` `\(\hat R_{K\text{-cv}}\)` has lower bias, more variance. Often use `\(K = 5\)` or `\(10\)`
+
+---
+class: inverse
+
+### Bias can be good or bad
+
+- Good for estimation in high-dimension (lower MSE)
+- Bad for inference (intervals/hypothesis tests)
+- Uncertainty principle: better estimate *or* better inference
+
+### Regularization
+
+- Fancy sounding word for "simplification," simpler models
+- Increases bias to reduce variance
+
+### Cross-validation
+
+- Fit and evaluate models on different subsets of data
+- Choose amount of regularization/complexity
+- Re-using data *more than once* `\(\to\)` overfitting again
+
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "github",
+"highlightLines": true,
+"highlightSpans": true,
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+(function(time) {
+  var d2 = function(number) {
+    return ('0' + number).slice(-2); // left-pad 0 to minutes/seconds
+  },
+
+  time_format = function(total) {
+    var secs = Math.abs(total) / 1000;
+    var h = Math.floor(secs / 3600);
+    var m = Math.floor(secs % 3600 / 60);
+    var s = Math.round(secs % 60);
+    var res = d2(m) + ':' + d2(s);
+    if (h > 0) res = h + ':' + res;
+    return res;  // [hh:]mm:ss
+  },
+
+  slide_number_div = function(i) {
+    return document.getElementsByClassName('remark-slide-number').item(i);
+  },
+
+  current_page_number = function(i) {
+    return slide_number_div(i).firstChild.textContent;  // text "i / N"
+  };
+
+  var timer = document.createElement('span'); timer.id = 'slide-time-left';
+  var time_left = time, k = slideshow.getCurrentSlideIndex(),
+      last_page_number = current_page_number(k);
+
+  setInterval(function() {
+    time_left = time_left - 1000;
+    timer.innerHTML = ' ' + time_format(time_left);
+    if (time_left < 0) timer.style.color = 'red';
+  }, 1000);
+
+  slide_number_div(k).appendChild(timer);
+
+  slideshow.on('showSlide', function(slide) {
+    var i = slide.getSlideIndex(), n = current_page_number(i);
+    // reset timer when a new slide is shown and the page number is changed
+    if (last_page_number !== n) {
+      time_left = time; last_page_number = n;
+      timer.innerHTML = ' ' + time_format(time); timer.style.color = null;
+    }
+    slide_number_div(i).appendChild(timer);
+  });
+})(59000);
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>

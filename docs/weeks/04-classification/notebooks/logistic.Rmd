@@ -1,0 +1,141 @@
+---
+title: "Logistic regression"
+author: "Joshua Loftus"
+date: "2/5/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+library(tidyverse)
+library(broom)
+library(modeldata)
+data(attrition)
+```
+
+## Categorical outcome data
+
+Look at this data
+
+```{r}
+head(attrition)
+```
+
+Comparing the distribution of a predictor variable between the two classes
+
+```{r}
+ggplot(attrition, aes(Attrition, TotalWorkingYears)) + 
+  geom_boxplot()
+```
+
+
+```{r}
+t.test(DistanceFromHome ~ Attrition, data = attrition)
+```
+
+Check class balance:
+
+```{r}
+attrition %>% pull(Attrition) %>% table()
+table(attrition$Attrition) # base R
+```
+
+Create a balanced dataset with the same number of observations in both classes
+
+```{r}
+attr_No <- attrition %>%
+  filter(Attrition == "No") %>%
+  sample_n(size = 237)
+
+attr_Yes <- attrition %>%
+  filter(Attrition == "Yes")
+
+attr <- rbind(attr_No, attr_Yes)
+
+# transform outcome to numeric 0-1
+nattr <- attr %>% 
+  mutate(Y = as.numeric(Attrition) - 1) %>%
+  select(Y, TotalWorkingYears)
+```
+
+
+## Classification: linear regression?
+
+Plot linear regression line, change the threshold
+
+```{r}
+ggplot(nattr, aes(x = TotalWorkingYears, y = Y)) + 
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE) +
+  geom_hline(yintercept = .4) # or e.g. mean(nattr$Y)
+```
+
+Problems:
+
+- Can predict outside 0-1 range
+- Not directly interpretable as probabilities
+
+### Thresholding ideas
+
+Choose a threshold/cutoff value for predictor $X$, say $c$, and then classify
+
+- $\hat Y = 1$ if $X \geq c$
+- $\hat Y = 0$ otherwise
+
+Or if the association is negative, change the sign
+
+As we vary $c$, we trade-off between kinds of errors: false positives and false negatives
+
+In the simple case with thresholding one predictor, the classification/decision rules are all equivalent whether we use linear regression or logistic regression
+
+For **multiple** regression--when we have more predictors--we can then transform a numeric prediction from the model $\hat Y$ to a classification by using a threshold rule on the scale of the predictions (instead of on the scale of one predictor as before)
+
+- $\hat Y = 1$ if $x^T \hat \beta \geq c$
+- $\hat Y = 0$ otherwise
+
+## Logistic regression
+
+```{r}
+model_glm <- glm(Y ~ TotalWorkingYears, data = nattr, family = "binomial")
+summary(model_glm)
+```
+
+```{r}
+augment(model_glm, type.predict = "response") %>%
+  ggplot(aes(TotalWorkingYears, Y)) + 
+  geom_point() +
+  geom_line(aes(y = .fitted))
+```
+
+### Modeling assumption
+
+$$
+\text{logit} P(Y = 1|X) = \beta_0 + \beta_1 X
+$$
+
+$$
+P(Y = 1|X) = \frac{e^{\beta_0 + \beta_1 X}}{1 + e^{\beta_0 + \beta_1 X}}
+$$
+
+### Interpreting coefficients
+
+
+```{r}
+exp(coef(model_glm))
+```
+
+### Inference
+
+```{r}
+exp(confint(model_glm))
+```
+
+Model evaluation measures
+
+```{r}
+glance(model_glm)
+```
+
+Diagnostic plots: can do this but less common
+
+(Warning: residual plots almost always show "patterns", can't be interpreted the same way as for linear regression)
+

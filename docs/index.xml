@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:media="http://search.yahoo.com/mrss/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:dc="http://purl.org/dc/elements/1.1/" version="2.0">
+  <channel>
+    <title>ml4ds</title>
+    <link>http://ml4ds.com/</link>
+    <atom:link href="http://ml4ds.com/index.xml" rel="self" type="application/rss+xml"/>
+    <description>ml4ds
+</description>
+    <generator>Distill</generator>
+    <lastBuildDate>Mon, 11 Oct 2021 00:00:00 +0000</lastBuildDate>
+    <item>
+      <title>1 Introduction and foundations</title>
+      <dc:creator>Joshua Loftus</dc:creator>
+      <link>http://ml4ds.com/weeks/01-introduction-foundations</link>
+      <description>A brief introduction to the course, preview of things to come, and some foundational background material.</description>
+      <guid>http://ml4ds.com/weeks/01-introduction-foundations</guid>
+      <pubDate>Mon, 11 Oct 2021 00:00:00 +0000</pubDate>
+      <media:content url="https://joshualoftus.com/ml4ds/01-introduction-foundations/slides/01-2-foundations_files/figure-html/gapminder-loess-1.png" medium="image" type="image/png"/>
+    </item>
+    <item>
+      <title>2 Linear regression</title>
+      <dc:creator>Joshua Loftus</dc:creator>
+      <link>http://ml4ds.com/weeks/02-linear-regression</link>
+      <description>Reviewing linear regression and framing it as a prototypical example and source of intuition for other machine learning methods.</description>
+      <guid>http://ml4ds.com/weeks/02-linear-regression</guid>
+      <pubDate>Sun, 10 Oct 2021 00:00:00 +0000</pubDate>
+    </item>
+    <item>
+      <title>3 Multiple regression and causality</title>
+      <dc:creator>Joshua Loftus</dc:creator>
+      <link>http://ml4ds.com/weeks/03-causality</link>
+      <description>Multiple linear regression does not, by default, tell us anything about causality. But with the right data and careful interpretation we might be able to learn some causal relationships.</description>
+      <guid>http://ml4ds.com/weeks/03-causality</guid>
+      <pubDate>Sat, 09 Oct 2021 00:00:00 +0000</pubDate>
+    </item>
+    <item>
+      <title>4 Classification</title>
+      <dc:creator>Joshua Loftus</dc:creator>
+      <link>http://ml4ds.com/weeks/04-classification</link>
+      <description>Categorical or qualitative outcome variables are ubiquitous. We review some supervised learning methods for classification, and see how these may be applied to observational causal inference.</description>
+      <guid>http://ml4ds.com/weeks/04-classification</guid>
+      <pubDate>Fri, 08 Oct 2021 00:00:00 +0000</pubDate>
+    </item>
+    <item>
+      <title>5 Optimization and overfitting</title>
+      <dc:creator>Joshua Loftus</dc:creator>
+      <link>http://ml4ds.com/weeks/05-optimization</link>
+      <description>Optimization is about finding the best model. With greater model complexity it becomes increasingly important to avoid overfitting: finding a model that is best for one specific dataset but does not generalize well to others.</description>
+      <guid>http://ml4ds.com/weeks/05-optimization</guid>
+      <pubDate>Thu, 07 Oct 2021 00:00:00 +0000</pubDate>
+    </item>
+    <item>
+      <title>6 Regularization and validation</title>
+      <dc:creator>Joshua Loftus</dc:creator>
+      <link>http://ml4ds.com/weeks/06-regularization</link>
+      <description>When optimizing an ML model there are a variety of strategies to improve generalization from the training data. We can add a complexity penalty to the loss function, and we can evaluate the loss function on validation data.</description>
+      <guid>http://ml4ds.com/weeks/06-regularization</guid>
+      <pubDate>Wed, 06 Oct 2021 00:00:00 +0000</pubDate>
+    </item>
+    <item>
+      <title>7 Nonlinear methods</title>
+      <dc:creator>Joshua Loftus</dc:creator>
+      <link>http://ml4ds.com/weeks/07-nonlinear</link>
+      <description>Non-linearity may result in models that trade interpretability for increased predictive accuracy. These notes discuss the challenges of non-linearity and introduce nearest neighbors and kernel methods.</description>
+      <guid>http://ml4ds.com/weeks/07-nonlinear</guid>
+      <pubDate>Tue, 05 Oct 2021 00:00:00 +0000</pubDate>
+    </item>
+    <item>
+      <title>8 More nonlinear methods</title>
+      <dc:creator>Joshua Loftus</dc:creator>
+      <link>http://ml4ds.com/weeks/08-nonlinear</link>
+      <description>We continue our exploration of non-linear supervised machine learning approaches including tree based methods, GAMs, and neural networks and graphs structured learning.</description>
+      <guid>http://ml4ds.com/weeks/08-nonlinear</guid>
+      <pubDate>Mon, 04 Oct 2021 00:00:00 +0000</pubDate>
+    </item>
+    <item>
+      <title>9 Less interpretable methods</title>
+      <dc:creator>Joshua Loftus</dc:creator>
+      <link>http://ml4ds.com/weeks/09-uninterpretable</link>
+      <description>Neural networks and ensemble methods like bagging, random forests, and boosting can greatly increase predictive accuracy at the cost of ease of interpretation.</description>
+      <guid>http://ml4ds.com/weeks/09-uninterpretable</guid>
+      <pubDate>Sun, 03 Oct 2021 00:00:00 +0000</pubDate>
+    </item>
+    <item>
+      <title>10 From prediction to action</title>
+      <dc:creator>Joshua Loftus</dc:creator>
+      <link>http://ml4ds.com/weeks/10-action</link>
+      <description>Supervised machine learning methods excel at predicting an outcome. But being able to predict an outcome does not mean we know how to change it, or that we should.</description>
+      <guid>http://ml4ds.com/weeks/10-action</guid>
+      <pubDate>Sat, 02 Oct 2021 00:00:00 +0000</pubDate>
+    </item>
+  </channel>
+</rss>

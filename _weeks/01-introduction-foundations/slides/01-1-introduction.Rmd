@@ -1,0 +1,345 @@
+---
+title: "Machine learning"
+subtitle: "Introductory remarks"
+author: "Joshua Loftus"
+#institute: "LSE"
+#date: "`r Sys.Date()`"
+output:
+  xaringan::moon_reader:
+    css: ["default", "xaringan-themer.css", "../../../theme.css"]
+#    seal: false    
+    lib_dir: libs
+    nature:
+      titleSlideClass: ["left", "bottom"]
+      countdown: 59000
+      highlightStyle: github
+      highlightLines: true
+      highlightSpans: true
+      countIncrementalSlides: false
+---
+
+```{r setup, include=FALSE}
+options(htmltools.dir.version = FALSE)
+knitr::opts_chunk$set(fig.retina = 3, warning = FALSE, message = FALSE)
+options(knitr.table.format = "html")
+```
+
+```{r xaringan-themer, include=FALSE, warning=FALSE}
+library(xaringanthemer)
+style_duo_accent(
+  primary_color = "#2d708e",
+  secondary_color = "#230433",
+  link_color = "#55c667",
+  text_bold_color = '#f68f46',
+  title_slide_background_color = "#ffffff", #"#042333",
+  title_slide_background_image = "../../../files/theme/LSE/sign_reflection.jpg",
+  title_slide_background_size = "cover",
+  ) #or contain
+```
+
+```{r xaringanextra, include=FALSE, warning=FALSE}
+library(xaringanExtra)
+xaringanExtra::use_animate_all("slide_left")
+xaringanExtra::use_tile_view()
+xaringanExtra::use_panelset()
+xaringanExtra::style_panelset_tabs(font_family = "inherit")
+```
+
+```{r tidyverse, include=FALSE, warning=FALSE}
+library(tidyverse)
+library(knitr)
+theme_set(theme_minimal(base_size = 22))
+```
+
+<style type="text/css">
+.remark-slide-content {
+    font-size: 1.2rem;
+    padding: 1em 4em 1em 4em;
+}
+</style>
+
+![](../../../files/theme/LSE_stats_banner.jpg)
+
+### ST 310: Machine Learning (for Data Science)
+
+Lent term 2021
+
+Lecturer: Joshua Loftus
+
+Co-instructor: Phil Chan
+
+Website: [ml4ds.com](https://ml4ds.com)
+
+???
+
+This is the very first, introductory video for week 1
+
+Provide context
+
+Set expectations
+
+
+---
+
+# About the course
+
+- Course info
+- Quick preview
+- Teaching/course philosophy
+![](../../../files/lasso.gif)
+
+???
+
+Animation shows lasso, a method we'll learn about later
+
+---
+class: inverse, center, middle
+
+# Course info
+
+---
+
+# Format
+
+- *Mostly* self-contained -- ask if you need help!
+- Videos on Moodle each week
+- Seminars: pre-work, Zoom links on Moodle
+- Course page (links, slides, misc. notes)
+  - http://ml4ds.com/
+- Forum (participation = learning)
+  - http://discourse.ml4ds.com/
+- Readings / supplemental references
+  - **ISLR** [Introduction to Statistical Learning](https://statlearning.com/) 
+  - **ESL** [Elements of Statistical Learning](https://web.stanford.edu/~hastie/ElemStatLearn/)
+  - **CASI** [Computer Age Statistical Inference](https://web.stanford.edu/~hastie/CASI/)
+  - **Mixtape** [Causal Inference: The Mixtape](https://mixtape.scunning.com/index.html)
+  - **R4DS** [R for Data Science](https://r4ds.had.co.nz/)
+
+---
+
+# Assessments
+
+As described in the [course listing](https://www.lse.ac.uk/resources/calendar2020-2021/courseGuides/ST/2020_ST310.htm)
+
+- Formative
+  - Problem sets every 2 weeks
+- Summative
+  - Final project (30%)
+  - Summer exam (70%)
+
+(I believe the summer exams may be remote?)
+
+(Whatever the university decides, that's what we're doing)
+
+### Let's all do our best, and be understanding!
+
+---
+class: inverse, center, middle
+
+# Quick preview
+
+Don't worry about following all the details now
+
+We'll introduce R coding gradually
+
+---
+
+.panelset[
+  .panel[.panel-name[Data]
+```{r gapminder}
+library(gapminder)
+gapminder %>% head() %>% kable()
+```
+  
+  ]
+  .panel[.panel-name[Code]
+  
+```{r plot-example, fig.show = "hide"}
+gdp_data <- gapminder %>%
+  `filter`(year == max(year))
+
+life_exp_plot <- 
+  ggplot(gdp_data, `aes`(x = gdpPercap, y = lifeExp)) +
+  `geom_point`(aes(color = continent,
+                   shape = continent,
+                   size = pop)) +
+  scale_color_viridis_d(option = "magma",
+                        direction = -1,
+                        begin = .2, end = .8)
+
+life_exp_plot +
+  `stat_smooth`(formula = y ~ x, method = "loess", span = 1)
+```
+  
+  
+  ]
+  .panel[.panel-name[Plot]
+```{r ref.label="plot-example", fig.width = 9, echo=FALSE}
+```
+  
+  ]
+
+  .panel[.panel-name[Modify]
+  
+```{r plot-example2, fig.show = "hide"}
+life_exp_plot +
+  scale_x_log10() +
+  stat_smooth(formula = y ~ x, method = "lm") +
+  xlab("GDP per capita") +
+  ylab("Life expectancy")
+```
+  
+  
+  ]
+  .panel[.panel-name[Plot again]
+```{r ref.label="plot-example2", fig.width = 9, echo=FALSE}
+```
+  
+  ]
+]
+
+???
+
+Preview of some R
+
+
+Model complexity: nonlinear vs relatively simple (linear) model
+
+Linear model: may not fit the data as well
+
+But! interpretable, one slope to summarize relationship
+
+But! reliable/stable, 
+
+
+Machine learning allows us to find models with just the right amount of complexity
+
+---
+class: bottom
+
+
+.pull-left[
+![xkcd 2048](https://imgs.xkcd.com/comics/curve_fitting_2x.png)
+Source: [xkcd](https://xkcd.com/2048/)
+]
+
+.pull-right[
+
+&nbsp; 
+
+&nbsp; 
+
+&nbsp; 
+
+&nbsp; 
+
+&nbsp; 
+
+Yes, there will be memes, [videos](https://twitter.com/Reza_Zadeh/status/1045124253006192640), etc...
+
+]
+
+---
+class: inverse, center, middle
+
+# Teaching/course philosophy
+
+???
+
+Not just math, also my opinions
+
+Textbooks are excellent, read them!
+
+But! Value added by lectures
+
+---
+
+# Recurring themes
+
+- Human-centric ML
+  - Tools for us to control, not conversely...
+  - Ethics of data science
+
+--
+
+- Interpretability
+  - Philosophy of science
+  - Causality vs "curve fitting"
+
+--
+
+- Social learning
+  - Come post on the forum!
+  - (More on this later)
+
+???
+
+Examples with ethical aspects
+
+Explicit consideration of ethics and professional responsibilities of data scientists
+
+Future lectures include a dose of philosophy, vaccinating against mindless application of tools
+
+Don't be a zombie data scientist
+
+Learn from each other, from people who we think are trustworthy...
+
+---
+class: inverse, center, middle
+
+# Please allow me
+
+# to introduce
+
+# myself
+
+I'm Joshua Loftus
+
+???
+
+I'm the lecturer
+
+For seminars, help from the very capable Phil Chan
+
+Am I trustworthy? Why should you listen to me? You decide!
+
+---
+class: bottom
+
+.pull-left[
+
+![](https://i.ytimg.com/vi/bQhEALoxoGE/maxresdefault.jpg)
+
+![](../../../files/brooklynbridge.jpg)
+]
+
+.pull-right[
+
+&nbsp; 
+
+&nbsp; 
+&nbsp; 
+
+- New to LSE! 
+- Used to teach at NYU
+- Cambridge postdoc
+- Stats PhD from Stanford
+- Reproducibility, fairness
+
+![](https://statweb.stanford.edu/~joftius/yosemite.jpg)
+]
+
+???
+
+I am a person in the world, not just on lecture slides!
+
+I look forward to getting to meet you!
+
+---
+class: inverse, center, middle
+
+# The end of the beginning
+
+I hope you're as excited about the course as I am!
+
+
