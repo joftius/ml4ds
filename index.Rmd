@@ -6,6 +6,3 @@ description: |
 listing: weeks
 ---
 
- \ 
-
-References: [**ISLR**](https://statlearning.com/) + [**ESL**](https://web.stanford.edu/~hastie/ElemStatLearn/) + [**CASI**](https://web.stanford.edu/~hastie/CASI/) + [**Mixtape**](https://mixtape.scunning.com/index.html) + [**R4DS**](https://r4ds.had.co.nz/) + [**MLstory**](https://mlstory.org/) 

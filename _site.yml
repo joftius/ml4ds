@@ -1,10 +1,27 @@
 name: "ml4ds"
-title: "ml4ds"
+title: "machine learning 4 data science"
 description: |
   ml4ds
 output_dir: "docs"
 navbar:
+  logo:
+    image: files/sticker.png
+    href: https://ml4ds.com
   right:
+    - text: "References"
+      menu:
+      - text: "ISLR"
+        href: "https://statlearning.com/"
+      - text: "ESL"
+        href: https://web.stanford.edu/~hastie/ElemStatLearn/
+      - text: "CASI"
+        href: https://web.stanford.edu/~hastie/CASI/
+      - text: "Mixtape"
+        href: https://mixtape.scunning.com/index.html
+      - text: "R4DS"
+        href: https://r4ds.had.co.nz/
+      - text: "MLstory"
+        href: https://mlstory.org/
     - text: "Home"
       href: index.html
 orcid_id: "0000-0002-2905-1632"

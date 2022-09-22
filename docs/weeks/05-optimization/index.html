@@ -85,7 +85,7 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 </style>
 
   <!--radix_placeholder_meta_tags-->
-<title>ml4ds: 5 Optimization and overfitting</title>
+<title>machine learning 4 data science: 5 Optimization and overfitting</title>
 
 <meta property="description" itemprop="description" content="Optimization is about finding the best model. With greater model complexity it becomes increasingly important to avoid overfitting: finding a model that is best for one specific dataset but does not generalize well to others."/>
 
@@ -98,22 +98,22 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 <meta name="article:author" content="Joshua Loftus"/>
 
 <!--  https://developers.facebook.com/docs/sharing/webmasters#markup -->
-<meta property="og:title" content="ml4ds: 5 Optimization and overfitting"/>
+<meta property="og:title" content="machine learning 4 data science: 5 Optimization and overfitting"/>
 <meta property="og:type" content="article"/>
 <meta property="og:description" content="Optimization is about finding the best model. With greater model complexity it becomes increasingly important to avoid overfitting: finding a model that is best for one specific dataset but does not generalize well to others."/>
 <meta property="og:url" content="http://ml4ds.com/weeks/05-optimization/"/>
 <meta property="og:locale" content="en_US"/>
-<meta property="og:site_name" content="ml4ds"/>
+<meta property="og:site_name" content="machine learning 4 data science"/>
 
 <!--  https://dev.twitter.com/cards/types/summary -->
 <meta property="twitter:card" content="summary"/>
-<meta property="twitter:title" content="ml4ds: 5 Optimization and overfitting"/>
+<meta property="twitter:title" content="machine learning 4 data science: 5 Optimization and overfitting"/>
 <meta property="twitter:description" content="Optimization is about finding the best model. With greater model complexity it becomes increasingly important to avoid overfitting: finding a model that is best for one specific dataset but does not generalize well to others."/>
 <meta property="twitter:url" content="http://ml4ds.com/weeks/05-optimization/"/>
 <meta property="twitter:site" content="@joftius"/>
 
 <!--  https://scholar.google.com/intl/en/scholar/inclusion.html#indexing -->
-<meta name="citation_title" content="ml4ds: 5 Optimization and overfitting"/>
+<meta name="citation_title" content="machine learning 4 data science: 5 Optimization and overfitting"/>
 <meta name="citation_fulltext_html_url" content="http://ml4ds.com/weeks/05-optimization/"/>
 <meta name="citation_fulltext_world_readable" content=""/>
 <meta name="citation_online_date" content="2021/10/07"/>
@@ -2223,12 +2223,18 @@ d-appendix {
 /* These properties only apply to Distill sites and blogs  */
 
 .distill-site-header {
-  --title-size:       1.2rem;
+  --title-size:       1.5rem;
   --text-color:       rgba(55, 55, 55, 0.8);
   --text-size:        1.1rem;
   --hover-color:      black;
   --bkgd-color:       #FFFFFF;
-  --padding: 40px 0px;  
+  --padding: 100px 100px;  
+}
+
+.distill-site-header .logo img{
+  max-height: 60px; /* Makes logo bigger, default was 20px */
+  width: auto;
+  margin-top: 10px;
 }
 
 .distill-site-footer {
@@ -2254,7 +2260,32 @@ h1, h2, h3, h4, h5, h6, title {
   letter-spacing: 2px;  
   line-height: 2rem; /* increases, so wrapping headers don't overlap */ 
 }
-</style>
+
+.distill-site-header .logo img {
+    display: inline-block;
+    width: 100px;
+    height: 100px;
+    max-height: 100px;
+}
+
+.distill-site-header {
+    height: 100px;
+}
+
+
+.distill-site-header .title {
+position: relative;
+transform: translateY(-70%);
+}
+
+.distill-site-header .nav-right {
+    top: 25%;
+    position: relative;
+}
+
+d-title{
+  margin-top: 50px;
+}</style>
 <style type="text/css">
 /* base style */
 
@@ -2451,10 +2482,28 @@ cookieconsent.run({
 <header class="header header--fixed" role="banner">
 <nav class="distill-site-nav distill-site-header">
 <div class="nav-left">
-<a href="../../index.html" class="title">ml4ds</a>
+<a class="logo" href="https://ml4ds.com">
+<img src="../../files/sticker.png" alt="Logo"/>
+</a>
+<a href="../../index.html" class="title">machine learning 4 data science</a>
 <input id="distill-search" class="nav-search hidden" type="text" placeholder="Search..."/>
 </div>
 <div class="nav-right">
+<div class="nav-dropdown">
+<button class="nav-dropbtn">
+References
+ 
+<span class="down-arrow">&#x25BE;</span>
+</button>
+<div class="nav-dropdown-content">
+<a href="https://statlearning.com/">ISLR</a>
+<a href="https://web.stanford.edu/~hastie/ElemStatLearn/">ESL</a>
+<a href="https://web.stanford.edu/~hastie/CASI/">CASI</a>
+<a href="https://mixtape.scunning.com/index.html">Mixtape</a>
+<a href="https://r4ds.had.co.nz/">R4DS</a>
+<a href="https://mlstory.org/">MLstory</a>
+</div>
+</div>
 <a href="../../index.html">Home</a>
 <a href="javascript:void(0);" class="nav-toggle">&#9776;</a>
 </div>
@@ -2504,11 +2553,11 @@ cookieconsent.run({
   <p>Text and figures are licensed under Creative Commons Attribution <a rel="license" href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>. The figures that have been reused from other sources don't fall under this license and can be recognized by a note in their caption: "Figure from ...".</p>
   <h3 id="citation">Citation</h3>
   <p>For attribution, please cite this work as</p>
-  <pre class="citation-appendix short">Loftus (2021, Oct. 7). ml4ds: 5 Optimization and overfitting. Retrieved from http://ml4ds.com/weeks/05-optimization/</pre>
+  <pre class="citation-appendix short">Loftus (2021, Oct. 7). machine learning 4 data science: 5 Optimization and overfitting. Retrieved from http://ml4ds.com/weeks/05-optimization/</pre>
   <p>BibTeX citation</p>
   <pre class="citation-appendix long">@misc{loftus20215,
   author = {Loftus, Joshua},
-  title = {ml4ds: 5 Optimization and overfitting},
+  title = {machine learning 4 data science: 5 Optimization and overfitting},
   url = {http://ml4ds.com/weeks/05-optimization/},
   year = {2021}
 }</pre>

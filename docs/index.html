@@ -89,7 +89,7 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 
 
   <!--radix_placeholder_meta_tags-->
-  <title>ml4ds: Machine Learning 4 Data Science</title>
+  <title>machine learning 4 data science: Machine Learning 4 Data Science</title>
 
   <meta property="description" itemprop="description" content="Introducing a core set of commonly used machine learning tools and practicing them in the R statistical programming language to understand their mathematical foundations, statistical limitations, and proper interpretation."/>
 
@@ -97,15 +97,15 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 
 
   <!--  https://developers.facebook.com/docs/sharing/webmasters#markup -->
-  <meta property="og:title" content="ml4ds: Machine Learning 4 Data Science"/>
+  <meta property="og:title" content="machine learning 4 data science: Machine Learning 4 Data Science"/>
   <meta property="og:type" content="article"/>
   <meta property="og:description" content="Introducing a core set of commonly used machine learning tools and practicing them in the R statistical programming language to understand their mathematical foundations, statistical limitations, and proper interpretation."/>
   <meta property="og:locale" content="en_US"/>
-  <meta property="og:site_name" content="ml4ds"/>
+  <meta property="og:site_name" content="machine learning 4 data science"/>
 
   <!--  https://dev.twitter.com/cards/types/summary -->
   <meta property="twitter:card" content="summary"/>
-  <meta property="twitter:title" content="ml4ds: Machine Learning 4 Data Science"/>
+  <meta property="twitter:title" content="machine learning 4 data science: Machine Learning 4 Data Science"/>
   <meta property="twitter:description" content="Introducing a core set of commonly used machine learning tools and practicing them in the R statistical programming language to understand their mathematical foundations, statistical limitations, and proper interpretation."/>
   <meta property="twitter:site" content="@joftius"/>
 
@@ -2209,12 +2209,18 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
   /* These properties only apply to Distill sites and blogs  */
 
   .distill-site-header {
-    --title-size:       1.2rem;
+    --title-size:       1.5rem;
     --text-color:       rgba(55, 55, 55, 0.8);
     --text-size:        1.1rem;
     --hover-color:      black;
     --bkgd-color:       #FFFFFF;
-    --padding: 40px 0px;  
+    --padding: 100px 100px;  
+  }
+
+  .distill-site-header .logo img{
+    max-height: 60px; /* Makes logo bigger, default was 20px */
+    width: auto;
+    margin-top: 10px;
   }
 
   .distill-site-footer {
@@ -2240,7 +2246,32 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
     letter-spacing: 2px;  
     line-height: 2rem; /* increases, so wrapping headers don't overlap */ 
   }
-  </style>
+
+  .distill-site-header .logo img {
+      display: inline-block;
+      width: 100px;
+      height: 100px;
+      max-height: 100px;
+  }
+
+  .distill-site-header {
+      height: 100px;
+  }
+
+
+  .distill-site-header .title {
+  position: relative;
+  transform: translateY(-70%);
+  }
+
+  .distill-site-header .nav-right {
+      top: 25%;
+      position: relative;
+  }
+
+  d-title{
+    margin-top: 50px;
+  }</style>
   <style type="text/css">
   /* base style */
 
@@ -2436,10 +2467,28 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 <header class="header header--fixed" role="banner">
 <nav class="distill-site-nav distill-site-header">
 <div class="nav-left">
-<a href="index.html" class="title">ml4ds</a>
+<a class="logo" href="https://ml4ds.com">
+<img src="files/sticker.png" alt="Logo"/>
+</a>
+<a href="index.html" class="title">machine learning 4 data science</a>
 <input id="distill-search" class="nav-search hidden" type="text" placeholder="Search..."/>
 </div>
 <div class="nav-right">
+<div class="nav-dropdown">
+<button class="nav-dropbtn">
+References
+ 
+<span class="down-arrow">&#x25BE;</span>
+</button>
+<div class="nav-dropdown-content">
+<a href="https://statlearning.com/">ISLR</a>
+<a href="https://web.stanford.edu/~hastie/ElemStatLearn/">ESL</a>
+<a href="https://web.stanford.edu/~hastie/CASI/">CASI</a>
+<a href="https://mixtape.scunning.com/index.html">Mixtape</a>
+<a href="https://r4ds.had.co.nz/">R4DS</a>
+<a href="https://mlstory.org/">MLstory</a>
+</div>
+</div>
 <a href="index.html">Home</a>
 <a href="javascript:void(0);" class="nav-toggle">&#9776;</a>
 </div>
@@ -2773,16 +2822,6 @@ interpretation.</p></p>
 
 
 <div class="d-article">
-<p> </p>
-<p>References: <a
-href="https://statlearning.com/"><strong>ISLR</strong></a> + <a
-href="https://web.stanford.edu/~hastie/ElemStatLearn/"><strong>ESL</strong></a>
-+ <a
-href="https://web.stanford.edu/~hastie/CASI/"><strong>CASI</strong></a>
-+ <a
-href="https://mixtape.scunning.com/index.html"><strong>Mixtape</strong></a>
-+ <a href="https://r4ds.had.co.nz/"><strong>R4DS</strong></a> + <a
-href="https://mlstory.org/"><strong>MLstory</strong></a></p>
 <div class="sourceCode" id="cb1"><pre
 class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
 <!--radix_placeholder_article_footer-->
