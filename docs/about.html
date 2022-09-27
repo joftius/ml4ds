@@ -7,7 +7,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1"/>
   <meta name="generator" content="distill" />
-  <link rel="alternate" type="application/rss+xml" href="http://ml4ds.com/index.xml" />
 
   <style type="text/css">
   /* Hide doc at startup (prevent jankiness while JS renders/transforms) */
@@ -89,31 +88,31 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 
 
   <!--radix_placeholder_meta_tags-->
-  <title>machine learning 4 data science: Weekly content</title>
+  <title>machine learning 4 data science: About this course</title>
 
-  <meta property="description" itemprop="description" content="Introducing a core set of commonly used machine learning tools and practicing them in the R statistical programming language to understand their mathematical foundations, statistical limitations, and proper interpretation."/>
+  <meta property="description" itemprop="description" content="Some additional details about the course"/>
 
   <link rel="license" href="https://creativecommons.org/licenses/by/4.0/"/>
 
 
   <!--  https://developers.facebook.com/docs/sharing/webmasters#markup -->
-  <meta property="og:title" content="machine learning 4 data science: Weekly content"/>
+  <meta property="og:title" content="machine learning 4 data science: About this course"/>
   <meta property="og:type" content="article"/>
-  <meta property="og:description" content="Introducing a core set of commonly used machine learning tools and practicing them in the R statistical programming language to understand their mathematical foundations, statistical limitations, and proper interpretation."/>
+  <meta property="og:description" content="Some additional details about the course"/>
   <meta property="og:locale" content="en_US"/>
   <meta property="og:site_name" content="machine learning 4 data science"/>
 
   <!--  https://dev.twitter.com/cards/types/summary -->
   <meta property="twitter:card" content="summary"/>
-  <meta property="twitter:title" content="machine learning 4 data science: Weekly content"/>
-  <meta property="twitter:description" content="Introducing a core set of commonly used machine learning tools and practicing them in the R statistical programming language to understand their mathematical foundations, statistical limitations, and proper interpretation."/>
+  <meta property="twitter:title" content="machine learning 4 data science: About this course"/>
+  <meta property="twitter:description" content="Some additional details about the course"/>
   <meta property="twitter:site" content="@joftius"/>
 
   <!--/radix_placeholder_meta_tags-->
   <!--radix_placeholder_rmarkdown_metadata-->
 
   <script type="text/json" id="radix-rmarkdown-metadata">
-  {"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["title","site","description","listing"]}},"value":[{"type":"character","attributes":{},"value":["Weekly content"]},{"type":"character","attributes":{},"value":["distill::distill_website"]},{"type":"character","attributes":{},"value":["Introducing a core set of commonly used machine learning tools and practicing them in the R statistical programming language to understand their mathematical foundations, statistical limitations, and proper interpretation.\n"]},{"type":"character","attributes":{},"value":["weeks"]}]}
+  {"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["title","description"]}},"value":[{"type":"character","attributes":{},"value":["About this course"]},{"type":"character","attributes":{},"value":["Some additional details about the course"]}]}
   </script>
   <!--/radix_placeholder_rmarkdown_metadata-->
   <!--radix_placeholder_navigation_in_header-->
@@ -2458,12 +2457,12 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 
 </head>
 
-<body class="layout-listing">
+<body>
 
 <!--radix_placeholder_front_matter-->
 
 <script id="distill-front-matter" type="text/json">
-{"title":"Weekly content","description":"Introducing a core set of commonly used machine learning tools and practicing them in the R statistical programming language to understand their mathematical foundations, statistical limitations, and proper interpretation.","authors":[]}
+{"title":"About this course","description":"Some additional details about the course","authors":[]}
 </script>
 
 <!--/radix_placeholder_front_matter-->
@@ -2502,332 +2501,30 @@ References
 <!--/radix_placeholder_navigation_before_body-->
 <!--radix_placeholder_site_before_body-->
 <!--/radix_placeholder_site_before_body-->
-<!--radix_placeholder_article_listing-->
-
-
-<script type="application/javascript">
-
-function init_posts_list() {
-
-  function load_image(img) {
-    var src = $(img).attr('data-src');
-    if (src) {
-      $(img).attr('src', src);
-      $(img).on("load", function() {
-        img.removeAttribute('data-src');
-      });
-    }
-  }
-
-  function set_posts_visible(posts, visible) {
-    if (visible) {
-
-      // show bottom border by default
-      $(posts).removeClass('post-preview-last');
-
-      // apply limits if need be
-      var max_posts = 25;
-      var apply_limits = $('.posts-container').hasClass('posts-apply-limit');
-      if (apply_limits && posts.length > max_posts) {
-        posts = $(posts).slice(0, max_posts);
-      } else {
-        $('.posts-more a').addClass('hidden');
-      }
-
-      // apply last style
-      $(posts.slice(-1)[0]).addClass('post-preview-last');
-
-      $(posts).removeClass('hidden');
-      $(posts).find('img[data-src]').each(function(i, img) {
-        load_image(img);
-      });
-    } else {
-      $(posts).addClass('hidden');
-    }
-  }
-
-  function apply_hash_filter() {
-
-    // clear active state
-    $('.categories .active').removeClass('active');
-
-    // mark all posts invisible to start
-    set_posts_visible($('.posts-list').children('a'), false);
-
-    // if we have a hash filter
-    if (window.location.hash && window.location.hash.startsWith("#category:")) {
-
-      // mark posts that match the category visible
-      var page_category = window.location.hash.replace(/^#category:/, "");
-      page_category = decodeURIComponent(page_category)
-      var posts = $('.post-metadata').map(function(idx, script) {
-        var metadata = $.parseJSON($(script).html());
-        var post = null;
-        $.each(metadata.categories, function(idx, category) {
-          category = category.replace(/ /g,"_");
-          if ((page_category || '').toLowerCase() === "articles" || category === page_category) {
-            post = $(script).parent().get();
-            return false;
-          }
-        });
-        return post;
-      });
-      set_posts_visible(posts, true);
-
-      // mark the hash active
-      $('.categories li>a[href="' + decodeURIComponent(window.location.hash) + '"]').addClass('active');
-
-      // update the list_caption
-      var list_caption = $('.posts-list-caption');
-      var caption = (page_category || '').toLowerCase() === "articles"
-        ? list_caption.attr('data-caption')
-        : ('Category: ' + page_category.replace(/_/g," "));
-      list_caption.text(caption);
-
-    } else {
-
-      // no hash filter, make all posts visible (subject to max display)
-      set_posts_visible($('.posts-list').children(), true);
-
-      // reset list caption
-      var list_caption = $('.posts-list-caption');
-      list_caption.text(list_caption.attr('data-caption'));
-
-
-    }
-  }
-
-  // more articles
-  function apply_post_limits(apply) {
-    if (apply) {
-      $('.posts-container').addClass('posts-apply-limit');
-      $('.posts-more a').removeClass('hidden');
-    } else {
-      $('.posts-container').removeClass('posts-apply-limit');
-      $('.posts-more a').addClass('hidden');
-    }
-  }
-
-  // click handling for tags
-  $('.dt-tag').click(function(ev) {
-    window.location.hash = '#category:' + $(this).text().replace(/ /g, "_");
-    return false;
-  })
-
-  // hash filter handling
-  apply_hash_filter();
-  $(window).on('hashchange',function() {
-    apply_post_limits(true);
-    apply_hash_filter();
-  });
-
-  // more articles link
-  $('.posts-more a').click(function(e) {
-    e.preventDefault();
-    apply_post_limits(false);
-    apply_hash_filter();
-    return false;
-  });
-
-}
-
-</script>
-
-
-
-<div class="posts-container posts-apply-limit l-page">
-<div class="posts-list">
-<h1 class="posts-list-caption" data-caption="Weekly content">Weekly content</h1>
-<a href="weeks/01-introduction-foundations/" class="post-preview">
-<script class="post-metadata" type="text/json">{"categories":[]}</script>
-<div class="metadata">
-<div class="publishedDate">Oct. 11, 2021</div>
-<div class="dt-authors">
-<div class="dt-author">Joshua Loftus</div>
-</div>
-</div>
-<div class="thumbnail">
-<img src="https://ml4ds.com/weeks/01-introduction-foundations/slides/01-2-foundations_files/figure-html/gapminder-loess-1.png"/>
-</div>
-<div class="description">
-<h2>1 Introduction and foundations</h2>
-<div class="dt-tags"></div>
-<p>A brief introduction to the course, preview of things to come, and some foundational background material.</p>
-</div>
-</a>
-<a href="weeks/02-linear-regression/" class="post-preview">
-<script class="post-metadata" type="text/json">{"categories":[]}</script>
-<div class="metadata">
-<div class="publishedDate">Oct. 10, 2021</div>
-<div class="dt-authors">
-<div class="dt-author">Joshua Loftus</div>
-</div>
-</div>
-<div class="thumbnail">
-<img/>
-</div>
-<div class="description">
-<h2>2 Linear regression</h2>
-<div class="dt-tags"></div>
-<p>Reviewing linear regression and framing it as a prototypical example and source of intuition for other machine learning methods.</p>
-</div>
-</a>
-<a href="weeks/03-causality/" class="post-preview">
-<script class="post-metadata" type="text/json">{"categories":[]}</script>
-<div class="metadata">
-<div class="publishedDate">Oct. 9, 2021</div>
-<div class="dt-authors">
-<div class="dt-author">Joshua Loftus</div>
-</div>
-</div>
-<div class="thumbnail">
-<img/>
-</div>
-<div class="description">
-<h2>3 Multiple regression and causality</h2>
-<div class="dt-tags"></div>
-<p>Multiple linear regression does not, by default, tell us anything about causality. But with the right data and careful interpretation we might be able to learn some causal relationships.</p>
-</div>
-</a>
-<a href="weeks/04-classification/" class="post-preview">
-<script class="post-metadata" type="text/json">{"categories":[]}</script>
-<div class="metadata">
-<div class="publishedDate">Oct. 8, 2021</div>
-<div class="dt-authors">
-<div class="dt-author">Joshua Loftus</div>
-</div>
-</div>
-<div class="thumbnail">
-<img/>
-</div>
-<div class="description">
-<h2>4 Classification</h2>
-<div class="dt-tags"></div>
-<p>Categorical or qualitative outcome variables are ubiquitous. We review some supervised learning methods for classification, and see how these may be applied to observational causal inference.</p>
-</div>
-</a>
-<a href="weeks/05-optimization/" class="post-preview">
-<script class="post-metadata" type="text/json">{"categories":[]}</script>
-<div class="metadata">
-<div class="publishedDate">Oct. 7, 2021</div>
-<div class="dt-authors">
-<div class="dt-author">Joshua Loftus</div>
-</div>
-</div>
-<div class="thumbnail">
-<img/>
-</div>
-<div class="description">
-<h2>5 Optimization and overfitting</h2>
-<div class="dt-tags"></div>
-<p>Optimization is about finding the best model. With greater model complexity it becomes increasingly important to avoid overfitting: finding a model that is best for one specific dataset but does not generalize well to others.</p>
-</div>
-</a>
-<a href="weeks/06-regularization/" class="post-preview">
-<script class="post-metadata" type="text/json">{"categories":[]}</script>
-<div class="metadata">
-<div class="publishedDate">Oct. 6, 2021</div>
-<div class="dt-authors">
-<div class="dt-author">Joshua Loftus</div>
-</div>
-</div>
-<div class="thumbnail">
-<img/>
-</div>
-<div class="description">
-<h2>6 Regularization and validation</h2>
-<div class="dt-tags"></div>
-<p>When optimizing an ML model there are a variety of strategies to improve generalization from the training data. We can add a complexity penalty to the loss function, and we can evaluate the loss function on validation data.</p>
-</div>
-</a>
-<a href="weeks/07-nonlinear/" class="post-preview">
-<script class="post-metadata" type="text/json">{"categories":[]}</script>
-<div class="metadata">
-<div class="publishedDate">Oct. 5, 2021</div>
-<div class="dt-authors">
-<div class="dt-author">Joshua Loftus</div>
-</div>
-</div>
-<div class="thumbnail">
-<img/>
-</div>
-<div class="description">
-<h2>7 Nonlinear methods</h2>
-<div class="dt-tags"></div>
-<p>Non-linearity may result in models that trade interpretability for increased predictive accuracy. These notes discuss the challenges of non-linearity and introduce nearest neighbors and kernel methods.</p>
-</div>
-</a>
-<a href="weeks/08-nonlinear/" class="post-preview">
-<script class="post-metadata" type="text/json">{"categories":[]}</script>
-<div class="metadata">
-<div class="publishedDate">Oct. 4, 2021</div>
-<div class="dt-authors">
-<div class="dt-author">Joshua Loftus</div>
-</div>
-</div>
-<div class="thumbnail">
-<img/>
-</div>
-<div class="description">
-<h2>8 More nonlinear methods</h2>
-<div class="dt-tags"></div>
-<p>We continue our exploration of non-linear supervised machine learning approaches including tree based methods, GAMs, and neural networks and graphs structured learning.</p>
-</div>
-</a>
-<a href="weeks/09-uninterpretable/" class="post-preview">
-<script class="post-metadata" type="text/json">{"categories":[]}</script>
-<div class="metadata">
-<div class="publishedDate">Oct. 3, 2021</div>
-<div class="dt-authors">
-<div class="dt-author">Joshua Loftus</div>
-</div>
-</div>
-<div class="thumbnail">
-<img/>
-</div>
-<div class="description">
-<h2>9 Less interpretable methods</h2>
-<div class="dt-tags"></div>
-<p>Neural networks and ensemble methods like bagging, random forests, and boosting can greatly increase predictive accuracy at the cost of ease of interpretation.</p>
-</div>
-</a>
-<a href="weeks/10-action/" class="post-preview">
-<script class="post-metadata" type="text/json">{"categories":[]}</script>
-<div class="metadata">
-<div class="publishedDate">Oct. 2, 2021</div>
-<div class="dt-authors">
-<div class="dt-author">Joshua Loftus</div>
-</div>
-</div>
-<div class="thumbnail">
-<img/>
-</div>
-<div class="description">
-<h2>10 From prediction to action</h2>
-<div class="dt-tags"></div>
-<p>Supervised machine learning methods excel at predicting an outcome. But being able to predict an outcome does not mean we know how to change it, or that we should.</p>
-</div>
-</a>
-</div>
-<div class="posts-more">
-<a href="#">More articles &raquo;</a>
-</div>
-</div>
-<!--/radix_placeholder_article_listing-->
 
 <div class="d-title">
-<h1>Weekly content</h1>
+<h1>About this course</h1>
 <!--radix_placeholder_categories-->
 <!--/radix_placeholder_categories-->
-<p><p>Introducing a core set of commonly used machine learning tools and
-practicing them in the R statistical programming language to understand
-their mathematical foundations, statistical limitations, and proper
-interpretation.</p></p>
+<p><p>Some additional details about the course</p></p>
 </div>
 
 
 <div class="d-article">
-<div class="sourceCode" id="cb1"><pre
+<p>References</p>
+<pre><code>  - text: &quot;ISLR&quot;
+    href: &quot;https://statlearning.com/&quot;
+  - text: &quot;ESL&quot;
+    href: https://web.stanford.edu/~hastie/ElemStatLearn/
+  - text: &quot;CASI&quot;
+    href: https://web.stanford.edu/~hastie/CASI/
+  - text: &quot;Mixtape&quot;
+    href: https://mixtape.scunning.com/index.html
+  - text: &quot;R4DS&quot;
+    href: https://r4ds.had.co.nz/
+  - text: &quot;MLstory&quot;
+    href: https://mlstory.org/</code></pre>
+<div class="sourceCode" id="cb2"><pre
 class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
 <!--radix_placeholder_article_footer-->
 <!--/radix_placeholder_article_footer-->
