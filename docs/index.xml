@@ -15,7 +15,7 @@
       <description>A brief introduction to the course, preview of things to come, and some foundational background material.</description>
       <guid>http://ml4ds.com/weeks/01-introduction-foundations</guid>
       <pubDate>Mon, 11 Oct 2021 00:00:00 +0000</pubDate>
-      <media:content url="https://joshualoftus.com/ml4ds/01-introduction-foundations/slides/01-2-foundations_files/figure-html/gapminder-loess-1.png" medium="image" type="image/png"/>
+      <media:content url="https://ml4ds.com/weeks/01-introduction-foundations/slides/01-2-foundations_files/figure-html/gapminder-loess-1.png" medium="image" type="image/png"/>
     </item>
     <item>
       <title>2 Linear regression</title>

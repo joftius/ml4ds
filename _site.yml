@@ -22,7 +22,9 @@ navbar:
         href: https://r4ds.had.co.nz/
       - text: "MLstory"
         href: https://mlstory.org/
-    - text: "Home"
+    - text: "About"
+      href: about.html
+    - text: "Content"
       href: index.html
 orcid_id: "0000-0002-2905-1632"
 base_url: http://ml4ds.com/

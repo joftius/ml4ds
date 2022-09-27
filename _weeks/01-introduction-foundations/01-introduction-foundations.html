@@ -23,6 +23,7 @@
 pre > code.sourceCode { white-space: pre; position: relative; }
 pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
 pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
 code.sourceCode > span { color: inherit; text-decoration: inherit; }
 div.sourceCode { margin: 1em 0; }
 pre.sourceCode { margin: 0; }
@@ -49,16 +50,17 @@ pre.numberSource code > span > a:first-child::before
   }
 pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
 div.sourceCode
-  {   }
+  { color: #00769e; background-color: #f1f3f5; }
 @media screen {
 pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
+code span { color: #00769e; } /* Normal */
 code span.al { color: #ad0000; } /* Alert */
 code span.an { color: #5e5e5e; } /* Annotation */
-code span.at { color: #20794d; } /* Attribute */
+code span.at { color: #657422; } /* Attribute */
 code span.bn { color: #ad0000; } /* BaseN */
 code span.bu { } /* BuiltIn */
-code span.cf { color: #007ba5; } /* ControlFlow */
+code span.cf { color: #00769e; } /* ControlFlow */
 code span.ch { color: #20794d; } /* Char */
 code span.cn { color: #8f5902; } /* Constant */
 code span.co { color: #5e5e5e; } /* Comment */
@@ -72,17 +74,18 @@ code span.fl { color: #ad0000; } /* Float */
 code span.fu { color: #4758ab; } /* Function */
 code span.im { } /* Import */
 code span.in { color: #5e5e5e; } /* Information */
-code span.kw { color: #007ba5; } /* Keyword */
+code span.kw { color: #00769e; } /* Keyword */
 code span.op { color: #5e5e5e; } /* Operator */
-code span.ot { color: #007ba5; } /* Other */
+code span.ot { color: #00769e; } /* Other */
 code span.pp { color: #ad0000; } /* Preprocessor */
-code span.sc { color: #20794d; } /* SpecialChar */
+code span.sc { color: #5e5e5e; } /* SpecialChar */
 code span.ss { color: #20794d; } /* SpecialString */
 code span.st { color: #20794d; } /* String */
 code span.va { color: #111111; } /* Variable */
 code span.vs { color: #20794d; } /* VerbatimString */
 code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 </style>
+
 
   <!--radix_placeholder_meta_tags-->
   <title>1 Introduction and foundations</title>
@@ -110,12 +113,12 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
   <!--radix_placeholder_rmarkdown_metadata-->
 
   <script type="text/json" id="radix-rmarkdown-metadata">
-  {"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["title","description","author","date","output","preview"]}},"value":[{"type":"character","attributes":{},"value":["1 Introduction and foundations"]},{"type":"character","attributes":{},"value":["A brief introduction to the course, preview of things to come, and some foundational background material.\n"]},{"type":"list","attributes":{},"value":[{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name"]}},"value":[{"type":"character","attributes":{},"value":["Joshua Loftus"]}]}]},{"type":"character","attributes":{},"value":["10-11-2021"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["distill::distill_article"]}},"value":[{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["self_contained"]}},"value":[{"type":"logical","attributes":{},"value":[false]}]}]},{"type":"character","attributes":{},"value":["https://joshualoftus.com/ml4ds/01-introduction-foundations/slides/01-2-foundations_files/figure-html/gapminder-loess-1.png"]}]}
+  {"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["title","description","author","date","output","preview"]}},"value":[{"type":"character","attributes":{},"value":["1 Introduction and foundations"]},{"type":"character","attributes":{},"value":["A brief introduction to the course, preview of things to come, and some foundational background material.\n"]},{"type":"list","attributes":{},"value":[{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name"]}},"value":[{"type":"character","attributes":{},"value":["Joshua Loftus"]}]}]},{"type":"character","attributes":{},"value":["10-11-2021"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["distill::distill_article"]}},"value":[{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["self_contained"]}},"value":[{"type":"logical","attributes":{},"value":[false]}]}]},{"type":"character","attributes":{},"value":["https://ml4ds.com/weeks/01-introduction-foundations/slides/01-2-foundations_files/figure-html/gapminder-loess-1.png"]}]}
   </script>
   <!--/radix_placeholder_rmarkdown_metadata-->
   
   <script type="text/json" id="radix-resource-manifest">
-  {"type":"character","attributes":{},"value":["01-introduction-foundations_files/anchor-4.2.2/anchor.min.js","01-introduction-foundations_files/anchor/anchor.min.js","01-introduction-foundations_files/bowser-1.9.3/bowser.min.js","01-introduction-foundations_files/bowser/bowser.min.js","01-introduction-foundations_files/distill-2.2.21/template.v2.js","01-introduction-foundations_files/distill/template.v2.js","01-introduction-foundations_files/header-attrs-2.6/header-attrs.js","01-introduction-foundations_files/header-attrs-2.7/header-attrs.js","01-introduction-foundations_files/header-attrs/header-attrs.js","01-introduction-foundations_files/jquery-1.11.3/jquery.min.js","01-introduction-foundations_files/jquery/jquery.min.js","01-introduction-foundations_files/popper-2.6.0/popper.min.js","01-introduction-foundations_files/popper/popper.min.js","01-introduction-foundations_files/tippy-6.2.7/tippy-bundle.umd.min.js","01-introduction-foundations_files/tippy-6.2.7/tippy-light-border.css","01-introduction-foundations_files/tippy-6.2.7/tippy.css","01-introduction-foundations_files/tippy-6.2.7/tippy.umd.min.js","01-introduction-foundations_files/tippy/tippy-bundle.umd.min.js","01-introduction-foundations_files/tippy/tippy-light-border.css","01-introduction-foundations_files/tippy/tippy.css","01-introduction-foundations_files/tippy/tippy.umd.min.js","01-introduction-foundations_files/webcomponents-2.0.0/webcomponents.js","01-introduction-foundations_files/webcomponents/webcomponents.js","notebooks/candy.html","notebooks/candy.Rmd","notebooks/example_delete_later.html","notebooks/example_delete_later.Rmd","notebooks/gapminder.html","notebooks/gapminder.Rmd","notebooks/seminar_fresh.Rmd","notebooks/seminar.html","notebooks/seminar.Rmd","slides/01-1-introduction_files/figure-html/cars-1.png","slides/01-1-introduction_files/figure-html/plot-example-1.png","slides/01-1-introduction_files/figure-html/plot-example2-1.png","slides/01-1-introduction_files/figure-html/unnamed-chunk-1-1.png","slides/01-1-introduction_files/figure-html/unnamed-chunk-2-1.png","slides/01-1-introduction_files/figure-html/unnamed-chunk-3-1.png","slides/01-1-introduction.html","slides/01-1-introduction.Rmd","slides/01-2-foundations_files/figure-html/candy_lm_multiple-1.png","slides/01-2-foundations_files/figure-html/candy_lm-1.png","slides/01-2-foundations_files/figure-html/gapminder-lm-1.png","slides/01-2-foundations_files/figure-html/gapminder-loess-1.png","slides/01-2-foundations.html","slides/01-2-foundations.Rmd","slides/01-3-contextual.Rmd","slides/libs/animate.css-xaringan/animate.slide_left.css","slides/libs/crosstalk/css/crosstalk.css","slides/libs/crosstalk/js/crosstalk.js","slides/libs/crosstalk/js/crosstalk.js.map","slides/libs/crosstalk/js/crosstalk.min.js","slides/libs/crosstalk/js/crosstalk.min.js.map","slides/libs/datatables-binding/datatables.js","slides/libs/datatables-css/datatables-crosstalk.css","slides/libs/dt-core/css/jquery.dataTables.extra.css","slides/libs/dt-core/css/jquery.dataTables.min.css","slides/libs/dt-core/js/jquery.dataTables.min.js","slides/libs/header-attrs/header-attrs.js","slides/libs/htmlwidgets/htmlwidgets.js","slides/libs/jquery/jquery-AUTHORS.txt","slides/libs/jquery/jquery.js","slides/libs/jquery/jquery.min.js","slides/libs/jquery/jquery.min.map","slides/libs/leaflet-binding/leaflet.js","slides/libs/leaflet/images/layers-2x.png","slides/libs/leaflet/images/layers.png","slides/libs/leaflet/images/marker-icon-2x.png","slides/libs/leaflet/images/marker-icon.png","slides/libs/leaflet/images/marker-shadow.png","slides/libs/leaflet/leaflet.css","slides/libs/leaflet/leaflet.js","slides/libs/leafletfix/leafletfix.css","slides/libs/panelset/panelset.css","slides/libs/panelset/panelset.js","slides/libs/proj4/proj4.min.js","slides/libs/Proj4Leaflet/proj4leaflet.js","slides/libs/remark-css/default.css","slides/libs/rstudio_leaflet/images/1px.png","slides/libs/rstudio_leaflet/rstudio_leaflet.css","slides/libs/tile-view/tile-view.css","slides/libs/tile-view/tile-view.js","slides/xaringan-themer.css"]}
+  {"type":"character","attributes":{},"value":["01-introduction-foundations_files/anchor-4.2.2/anchor.min.js","01-introduction-foundations_files/anchor/anchor.min.js","01-introduction-foundations_files/bowser-1.9.3/bowser.min.js","01-introduction-foundations_files/bowser/bowser.min.js","01-introduction-foundations_files/distill-2.2.21/template.v2.js","01-introduction-foundations_files/distill/template.v2.js","01-introduction-foundations_files/header-attrs-2.16/header-attrs.js","01-introduction-foundations_files/header-attrs-2.6/header-attrs.js","01-introduction-foundations_files/header-attrs-2.7/header-attrs.js","01-introduction-foundations_files/header-attrs/header-attrs.js","01-introduction-foundations_files/jquery-1.11.3/jquery.min.js","01-introduction-foundations_files/jquery-3.6.0/jquery-3.6.0.js","01-introduction-foundations_files/jquery-3.6.0/jquery-3.6.0.min.js","01-introduction-foundations_files/jquery-3.6.0/jquery-3.6.0.min.map","01-introduction-foundations_files/jquery/jquery.min.js","01-introduction-foundations_files/popper-2.6.0/popper.min.js","01-introduction-foundations_files/popper/popper.min.js","01-introduction-foundations_files/tippy-6.2.7/tippy-bundle.umd.min.js","01-introduction-foundations_files/tippy-6.2.7/tippy-light-border.css","01-introduction-foundations_files/tippy-6.2.7/tippy.css","01-introduction-foundations_files/tippy-6.2.7/tippy.umd.min.js","01-introduction-foundations_files/tippy/tippy-bundle.umd.min.js","01-introduction-foundations_files/tippy/tippy-light-border.css","01-introduction-foundations_files/tippy/tippy.css","01-introduction-foundations_files/tippy/tippy.umd.min.js","01-introduction-foundations_files/webcomponents-2.0.0/webcomponents.js","01-introduction-foundations_files/webcomponents/webcomponents.js","notebooks/candy.html","notebooks/candy.Rmd","notebooks/example_delete_later.html","notebooks/example_delete_later.Rmd","notebooks/gapminder.html","notebooks/gapminder.Rmd","notebooks/seminar_fresh.Rmd","notebooks/seminar.html","notebooks/seminar.Rmd","slides/01-1-introduction_files/figure-html/cars-1.png","slides/01-1-introduction_files/figure-html/plot-example-1.png","slides/01-1-introduction_files/figure-html/plot-example2-1.png","slides/01-1-introduction_files/figure-html/unnamed-chunk-1-1.png","slides/01-1-introduction_files/figure-html/unnamed-chunk-2-1.png","slides/01-1-introduction_files/figure-html/unnamed-chunk-3-1.png","slides/01-1-introduction.html","slides/01-1-introduction.Rmd","slides/01-2-foundations_files/figure-html/candy_lm_multiple-1.png","slides/01-2-foundations_files/figure-html/candy_lm-1.png","slides/01-2-foundations_files/figure-html/gapminder-lm-1.png","slides/01-2-foundations_files/figure-html/gapminder-loess-1.png","slides/01-2-foundations.html","slides/01-2-foundations.Rmd","slides/01-3-contextual.Rmd","slides/libs/animate.css-xaringan/animate.slide_left.css","slides/libs/crosstalk/css/crosstalk.css","slides/libs/crosstalk/js/crosstalk.js","slides/libs/crosstalk/js/crosstalk.js.map","slides/libs/crosstalk/js/crosstalk.min.js","slides/libs/crosstalk/js/crosstalk.min.js.map","slides/libs/datatables-binding/datatables.js","slides/libs/datatables-css/datatables-crosstalk.css","slides/libs/dt-core/css/jquery.dataTables.extra.css","slides/libs/dt-core/css/jquery.dataTables.min.css","slides/libs/dt-core/js/jquery.dataTables.min.js","slides/libs/header-attrs/header-attrs.js","slides/libs/htmlwidgets/htmlwidgets.js","slides/libs/jquery/jquery-AUTHORS.txt","slides/libs/jquery/jquery.js","slides/libs/jquery/jquery.min.js","slides/libs/jquery/jquery.min.map","slides/libs/leaflet-binding/leaflet.js","slides/libs/leaflet/images/layers-2x.png","slides/libs/leaflet/images/layers.png","slides/libs/leaflet/images/marker-icon-2x.png","slides/libs/leaflet/images/marker-icon.png","slides/libs/leaflet/images/marker-shadow.png","slides/libs/leaflet/leaflet.css","slides/libs/leaflet/leaflet.js","slides/libs/leafletfix/leafletfix.css","slides/libs/panelset/panelset.css","slides/libs/panelset/panelset.js","slides/libs/proj4/proj4.min.js","slides/libs/Proj4Leaflet/proj4leaflet.js","slides/libs/remark-css/default.css","slides/libs/rstudio_leaflet/images/1px.png","slides/libs/rstudio_leaflet/rstudio_leaflet.css","slides/libs/tile-view/tile-view.css","slides/libs/tile-view/tile-view.js","slides/xaringan-themer.css"]}
   </script>
   <!--radix_placeholder_navigation_in_header-->
   <!--/radix_placeholder_navigation_in_header-->
@@ -427,10 +430,6 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
     position: relative;
     margin-bottom: 2.5em;
     margin-top: 1.5em;
-  }
-
-  .figure img {
-    width: 100%;
   }
 
   .figure .caption {
@@ -1262,7 +1261,16 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 
       // hoverable references
       $('span.citation[data-cites]').each(function() {
-        var refHtml = $('#ref-' + $(this).attr('data-cites')).html();
+        if ($(this).children()[0].nodeName == "D-FOOTNOTE") {
+          var fn = $(this).children()[0]
+          $(this).html(fn.shadowRoot.querySelector("sup"))
+          $(this).id = fn.id
+          fn.remove()
+        }
+        var refs = $(this).attr('data-cites').split(" ");
+        var refHtml = refs.map(function(ref) {
+          return "<p>" + $('#ref-' + ref).html() + "</p>";
+        }).join("\n");
         window.tippy(this, {
           allowHTML: true,
           content: refHtml,
@@ -1273,6 +1281,31 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
           placement: 'bottom-start'
         });
       });
+
+      // fix footnotes in tables (#411)
+      // replacing broken distill.pub feature
+      $('table d-footnote').each(function() {
+        // we replace internal showAtNode methode which is triggered when hovering a footnote
+        this.hoverBox.showAtNode = function(node) {
+          // ported from https://github.com/distillpub/template/pull/105/files
+          calcOffset = function(elem) {
+              let x = elem.offsetLeft;
+              let y = elem.offsetTop;
+              // Traverse upwards until an `absolute` element is found or `elem`
+              // becomes null.
+              while (elem = elem.offsetParent && elem.style.position != 'absolute') {
+                  x += elem.offsetLeft;
+                  y += elem.offsetTop;
+              }
+
+              return { left: x, top: y };
+          }
+          // https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/offsetTop
+          const bbox = node.getBoundingClientRect();
+          const offset = calcOffset(node);
+          this.show([offset.left + bbox.width, offset.top + bbox.height]);
+        }
+      })
 
       // clear polling timer
       clearInterval(tid);
@@ -1372,6 +1405,8 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
     // mark non-body figures created by knitr chunks as 100% width
     $('.layout-chunk').each(function(i, val) {
       var figures = $(this).find('img, .html-widget');
+      // ignore leaflet img layers (#106)
+      figures = figures.filter(':not(img[class*="leaflet"])')
       if ($(this).attr('data-layout') !== "l-body") {
         figures.css('width', '100%');
       } else {
@@ -1394,7 +1429,7 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
     // get rid of index.html references in header
     if (window.location.protocol !== "file:") {
       $('.distill-site-header a[href]').each(function(i,val) {
-        $(this).attr('href', $(this).attr('href').replace("index.html", "./"));
+        $(this).attr('href', $(this).attr('href').replace(/^index[.]html/, "./"));
       });
     }
 
@@ -1433,8 +1468,8 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
   </script>
 
   <!--/radix_placeholder_distill-->
-  <script src="01-introduction-foundations_files/header-attrs-2.7/header-attrs.js"></script>
-  <script src="01-introduction-foundations_files/jquery-1.11.3/jquery.min.js"></script>
+  <script src="01-introduction-foundations_files/header-attrs-2.16/header-attrs.js"></script>
+  <script src="01-introduction-foundations_files/jquery-3.6.0/jquery-3.6.0.min.js"></script>
   <script src="01-introduction-foundations_files/popper-2.6.0/popper.min.js"></script>
   <link href="01-introduction-foundations_files/tippy-6.2.7/tippy.css" rel="stylesheet" />
   <link href="01-introduction-foundations_files/tippy-6.2.7/tippy-light-border.css" rel="stylesheet" />
@@ -1454,7 +1489,7 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 <!--radix_placeholder_front_matter-->
 
 <script id="distill-front-matter" type="text/json">
-{"title":"1 Introduction and foundations","description":"A brief introduction to the course, preview of things to come, and some foundational background material.","authors":[{"author":"Joshua Loftus","authorURL":"#","affiliation":"&nbsp;","affiliationURL":"#","orcidID":""}],"publishedDate":"2021-10-11T00:00:00.000+00:00","citationText":"Loftus, 2021"}
+{"title":"1 Introduction and foundations","description":"A brief introduction to the course, preview of things to come, and some foundational background material.","authors":[{"author":"Joshua Loftus","authorURL":"#","affiliation":"&nbsp;","affiliationURL":"#","orcidID":""}],"publishedDate":"2021-10-11T00:00:00.000+01:00","citationText":"Loftus, 2021"}
 </script>
 
 <!--/radix_placeholder_front_matter-->
@@ -1467,7 +1502,8 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 <h1>1 Introduction and foundations</h1>
 <!--radix_placeholder_categories-->
 <!--/radix_placeholder_categories-->
-<p><p>A brief introduction to the course, preview of things to come, and some foundational background material.</p></p>
+<p><p>A brief introduction to the course, preview of things to come, and
+some foundational background material.</p></p>
 </div>
 
 <div class="d-byline">
@@ -1478,38 +1514,107 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 
 <div class="d-article">
 <h2 id="what-is-machine-learning">What is machine learning?</h2>
-<p>We begin with some key conceptual themes in machine learning. The subject mainly focuses on <strong>algorithms</strong> for finding potentially useful structure in data.</p>
+<p>We begin with some key conceptual themes in machine learning. The
+subject mainly focuses on <strong>algorithms</strong> for finding
+potentially useful structure in data.</p>
 <h3 id="supervised-machine-learning">Supervised machine learning</h3>
-<p>This refers to the special case where one variable in the dataset is specified as an “outcome”–usually represented as <span class="math inline">\(y\)</span>–the other variables are considered inputs or “predictors”–written as <span class="math inline">\(x\)</span>–and the algorithm attempts to “fit” a functional relationship between these using the dataset. A key idea in applied mathematics is that there may be some “true” function <span class="math inline">\(f\)</span> that describes the relationship between <span class="math inline">\(x\)</span> and <span class="math inline">\(y\)</span>, so that measured data will approximately satisfy</p>
+<p>This refers to the special case where one variable in the dataset is
+specified as an “outcome”–usually represented as <span
+class="math inline">\(y\)</span>–the other variables are considered
+inputs or “predictors”–written as <span
+class="math inline">\(x\)</span>–and the algorithm attempts to “fit” a
+functional relationship between these using the dataset. A key idea in
+applied mathematics is that there may be some “true” function <span
+class="math inline">\(f\)</span> that describes the relationship between
+<span class="math inline">\(x\)</span> and <span
+class="math inline">\(y\)</span>, so that measured data will
+approximately satisfy</p>
 <p><span class="math display">\[
 y \approx f(x)
-\]</span> In the physical sciences, for example, this function could describe a “law” such as the laws of mechanics or elecromagnetism, <a href="https://en.wikipedia.org/wiki/Scientific_law">etc</a>. In machine learning we usually don’t know the function, or even have good <em>a priori</em> reasons to believe there is a useful functional relationship. Instead we hope that a (powerful enough) algorithm can “learn” a function <span class="math inline">\(\hat f\)</span> by approximating the examples in a (large enough) dataset:</p>
+\]</span> In the physical sciences, for example, this function could
+describe a “law” such as the laws of mechanics or elecromagnetism, <a
+href="https://en.wikipedia.org/wiki/Scientific_law">etc</a>. In machine
+learning we usually don’t know the function, or even have good <em>a
+priori</em> reasons to believe there is a useful functional
+relationship. Instead we hope that a (powerful enough) algorithm can
+“learn” a function <span class="math inline">\(\hat f\)</span> by
+approximating the examples in a (large enough) dataset:</p>
 <p><span class="math display">\[
 \hat f(x) \approx y
-\]</span> We might only care about the prediction accuracy of this learned function, or we might also want to <strong>interpret</strong> it based on the assumption that it is close to the “true” function: <span class="math display">\[
+\]</span> We might only care about the prediction accuracy of this
+learned function, or we might also want to <strong>interpret</strong> it
+based on the assumption that it is close to the “true” function: <span
+class="math display">\[
 \hat f(x) \approx f(x)
-\]</span> Technological advances in computing enable us to use more sophisticated algorithms and achieve better accuracy. This often creates tension between the two goals above, since new “state of the art” (SOTA) algorithms that have the highest prediction accuracy are usually very complicated and hence difficult to interpret. Later in the course we will learn about some algorithmic tools to help us interpret other algorithms.</p>
+\]</span> Technological advances in computing enable us to use more
+sophisticated algorithms and achieve better accuracy. This often creates
+tension between the two goals above, since new “state of the art” (SOTA)
+algorithms that have the highest prediction accuracy are usually very
+complicated and hence difficult to interpret. Later in the course we
+will learn about some algorithmic tools to help us interpret other
+algorithms.</p>
 <h3 id="model-complexity">Model complexity</h3>
-<p>The distinguishing feature of machine learning as compared to statistics, for example, is that it is mainly concerned with the accuracy of the fitted relationship. In statistics we usually want some kind of <strong>inference</strong> for our fitted models, for example confidence/prediction intervals, hypothesis tests, and diagnostic plots. Machine learning drops this requirement allowing us to more kinds of models, including ones where we do not know how to compute valid inferences or provide any simple interpretations. To move in the direction of machine learning, then, we can imagine starting at statistics and taking a step in the direction of <strong>greater model complexity</strong>.</p>
-<p>Two simple examples illustrate different strategies for building more complex models:</p>
+<p>The distinguishing feature of machine learning as compared to
+statistics, for example, is that it is mainly concerned with the
+accuracy of the fitted relationship. In statistics we usually want some
+kind of <strong>inference</strong> for our fitted models, for example
+confidence/prediction intervals, hypothesis tests, and diagnostic plots.
+Machine learning drops this requirement allowing us to more kinds of
+models, including ones where we do not know how to compute valid
+inferences or provide any simple interpretations. To move in the
+direction of machine learning, then, we can imagine starting at
+statistics and taking a step in the direction of <strong>greater model
+complexity</strong>.</p>
+<p>Two simple examples illustrate different strategies for building more
+complex models:</p>
 <ul>
-<li>increasing complexity of the <strong>function class</strong>, for example by using (more highly) non-linear functions and/or allowing functions to fit flexibly/locally to different subsets of the data</li>
-<li>increasing the <strong>dimension of predictors</strong> (while otherwise keeping the function class fixed)</li>
+<li>increasing complexity of the <strong>function class</strong>, for
+example by using (more highly) non-linear functions and/or allowing
+functions to fit flexibly/locally to different subsets of the data</li>
+<li>increasing the <strong>dimension of predictors</strong> (while
+otherwise keeping the function class fixed)</li>
 </ul>
-<p><a href="https://en.wikipedia.org/wiki/Degrees_of_freedom_(statistics)">Model complexity</a> relates to the <a href="https://en.wikipedia.org/wiki/Bias%E2%80%93variance_tradeoff">bias-variance trade-off</a>: more complexity <em>typically</em> results in lower bias and higher variance.</p>
+<p><a
+href="https://en.wikipedia.org/wiki/Degrees_of_freedom_(statistics)">Model
+complexity</a> relates to the <a
+href="https://en.wikipedia.org/wiki/Bias%E2%80%93variance_tradeoff">bias-variance
+trade-off</a>: more complexity <em>typically</em> results in lower bias
+and higher variance.</p>
 <div class="layout-chunk" data-layout="l-body">
 <p><img src="https://joshualoftus.com/ml4ds/01-introduction-foundations/slides/01-2-foundations_files/figure-html/gapminder-lm-1.png" width="50%" /><img src="https://joshualoftus.com/ml4ds/01-introduction-foundations/slides/01-2-foundations_files/figure-html/gapminder-loess-1.png" width="50%" /></p>
 </div>
-<p>Increasing complexity usually results in a lower mean-squared error <em>if the MSE is calculated on the same dataset that was used to fit the model</em>. But if the MSE is calculated on a different dataset this is no longer true, and more complexity may result in a larger MSE on the other dataset.</p>
-<p>Why should we evaluate model fit (like MSE) on a different dataset than the one used to fit the model? First, if we evaluate it on the same dataset instead, then such an evaluation will always prefer greater complexity until the model “saturates” the data. In this case there was nothing gained from using a model–we have only created a <a href="https://en.wikipedia.org/wiki/On_Exactitude_in_Science#Influences_and_legacy">map as large as the entire territory</a>. Second, if our purpose in using a model is to describe some <em>stable</em> aspect of the world, if we think the “true” <span class="math inline">\(f\)</span> is something like a “law of nature,” then we would hope that such a model would not immediately fail if the time or context of the data collection is slightly different.</p>
-<p>Since these concepts are so central to machine learning we will return to them several times through the term and understand them through more examples and some mathematical derivations.</p>
+<p>Increasing complexity usually results in a lower mean-squared error
+<em>if the MSE is calculated on the same dataset that was used to fit
+the model</em>. But if the MSE is calculated on a different dataset this
+is no longer true, and more complexity may result in a larger MSE on the
+other dataset.</p>
+<p>Why should we evaluate model fit (like MSE) on a different dataset
+than the one used to fit the model? First, if we evaluate it on the same
+dataset instead, then such an evaluation will always prefer greater
+complexity until the model “saturates” the data. In this case there was
+nothing gained from using a model–we have only created a <a
+href="https://en.wikipedia.org/wiki/On_Exactitude_in_Science#Influences_and_legacy">map
+as large as the entire territory</a>. Second, if our purpose in using a
+model is to describe some <em>stable</em> aspect of the world, if we
+think the “true” <span class="math inline">\(f\)</span> is something
+like a “law of nature,” then we would hope that such a model would not
+immediately fail if the time or context of the data collection is
+slightly different.</p>
+<p>Since these concepts are so central to machine learning we will
+return to them several times through the term and understand them
+through more examples and some mathematical derivations.</p>
 <h2 id="slides-and-notebooks">Slides and notebooks</h2>
-<p><a href="slides/01-1-introduction.html">Slides</a> for first video</p>
-<p><a href="notebooks/gapminder.html">Notebook</a> for <code>gapminder</code> example</p>
-<p><a href="notebooks/candy.html">Notebook</a> for <code>candy</code> example</p>
-<p><a href="slides/01-2-foundations.html">Slides</a> for last video (<a href="slides/foundations.pdf">PDF</a>)</p>
+<p><a href="slides/01-1-introduction.html">Slides</a> for first
+video</p>
+<p><a href="notebooks/gapminder.html">Notebook</a> for
+<code>gapminder</code> example</p>
+<p><a href="notebooks/candy.html">Notebook</a> for <code>candy</code>
+example</p>
+<p><a href="slides/01-2-foundations.html">Slides</a> for last video (<a
+href="slides/foundations.pdf">PDF</a>)</p>
 <p><a href="notebooks/seminar.html">Notebook</a> from seminar</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
 <!--radix_placeholder_article_footer-->
 <!--/radix_placeholder_article_footer-->
 </div>

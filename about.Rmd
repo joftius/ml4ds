@@ -1,10 +1,25 @@
 ---
-title: "About this site"
+title: "About this course"
 description: |
-  Some additional details about the website
+  Some additional details about the course
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE)
 ```
 
+
+References
+
+      - text: "ISLR"
+        href: "https://statlearning.com/"
+      - text: "ESL"
+        href: https://web.stanford.edu/~hastie/ElemStatLearn/
+      - text: "CASI"
+        href: https://web.stanford.edu/~hastie/CASI/
+      - text: "Mixtape"
+        href: https://mixtape.scunning.com/index.html
+      - text: "R4DS"
+        href: https://r4ds.had.co.nz/
+      - text: "MLstory"
+        href: https://mlstory.org/
