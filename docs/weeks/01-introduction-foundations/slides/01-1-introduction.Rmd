@@ -6,7 +6,7 @@ author: "Joshua Loftus"
 #date: "`r Sys.Date()`"
 output:
   xaringan::moon_reader:
-    css: ["default", "xaringan-themer.css", "../../../theme.css"]
+    css: ["default", "xaringan-themer.css"]
 #    seal: false    
     lib_dir: libs
     nature:
