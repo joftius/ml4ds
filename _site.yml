@@ -4,6 +4,7 @@ description: |
   ml4ds
 output_dir: "docs"
 navbar:
+  search: false
   logo:
     image: files/sticker.png
     href: https://ml4ds.com
