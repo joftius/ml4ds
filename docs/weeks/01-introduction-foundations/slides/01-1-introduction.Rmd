@@ -62,11 +62,11 @@ theme_set(theme_minimal(base_size = 22))
 
 ### ST 310: Machine Learning (for Data Science)
 
-Lent term 2021
+Lent term `r format(Sys.Date(), "%Y")`
 
 Lecturer: Joshua Loftus
 
-Co-instructor: Phil Chan
+Co-instructors: [Phil Chan](https://www.lse.ac.uk/Statistics/People/Dr-Phil-Chan), [Shakeel Gavioli-Akilagun](https://www.lse.ac.uk/Statistics/People/Shakeel-Gavioli-Akilagun), [Domenico Mergoni](https://www.lse.ac.uk/Mathematics/people/Research-Students/Domenico-Mergoni)
 
 Website: [ml4ds.com](https://ml4ds.com)
 
@@ -102,12 +102,10 @@ class: inverse, center, middle
 # Format
 
 - *Mostly* self-contained -- ask if you need help!
-- Videos on Moodle each week
 - Seminars: pre-work, Zoom links on Moodle
 - Course page (links, slides, misc. notes)
   - http://ml4ds.com/
 - Forum (participation = learning)
-  - http://discourse.ml4ds.com/
 - Readings / supplemental references
   - **ISLR** [Introduction to Statistical Learning](https://statlearning.com/) 
   - **ESL** [Elements of Statistical Learning](https://web.stanford.edu/~hastie/ElemStatLearn/)
@@ -119,19 +117,13 @@ class: inverse, center, middle
 
 # Assessments
 
-As described in the [course listing](https://www.lse.ac.uk/resources/calendar2020-2021/courseGuides/ST/2020_ST310.htm)
+As described in the [course listing](https://www.lse.ac.uk/resources/calendar2022-2023/courseGuides/ST/2022_ST310.htm)
 
-- Formative
-  - Problem sets every 2 weeks
+- Problem sets: 4 total, 2 are summative
 - Summative
-  - Final project (30%)
-  - Summer exam (70%)
-
-(I believe the summer exams may be remote?)
-
-(Whatever the university decides, that's what we're doing)
-
-### Let's all do our best, and be understanding!
+  - Problem sets (30%)
+  - Individual project (40%) in LT
+  - Group project (30%) in LT
 
 ---
 class: inverse, center, middle
@@ -162,10 +154,7 @@ life_exp_plot <-
   ggplot(gdp_data, `aes`(x = gdpPercap, y = lifeExp)) +
   `geom_point`(aes(color = continent,
                    shape = continent,
-                   size = pop)) +
-  scale_color_viridis_d(option = "magma",
-                        direction = -1,
-                        begin = .2, end = .8)
+                   size = pop))
 
 life_exp_plot +
   `stat_smooth`(formula = y ~ x, method = "loess", span = 1)
@@ -299,7 +288,7 @@ I'm Joshua Loftus
 
 I'm the lecturer
 
-For seminars, help from the very capable Phil Chan
+For seminars, help from the very capable teaching staff
 
 Am I trustworthy? Why should you listen to me? You decide!
 
@@ -308,7 +297,6 @@ class: bottom
 
 .pull-left[
 
-![](https://i.ytimg.com/vi/bQhEALoxoGE/maxresdefault.jpg)
 
 ![](../../../files/brooklynbridge.jpg)
 ]

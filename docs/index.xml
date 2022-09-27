@@ -7,14 +7,14 @@
     <description>ml4ds
 </description>
     <generator>Distill</generator>
-    <lastBuildDate>Sun, 10 Oct 2021 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Mon, 11 Oct 2021 00:00:00 +0000</lastBuildDate>
     <item>
       <title>1 Introduction and foundations</title>
       <dc:creator>Joshua Loftus</dc:creator>
       <link>http://ml4ds.com/weeks/01-introduction-foundations</link>
       <description>A brief introduction to the course, preview of things to come, and some foundational background material.</description>
       <guid>http://ml4ds.com/weeks/01-introduction-foundations</guid>
-      <pubDate>Sun, 10 Oct 2021 00:00:00 +0000</pubDate>
+      <pubDate>Mon, 11 Oct 2021 00:00:00 +0000</pubDate>
       <media:content url="https://ml4ds.com/weeks/01-introduction-foundations/slides/01-2-foundations_files/figure-html/gapminder-loess-1.png" medium="image" type="image/png"/>
     </item>
     <item>
