@@ -1,0 +1,219 @@
+---
+title: "Week 1 seminar"
+author: "Joshua Loftus"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse) # should've already install.packages("tidyverse")
+library(gapminder) # might need to install.packages("gapminder")
+library(broom) # might need to install.packages("broom")
+theme_set(theme_minimal()) 
+```
+
+In the examples below you may need to replace `...` before running the code.
+
+Click the triangle in the upper right of a code chunk to run that chunk
+
+## Repeating the gapminder analysis
+
+After running `library(gapminder)` you can access the dataset. Try typing `View(gapminder)` in the Console window below.
+
+#### Create a `gapminder` scatterplot (`geom_point`) using data from the year 2002
+
+First create an object with the right subset of data.
+
+```{r}
+gm2002 <- gapminder |>
+  filter(...)
+```
+
+Now use this data to create the scatterplot.
+
+```{r}
+gm_scatterplot <- 
+  ggplot(gm2002, aes(x = gdpPercap, y = lifeExp)) +
+  geom_point()
+gm_scatterplot
+```
+
+#### Create an `lm` model to predict `lifeExp` from `gdpPercap`
+
+```{r}
+model_lm <- lm(lifeExp ~ gdpPercap, data = gm2002)
+predictions_lm <- augment(model_lm)
+```
+
+#### Create a `loess` model to do the same
+
+```{r}
+model_loess <- loess(lifeExp ~ gdpPercap, span = .75, data = gm2002)
+predictions_loess <- augment(model_loess)
+```
+
+#### Plot showing the two models
+
+```{r}
+gm_scatterplot +
+  geom_line(data = predictions_lm, size = 1,
+            color = "blue",
+            linetype = "dashed",
+            aes(x = gdpPercap, y = .fitted)) +
+  geom_line(data = predictions_loess, size = 1,
+            color = "green",
+            aes(x = gdpPercap, y = .fitted))  
+```
+
+Now try changing `span` in the `loess()` function to some other number (strictly) between 0 and 1, and re-run the code chunks. First re-run the code chunk that fits the model with `loess()`, then re-run the chunk that plots the predictions. Observe how the fitted curve is different.
+
+#### Compute the mean square of `residuals()` of each model.
+
+```{r}
+mean(residuals(model_lm)^2)
+mean(...)
+```
+
+Which model is better? Why?
+
+### Predicting on new data
+
+Models are supposed to capture/use structure in the data that corresponds to structure in the real world. And if the real world isn't misbehaving, that structure should be somewhat stable.
+
+For example, suppose the relationship changed dramatically from one time period to another time period. Then it would be less useful/interesting to have a model fit on data at one time period, because the same model might have a poor fit on data from a different time period.
+
+Let's explore this with our `gapminder` models
+
+#### Predictions on different years
+
+Create a dataset for the year 1997
+
+```{r}
+gm1997 <- ...
+```
+
+Get predictions for 1997 from both models by predicting with the `newdata` argument
+
+```{r}
+lm_predict1997 <- augment(model_lm, newdata = gm1997)
+loess_predict1997 <- augment(model_loess, newdata = gm1997)
+```
+
+#### Check MSE
+
+```{r}
+lm_predict1997 |> 
+  summarize(MSE = mean(.resid^2))
+```
+
+```{r}
+... |> 
+  summarize(MSE = mean(.resid^2))
+```
+
+**Question**: Is it surprising which model does better? Why or why not?
+
+The more complex, `loess` model performs better than the linear model even when tested on different data. Apparently the association between `gdpPercap` and `lifeExp` is fairly stable over time.
+
+## Simulation
+
+### Generate data from a non-linear function
+
+Choose a function. Be creative! Type `?sqrt` in the Console. Also try `?log` and `?sin`. 
+
+```{r}
+f <- function(x) x^2 # change this
+```
+
+#### Data generating process
+
+Come back here, change things, and re-run the code chunks below to experiment.
+
+Type `?Distributions` in the Console to see other random variables you can choose from. The function name starting with `r` generates a random sample, e.g. `rexp` generates a sample from an exponential random variable.
+
+```{r}
+simulate_data <- function(n) {
+  x <- runif(n, min = 0, max = 3) # change
+  errors <- rnorm(n, sd = 1) # change
+  y <- ... # what should this be?
+  data.frame(x = x, y = y)
+}
+```
+
+Generate and plot data
+
+```{r}
+n <- 100 # change
+sim_data <- simulate_data(n)
+sim_plot <- ggplot(sim_data, aes(x = x, y = y)) +
+  geom_point()
+sim_plot
+```
+
+#### Fit `lm` and `loess` models to the simulated data and plot them
+
+(Hint: copy and paste your earlier code, change `gm2002` and other variable names)
+
+```{r}
+model_sim_lm <- lm(y ~ x, data = sim_data)
+predictions_sim_lm <- augment(model_sim_lm)
+model_sim_loess <- loess(y ~ x,
+                         span = .75, # change
+                         data = sim_data)
+predictions_sim_loess <- augment(model_sim_loess)
+```
+
+```{r}
+sim_plot +
+  geom_line(data = predictions_sim_lm, size = 1,
+            color = "blue",
+            linetype = "dashed",
+            aes(x = x, y = .fitted)) +
+  geom_line(data = predictions_sim_loess, size = 1,
+            color = "green",
+            linetype = "dotdash",
+            aes(x = x, y = .fitted)) +
+  geom_function(fun = f, color = "purple", size = 1)
+```
+
+
+```{r}
+coef(model_sim_lm)
+```
+
+```{r}
+coef(model_sim_lm)[2]
+```
+
+**Question**: How is this slope related to the true function `f`?
+
+
+### Sampling distribution of an estimator
+
+```{r}
+n_iters <- 5
+simulate_slope <- function(n) {
+  new_data <- simulate_data(n)
+  new_model <- lm(y ~ x, new_data)
+  return(...) # output the estimated coefficient
+}
+replicate(n_iters, simulate_slope(n))
+```
+
+#### Histogram of many estimates
+
+```{r}
+n_iters <- 200
+many_slopes <- replicate(...) 
+qplot(many_slopes, bins = 20)
+```
+
+
+**Question**: What do you notice about this distribution, and why?
+
+
+#### Experiment
+
+Go back and change some inputs in previous code chunks and re-run all the chunks after that change.
+
+Can you find anything that seems like it makes an important, qualitative difference in the conclusions?
