@@ -7,14 +7,14 @@
     <description>ml4ds
 </description>
     <generator>Distill</generator>
-    <lastBuildDate>Sun, 10 Oct 2021 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Mon, 11 Oct 2021 00:00:00 +0000</lastBuildDate>
     <item>
       <title>1 Introduction and foundations</title>
       <dc:creator>Joshua Loftus</dc:creator>
       <link>http://ml4ds.com/weeks/01-introduction-foundations</link>
       <description>A brief introduction to the course, preview of things to come, and some foundational background material.</description>
       <guid>http://ml4ds.com/weeks/01-introduction-foundations</guid>
-      <pubDate>Sun, 10 Oct 2021 00:00:00 +0000</pubDate>
+      <pubDate>Mon, 11 Oct 2021 00:00:00 +0000</pubDate>
       <media:content url="https://ml4ds.com/weeks/01-introduction-foundations/slides/01-2-foundations_files/figure-html/gapminder-loess-1.png" medium="image" type="image/png"/>
     </item>
     <item>
@@ -24,6 +24,7 @@
       <description>Reviewing linear regression and framing it as a prototypical example and source of intuition for other machine learning methods.</description>
       <guid>http://ml4ds.com/weeks/02-linear-regression</guid>
       <pubDate>Sun, 10 Oct 2021 00:00:00 +0000</pubDate>
+      <media:content url="http://ml4ds.com/weeks/02-linear-regression/candy.PNG" medium="image" type="image/png" width="1226" height="1002"/>
     </item>
     <item>
       <title>3 Multiple regression and causality</title>
@@ -31,7 +32,7 @@
       <link>http://ml4ds.com/weeks/03-causality</link>
       <description>Multiple linear regression does not, by default, tell us anything about causality. But with the right data and careful interpretation we might be able to learn some causal relationships.</description>
       <guid>http://ml4ds.com/weeks/03-causality</guid>
-      <pubDate>Sat, 09 Oct 2021 00:00:00 +0000</pubDate>
+      <pubDate>Fri, 08 Oct 2021 00:00:00 +0000</pubDate>
     </item>
     <item>
       <title>4 Classification</title>

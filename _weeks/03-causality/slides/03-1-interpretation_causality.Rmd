@@ -62,6 +62,182 @@ set.seed(1)
 }
 </style>
 
+
+### From the stars to "Poor Law Statistics"
+
+- Almost a century after Gauss
+- Scientists correlating/regressing anything
+- Problem: what does it mean?
+
+--
+
+e.g. [Francis Galton](https://www.theguardian.com/education/2020/jun/19/ucl-renames-three-facilities-that-honoured-prominent-eugenicists) correlated numeric traits between generations of organisms...
+
+But *why*? "Nature versus nurture" debate never ends?
+
+--
+
+e.g. [Udny Yule](https://en.wikipedia.org/wiki/Udny_Yule) and others correlated poverty ("pauperism") with welfare ("out-relief")...
+
+But *why*? The "[welfare](http://economistjourney.blogspot.com/2014/08/the-crazy-dream-of-george-udny-yule-is.html) [trap](https://en.wikipedia.org/wiki/Welfare_trap)" debate never ends?
+
+---
+class: inverse
+
+# Origin of multiple regression
+
+.pull-left[
+- Udny Yule (1871-1951)
+
+- Studied this poverty question
+
+- First paper using multiple regression in 1897
+
+- Association between poverty and welfare while "controlling for" age
+]
+.pull-right[
+![Udny Yule](https://upload.wikimedia.org/wikipedia/en/4/4a/George_Udny_Yule.jpg)
+]
+
+---
+class: inverse
+
+## Yule, in 1897:
+
+> Instead of speaking of "causal relation," ... we will use the terms "correlation," ...
+
+- Variables, roughly:
+  - $Y =$ prevalence of poverty
+  - $X_1 =$ generosity of welfare policy
+  - $X_2 =$ age
+- Positive correlations:
+  - $\text{cor}(Y, X_1) > 0$
+  - $\text{cor}(X_2, X_1) > 0$
+
+--
+
+Do more people enter/stay in poverty if welfare is more generous?
+
+Or is this association "due to" age?
+
+---
+class: inverse
+
+## Yule, in 1897:
+
+> The investigation of **causal relations** between economic phenomena presents many problems of peculiar difficulty, and offers many opportunities for fallacious conclusions.
+
+--
+
+> Since the statistician can seldom or never make experiments for himself, he has to accept the data of daily experience, and discuss as best he can the relations of a whole group of changes; he **cannot, like the physicist, narrow down the issue to the effect of one variation at a time. The problems of statistics are in this sense far more complex than the problems of physics**.
+
+
+---
+
+### Regression estimates when $p = 3$
+
+![](yule4.jpg)
+
+---
+class: inverse
+
+### Progress(?) in regression
+
+$p$ variables $\to$ $\binom{p}{2}$ "product sums" to compute by hand...
+
+Yule:
+> ... if we wished to discuss the causality [note: correlation?! -JL] of pauperism on the basis of as many as eight variables, the **work** involved would be something like twenty-eight times as much as that necessary for the example taken on pp. 824-831. The **labour** would, in fact, be almost impossible for a single individual.
+
+- 1958: Ted Anderson *An Introduction to Multivariate Analysis*
+
+- 1960's: **Electric** desktop calculators made it easier
+
+- Present: linear algebra notation and computers (R, etc)
+
+---
+
+### Interpreting coefficients
+
+People *want* these two things to be true:
+
+1. $$\frac{\partial}{\partial x_j} \mathbb E[\mathbf y | \mathbf X] = \beta_j \approx \hat \beta_j$$
+
+2. $\beta_j$ is a causal parameter, i.e. **intervening**  to increase $x_j$ by 1 unit would result in conditional average of $y$ changing by $\beta_j$ units
+
+--
+
+Both of these can be *importantly wrong*! Always remember:
+
+- Think about *general* conditional expectation functions vs the **linear model assumption** (strength of ML!)
+- Think about **relationships between predictors** (causal or associations)
+- Consider **unobserved variables** not in the dataset
+
+
+---
+
+## Non-linear example
+
+Suppose there is one predictor $x$, and a (global) non-linear model fits the CEF:
+
+$$\mathbb E[\mathbf y |X = x] = \beta_0 + \beta_1 x + \beta_2 x^2$$
+
+--
+
+We don't know the $\beta$'s but we have some data, and we use multiple linear regression to fit the coefficients
+
+```{r eval = FALSE}
+x2 <- x^2
+lm(y ~ x + x2)
+```
+--
+But, there's a **problem**:
+
+$$\frac{\partial}{\partial x} \mathbb E[\mathbf y | x] = \beta_1 + 2\beta_2 x \neq \beta_1 \approx \hat \beta_1$$
+---
+
+## What went wrong?
+
+In this simple example we know the problem is that $x_2$ is actually a function of $x$. **Solution**: interpret $\frac{\partial}{\partial x}$ locally as a function of $x$, not as a global constant
+
+--
+
+Sometimes simplifying assumptions are **importantly wrong**, and we must reject simple interpretations
+
+Machine learning provides tools for fitting more complex models, like non-linear models
+
+
+---
+
+## Interpreting causality
+
+- In the real world when is it true that one predictor variable *does not depend* on any of the other ones?
+
+- Or when is it true that there are no important **unobserved confounders**, variables that are related to both the predictor and the outcome?
+
+--
+
+Consider Yule's regression analysis of poverty
+
+Other important but unobserved variables?
+
+Reverse causation? Simultaneity (feedback loop)?
+
+
+---
+class: inverse, center, middle
+
+## In the real world
+
+### *ceteris* is never *paribus*
+
+Fortunately, we will also study "causal inference" - a field with methods specialized for interpreting coefficients the way *people generally want to*
+
+Remember Yule!
+
+> *[We] cannot, like the physicist, narrow down the issue to the effect of **one variation at a time***
+
+---
+
 .pull-left[
 ![](chesterfield.jpg)
 ]
@@ -440,6 +616,17 @@ Even if prediction accuracy is measured on test data!
 - Inference = causal inference...?
 
 Or, at least, causal interpretations can be special case of trade-off between prediction and inference/interpretation
+
+---
+class: inverse
+
+# the end
+
+Wisdom from one of the great early statistical explorers
+
+[Udny Yule](https://mathshistory.st-andrews.ac.uk/Biographies/Yule/quotations/):
+
+> Measurement does not necessarily mean progress. Failing the possibility of measuring that which you desire, the lust for measurement may, for example, merely result in your measuring something else - and perhaps forgetting the difference - or in your ignoring some things because they cannot be measured.
 
 ---
 class: inverse, center, middle

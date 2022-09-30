@@ -8,8 +8,8 @@ date: 10-10-2021
 output:
   distill::distill_article:
     self_contained: false
+preview: candy.PNG
 ---
-
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE)
@@ -20,15 +20,30 @@ library(gapminder)
 theme_set(theme_minimal(base_size = 22))
 ```
 
-## Machine learning before the information age
+## Readings
 
-## Multiple regression
+-   [ISLR](https://www.statlearning.com/) Chapter 3: Linear Regression.
 
-Regression, when conditioning on more than one predictor variable.
+This chapter is long but should be mostly a review of material from previous courses.
+
+For practice, try answering the Conceptual problems at the end of the chapter.
+
+## Computer setup
+
+Identify a dataset that you can use to fit a multiple regression model (one outcome variable, multiple predictor variables). This way you can work on an example dataset that you're personally interested in. If you can't find something or have trouble loading it into R in time there are backup options in these packages:
+
+- `fivethirtyeight` https://fivethirtyeight-r.netlify.app/
+- `palmerpenguins` https://allisonhorst.github.io/palmerpenguins/
+- `modeldata` https://modeldata.tidymodels.org/
+- `nycflights13` https://nycflights13.tidyverse.org/
+
+Just be sure to identify in advance which variable you'll use as an
+outcome to predict, and which variables you might use as predictors
 
 ## Slides and notebooks
 
-[Slides](slides/02-1-regression.html) for simple regression video ([PDF](slides/simple_regression.pdf))
+- Slides: 
+[[html](slides/02-1-regression_combined.html)]  [[pdf](slides/02-1-regression_combined_simple.pdf)]
 
 [Notebook](notebooks/gapminder-simple.html) for `gapminder` example
 
@@ -38,6 +53,12 @@ Regression, when conditioning on more than one predictor variable.
 
 [Notebook](notebooks/seminar_regression.html) for seminar
 
-[Exercises](exercises/set1.html) 
+[Exercises](exercises/set1.html)
+
+## Machine learning before the information age
+
+## Multiple regression
+
+Regression, when conditioning on more than one predictor variable.
 
 

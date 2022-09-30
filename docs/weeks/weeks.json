@@ -28,10 +28,12 @@
     ],
     "date": "2021-10-10",
     "categories": [],
-    "contents": "\nMachine learning before the information age\nMultiple regression\nRegression, when conditioning on more than one predictor variable.\nSlides and notebooks\nSlides for simple regression video (PDF)\nNotebook for gapminder example\nSlides for risk and CEFs video (PDF)\nSlides for multiple regression\nNotebook for seminar\nExercises\n\n\n\n",
-    "preview": {},
-    "last_modified": "2022-09-18T15:01:05+01:00",
-    "input_file": {}
+    "contents": "\nReadings\nISLR Chapter 3: Linear\nRegression.\nThis chapter is long but should be mostly a review of material from\nprevious courses.\nFor practice, try answering the Conceptual problems at the end of the\nchapter.\nComputer setup\nIdentify a dataset that you can use to fit a multiple regression\nmodel (one outcome variable, multiple predictor variables). This way you\ncan work on an example dataset that you’re personally interested in. If\nyou can’t find something or have trouble loading it into R in time there\nare backup options in these packages:\nfivethirtyeight https://fivethirtyeight-r.netlify.app/\npalmerpenguins https://allisonhorst.github.io/palmerpenguins/\nmodeldata https://modeldata.tidymodels.org/\nnycflights13 https://nycflights13.tidyverse.org/\nJust be sure to identify in advance which variable you’ll use as an\noutcome to predict, and which variables you might use as predictors\nSlides and notebooks\nSlides: [html]\n[pdf]\nNotebook for\ngapminder example\nSlides for risk and CEFs video\n(PDF)\nSlides for multiple\nregression\nNotebook for\nseminar\nExercises\nMachine learning\nbefore the information age\nMultiple regression\nRegression, when conditioning on more than one predictor\nvariable.\n\n\n\n",
+    "preview": "weeks/02-linear-regression/candy.PNG",
+    "last_modified": "2022-09-30T19:40:47+01:00",
+    "input_file": "02-linear-regression.knit.md",
+    "preview_width": 1226,
+    "preview_height": 1002
   },
   {
     "path": "weeks/03-causality/",
@@ -45,10 +47,10 @@
     ],
     "date": "2021-10-09",
     "categories": [],
-    "contents": "\nRerum cognoscere causas\nVirgil:\n\nFortunate, who can know the causes of things\n\nSlides, notebooks, exercises\nSlides for first causality video (PDF)\nSlides for second causality video\nSlides for logistic regression video\nNotebook from seminar\n\n\n\n",
+    "contents": "\nReadings\nMixtape\nSections 1.1, 1.2, and 3.1 up to 3.1.3 (stop before 3.1.4)\nRerum cognoscere causas\nVirgil:\n\nFortunate, who can know the causes of things\n\nSlides, notebooks, exercises\nSlides for first causality\nvideo (PDF)\nSlides for\nsecond causality video\nSlides\nfor logistic regression video\nNotebook from\nseminar\n\n\n\n",
     "preview": {},
-    "last_modified": "2022-09-18T15:01:05+01:00",
-    "input_file": {}
+    "last_modified": "2022-09-30T20:07:14+01:00",
+    "input_file": "03-causality.knit.md"
   },
   {
     "path": "weeks/04-classification/",

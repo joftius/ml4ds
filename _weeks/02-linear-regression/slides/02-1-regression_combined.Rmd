@@ -40,8 +40,6 @@ style_duo_accent(
 
 ```{r xaringanextra, include=FALSE, warning=FALSE}
 library(xaringanExtra)
-xaringanExtra::use_animate_all("slide_left")
-xaringanExtra::use_tile_view()
 xaringanExtra::use_panelset()
 xaringanExtra::style_panelset_tabs(font_family = "inherit")
 ```
@@ -136,26 +134,7 @@ class: inverse, middle
 - Almost a year passed, so its position was far from the initial observations
 - Searching for a small dim object in a sky full of brighter stars
 
-How did Gauss do it?
-
----
-class: inverse
-
-#### Data
-
-Positions (two dimensional) and times for each of 24 observations
-
-#### Transformations
-
-Changing coordinates: Ceres-Earth, Earth-Sun, Ceres-Sun
-
-#### Laws of motion
-
-Gauss computed with > 80 variables in these coordinate systems to approximately solve Kepler's (non-linear) laws and determine the orbit of Ceres about the sun
-
---
-
-**Problem**: Kepler's laws determine an orbit uniquely from 3 points. What to do with 24?
+How did Gauss do it? Kepler's laws determine an orbit uniquely from 3 points. What to do with 24?
 
 ---
 class: inverse
@@ -164,64 +143,9 @@ class: inverse
 
 > When the number  of unknown  quantities is equal to the number of the observed  quantities  depending on them, the former may be so determined as exactly to satisfy  the latter. But when the number of the former is less than that  of the latter, an absolutely exact agreement cannot be determined, in so far as the observations  do not enjoy  absolute  accuracy. In this  *case care  must  be taken  to establish the best possible agreement, or to diminish as far as practicable the differences*.
 
---
-
 ## i.e. minimize errors
 
 but why *squared* errors?
-
----
-
-# Detour: center of "mass"
-
-Suppose $(x_i, y_i)$ are observations we wish to model as
-
-$$
-y_i = \alpha + \beta x_i + \varepsilon_i
-$$
-For some unknown "true" and/or "optimal" values $(\alpha, \beta)$
-
-For a given choice $(\hat \alpha, \hat \beta)$ let $\hat y_i = \hat \alpha + \hat \beta x_i$ and $r_i = y_i - \hat y_i$.
-
-**Exercise**: Show that $\bar r = 0$ if and only if the line $y = \hat \alpha + \hat \beta x$ passes through the point $(\bar x, \bar y)$.
-
---
-
-**Problem**: There are (uncountably) infinitely many solutions with "zero average error"
-
-For a given $x \neq \bar x$, could predict *any* $y$ with one of these lines
-
----
-
-## Detour: severe testing
-
-If a method or theory can be used to produce *any* prediction, we are on very shaky ground scientifically
-
-> If the new predictions are borne out, then the new theory is corroborated (and the old one falsified), and is adopted as a working hypothesis. If the predictions are not borne out, then they falsify the theory from which they are derived.
-
-Popper, *Logic of Scientific Discovery*
-
---
-
-Mayo, on [severity](https://www.lse.ac.uk/philosophy/blog/2019/06/03/deborah-mayo-virginia-tech-severe-testing-a-conjecture-passes-a-severe-test-only-if-a-refutation-would-probably-have-occurred-if-its-false/):
-
-> A conjecture passes a **severe test** only if a refutation would *probably* have occurred if it’s false
-
----
-
-### Constrained methods, specific theories
-
-- If our method only requires drawing a line passing through $(\bar x, \bar y)$ then it can be made consistent with any new observation
-
-- A theory based on this method will not be falsifiable, and can not be severely tested 
-
-- If the method is mathematically well-defined, producing a unique solution, then theories formed using that method can be severely tested
-
---
-
-Philosophical ideas can guide our thinking about machine learning
-
-**Question**: Are more flexible models easier/more difficult to falsify or severely test? Is this good/bad scientifically?
 
 ---
 class: inverse
@@ -364,4 +288,348 @@ class: inverse, middle, center
 ### Computers speed up the process, which perhaps decreases quality
 
 ### The era of "[surveillance capitalism](https://theconversation.com/the-price-of-connection-surveillance-capitalism-64124)" means scientifically (and ethically) questionable data is multiplying faster than ever
+
+---
+
+### Multiple regression
+
+```{r, echo=FALSE, out.width="90%"}
+knitr::include_graphics("../candy.png")
+```
+
+---
+
+### Just the math, please
+
+For now: method for using more variables to predict the outcome
+
+Next week: interpreting coefficients, causality
+
+---
+
+### When $p > 1$
+
+.pull-left[
+- Instead of a regression line, we fit a regression (hyper)plane
+
+- Among all possible such planes, find the one minimizing sum of squared errors (represented by vertical lines in ISLR Fig 3.4)
+
+- How to find the coefficients? Calculus?
+]
+.pull-right[
+![](islr3.4.png)
+]
+
+
+---
+
+# Notation
+
+Writing the same thing in various ways
+
+- For observation $i$:
+
+$$y_i = \beta_0 + \beta_1 x_{i1} + \beta_2 x_{i2} + \cdots + \beta_p x_{ip} + \varepsilon_i$$
+
+or using the [inner product](https://en.wikipedia.org/wiki/Dot_product) (of column vectors)
+
+$$y_i = x_i^T \beta + \varepsilon_i$$
+- Random variable version:
+
+$$Y = X^T \beta + \varepsilon$$
+---
+
+# Notation, continued
+
+- For all $n$ observations
+
+$$
+\begin{pmatrix}
+y_1 \\
+y_2 \\
+\vdots \\
+y_n
+\end{pmatrix}
+=
+\begin{pmatrix}
+1 & x_{11} & x_{12} & \cdots & x_{1p}\\
+1 & x_{21} & x_{22} & \cdots & x_{2p}\\
+\vdots & \vdots & \vdots & \ddots & \vdots \\
+1 & x_{n1} & x_{n2} & \cdots & x_{np}\\
+\end{pmatrix}
+\begin{pmatrix}
+\beta_0 \\
+\beta_1 \\
+\vdots \\
+\beta_p
+\end{pmatrix}
++
+\begin{pmatrix}
+\varepsilon_1 \\
+\varepsilon_2 \\
+\vdots \\
+\varepsilon_n
+\end{pmatrix}
+$$
+
+or
+
+$$\mathbf{y} = \mathbf{X} \beta + \mathbf{\varepsilon}$$
+
+Note: column of 1's for intercept term. Sometimes omitted by assuming $\mathbf y$ is already "centered"
+
+---
+
+## Notational conventions
+
+We'll use common conventions in this course
+
+- Bold for vectors, bold and upper case for matrices
+- Otherwise upper case denotes random variable
+- Error terms $\varepsilon = y - \mathbf x^T \beta$ never truly observed
+- Residuals $r = y - \mathbf x^T \hat \beta$ used as a proxy for errors
+- Greek letters like $\beta, \theta, \sigma, \Sigma$ usually *unknown parameters*
+- Greek letters with hats like $\hat \beta$ are estimates computed from data
+- Roman letters that usually denote functions with hats, like $\hat f$ are also estimates
+- Other Roman letters with hats like $\hat y$ are predictions
+
+---
+
+# Matrices and vectors in `R`
+
+```{r}
+# byrow = FALSE default
+x <- matrix(1:9, nrow = 3, ncol = 3)
+x
+```
+
+```{r}
+beta <- rep(1,3)
+beta
+```
+
+---
+
+### Multiplication: %*% (yes, really)
+
+- Beware "Error: non-conformable arguments"
+- Always remember to check dimensions
+- If dimension of one object divides dimension of another, `R` may "conveniently" (unintuitively) repeat the smaller one
+
+```{r}
+dim(x)
+```
+
+```{r}
+dim(beta) # frustrating
+```
+
+```{r}
+x %*% beta
+```
+
+---
+
+### Transpose and symmetry
+
+Recall: even if a matrix $\mathbf A$ is not square, both $\mathbf A^T\mathbf A$ and $\mathbf A \mathbf A^T$ are square and symmetric (often one is invertible)
+
+```{r}
+A <- matrix(c(rep(1,4), 0,0), nrow = 3, byrow = FALSE)
+A
+```
+
+
+```{r}
+t(A) %*% A
+```
+
+Note: this matrix is even invertible! (But $\mathbf A \mathbf A^T$ is not)
+
+---
+
+# Pseudoinversion
+
+```{r}
+# ginv() function in MASS library
+Ainv <- MASS::ginv(A)
+Ainv
+```
+
+
+```{r}
+Ainv %*% A
+```
+
+The $2 \times 2$ identity matrix
+
+---
+
+# Pseudoinversion
+
+Why does this work?
+
+Let $\mathbf A^\dagger = (\mathbf A^T\mathbf A)^{-1} \mathbf A^T$, then
+
+$$
+\mathbf A^\dagger \mathbf A = (\mathbf A^T\mathbf A)^{-1} \mathbf A^T \mathbf A = (\mathbf A^T\mathbf A)^{-1} (\mathbf A^T \mathbf A) = \mathbf I
+$$
+
+--
+
+`ginv` in the library `MASS` apparently computes the left or right pseudoinverse, whichever one works
+
+```{r}
+A %*% Ainv # not a right inverse
+```
+
+---
+
+### Least-squares solutions in matrix notation
+
+Instead of those long expressions that Yule found were already very complicated with $p = 3$, we can always write very simply:
+
+$$
+\hat {\mathbf \beta} = (\mathbf X^T\mathbf X)^{-1}\mathbf X^T \mathbf y = \mathbf X^\dagger \mathbf y
+$$
+
+--
+
+This assumes $\mathbf X^T\mathbf X$ to be invertible, i.e. the *columns* of $\mathbf X$ have full rank (columns = variables)
+
+- That's often true if $n > p$, unless some problem like one variable is a copy of another
+
+--
+
+- Impossible if $p > n$. "High-dimensional" regression requires special methods, covered soon in this course!
+
+---
+
+### Linear algebra and geometric intuition
+
+Predictions from the linear model:
+
+$$\hat{\mathbf y} = \mathbf {X} \hat{\mathbf \beta} = \mathbf X (\mathbf X^T\mathbf X)^{-1}\mathbf X^T \mathbf y = \mathbf H y$$
+if we define
+
+$$\mathbf H = \mathbf X (\mathbf X^T\mathbf X)^{-1}\mathbf X^T$$
+
+--
+
+COOL FACTS about $\mathbf H$:
+
+- $\mathbf H$ is a projection: $\mathbf H^2 = \mathbf H$
+- For any $n$-vector $\mathbf v$, the $n$-vector $\mathbf {Hv}$ is the orthogonal projection of $\mathbf v$ onto the column space of $\mathbf X$
+- Of all linear combinations of columns of $\mathbf X$, $\mathbf {Hv}$ is the one closest (in Euclidean distance) to $\mathbf v$. 
+
+---
+
+## Exercise: do the calculus
+
+We have the loss function
+
+$$L(\mathbf X, \mathbf y, \mathbf \beta) = (\mathbf y - \mathbf X \beta)^T(\mathbf y - \mathbf X \beta)$$
+
+(just a different way of writing sum of squared errors)
+
+- Consider each coordinate separately and take univariate partial derivatives
+- Use vector calculus and compute the gradient
+- (Or even use matrix calculus identities)
+
+--
+
+Reach the same conclusion: at a stationary point of $L$,
+
+$$\mathbf X^T \mathbf X \hat \beta = \mathbf X^T \mathbf y$$
+
+---
+
+### Categorical predictors
+
+This is an interesting/practically important special case
+
+
+.pull-left[
+```{r}
+x <- as.factor(
+  sample(c("A", "B", "C"),
+         10,
+         replace = TRUE))
+x
+```
+
+Categorical predictor with 3 levels, what does the **design matrix** (common terminology in regression) $\mathbf X$ look like?
+]
+.pull-right[
+```{r}
+model.matrix(~x)
+```
+
+]
+
+---
+
+```{r}
+X <- model.matrix(~x-1) # take out intercept
+head(X)
+round(head(X %*% MASS::ginv(X)), 3) # hat matrix
+```
+```{r}
+which(x == "C") # predicting within-group averages!
+```
+
+---
+
+## Differences from simple regression
+
+- **Interpreting coefficients**: "*ceteris paribus*" -- all other things being equal
+
+The status quo is *ridiculous*, but I must tell you... (I will also tell you about better ways)
+
+--
+
+- **Diagnostic plots**: can't see higher dimensional relationships
+
+Plot residuals vs fitted values, and/or various pair plots
+
+`GGally` package `r emo::ji("thumbsup")`
+
+--
+
+- **Inference**: testing multiple coefficients
+
+See ISLR's discussion of $F$-tests, beginning of Section 3.2.2
+
+---
+
+### Collinearity between predictors
+
+Another important difference from simple regression
+
+Related to problems with interpreting coefficients
+
+For a set of predictors, the more closely they are mutually linearly dependent the more difficult it is to estimate their separate coefficients
+
+If the problem is bad enough, can result in numerical instability
+
+--
+
+#### Assessing if it's a problem
+
+- For each predictor $x_j$, treat it as an outcome in a regression model using all the other predictors
+- $R^2$ of this model: closer to 1, worse collinearity
+
+
+---
+
+# Concluding points
+
+One of the most commonly used methods, even with more complex ML often compare to regression as a "baseline"
+
+Perhaps the most complex method that is still considered relatively interpretable. But interpretation is actually trickier than most understand! *Ceteris paribus* and causality...
+
+Always remember bias, even if sample is large our estimates could be far from truth
+
+Could be estimating the wrong thing, using a model that's importantly wrong, asking the wrong question, analyzing/collecting the wrong data, including wrong predictors, etc
+
 
