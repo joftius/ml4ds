@@ -21,27 +21,54 @@ library(gapminder)
 theme_set(theme_minimal(base_size = 22))
 ```
 
+## Readings
+
+- [ISLR](https://www.statlearning.com/) Chapter 1: Introduction. Should be a quick read. Don't skip the section on **Notation and Simple Matrix Algebra**.
+- [ISLR](https://www.statlearning.com/) Chapter 2: Statistical Learning.
+
+If you finish these quickly you may want to start Chapter 3, because it's a long one. 
+
+## Computer setup
+
+###  Installing `R` and `RStudio`
+
+First [install R](https://cran.r-project.org/) and then install [RStudio](https://www.rstudio.com/products/rstudio/download/) (this second step is highly recommended but not required, if you prefer another IDE and you're sure you know what you're doing). Finally, open RStudio and install the [tidyverse](https://www.tidyverse.org/packages/) set of packages by running the command
+
+```
+install.packages("tidyverse")
+```
+
+**Note**: If you use a Mac or Linux-based computer you may want to install these using a package manager instead of downloading them from the websites linked above. Personally, on a Mac computer I use [Homebrew](https://brew.sh/) (the link has instructions for how to install it) to [install R](https://formulae.brew.sh/cask/r) and [RStudio](https://formulae.brew.sh/cask/rstudio).
+
+## Slides and notebooks
+
+- Part 1 slides: [[html](slides/01-1-introduction.html)] [[pdf](slides/01-1-introduction_simple.pdf)]
+- Part 2 slides: [[html](slides/01-2-foundations.html)] [[pdf](slides/01-2-foundations_simple.pdf)]
+- [Notebook](notebooks/gapminder.html) for `gapminder` example
+- [Notebook](notebooks/candy.html) for `candy` example
+- [Notebook](notebooks/seminar.html) from previous (outdated) seminar
+
 ## What is machine learning?
 
 We begin with some key conceptual themes in machine learning. The subject mainly focuses on **algorithms** for finding potentially useful structure in data.
 
 ### Supervised machine learning
 
-This refers to the special case where one variable in the dataset is specified as an "outcome"--usually represented as $y$--the other variables are considered inputs or "predictors"--written as $x$--and the algorithm attempts to "fit" a functional relationship between these using the dataset. A key idea in applied mathematics is that there may be some "true" function $f$ that describes the relationship between $x$ and $y$, so that measured data will approximately satisfy
+This refers to the special case where one variable in the dataset is specified as an "outcome"--usually represented as $y$--the other variables are considered inputs or "predictors"--written as $x$--and the algorithm attempts to "fit" a functional relationship between these using the dataset. A key idea in applied mathematics is that there may be some "true" function $f$ that describes the relationship between $x$ and $y$, so that measured data will satisfy
 
 $$
-y \approx f(x)
+y = f(x) + \epsilon
 $$
-In the physical sciences, for example, this function could describe a "law" such as the laws of mechanics or elecromagnetism, [etc](https://en.wikipedia.org/wiki/Scientific_law). In machine learning we usually don't know the function, or even have good *a priori* reasons to believe there is a useful functional relationship. Instead we hope that a (powerful enough) algorithm can "learn" a function $\hat f$ by approximating the examples in a (large enough) dataset:
+where $\epsilon$ is a (hopefully small) "error" term. In the physical sciences, for example, this function could describe a "law" such as the laws of mechanics or elecromagnetism, [etc](https://en.wikipedia.org/wiki/Scientific_law). In machine learning we usually don't know the function, or even have good *a priori* reasons to believe there is a useful functional relationship. Instead we hope that a (powerful enough) algorithm can "learn" a function $\hat f$ by approximating the examples in a (large enough) dataset:
 
 $$
-\hat f(x) \approx y
+\hat f(x_i) \approx y_i, \quad \text{ for } \quad i = 1, \ldots, n
 $$
 We might only care about the prediction accuracy of this learned function, or we might also want to **interpret** it based on the assumption that it is close to the "true" function:
 $$
 \hat f(x) \approx f(x)
 $$
-Technological advances in computing enable us to use more sophisticated algorithms and achieve better accuracy. This often creates tension between the two goals above, since new "state of the art" (SOTA) algorithms that have the highest prediction accuracy are usually very complicated and hence difficult to interpret. Later in the course we will learn about some algorithmic tools to help us interpret other algorithms.
+Technological advances in computing enable us to use more sophisticated algorithms and achieve better accuracy. This often creates tension between the two goals above, since new "state of the art" (**SOTA**) algorithms that have the highest prediction accuracy are usually very complicated and hence difficult to interpret. Later in the course we will learn about some algorithmic tools to help us interpret other algorithms.
 
 ### Model complexity
 
@@ -64,15 +91,3 @@ Increasing complexity usually results in a lower mean-squared error *if the MSE 
 Why should we evaluate model fit (like MSE) on a different dataset than the one used to fit the model? First, if we evaluate it on the same dataset instead, then such an evaluation will always prefer greater complexity until the model "saturates" the data. In this case there was nothing gained from using a model--we have only created a [map as large as the entire territory](https://en.wikipedia.org/wiki/On_Exactitude_in_Science#Influences_and_legacy). Second, if our purpose in using a model is to describe some *stable* aspect of the world, if we think the "true" $f$ is something like a "law of nature," then we would hope that such a model would not immediately fail if the time or context of the data collection is slightly different.
 
 Since these concepts are so central to machine learning we will return to them several times through the term and understand them through more examples and some mathematical derivations.
-
-## Slides and notebooks
-
-[Slides](slides/01-1-introduction.html) for first video
-
-[Notebook](notebooks/gapminder.html) for `gapminder` example
-
-[Notebook](notebooks/candy.html) for `candy` example
-
-[Slides](slides/01-2-foundations.html) for last video ([PDF](slides/foundations.pdf))
-
-[Notebook](notebooks/seminar.html) from seminar
