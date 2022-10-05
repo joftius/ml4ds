@@ -7,7 +7,7 @@ author: "Joshua Loftus"
 output:
   xaringan::moon_reader:
     css: ["default", "xaringan-themer.css"]
-#    seal: false    
+    seal: true    
     lib_dir: libs
     nature:
       titleSlideClass: ["left", "bottom"]
@@ -40,8 +40,6 @@ style_duo_accent(
 
 ```{r xaringanextra, include=FALSE, warning=FALSE}
 library(xaringanExtra)
-xaringanExtra::use_panelset()
-xaringanExtra::style_panelset_tabs(font_family = "inherit")
 ```
 
 ```{r tidyverse, include=FALSE, warning=FALSE}
