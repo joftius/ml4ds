@@ -7,7 +7,7 @@ author: "Joshua Loftus"
 output:
   xaringan::moon_reader:
     css: ["default", "xaringan-themer.css"]
-#    seal: false    
+    seal: false    
     lib_dir: libs
     nature:
       titleSlideClass: ["left", "bottom"]
@@ -17,7 +17,7 @@ output:
       highlightSpans: true
       countIncrementalSlides: false
 ---
-class: inverse
+class: middle
 
 ```{r setup, include=FALSE}
 options(htmltools.dir.version = FALSE)
@@ -33,7 +33,6 @@ style_duo_accent(
   link_color = "#55c667",
   text_bold_color = '#f68f46',
   title_slide_background_color = "#ffffff", #"#042333",
-  title_slide_background_image = "./../../../files/theme/ceres.jpg",
   title_slide_background_size = "cover",
   ) #or contain
 ```
@@ -57,13 +56,16 @@ theme_set(theme_minimal(base_size = 22))
 }
 </style>
 
+
+# Week 2: Regression
+
+---
+
 # It's the year 1801
 
 ## There is no Google Maps
 
 How do you travel? With the original GPS: **astronomy**
-
---
 
 - Relatively mature science
 - Millennia of observations and evolving theories
@@ -73,14 +75,11 @@ How do you travel? With the original GPS: **astronomy**
 - But still, 45 years before discovery of Neptune
 
 ---
-class: inverse, center
-background-image: url("./../../../files/theme/ceres.jpg")
+class: center
 
 # Discovering planets and things
 
 ### Imagine being the first to observe a previously unknown celestial object in our solar system
-
---
 
 ...
 
@@ -99,14 +98,6 @@ But he also sick and stopped observing it
 And then the sun blocked observation for a good portion of the year
 
 ---
-class: inverse
-
-mfw
-
-![](https://upload.wikimedia.org/wikipedia/commons/thumb/e/e9/Costanzo_Angelini%2C_L%27astronomo_Piazzi_1825_ca.jpg/440px-Costanzo_Angelini%2C_L%27astronomo_Piazzi_1825_ca.jpg)
-
----
-class: inverse
 
 ### A (pre-machine learning?) prediction contest
 
@@ -130,7 +121,7 @@ class: inverse
 hm
 
 ---
-class: inverse, middle
+class: middle
 
 ### Gauss became an instant celebrity
 
@@ -144,7 +135,6 @@ class: inverse, middle
 How did Gauss do it? Kepler's laws determine an orbit uniquely from 3 points. What to do with 24?
 
 ---
-class: inverse
 
 [Gauss](https://www.maa.org/programs/maa-awards/writing-awards/the-discovery-of-ceres-how-gauss-became-famous):
 
@@ -155,7 +145,6 @@ class: inverse
 but why *squared* errors?
 
 ---
-class: inverse
 
 ## Constraints
 
@@ -177,7 +166,7 @@ $$
 - Gauss said we can use any even power, e.g. $\sum r_i^8$
 
 ---
-class: inverse, middle
+class: middle
 
 ### Gauss's answer
 
@@ -190,7 +179,7 @@ On the other hand, he said he used least squares *thousands* of times in his yea
 For more about the origin of least squares see [this article](https://academic.oup.com/biomet/article/59/2/239/325474).
 
 ---
-class: inverse, middle
+class: middle
 
 ### Another answer: nice geometry
 
@@ -214,7 +203,6 @@ $$
 i.e. **orthogonality**.
 
 ---
-class: inverse
 
 # Orthogonality, uncorrelatedness, bias
 
@@ -236,16 +224,11 @@ $$
 
 - **Severity (or novelty)**: lots of mathematicians used methods to fit the initial observations, what distinguished Gauss was predicting a *new* data point 
 
---
-
 - The *right amount* of **complexity**: some predictions assumed a circular orbit instead of elliptical, this simplified calculations but missed Ceres
-
---
 
 - **Theory *and* observation**: without the heliocentric model of the solar system this search would have been a lost cause. That model itself evolved from previous iterations of theories and observations
 
 ---
-class: inverse
 
 ### An absurdly abbreviated history of optics
 
@@ -257,7 +240,6 @@ class: inverse
 
 
 ---
-class: inverse
 
 #### Put the "science" back in "data science"!
 
@@ -284,7 +266,7 @@ Convenience of calculation enables a lot of bad science
 Much of modern ML is similarly fitting curves to model relationships in any available data *because we can* -- not because there is any scientific or theoretical reason to do so
 
 ---
-class: inverse, middle, center
+class: middle, center
 
 ### Regression began with an exemplary application, the re-discovery of Ceres
 
@@ -295,7 +277,6 @@ class: inverse, middle, center
 ### The era of "[surveillance capitalism](https://theconversation.com/the-price-of-connection-surveillance-capitalism-64124)" means scientifically (and ethically) questionable data is multiplying faster than ever
 
 ---
-class: inverse
 
 ### Multiple regression
 
@@ -310,14 +291,6 @@ Some math(s) notation
 Interpreting the model and its coefficients
 
 Association vs causality
-
----
-
-### Multiple regression
-
-```{r, echo=FALSE, out.width="90%"}
-knitr::include_graphics("../candy.png")
-```
 
 ---
 
@@ -489,9 +462,7 @@ $$
 \mathbf A^\dagger \mathbf A = (\mathbf A^T\mathbf A)^{-1} \mathbf A^T \mathbf A = (\mathbf A^T\mathbf A)^{-1} (\mathbf A^T \mathbf A) = \mathbf I
 $$
 
---
-
-`ginv` in the library `MASS` apparently computes the left or right pseudoinverse, whichever one works
+`ginv` in the library `MASS` apparently computes the left or right pseudowhichever one works
 
 ```{r}
 A %*% Ainv # not a right inverse
@@ -509,13 +480,9 @@ $$
 
 **Remember this!** It encodes many important facts...
 
---
-
 This assumes $\mathbf X^T\mathbf X$ to be invertible, i.e. the *columns* of $\mathbf X$ have full rank (columns = variables)
 
 - That's often true if $n > p$, unless some problem like one variable is a copy of another
-
---
 
 - Impossible if $p > n$. "High-dimensional" regression requires special methods, covered soon in this course!
 
@@ -529,8 +496,6 @@ $$\hat{\mathbf y} = \mathbf {X} \hat{\mathbf \beta} = \mathbf X (\mathbf X^T\mat
 if we define
 
 $$\mathbf H = \mathbf X (\mathbf X^T\mathbf X)^{-1}\mathbf X^T$$
-
---
 
 COOL FACTS about $\mathbf H$:
 
@@ -551,8 +516,6 @@ $$L(\mathbf X, \mathbf y, \mathbf \beta) = (\mathbf y - \mathbf X \beta)^T(\math
 - Consider each coordinate separately and take univariate partial derivatives
 - Use vector calculus and compute the gradient
 - (Or even use matrix calculus identities)
-
---
 
 Reach the same conclusion: at a stationary point of $L$,
 
@@ -612,7 +575,6 @@ model <- lm(y ~ x1 + x2 ...)
 **Idea**: if the model captures the "signal," what is left over (residuals) should look like "noise" -- i.e. have no discernible structure or patterns
 
 ---
-class: inverse
 
 # Concluding points
 
@@ -620,10 +582,8 @@ One of the most commonly used methods, even with more complex ML often compare t
 
 Perhaps the most complex method that is still considered relatively interpretable. But interpretation is actually trickier than most understand! (**more on this next week!**)
 
---
 
 #### *Very* often used in ways that don't make sense by people who don't know what they're doing to reach conclusions that don't work in the real world!
 
---
 
 #### Done well: amazing, *almost* magically effective, worth many more years of study, can easily provide a lifetime of valuable usage to a wise practitioner

@@ -45,7 +45,7 @@ outcome to predict, and which variables you might use as predictors
 ## Slides and notebooks
 
 - Slides: 
-[[html](slides/02-1-regression_combined.html)]  [[pdf](slides/02-1-regression_combined_simple.pdf)]
+[[html](slides/02-1-regression_combined.html)]  [[pdf](slides/02-1-regression_handout.pdf)]
 
 [Notebook](notebooks/gapminder-simple.html) for `gapminder` example
 

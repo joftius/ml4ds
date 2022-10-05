@@ -101,6 +101,13 @@ And then the sun blocked observation for a good portion of the year
 ---
 class: inverse
 
+mfw
+
+![](https://upload.wikimedia.org/wikipedia/commons/thumb/e/e9/Costanzo_Angelini%2C_L%27astronomo_Piazzi_1825_ca.jpg/440px-Costanzo_Angelini%2C_L%27astronomo_Piazzi_1825_ca.jpg)
+
+---
+class: inverse
+
 ### A (pre-machine learning?) prediction contest
 
 .pull-left[
@@ -252,17 +259,15 @@ class: inverse
 ---
 class: inverse
 
-### Put the "science" back in "data science"!
+#### Put the "science" back in "data science"!
 
 Feynman, [Lectures on Physics, Vol. 1](https://www.feynmanlectures.caltech.edu/I_26.html):
 
 > Now in the further development of science, we want more than just a formula. First we have an observation, then we have numbers that we measure, then we have a law which summarizes all the numbers. *But the real glory of science is that we can find a way of thinking such that the law is evident*.
 
---
+And from "Cargo Cult Science":
 
-- Ceres: elliptical orbits (later understood using gravitation)
-- Optics: least time
-- A typical modern application of machinee learning: ...
+> When you have put a lot of ideas together to make an **elaborate theory**, you want to make sure, when explaining what it fits, that *those things it fits are not just the things that gave you the idea for the theory*; but that the finished theory makes something else come out right, in addition.
 
 ---
 
@@ -272,11 +277,11 @@ Convenience of calculation enables a lot of bad science
 
 - A. Quetelet in 1835, "social physics," correlates basically any social data together, tries to predict "crime," poverty, alcohol consumption, etc
 
-- F. Nightingale (1820-1910) believes correlations observable this way demonstrate "God's will"
-
 - F. Galton (1822-1911) founds the field of eugenics...
 
-And much of modern ML is similarly fitting curves to model relationships in any available data *because we can* -- not because there is any scientific or theoretical reason to do so
+- Modern science: [replication](https://journals.sagepub.com/doi/10.1177/2515245917747646) [crisis](https://en.wikipedia.org/wiki/Replication_crisis)
+
+Much of modern ML is similarly fitting curves to model relationships in any available data *because we can* -- not because there is any scientific or theoretical reason to do so
 
 ---
 class: inverse, middle, center
@@ -290,20 +295,29 @@ class: inverse, middle, center
 ### The era of "[surveillance capitalism](https://theconversation.com/the-price-of-connection-surveillance-capitalism-64124)" means scientifically (and ethically) questionable data is multiplying faster than ever
 
 ---
+class: inverse
+
+### Multiple regression
+
+#### This week
+
+What is it? Simply a method for using more variables to predict the outcome?
+
+Some math(s) notation
+
+#### Next week
+
+Interpreting the model and its coefficients
+
+Association vs causality
+
+---
 
 ### Multiple regression
 
 ```{r, echo=FALSE, out.width="90%"}
 knitr::include_graphics("../candy.png")
 ```
-
----
-
-### Just the math, please
-
-For now: method for using more variables to predict the outcome
-
-Next week: interpreting coefficients, causality
 
 ---
 
@@ -487,11 +501,13 @@ A %*% Ainv # not a right inverse
 
 ### Least-squares solutions in matrix notation
 
-Instead of those long expressions that Yule found were already very complicated with $p = 3$, we can always write very simply:
+With matrix-vector notation we can always write very simply:
 
 $$
 \hat {\mathbf \beta} = (\mathbf X^T\mathbf X)^{-1}\mathbf X^T \mathbf y = \mathbf X^\dagger \mathbf y
 $$
+
+**Remember this!** It encodes many important facts...
 
 --
 
@@ -580,56 +596,34 @@ which(x == "C") # predicting within-group averages!
 
 ---
 
-## Differences from simple regression
+## This week's lab
 
-- **Interpreting coefficients**: "*ceteris paribus*" -- all other things being equal
+- Fitting models in `R`
 
-The status quo is *ridiculous*, but I must tell you... (I will also tell you about better ways)
+```
+model <- lm(y ~ x1 + x2 ...)
+```
+- Important functions to use on models: `summary`, `coef`, `confint`, `plot`
 
---
+- Interpreting the output
 
-- **Diagnostic plots**: can't see higher dimensional relationships
+- Residual plots and other diagnostics
 
-Plot residuals vs fitted values, and/or various pair plots
-
-`GGally` package `r emo::ji("thumbsup")`
-
---
-
-- **Inference**: testing multiple coefficients
-
-See ISLR's discussion of $F$-tests, beginning of Section 3.2.2
+**Idea**: if the model captures the "signal," what is left over (residuals) should look like "noise" -- i.e. have no discernible structure or patterns
 
 ---
-
-### Collinearity between predictors
-
-Another important difference from simple regression
-
-Related to problems with interpreting coefficients
-
-For a set of predictors, the more closely they are mutually linearly dependent the more difficult it is to estimate their separate coefficients
-
-If the problem is bad enough, can result in numerical instability
-
---
-
-#### Assessing if it's a problem
-
-- For each predictor $x_j$, treat it as an outcome in a regression model using all the other predictors
-- $R^2$ of this model: closer to 1, worse collinearity
-
-
----
+class: inverse
 
 # Concluding points
 
 One of the most commonly used methods, even with more complex ML often compare to regression as a "baseline"
 
-Perhaps the most complex method that is still considered relatively interpretable. But interpretation is actually trickier than most understand! *Ceteris paribus* and causality...
+Perhaps the most complex method that is still considered relatively interpretable. But interpretation is actually trickier than most understand! (**more on this next week!**)
 
-Always remember bias, even if sample is large our estimates could be far from truth
+--
 
-Could be estimating the wrong thing, using a model that's importantly wrong, asking the wrong question, analyzing/collecting the wrong data, including wrong predictors, etc
+#### *Very* often used in ways that don't make sense by people who don't know what they're doing to reach conclusions that don't work in the real world!
 
+--
 
+#### Done well: amazing, *almost* magically effective, worth many more years of study, can easily provide a lifetime of valuable usage to a wise practitioner
