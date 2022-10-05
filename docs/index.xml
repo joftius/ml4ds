@@ -7,14 +7,14 @@
     <description>ml4ds
 </description>
     <generator>Distill</generator>
-    <lastBuildDate>Mon, 11 Oct 2021 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Wed, 05 Oct 2022 00:00:00 +0000</lastBuildDate>
     <item>
       <title>1 Introduction and foundations</title>
       <dc:creator>Joshua Loftus</dc:creator>
       <link>http://ml4ds.com/weeks/01-introduction-foundations</link>
       <description>A brief introduction to the course, preview of things to come, and some foundational background material.</description>
       <guid>http://ml4ds.com/weeks/01-introduction-foundations</guid>
-      <pubDate>Mon, 11 Oct 2021 00:00:00 +0000</pubDate>
+      <pubDate>Wed, 05 Oct 2022 00:00:00 +0000</pubDate>
       <media:content url="https://ml4ds.com/weeks/01-introduction-foundations/slides/01-2-foundations_files/figure-html/gapminder-loess-1.png" medium="image" type="image/png"/>
     </item>
     <item>
@@ -23,7 +23,7 @@
       <link>http://ml4ds.com/weeks/02-linear-regression</link>
       <description>Reviewing linear regression and framing it as a prototypical example and source of intuition for other machine learning methods.</description>
       <guid>http://ml4ds.com/weeks/02-linear-regression</guid>
-      <pubDate>Sun, 10 Oct 2021 00:00:00 +0000</pubDate>
+      <pubDate>Sat, 09 Oct 2021 00:00:00 +0000</pubDate>
       <media:content url="http://ml4ds.com/weeks/02-linear-regression/candy.png" medium="image" type="image/png" width="1226" height="1002"/>
     </item>
     <item>

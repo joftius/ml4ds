@@ -8,6 +8,8 @@ date: 10-10-2021
 output:
   distill::distill_article:
     self_contained: false
+    toc: true
+    toc_depth: 3
 preview: candy.png
 ---
 
@@ -25,7 +27,7 @@ theme_set(theme_minimal(base_size = 22))
 | Link | Type | Description             |
 |:----:|:----:|:------------------------|
 | [html](slides/02-1-regression_combined.html)  [pdf](slides/02-1-regression_handout.pdf) | Slides | Least-squares regression
-
+| [Rmd](notebooks/regression.Rmd) | Notebook | Regression analysis and simulations |
 
 ## Preparation
 

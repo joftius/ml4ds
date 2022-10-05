@@ -4,10 +4,11 @@ description: |
   A brief introduction to the course, preview of things to come, and some foundational background material.
 author:
   - name: Joshua Loftus
-date: 10-11-2021
 output:
   distill::distill_article:
     self_contained: false
+    toc: true
+    toc_depth: 3
 preview: https://ml4ds.com/weeks/01-introduction-foundations/slides/01-2-foundations_files/figure-html/gapminder-loess-1.png
 ---
 

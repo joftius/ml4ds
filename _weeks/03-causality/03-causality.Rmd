@@ -8,6 +8,8 @@ date: 10-09-2021
 output:
   distill::distill_article:
     self_contained: false
+    toc: true
+    toc_depth: 3
 ---
 
 ```{r setup, include=FALSE}
@@ -19,9 +21,22 @@ library(gapminder)
 theme_set(theme_minimal(base_size = 22))
 ```
 
-## Readings
+## Materials
+
+| Link | Type | Description             |
+|:----:|:----:|:------------------------|
+| [html](slides/03-1-causality.html)  [pdf](slides/03-1-causality_handout.pdf) | Slides | Causality and interpreting regression
+
+**To be updated**
+
+## Preparation
+
+### Required reading
 
 - [Mixtape](https://mixtape.scunning.com/index.html) Sections 1.1, 1.2, and 3.1 up to 3.1.3 (stop before 3.1.4)
+
+### Supplemental reading
+
 
 ## Rerum cognoscere causas
 
@@ -31,7 +46,7 @@ theme_set(theme_minimal(base_size = 22))
 
 ## Slides, notebooks, exercises
 
-[Slides](slides/03-1-causality.html) for first causality video ([PDF](slides/causality.pdf))
+[Slides] for first causality video ([PDF](slides/causality.pdf))
 
 [Slides](../10-action/slides/10-2-changetheworld.html) for second causality video
 

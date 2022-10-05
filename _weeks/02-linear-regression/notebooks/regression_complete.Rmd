@@ -1,0 +1,232 @@
+---
+title: "Week 2 seminar: regression"
+author: Joshua Loftus
+output: html_document
+---
+
+```{r setup, message = FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+theme_set(theme_minimal(base_size = 14))
+set.seed(1)
+```
+
+## Regression models with real data
+
+In this analysis you are encouraged to use a dataset that you found interesting. Your dataset should have a numeric outcome variable and multiple predictor variables, and at least one of the predictors should also be numeric. Your dataset should not have any special structure that would clearly violate independence assumptions, e.g. observations with possible spatial or temporal correlation. We previously used the `gapminder` dataset but with a `filter` to take a subset of only one year of data for this reason (so the same country would not be repeated multiple times in the plot or model).
+
+Note: we also cannot deal with missing values right now so you may use `drop_na()`
+
+```{r}
+# Load dataset and pre-process if necessary
+library(palmerpenguins)
+penguins |> 
+  drop_na() -> my_data # bad syntax, but fun!
+```
+
+### Simple linear regression
+
+Choose one predictor variable and fit a simple linear model.
+
+```{r}
+model_simple <- lm(body_mass_g ~ bill_length_mm, data = my_data)
+```
+
+Use each of the functions below on your model object and try to understand the output:
+
+- `summary` 
+- `predict`
+- `residuals`
+- `coef`
+- `confint`
+- `plot`
+
+Note that many of these are shortcut functions that can be used on many different types of objects, e.g. models fit by other methods. To learn more about each function `f` above type `?f` in the console, and to see more specifically how the function works on linear model objects type `?f.lm`, e.g. `?plot.lm`
+
+```{r}
+summary(model_simple)
+# predict(model_simple)
+# residuals(model_simple)
+# coef(model_simple)
+# confint(model_simple)
+```
+
+```{r fig.show="hold", out.width="70%"}
+plot(model_simple)
+```
+
+**Question**: How do we interpret diagnostic plots?
+
+**Answer**: Generally looking for patterns in residuals, normality of their distribution (diagonal line in QQ plot), constant variance (homoscedasticity), and influential points (high-leverage outliers)
+
+#### Exercise: Create a scatterplot showing your simple linear model
+
+```{r message=FALSE, warning=FALSE}
+my_data |>
+  ggplot(aes(x = bill_length_mm, y = body_mass_g)) +
+  geom_point() +
+  geom_smooth(method = "lm")
+```
+
+### Multiple linear regression
+
+Now repeat the above steps but with a model using more than one predictor.
+
+```{r}
+model_multiple <- lm(
+  body_mass_g ~ bill_length_mm + bill_depth_mm + sex,
+  data = my_data)
+```
+
+Try using each of the previous functions on your model object. Notice what's different about the output.
+
+```{r}
+summary(model_multiple)
+```
+### Some helpful packages
+
+The `broom` and `GGally` packages have some functions that are useful when used on `lm` objects (and also on some other types of models).
+
+```{r message=FALSE}
+library(broom)
+library(GGally)
+```
+
+Use the `tidy` and `glance` functions from the `broom` package. Compare to the output from `summary`. Check out the documentation `?tidy.lm`. For nice document formatting you can also try piping `|>` the output from `tidy()` into the `knitr::kable()` function.
+
+```{r}
+tidy(model_multiple)
+```
+
+```{r}
+# options(digits = 2)
+tidy(model_multiple, conf.int = TRUE) |>
+  knitr::kable(digits = 2)
+```
+
+```{r}
+glance(model_multiple)
+```
+
+Now use the `ggcoef` and `ggnostic` functions from `GGally`.
+
+```{r out.width="50%"}
+ggcoef(model_multiple)
+```
+
+```{r message=FALSE}
+ggnostic(model_multiple)
+```
+
+Note: there is also a function `ggpairs` useful for exploratory data analysis, but beware that it can be slow because it computes many pairwise plots. You may not want to rerun that code many times. There is an option `cache=TRUE` that saves the result after running it once and then refuses to run it again unless you change the code chunk. You can also leave out variables you don't want to include using `select(-var1, -var2, ...)` or choose only some to include with `select(var1, var2, ...)`. Also see useful helper functions like `?tidyselect::starts_with`.
+
+```{r message=FALSE, warning=FALSE, cache=TRUE}
+my_data |>
+  select(-year, -island) |>
+  ggpairs(progress = FALSE)
+```
+```{r message=FALSE, warning=FALSE, cache=TRUE}
+my_data |>
+  select(contains("_")) |>
+  ggpairs(progress = FALSE)
+```
+
+### Including non-linear transformed predictors
+
+Now pick at least one of your numeric predictor variables and include at least one non-linear transformation. For example you could include a polynomial in `x` of degree `d` with `y ~ poly(x, d)`, or include interactions between `x1` and `x2` with `y ~ x1 * x2`. Use the `glance`, `tidy`, and `plot` functions again on this new model and note any differences.
+
+```{r}
+model_transformed <- lm(
+  body_mass_g ~ poly(bill_length_mm, 2) + bill_depth_mm + sex,
+  data = my_data)
+```
+
+
+```{r}
+model_transformed |>
+  tidy() |>
+  knitr::kable()
+```
+
+```{r}
+model_transformed |>
+  glance() |>
+  knitr::kable(digits = 3)
+```
+
+
+```{r fig.show="hold", out.width="50%"}
+plot(model_transformed)
+```
+
+
+#### Problem: high dimensional plots
+
+The pair plots from e.g. `ggnostic` or `ggpairs` show many 2-dimensional projections of the data, but there is no guarantee that these projections together help us understand higher dimensional relationships.
+
+**Question**: What does this mean for diagnostic plots when our regression model is high dimensional (e.g. p > 3 predictors)
+
+**Answer**: It is possible there is some higher dimensional pattern in the residuals that the pairs plot does not reveal to us. This would mean the model failed to capture some (non-linear) signal and our diagnostic method failed to reveal that flaw to us.
+
+## Regression models with simulated data
+
+Now we want to simulate data in various ways, fit regression models to the data while pretending we don't know how it was generated, and then see how those models perform. We want to understand the limitations of regression models. *If something was wrong with the model, would we be able to tell?*
+
+Choose a functional form for the true outcome data generation process
+
+```{r}
+f <- function(x1, x2, x3) x1 + 2*x2 - x2^2 # change this
+```
+
+Generate several predictor variables, an error term, and an outcome
+
+```{r}
+simulate_data <- function(n) {
+  x1 <- rnorm(n, mean = 3, sd = 3) # change
+  x2 <- runif(n, min = 0, max = 2) # change
+  x3 <- rexp(n, rate = 2) # change
+  errors <- rnorm(n, sd = 1) # change
+  y <- f(x1, x2, x3) + errors
+  data.frame(y = y,
+             x1 = x1,
+             x2 = x2,
+             x3 = x3)
+}
+```
+
+Generate one dataset and use `ggpairs` to show pair plots.
+
+```{r warning=FALSE, message=FALSE}
+n <- 100
+sim_data <- simulate_data(n)
+ggpairs(sim_data, progress = FALSE)
+```
+
+Repeat the following, making various choices:
+
+1. Fit a linear regression model using some choice of predictors, possibly with non-linear transformations as well
+2. Look at the output from functions like `tidy`, `glance`, `ggcoef`, or `ggnostic` plots
+3. Consider whether the model is right/wrong and whether the output reveals the truth about the model
+
+```{r}
+my_model <- lm(y ~ ., data = sim_data)
+```
+
+```{r out.width="70%"}
+my_model |> ggcoef()
+```
+
+#### Experiment!
+
+There are many things you can play with above:
+
+- number and distributions of predictor variables
+- form of the true outcome generating function
+- distribution of the noise (either just changing `sd` or using some other centered distribution)
+- sample size
+- choice of fitted model
+- which aspect of the model to interpret or check against the truth
+
+**Challenge**: can you find some potential dangers of using regression models, where the model is wrong in some important way and our diagnostic methods fail to show us the problem?
+
+**Challenge**: what are some strengths or robustness properties of regression models that we should appreciate and trust in the long run? i.e. are there ways the model can be wrong but our conclusions from it will still (usually?) be good enough to use anyway?
