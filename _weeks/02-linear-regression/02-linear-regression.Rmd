@@ -20,15 +20,27 @@ library(gapminder)
 theme_set(theme_minimal(base_size = 22))
 ```
 
-## Readings
+## Materials
 
--   [ISLR](https://www.statlearning.com/) Chapter 3: Linear Regression.
+| Link | Type | Description             |
+|:----:|:----:|:------------------------|
+| [html](slides/02-1-regression_combined.html)  [pdf](slides/02-1-regression_handout.pdf) | Slides | Least-squares regression
+
+
+## Preparation
+
+### Required reading
+
+- [ISLR](https://www.statlearning.com/) Chapter 3: Linear Regression.
 
 This chapter is long but should be mostly a review of material from previous courses.
 
-For practice, try answering the Conceptual problems at the end of the chapter.
+### Supplemental reading
 
-## Computer setup
+- [ESL](https://hastie.su.domains/ElemStatLearn/) corresponding chapters
+- [MLstory](https://mlstory.org) Fundamentals of prediction and Supervised learning chapters
+
+### Computer setup
 
 First, create a [GitHub](https://github.com/) using your LSE email address (or add your LSE email to your existing account if you have another one). You'll need this account later when we start uploading completed notebooks to a GitHub Classroom.
 
@@ -42,20 +54,6 @@ Second, identify a dataset that you can use to fit a multiple regression model (
 Just be sure to identify in advance which variable you'll use as an
 outcome to predict, and which variables you might use as predictors
 
-## Slides and notebooks
-
-- Slides: 
-[[html](slides/02-1-regression_combined.html)]  [[pdf](slides/02-1-regression_handout.pdf)]
-
-[Notebook](notebooks/gapminder-simple.html) for `gapminder` example
-
-[Slides](slides/02-2-risk.html) for risk and CEFs video ([PDF](slides/risk_CEFs.pdf))
-
-[Slides](slides/02-3-multiple.html) for multiple regression
-
-[Notebook](notebooks/seminar_regression.html) for seminar
-
-[Exercises](exercises/set1.html)
 
 ## Machine learning before the information age
 

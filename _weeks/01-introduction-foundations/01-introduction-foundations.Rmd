@@ -11,7 +11,6 @@ output:
 preview: https://ml4ds.com/weeks/01-introduction-foundations/slides/01-2-foundations_files/figure-html/gapminder-loess-1.png
 ---
 
-
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE)
 knitr::opts_chunk$set(fig.retina = 3, warning = FALSE, message = FALSE)
@@ -21,32 +20,40 @@ library(gapminder)
 theme_set(theme_minimal(base_size = 22))
 ```
 
-## Readings
+## Materials
+
+| Link | Type | Description             |
+|:----:|:----:|:------------------------|
+| [html](slides/01-1-introduction.html) [pdf](slides/01-1-introduction_handout.pdf) | Slides | Course introduction |
+| [html](slides/01-2-foundations.html) [pdf](slides/01-2-foundations_handout.pdf) | Slides | Preview of machine learning concepts |
+| [html](notebooks/gapminder.html) | Notebook | `gapminder` example |
+| [html](notebooks/candy.html) | Notebook | `candy` example |
+| [html](notebooks/seminar.html) | Notebook | Previous (outdated) seminar |
+
+Updated notebooks will be available on GitHub.
+
+## Preparation
+
+### Required reading
 
 - [ISLR](https://www.statlearning.com/) Chapter 1: Introduction. Should be a quick read. Don't skip the section on **Notation and Simple Matrix Algebra**.
 - [ISLR](https://www.statlearning.com/) Chapter 2: Statistical Learning.
 
-If you finish these quickly you may want to start Chapter 3, because it's a long one. 
+If you finish these quickly you may want to start Chapter 3, because it's a long one.
 
-## Computer setup
+### Supplemental reading
 
-###  Installing `R` and `RStudio`
+- [ESL](https://hastie.su.domains/ElemStatLearn/) corresponding chapters
+- [MLstory](https://mlstory.org) Introduction and Mathematical background chapters
+
+### Installing `R` and `RStudio`
 
 First [install R](https://cran.r-project.org/) and then install [RStudio](https://www.rstudio.com/products/rstudio/download/) (this second step is highly recommended but not required, if you prefer another IDE and you're sure you know what you're doing). Finally, open RStudio and install the [tidyverse](https://www.tidyverse.org/packages/) set of packages by running the command
 
-```
-install.packages("tidyverse")
-```
+    install.packages("tidyverse")
 
 **Note**: If you use a Mac or Linux-based computer you may want to install these using a package manager instead of downloading them from the websites linked above. Personally, on a Mac computer I use [Homebrew](https://brew.sh/) (the link has instructions for how to install it) to [install R](https://formulae.brew.sh/cask/r) and [RStudio](https://formulae.brew.sh/cask/rstudio).
 
-## Slides and notebooks
-
-- Part 1 slides: [[html](slides/01-1-introduction.html)] [[pdf](slides/01-1-introduction_simple.pdf)]
-- Part 2 slides: [[html](slides/01-2-foundations.html)] [[pdf](slides/01-2-foundations_simple.pdf)]
-- [Notebook](notebooks/gapminder.html) for `gapminder` example
-- [Notebook](notebooks/candy.html) for `candy` example
-- [Notebook](notebooks/seminar.html) from previous (outdated) seminar
 
 ## What is machine learning?
 
@@ -58,17 +65,13 @@ This refers to the special case where one variable in the dataset is specified a
 
 $$
 y = f(x) + \epsilon
-$$
-where $\epsilon$ is a (hopefully small) "error" term. In the physical sciences, for example, this function could describe a "law" such as the laws of mechanics or elecromagnetism, [etc](https://en.wikipedia.org/wiki/Scientific_law). In machine learning we usually don't know the function, or even have good *a priori* reasons to believe there is a useful functional relationship. Instead we hope that a (powerful enough) algorithm can "learn" a function $\hat f$ by approximating the examples in a (large enough) dataset:
+$$ where $\epsilon$ is a (hopefully small) "error" term. In the physical sciences, for example, this function could describe a "law" such as the laws of mechanics or elecromagnetism, [etc](https://en.wikipedia.org/wiki/Scientific_law). In machine learning we usually don't know the function, or even have good *a priori* reasons to believe there is a useful functional relationship. Instead we hope that a (powerful enough) algorithm can "learn" a function $\hat f$ by approximating the examples in a (large enough) dataset:
 
 $$
 \hat f(x_i) \approx y_i, \quad \text{ for } \quad i = 1, \ldots, n
-$$
-We might only care about the prediction accuracy of this learned function, or we might also want to **interpret** it based on the assumption that it is close to the "true" function:
-$$
+$$ We might only care about the prediction accuracy of this learned function, or we might also want to **interpret** it based on the assumption that it is close to the "true" function: $$
 \hat f(x) \approx f(x)
-$$
-Technological advances in computing enable us to use more sophisticated algorithms and achieve better accuracy. This often creates tension between the two goals above, since new "state of the art" (**SOTA**) algorithms that have the highest prediction accuracy are usually very complicated and hence difficult to interpret. Later in the course we will learn about some algorithmic tools to help us interpret other algorithms.
+$$ Technological advances in computing enable us to use more sophisticated algorithms and achieve better accuracy. This often creates tension between the two goals above, since new "state of the art" (**SOTA**) algorithms that have the highest prediction accuracy are usually very complicated and hence difficult to interpret. Later in the course we will learn about some algorithmic tools to help us interpret other algorithms.
 
 ### Model complexity
 
@@ -76,8 +79,8 @@ The distinguishing feature of machine learning as compared to statistics, for ex
 
 Two simple examples illustrate different strategies for building more complex models:
 
-- increasing complexity of the **function class**, for example by using (more highly) non-linear functions and/or allowing functions to fit flexibly/locally to different subsets of the data
-- increasing the **dimension of predictors** (while otherwise keeping the function class fixed)
+-   increasing complexity of the **function class**, for example by using (more highly) non-linear functions and/or allowing functions to fit flexibly/locally to different subsets of the data
+-   increasing the **dimension of predictors** (while otherwise keeping the function class fixed)
 
 [Model complexity](https://en.wikipedia.org/wiki/Degrees_of_freedom_(statistics)) relates to the [bias-variance trade-off](https://en.wikipedia.org/wiki/Bias%E2%80%93variance_tradeoff): more complexity *typically* results in lower bias and higher variance.
 

@@ -7,7 +7,7 @@ author: "Joshua Loftus"
 output:
   xaringan::moon_reader:
     css: ["default", "xaringan-themer.css"]
-#    seal: false    
+    seal: true 
     lib_dir: libs
     nature:
       titleSlideClass: ["left", "bottom"]
@@ -34,17 +34,13 @@ style_duo_accent(
   link_color = "#55c667",
   text_bold_color = '#f68f46',  
   title_slide_background_color = "#ffffff", #"#042333",
-  title_slide_background_image = "../../../files/theme/LSE/aerial5.jpg",
+  title_slide_background_image = "./../../../files/theme/LSE/aerial5.jpg",
   title_slide_background_size = "cover",
   ) #or contain
 ```
 
 ```{r xaringanextra, include=FALSE, warning=FALSE}
 library(xaringanExtra)
-xaringanExtra::use_animate_all("slide_left")
-xaringanExtra::use_tile_view()
-xaringanExtra::use_panelset()
-xaringanExtra::style_panelset_tabs(font_family = "inherit")
 ```
 
 ```{r tidyverse, include=FALSE, warning=FALSE}
