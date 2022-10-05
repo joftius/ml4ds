@@ -8,18 +8,40 @@ description: |
 knitr::opts_chunk$set(echo = FALSE)
 ```
 
+[Course guide listing](https://www.lse.ac.uk/resources/calendar2022-2023/courseGuides/ST/2022_ST310.htm): includes information about requirements and assessments.
 
-References
+## References
 
-      - text: "ISLR"
-        href: "https://statlearning.com/"
-      - text: "ESL"
-        href: https://web.stanford.edu/~hastie/ElemStatLearn/
-      - text: "CASI"
-        href: https://web.stanford.edu/~hastie/CASI/
-      - text: "Mixtape"
-        href: https://mixtape.scunning.com/index.html
-      - text: "R4DS"
-        href: https://r4ds.had.co.nz/
-      - text: "MLstory"
-        href: https://mlstory.org/
+These are all available free online at their respective links below.
+
+#### [ISLR](https://statlearning.com/): Introduction to Statistical Learning with R
+
+Our main text for most of the term.
+
+#### [ESL](https://web.stanford.edu/~hastie/ElemStatLearn/): Elements of Statistical Learning
+
+A more advanced and thorough reference covering the same material as ISLR (and by some of the same authors). Useful if you want to go deeper on any topic and prepare for graduate studies.
+
+#### [CASI](https://web.stanford.edu/~hastie/CASI/): Computer Age Statistical Inference
+
+Supplementing the previous two references with a slightly different emphasis and coverage of some different topics.
+
+#### [Mixtape](https://mixtape.scunning.com/index.html): Causal Inference The Mixtape
+
+We will refer to a small portion of this text when learning some introductory ideas about causality.
+
+#### [MLstory](https://mlstory.org/): Patterns, Predictions, and Actions
+      
+Our reference when we discuss a few topics that are often included in computer science courses on machine learning but not covered in the other texts (which were all written by statisticians)
+
+#### Ethical guidelines
+
+These are brief documents published by professional societies on ethical practice of statistics or data science. They are all worth reading and comparing:
+
+- [Royal Statistical Society](https://rss.org.uk/RSS/media/News-and-publications/Publications/Reports%20and%20guides/A-Guide-for-Ethical-Data-Science-Final-Oct-2019.pdf)
+- [American Statistical Association](https://www.amstat.org/your-career/ethical-guidelines-for-statistical-practice)
+- [Association for Computing Machinery](https://www.acm.org/code-of-ethics)
+
+#### [R4DS](https://r4ds.had.co.nz/): R for Data Science
+
+There are many good sources about `R` that you can find by searching online but this one has the advantage of offering one coherent point of view.

@@ -19,10 +19,10 @@ navbar:
         href: https://web.stanford.edu/~hastie/CASI/
       - text: "Mixtape"
         href: https://mixtape.scunning.com/index.html
-      - text: "R4DS"
-        href: https://r4ds.had.co.nz/
       - text: "MLstory"
         href: https://mlstory.org/
+      - text: "R4DS"
+        href: https://r4ds.had.co.nz/
     - text: "About"
       href: about.html
     - text: "Content"
