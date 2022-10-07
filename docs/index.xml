@@ -23,11 +23,11 @@
       <link>http://ml4ds.com/weeks/02-linear-regression</link>
       <description>Reviewing linear regression and framing it as a prototypical example and source of intuition for other machine learning methods.</description>
       <guid>http://ml4ds.com/weeks/02-linear-regression</guid>
-      <pubDate>Sat, 09 Oct 2021 00:00:00 +0000</pubDate>
+      <pubDate>Sun, 10 Oct 2021 00:00:00 +0000</pubDate>
       <media:content url="http://ml4ds.com/weeks/02-linear-regression/candy.png" medium="image" type="image/png" width="1226" height="1002"/>
     </item>
     <item>
-      <title>3 Multiple regression and causality</title>
+      <title>3 Interpreting regression and causality</title>
       <dc:creator>Joshua Loftus</dc:creator>
       <link>http://ml4ds.com/weeks/03-causality</link>
       <description>Multiple linear regression does not, by default, tell us anything about causality. But with the right data and careful interpretation we might be able to learn some causal relationships.</description>

@@ -1,5 +1,5 @@
 ---
-title: "3 Multiple regression and causality"
+title: "3 Interpreting regression and causality"
 description: |
   Multiple linear regression does not, by default, tell us anything about causality. But with the right data and careful interpretation we might be able to learn some causal relationships.
 author:
@@ -34,9 +34,12 @@ theme_set(theme_minimal(base_size = 22))
 ### Required reading
 
 - [Mixtape](https://mixtape.scunning.com/index.html) Sections 1.1, 1.2, and 3.1 up to 3.1.3 (stop before 3.1.4)
+- [MLstory](https://mlstory.org/) Chapter 9 on Causality, roughly the first half (stop before the section called *Experimentation, randomization, potential outcomes*)
 
 ### Supplemental reading
 
+- [Blog post](https://towardsdatascience.com/double-machine-learning-for-causal-inference-78e0c6111f9d) on "double machine learning" up to the second histogram (note that material after that point is more advanced)
+- [MLstory](https://mlstory.org/) Chapter 9 on Causality and Chapter 10 on Causal inference in practice
 
 ## Rerum cognoscere causas
 

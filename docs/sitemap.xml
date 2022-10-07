@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd" version="1.0">
   <url>
+    <loc>http://ml4ds.com/about.html</loc>
+    <lastmod>2022-10-05T14:08:23+01:00</lastmod>
+  </url>
+  <url>
     <loc>http://ml4ds.com/</loc>
     <lastmod>2022-10-05T16:20:54+01:00</lastmod>
   </url>
@@ -10,11 +14,11 @@
   </url>
   <url>
     <loc>http://ml4ds.com/weeks/02-linear-regression/</loc>
-    <lastmod>2022-10-05T21:04:21+01:00</lastmod>
+    <lastmod>2022-10-05T21:04:22+01:00</lastmod>
   </url>
   <url>
     <loc>http://ml4ds.com/weeks/03-causality/</loc>
-    <lastmod>2022-10-05T16:30:17+01:00</lastmod>
+    <lastmod>2022-10-07T14:14:01+01:00</lastmod>
   </url>
   <url>
     <loc>http://ml4ds.com/weeks/04-classification/</loc>
