@@ -1,0 +1,276 @@
+---
+title: "Week 3 seminar: more regression, some causality"
+author: Joshua Loftus
+output: html_document
+---
+
+```{r setup, message = FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+theme_set(theme_minimal(base_size = 14))
+set.seed(1)
+```
+
+## Regression models with simulated data
+
+In this notebook we will do experiments to understand the limitations of using regression models to make conclusions about causality. We make an important **assumption** here that the way we generate data determines all causal relationships. Remember that this is an assumption we choose to adopt now, but that in general we do not always assume anything about causality in our simulations.
+
+For our purposes here the assumption works like this: if we change one variable then we must also propagate this change to any of the variables that functionally depend on it. Two examples below will make this clearer.
+
+### Direct causation `X -> Y`
+
+#### Causal model
+
+This describes how the simulated world works.
+
+```{r}
+# Direct causation: X -> Y
+n <- 200
+X <- rnorm(n, mean = 1)
+Y_CEF <- function(X) 2 * X
+Y <- Y_CEF(X) + rnorm(n)
+```
+
+What would we conclude from regression on data like this?
+
+```{r}
+# or GGally::ggcoef() for a plot
+lm(Y ~ X) |> broom::tidy() |> knitr::kable()
+```
+
+
+#### Counterfactual values for `X`
+
+Below are several examples of different kinds of interventions. We can use these to ask various questions like, "What if the value of `X` had been different in this particular way? Would that have changed other variables as well?"
+
+```{r}
+#X_new <- rep(0, n) # "atomic" intervention, set all X to a constant, e.g. 0
+X_new <- X + 1 # constant additive intervention
+#X_new <- rnorm(n, mean = 2) # shift in mean
+```
+
+#### Propagating the intervention
+
+After intervening on a variable we have to re-generate all the other variables that depend on it using its new values.
+
+```{r}
+Y_new <- Y_CEF(X_new) + rnorm(n)
+```
+
+#### Measuring the causal effect
+
+```{r}
+# Average causal effect (ATE)
+mean(Y_new - Y)
+```
+
+There is another possible treatment effect we may be interested in. Sometimes the magnitude/direction of the treatment effect depends in an important way on another variable, like one of the predictors or covariates. In cases like this we may want to know how the treatment effect varies as we look at different values of the covariate, as in the plot below.
+
+```{r message=FALSE}
+# Conditional average treatment effect (CATE)
+qplot(X, Y_new - Y, geom=c("smooth", "point")) +
+  geom_hline(yintercept = mean(Y_new - Y))
+```
+
+**Exercise**: Can you change `Y_CEF` so that the regression estimate is highly misleading?
+
+**Exercise**: Can you make the `ATE` and the `CATE` provide very different conclusions about the causal effect of `X`?
+
+### Unmeasured confounder `X <- U -> Y`
+
+#### Causal model
+
+In this world there is no causal relationship between `X` and `Y`
+
+```{r}
+n <- 1000
+U <- rnorm(n)
+X <- -2 * U + U^2 + rnorm(n)
+Y_CEF <- function(U) 4 - U
+Y <- Y_CEF(U) + rnorm(n)
+```
+
+But if we fit regression models we might believe there is a relationship:
+
+```{r}
+lm(Y ~ X) |> broom::tidy() |> knitr::kable()
+```
+
+And someone looking at a plot might conclude there is a clear, strong relationship:
+
+```{r}
+qplot(X, Y)
+```
+
+#### Intervening on `X`
+
+```{r}
+# Try changing this
+X_new <- X + 1
+```
+
+#### Propagating the intervention
+
+In this model `X <- U -> Y` there are no other variables on directed pathways out of `X` so nothing else is changed.
+
+```{r}
+U_new <- U
+Y_new <- Y_CEF(U_new) + rnorm(n) 
+```
+
+#### Measuring the causal effect
+
+All causal effects on `Y` are 0
+
+```{r}
+# ATE
+mean(Y_new - Y)
+```
+
+```{r message=FALSE}
+# CATE
+qplot(X, Y_new - Y, geom=c("point")) 
+```
+
+### Confounded relationship `X -> Y <- Z` and `Z -> X`
+
+#### Causal model
+
+Now there is another measured variable `Z` which effects both `X` and `Y`. We might be only interested (for science or profit) in the causal relationship between `X` and `Y`, or the "direct effect" between `Z` and `Y`, or the "total effect" between `Z` and `Y`. We'll consider each of these below.
+
+```{r}
+n <- 500
+Z <- rnorm(n)
+X <- 5 -2 * Z + rnorm(n)
+Y_CEF <- function(X, Z) 4 + 2 * Z - 3 * X
+Y <- Y_CEF(X, Z) + rnorm(n)
+```
+
+Regression model outputs. Which of the coefficients below (if any) give the right answer to which causal questions?
+
+```{r}
+lm(Y ~ Z) |> broom::tidy() |> knitr::kable()
+```
+
+```{r}
+lm(Y ~ X) |> broom::tidy() |> knitr::kable()
+```
+
+```{r}
+lm(Y ~ X + Z) |> broom::tidy() |> knitr::kable()
+```
+#### Changing `X` only
+
+```{r}
+# Original data, copied for re-running
+Z <- rnorm(n)
+X <- 5 -2 * Z + rnorm(n)
+Y <- Y_CEF(X, Z) + rnorm(n)
+# Counterfactuals
+Z_new <- Z
+X_new <- X + 1
+Y_new <- Y_CEF(X_new, Z_new) + rnorm(n)
+```
+
+#### Measuring the causal effect
+
+```{r}
+mean(Y_new - Y)
+```
+
+CATE at different values of `X`
+
+```{r message=FALSE}
+# Conditional average treatment effect (CATE)
+qplot(X, Y_new - Y, geom=c("smooth", "point")) +
+  geom_hline(yintercept = mean(Y_new - Y))
+```
+
+CATE at different values of `Z`
+
+```{r message=FALSE}
+# Conditional average treatment effect (CATE)
+qplot(Z, Y_new - Y, geom=c("smooth", "point")) +
+  geom_hline(yintercept = mean(Y_new - Y))
+```
+
+#### Changing `Z` but not `X` (direct effect)
+
+Note that we are making an exception to our usual rule about propagating changes in the model. In this case we hold `X` fixed because we are interested in understanding only the "direct effect" of `Z` on `Y`, and not any change that would normally also go through `X`.
+
+```{r}
+# Original data, copied for re-running
+Z <- rnorm(n)
+X <- 5 -2 * Z + rnorm(n)
+Y <- Y_CEF(X, Z) + rnorm(n)
+# Counterfactuals
+Z_new <- Z + 1
+X_new <- X
+Y_new <- Y_CEF(X_new, Z_new) + rnorm(n)
+```
+
+#### Measuring the causal effect
+
+```{r}
+mean(Y_new - Y)
+```
+
+CATE at different values of `X`
+
+```{r message=FALSE}
+# Conditional average treatment effect (CATE)
+qplot(X, Y_new - Y, geom=c("smooth", "point")) +
+  geom_hline(yintercept = mean(Y_new - Y))
+```
+
+CATE at different values of `Z`
+
+```{r message=FALSE}
+# Conditional average treatment effect (CATE)
+qplot(Z, Y_new - Y, geom=c("smooth", "point")) +
+  geom_hline(yintercept = mean(Y_new - Y))
+```
+
+#### Changing `Z` (total effect)
+
+
+```{r}
+# Original data, copied for re-running
+Z <- rnorm(n)
+X <- 5 -2 * Z + rnorm(n)
+Y <- Y_CEF(X, Z) + rnorm(n)
+# Counterfactuals
+Z_new <- Z + 1
+X_new <- 5 -2 * Z_new + rnorm(n)
+Y_new <- Y_CEF(X_new, Z_new) + rnorm(n)
+```
+
+#### Measuring the causal effect
+
+```{r}
+mean(Y_new - Y)
+```
+
+CATE at different values of `X`
+
+```{r message=FALSE}
+# Conditional average treatment effect (CATE)
+qplot(X, Y_new - Y, geom=c("smooth", "point")) +
+  geom_hline(yintercept = mean(Y_new - Y))
+```
+
+CATE at different values of `Z`
+
+```{r message=FALSE}
+# Conditional average treatment effect (CATE)
+qplot(Z, Y_new - Y, geom=c("smooth", "point")) +
+  geom_hline(yintercept = mean(Y_new - Y))
+```
+
+#### Experiment suggestions
+
+**Note**: In this example the generating code is copy/pasted in 3 places, so any change you make you need to make the same change in all 3 code chunks. You might want to copy/paste the entire section and only edit the new copy of it.
+
+- Try changing the functions/distributions generating each variable (but without altering the structure of the underlying DAG).
+
+- Try to understand when regression coefficients give accurate answers, which causal effects they may be measuring, and when they do not give accurate answers.
