@@ -25,7 +25,7 @@ theme_set(theme_minimal(base_size = 22))
 
 | Link | Type | Description             |
 |:----:|:----:|:------------------------|
-| [html](slides/03-1-causality.html)  [pdf](slides/03-1-causality_handout.pdf) | Slides | Causality and interpreting regression
+| 03-1-interpretation_causality.htmlcausality.html)  [pdf](slides/03-1-interpretation_causality_handout.pdf) | Slides | Causality and interpreting regression
 
 **To be updated**
 

@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Machine learning</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Joshua Loftus" />
+    <script src="libs/header-attrs/header-attrs.js"></script>
+    <link href="libs/remark-css/default.css" rel="stylesheet" />
+    <link rel="stylesheet" href="xaringan-themer.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+
+
+
+
+
+
+
+
+
+
+&lt;style type="text/css"&gt;
+.remark-slide-content {
+    font-size: 1.2rem;
+    padding: 1em 4em 1em 4em;
+}
+&lt;/style&gt;
+
+
+### From the stars to "Poor Law Statistics"
+
+- Almost a century after Gauss
+- Scientists correlating/regressing anything
+- Problem: what does it mean?
+
+e.g. [Francis Galton](https://www.theguardian.com/education/2020/jun/19/ucl-renames-three-facilities-that-honoured-prominent-eugenicists) correlated numeric traits between generations of organisms...
+
+But *why*? "[Nature versus nurture](https://en.wikipedia.org/wiki/Nature_versus_nurture)" debate (still unresolved?)
+
+e.g. [Udny Yule](https://en.wikipedia.org/wiki/Udny_Yule) and others correlated poverty ("pauperism") with welfare ("out-relief")...
+
+But *why*? "[Welfare](http://economistjourney.blogspot.com/2014/08/the-crazy-dream-of-george-udny-yule-is.html) [trap](https://en.wikipedia.org/wiki/Welfare_trap)" debate (still unresolved?)
+
+---
+
+# Origin of multiple regression
+
+.pull-left[
+- Udny Yule (1871-1951)
+
+- Studied this poverty question
+
+- First paper using multiple regression in 1897
+
+- Association between poverty and welfare while "controlling for" age
+]
+.pull-right[
+![Udny Yule](https://upload.wikimedia.org/wikipedia/en/4/4a/George_Udny_Yule.jpg)
+]
+
+---
+
+## Yule, in 1897:
+
+&gt; Instead of speaking of "causal relation," ... we will use the terms "correlation," ...
+
+- Variables, roughly:
+  - `\(Y =\)` prevalence of poverty
+  - `\(X_1 =\)` generosity of welfare policy
+  - `\(X_2 =\)` age
+- Positive correlations:
+  - `\(\text{cor}(Y, X_1) &gt; 0\)`
+  - `\(\text{cor}(X_2, X_1) &gt; 0\)`
+
+Do more people enter/stay in poverty if welfare is more generous?
+
+Or is this association "due to" age?
+
+---
+
+## Yule, in 1897:
+
+&gt; The investigation of **causal relations** between economic phenomena presents many problems of peculiar difficulty, and offers many opportunities for fallacious conclusions.
+
+&gt; Since the statistician can seldom or never make experiments for himself, he has to accept the data of daily experience, and *discuss as best he can the relations of a whole group of changes*; he **cannot, like the physicist, narrow down the issue to the effect of one variation at a time. The problems of statistics are in this sense far more complex than the problems of physics**.
+
+---
+class: center, middle
+
+# [We] cannot [...] narrow down the issue to the effect of **one variation at a time**
+
+--
+
+but... isn't this how *almost everyone* interprets regression coefficients?...
+
+# 🤔 🤨
+
+(yes! and they are wrong!!!!)
+
+---
+class: middle
+
+Warning: don't go this way
+
+the next slide is about some common mistakes people make when interpreting regression coefficients
+
+(don't try to memorize the formulas)
+
+---
+
+### Interpreting regression coefficients
+
+People *want* these things to be true:
+
+- "The linear **model** and our **estimates** are both good"
+
+`$$\frac{\partial}{\partial x_j} \mathbb E[\mathbf y | \mathbf X] = \beta_j \approx \hat \beta_j$$`
+
+- "We can interpret `\(\beta_j\)` as a causal parameter," i.e. **intervening**  to increase `\(x_j\)` by 1 unit would result in conditional average of `\(y\)` changing by `\(\beta_j\)` units
+
+$$
+\text{If } (x_j \mapsto x_j + 1) \text{ then } (\mathbb E[y] \mapsto \mathbb E[\mathbf y | \mathbf X] + \hat \beta_j)
+$$
+
+## But this *almost never* works!
+
+---
+
+Many textbooks tell us something like:
+
+&gt; "The coefficient `\(\hat \beta_j\)` estimates the relationship between the (conditional mean of the) outcome variable and `\(x_j\)` *while holding all other predictors constant*"
+
+i.e. "**ceteris paribus**" or "other things equal" (unchanged)
+
+#### Fundamental problem of interpreting regression coefficients:
+
+--
+
+"holding all other predictors constant" is (almost) never applicable in the real world, i.e. ceteris is (almost) never paribus
+
+Reasons we'll highlight today: **causality** and **nonlinearity**
+
+---
+
+## Interpreting causality
+
+Back to Yule. What does `\(\hat \beta_\text{welfare}\)` mean?
+
+
+
+
+
+
+```r
+lm(poverty ~ welfare + age) |&gt; broom::tidy() |&gt; knitr::kable()
+```
+
+&lt;table&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:left;"&gt; term &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; estimate &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; std.error &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; statistic &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; p.value &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; (Intercept) &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; -0.009 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.046 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; -0.19 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.849 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; welfare &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.491 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.015 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 31.97 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.000 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; age &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.267 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.083 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 3.21 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.001 &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+---
+
+
+```r
+lm(welfare ~ poverty + age) |&gt; broom::tidy() |&gt; knitr::kable()
+```
+
+&lt;table&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:left;"&gt; term &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; estimate &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; std.error &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; statistic &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; p.value &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; (Intercept) &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; -0.017 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.067 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; -0.262 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.794 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; poverty &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1.032 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.032 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 31.973 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.000 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; age &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.484 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.120 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 4.027 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.000 &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+
+---
+
+## Are these associations "causal"?
+
+Yule found a positive association between `welfare` and `poverty` after "controlling for" `age`
+
+Which is the cause and which is the effect?
+
+Both? Neither?
+
+---
+
+### Another important historic example
+
+.pull-left[
+![](chesterfield.jpg)
+]
+.pull-right[
+
+**Smoking** and **lung cancer**
+
+![](lung-cancer-deaths.png)
+
+(don't smoke)
+]
+
+---
+
+[R. A. Fisher](https://www.newstatesman.com/international/science-tech/2020/07/ra-fisher-and-science-hatred) on [smoking](https://www.york.ac.uk/depts/maths/histstat/smoking.htm) and lung cancer (in 1957)
+
+&gt; ... the B.B.C. gave me the opportunity of putting forward examples of the two classes of alternative theories which **any statistical association, observed without the predictions of a definite experiment**, allows--namely, (1) that the supposed effect **is really the cause**, or in this case that incipient cancer, or a pre-cancerous condition with chronic inflammation, is a factor in inducing the smoking of cigarettes, or (2) that cigarette smoking and lung cancer, though not mutually causative, are **both influenced by a common cause**, in this case the individual genotype ...
+
+---
+
+## Graphical notation for causality
+
+&lt;img src="03-1-interpretation_causality_handout_files/figure-html/unnamed-chunk-4-1.png" width="504" style="display: block; margin: auto;" /&gt;
+
+Variables: vertices (or nodes)
+
+Relationships: directed edges (arrows) 
+
+Shaded node / dashed edges: unobserved variable
+
+---
+
+Smoking causes cancer?
+
+&lt;img src="03-1-interpretation_causality_handout_files/figure-html/unnamed-chunk-5-1.png" width="360" style="display: block; margin: auto;" /&gt;
+
+Genotype is a common cause?
+
+&lt;img src="03-1-interpretation_causality_handout_files/figure-html/unnamed-chunk-6-1.png" width="504" style="display: block; margin: auto;" /&gt;
+
+
+---
+class: middle, center
+
+## Fisher: association is not causation
+
+(He did not use graphical notation like this)
+
+---
+
+## Idea: adjusting for confounders
+
+**Confounders**: other variables that obscure the (causal) relationship from `\(X\)` to `\(Y\)`, e.g.
+
+- `\(Y\)`: health outcome
+- `\(X\)`: treatment dose
+- `\(Z\)`: disease severity
+
+Without considering `\(Z\)`, it might seem like larger doses of `\(X\)` correlate with worse health outcomes
+
+--
+
+### Solution: add more variables to the model
+
+Including (measured) confounders in the regression model may give us a more accurate estimate
+
+---
+class: middle
+
+(My conjecture: Fisher used genes as his example confounder because, in his day, they could not be measured, so his theory would be harder to disprove)
+
+*Confounder adjustment* is why some people think **multiple** regression is One Weird Trick that lets us make causal conclusions
+
+(Statisticians Don't Want You To Know!)
+
+It's not that simple, and DAGs can help us understand why!
+
+---
+
+## Simple models for causality
+
+Think about **interventions** that change some target variable `\(T\)`
+
+- Forget about the arrows pointing into `\(T\)` (intervention makes them irrelevant)
+
+- Change `\(T\)`, e.g. setting it to some arbitrary new value `\(T = t\)`
+
+- This change propagates along directed paths out of `\(T\)` to all descendant variables of `\(T\)` in the graph, causing their values to change
+
+(All of these changes could be deterministic, but most likely in our usage they are probabilistic)
+
+---
+
+.pull-left[
+&lt;img src="03-1-interpretation_causality_handout_files/figure-html/unnamed-chunk-7-1.png" width="360" style="display: block; margin: auto;" /&gt;
+
+&lt;img src="03-1-interpretation_causality_handout_files/figure-html/unnamed-chunk-8-1.png" width="360" style="display: block; margin: auto;" /&gt;
+
+
+&lt;img src="03-1-interpretation_causality_handout_files/figure-html/unnamed-chunk-9-1.png" width="360" style="display: block; margin: auto;" /&gt;
+]
+.pull-right[
+
+**Exercise**: in each of these cases, if we intervene on `\(X\)` which other variable(s) are changed as a result?
+
+
+&lt;img src="03-1-interpretation_causality_handout_files/figure-html/unnamed-chunk-10-1.png" width="360" style="display: block; margin: auto;" /&gt;
+
+]
+
+---
+
+## Explaining an observed correlation
+
+We find a statistically significant correlation between `\(X\)` and `\(Y\)`
+
+What does it mean?
+
+1. False positive (spurious correlation)
+2. `\(X\)` causes `\(Y\)`
+3. `\(Y\)` causes `\(X\)`
+4. Both have common cause `\(U\)` [possibly unobserved]
+
+Statistically indistinguishable cases (without "experimental" data)
+
+Importantly different consequences!
+
+---
+
+### Computing counterfactuals
+
+If we know/estimate *functions* represented by edges, we can simulate/compute the consequences of an intervention
+
+`$$x = \text{exogeneous}, \quad  m = f(x) + \varepsilon_m, \quad y = g(m) + \varepsilon_y$$`
+
+&lt;img src="03-1-interpretation_causality_handout_files/figure-html/unnamed-chunk-11-1.png" width="504" style="display: block; margin: auto;" /&gt;
+
+
+--
+
+`$$x \gets x',  \quad m \gets f(x') + \varepsilon_m, \quad y \gets g(f(x') + \varepsilon_m) + \varepsilon_y$$`
+---
+
+### If we intervene on `\(m\)` instead:
+
+`$$x = x,  \quad m \gets m', \quad y \gets g(m') + \varepsilon_y$$`
+
+&lt;img src="03-1-interpretation_causality_handout_files/figure-html/unnamed-chunk-12-1.png" width="360" style="display: block; margin: auto;" /&gt;
+We can ask different causal questions about the same model, and communicate clearly/visually
+
+
+---
+
+### Strategy: two staged regression
+
+You might have learned "two-stage least squares" (**2SLS**)
+
+Suppose we want to learn the causal relationship of `\(D\)` on `\(Y\)`, but (**Exercise**: draw the DAG for this)
+
+$$
+Y = D \theta + X \beta + \varepsilon_Y
+$$
+
+$$
+D = X \alpha + \varepsilon_D
+$$
+In words: `\(X\)` is confounding the relationship 
+
+- First stage: regress out `\(X\)`
+
+- Second stage: using residuals from first stage,
+
+`$$\text{regress } Y - X \hat \beta \text{ on } D - X \hat \alpha$$` 
+
+
+---
+
+### Strategy: double machine learning (DML)
+
+For various reasons (e.g. nonlinearity) we might replace linear regression in 2SLS with more complex, machine learning predictive models
+
+- First stage: regress out `\(X\)` using ML models
+
+- Second stage: using residuals from first stage,
+
+`$$\text{regress } Y - \hat Y \text{ on } D - \hat D$$` 
+
+(This is an exciting and active field of research now!)
+
+---
+
+This is pretty cool
+
+To see why, let's remember the other of the two common reasons regression coefficients are often misinterpreted: **nonlinearity**
+
+
+---
+
+## Non-linear example
+
+Suppose there is one predictor `\(x\)`, and a (global) non-linear model fits the CEF:
+
+`$$\mathbb E[\mathbf y |X = x] = \beta_0 + \beta_1 x + \beta_2 x^2$$`
+
+We don't know the `\(\beta\)`'s but we have some data, and we use multiple linear regression to fit the coefficients
+
+
+```r
+x2 &lt;- x^2
+lm(y ~ x + x2)
+```
+
+--
+
+The model fits well, but there's an **interpretation problem**:
+
+`$$\frac{\partial}{\partial x} \mathbb E[\mathbf y | x] = \beta_1 + 2\beta_2 x \neq \beta_1 \approx \hat \beta_1$$`
+
+---
+
+## What went wrong?
+
+In this simple example we know the problem is that `\(x_2\)` is actually a function of `\(x\)`. **Solution**: interpret `\(\frac{\partial}{\partial x}\)` locally as a function of `\(x\)`, not as a global constant
+
+--
+
+Sometimes simplifying assumptions are *importantly wrong*. Sometimes we must reject simple interpretations and use more complex models (ML)
+
+**Problem**: ML models may be more difficult to interpret, e.g. not having coefficients like regression models
+
+**Preview**: later in the course we will learn new methods for interpreting some ML models
+
+---
+
+# Conclusions
+
+Wisdom from one of the great early statistical explorers
+
+[Udny Yule](https://mathshistory.st-andrews.ac.uk/Biographies/Yule/quotations/):
+
+&gt; **Measurement does not necessarily mean progress**. Failing the possibility of measuring that which you desire, the lust for measurement may, for example, merely result in your measuring something else - and perhaps forgetting the difference - or in your ignoring some things because they cannot be measured.
+
+Remember: regression coefficients do not necessarily mean causal relationships
+
+---
+class: center
+
+### Experiments
+
+Actually do interventions while collecting data
+
+### Observational studies
+
+Try to infer causal relationships without interventions, by using ~~dark arts~~ more/specialized assumptions/methods that require careful interpretation
+
+(increasingly common due to superabundance of data)
+
+Scientific progress: be wrong in more interesting/specific ways
+
+---
+
+### Causal inference isn't easy!
+
+*Predictive* machine learning is about
+
+$$
+p_{Y|X}(y|x)
+$$
+and regression--conditional expectation, conditional quantile, etc. If we passively observe some value of `\(x\)`, what would we observe about `\(y\)`?
+
+--
+
+*Causal inference* is about (various notations)
+
+$$
+p(y|\text{do}[X=x]), \quad \text{i.e.} \quad p_{}(y| X \gets x)
+$$
+i.e. what happens to `\(Y\)` when we actually **intervene** on `\(X\)`
+
+
+---
+class: center, middle
+
+# Causal inference
+
+## An exciting interdisciplinary field
+
+### Practically important, connections to ML
+
+&gt; "Data scientists have hitherto only predicted the world in various ways; the point is to change it" - Joshua Loftus
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "github",
+"highlightLines": true,
+"highlightSpans": true,
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+// add `data-at-shortcutkeys` attribute to <body> to resolve conflicts with JAWS
+// screen reader (see PR #262)
+(function(d) {
+  let res = {};
+  d.querySelectorAll('.remark-help-content table tr').forEach(tr => {
+    const t = tr.querySelector('td:nth-child(2)').innerText;
+    tr.querySelectorAll('td:first-child .key').forEach(key => {
+      const k = key.innerText;
+      if (/^[a-z]$/.test(k)) res[k] = t;  // must be a single letter (key)
+    });
+  });
+  d.body.setAttribute('data-at-shortcutkeys', JSON.stringify(res));
+})(document);
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+(function(time) {
+  var d2 = function(number) {
+    return ('0' + number).slice(-2); // left-pad 0 to minutes/seconds
+  },
+
+  time_format = function(total) {
+    var secs = Math.abs(total) / 1000;
+    var h = Math.floor(secs / 3600);
+    var m = Math.floor(secs % 3600 / 60);
+    var s = Math.round(secs % 60);
+    var res = d2(m) + ':' + d2(s);
+    if (h > 0) res = h + ':' + res;
+    return res;  // [hh:]mm:ss
+  },
+
+  slide_number_div = function(i) {
+    return document.getElementsByClassName('remark-slide-number').item(i);
+  },
+
+  current_page_number = function(i) {
+    return slide_number_div(i).firstChild.textContent;  // text "i / N"
+  };
+
+  var timer = document.createElement('span'); timer.id = 'slide-time-left';
+  var time_left = time, k = slideshow.getCurrentSlideIndex(),
+      last_page_number = current_page_number(k);
+
+  setInterval(function() {
+    time_left = time_left - 1000;
+    timer.innerHTML = ' ' + time_format(time_left);
+    if (time_left < 0) timer.style.color = 'red';
+  }, 1000);
+
+  slide_number_div(k).appendChild(timer);
+
+  slideshow.on('showSlide', function(slide) {
+    var i = slide.getSlideIndex(), n = current_page_number(i);
+    // reset timer when a new slide is shown and the page number is changed
+    if (last_page_number !== n) {
+      time_left = time; last_page_number = n;
+      timer.innerHTML = ' ' + time_format(time); timer.style.color = null;
+    }
+    slide_number_div(i).appendChild(timer);
+  });
+})(59000);
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>

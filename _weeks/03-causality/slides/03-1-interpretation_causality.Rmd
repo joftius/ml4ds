@@ -1,13 +1,13 @@
 ---
 title: "Machine learning"
-subtitle: "Causal inference"
+subtitle: "Interpreting regression and causality"
 author: "Joshua Loftus"
 #institute: "LSE"
 #date: "`r Sys.Date()`"
 output:
   xaringan::moon_reader:
     css: ["default", "xaringan-themer.css"]
-#    seal: false    
+    seal: true    
     lib_dir: libs
     nature:
       titleSlideClass: ["right", "top"]
@@ -42,8 +42,7 @@ style_duo_accent(
 
 ```{r xaringanextra, include=FALSE, warning=FALSE}
 library(xaringanExtra)
-xaringanExtra::use_animate_all("slide_left")
-xaringanExtra::use_tile_view()
+xaringanExtra::use_animate_all("slide_up")
 xaringanExtra::use_panelset()
 xaringanExtra::style_panelset_tabs(font_family = "inherit")
 ```
@@ -53,6 +52,7 @@ library(tidyverse)
 library(knitr)
 theme_set(theme_minimal(base_size = 22))
 set.seed(1)
+options(digits = 3)
 ```
 
 <style type="text/css">
@@ -69,17 +69,13 @@ set.seed(1)
 - Scientists correlating/regressing anything
 - Problem: what does it mean?
 
---
-
 e.g. [Francis Galton](https://www.theguardian.com/education/2020/jun/19/ucl-renames-three-facilities-that-honoured-prominent-eugenicists) correlated numeric traits between generations of organisms...
 
-But *why*? "Nature versus nurture" debate never ends?
-
---
+But *why*? "[Nature versus nurture](https://en.wikipedia.org/wiki/Nature_versus_nurture)" debate (still unresolved?)
 
 e.g. [Udny Yule](https://en.wikipedia.org/wiki/Udny_Yule) and others correlated poverty ("pauperism") with welfare ("out-relief")...
 
-But *why*? The "[welfare](http://economistjourney.blogspot.com/2014/08/the-crazy-dream-of-george-udny-yule-is.html) [trap](https://en.wikipedia.org/wiki/Welfare_trap)" debate never ends?
+But *why*? "[Welfare](http://economistjourney.blogspot.com/2014/08/the-crazy-dream-of-george-udny-yule-is.html) [trap](https://en.wikipedia.org/wiki/Welfare_trap)" debate (still unresolved?)
 
 ---
 class: inverse
@@ -114,8 +110,6 @@ class: inverse
   - $\text{cor}(Y, X_1) > 0$
   - $\text{cor}(X_2, X_1) > 0$
 
---
-
 Do more people enter/stay in poverty if welfare is more generous?
 
 Or is this association "due to" age?
@@ -127,124 +121,118 @@ class: inverse
 
 > The investigation of **causal relations** between economic phenomena presents many problems of peculiar difficulty, and offers many opportunities for fallacious conclusions.
 
---
-
-> Since the statistician can seldom or never make experiments for himself, he has to accept the data of daily experience, and discuss as best he can the relations of a whole group of changes; he **cannot, like the physicist, narrow down the issue to the effect of one variation at a time. The problems of statistics are in this sense far more complex than the problems of physics**.
-
+> Since the statistician can seldom or never make experiments for himself, he has to accept the data of daily experience, and *discuss as best he can the relations of a whole group of changes*; he **cannot, like the physicist, narrow down the issue to the effect of one variation at a time. The problems of statistics are in this sense far more complex than the problems of physics**.
 
 ---
+class: center, middle
 
-### Regression estimates when $p = 3$
-
-![](yule4.jpg)
-
----
-class: inverse
-
-### Progress(?) in regression
-
-$p$ variables $\to$ $\binom{p}{2}$ "product sums" to compute by hand...
-
-Yule:
-> ... if we wished to discuss the causality [note: correlation?! -JL] of pauperism on the basis of as many as eight variables, the **work** involved would be something like twenty-eight times as much as that necessary for the example taken on pp. 824-831. The **labour** would, in fact, be almost impossible for a single individual.
-
-- 1958: Ted Anderson *An Introduction to Multivariate Analysis*
-
-- 1960's: **Electric** desktop calculators made it easier
-
-- Present: linear algebra notation and computers (R, etc)
-
----
-
-### Interpreting coefficients
-
-People *want* these two things to be true:
-
-1. $$\frac{\partial}{\partial x_j} \mathbb E[\mathbf y | \mathbf X] = \beta_j \approx \hat \beta_j$$
-
-2. $\beta_j$ is a causal parameter, i.e. **intervening**  to increase $x_j$ by 1 unit would result in conditional average of $y$ changing by $\beta_j$ units
+# [We] cannot [...] narrow down the issue to the effect of **one variation at a time**
 
 --
 
-Both of these can be *importantly wrong*! Always remember:
+but... isn't this how *almost everyone* interprets regression coefficients?...
 
-- Think about *general* conditional expectation functions vs the **linear model assumption** (strength of ML!)
-- Think about **relationships between predictors** (causal or associations)
-- Consider **unobserved variables** not in the dataset
+# `r emo::ji_completion("think")` `r emo::ji_completion("eyebrow")`
 
+(yes! and they are wrong!!!!)
+
+---
+class: middle
+
+Warning: don't go this way
+
+the next slide is about some common mistakes people make when interpreting regression coefficients
+
+(don't try to memorize the formulas)
 
 ---
 
-## Non-linear example
+### Interpreting regression coefficients
 
-Suppose there is one predictor $x$, and a (global) non-linear model fits the CEF:
+People *want* these things to be true:
 
-$$\mathbb E[\mathbf y |X = x] = \beta_0 + \beta_1 x + \beta_2 x^2$$
+- "The linear **model** and our **estimates** are both good"
 
---
+$$\frac{\partial}{\partial x_j} \mathbb E[\mathbf y | \mathbf X] = \beta_j \approx \hat \beta_j$$
 
-We don't know the $\beta$'s but we have some data, and we use multiple linear regression to fit the coefficients
+- "We can interpret $\beta_j$ as a causal parameter," i.e. **intervening**  to increase $x_j$ by 1 unit would result in conditional average of $y$ changing by $\beta_j$ units
 
-```{r eval = FALSE}
-x2 <- x^2
-lm(y ~ x + x2)
-```
---
-But, there's a **problem**:
+$$
+\text{If } (x_j \mapsto x_j + 1) \text{ then } (\mathbb E[y] \mapsto \mathbb E[\mathbf y | \mathbf X] + \hat \beta_j)
+$$
 
-$$\frac{\partial}{\partial x} \mathbb E[\mathbf y | x] = \beta_1 + 2\beta_2 x \neq \beta_1 \approx \hat \beta_1$$
+## But this *almost never* works!
+
 ---
 
-## What went wrong?
+Many textbooks tell us something like:
 
-In this simple example we know the problem is that $x_2$ is actually a function of $x$. **Solution**: interpret $\frac{\partial}{\partial x}$ locally as a function of $x$, not as a global constant
+> "The coefficient $\hat \beta_j$ estimates the relationship between the (conditional mean of the) outcome variable and $x_j$ *while holding all other predictors constant*"
+
+i.e. "**ceteris paribus**" or "other things equal" (unchanged)
+
+#### Fundamental problem of interpreting regression coefficients:
 
 --
 
-Sometimes simplifying assumptions are **importantly wrong**, and we must reject simple interpretations
+"holding all other predictors constant" is (almost) never applicable in the real world, i.e. ceteris is (almost) never paribus
 
-Machine learning provides tools for fitting more complex models, like non-linear models
-
+Reasons we'll highlight today: **causality** and **nonlinearity**
 
 ---
 
 ## Interpreting causality
 
-- In the real world when is it true that one predictor variable *does not depend* on any of the other ones?
+Back to Yule. What does $\hat \beta_\text{welfare}$ mean?
 
-- Or when is it true that there are no important **unobserved confounders**, variables that are related to both the predictor and the outcome?
+```{r include=FALSE}
+n <- 1000
+age <- runif(n)
+poverty <- age + rnorm(n)
+welfare <- poverty + age/2 + rnorm(n)
+```
 
---
+.panelset[
+.panel[.panel-name[Poverty]
 
-Consider Yule's regression analysis of poverty
+```{r}
+lm(poverty ~ welfare + age) |> broom::tidy() |> knitr::kable()
+```
+]
 
-Other important but unobserved variables?
+.panel[.panel-name[Welfare]
 
-Reverse causation? Simultaneity (feedback loop)?
+```{r}
+lm(welfare ~ poverty + age) |> broom::tidy() |> knitr::kable()
+```
 
+]
+]
 
 ---
-class: inverse, center, middle
 
-## In the real world
+## Are these associations "causal"?
 
-### *ceteris* is never *paribus*
+Yule found a positive association between `welfare` and `poverty` after "controlling for" `age`
 
-Fortunately, we will also study "causal inference" - a field with methods specialized for interpreting coefficients the way *people generally want to*
+Which is the cause and which is the effect?
 
-Remember Yule!
-
-> *[We] cannot, like the physicist, narrow down the issue to the effect of **one variation at a time***
+Both? Neither?
 
 ---
+
+### Another important historic example
 
 .pull-left[
 ![](chesterfield.jpg)
 ]
 .pull-right[
+
+**Smoking** and **lung cancer**
+
 ![](lung-cancer-deaths.png)
 
-Hey kids... don't smoke
+(don't smoke)
 ]
 
 
@@ -321,52 +309,52 @@ G -> C
 ---
 class: inverse, middle, center
 
-## Fisher: correlation is not causation
+## Fisher: association is not causation
 
-He did not use graphical notation like this
-
-But the graphs can be very useful
+(He did not use graphical notation like this)
 
 ---
 
-## Explaining an observed correlation
+## Idea: adjusting for confounders
 
-We find a statistically significant correlation between $X$ and $Y$
+**Confounders**: other variables that obscure the (causal) relationship from $X$ to $Y$, e.g.
 
-What does it mean?
+- $Y$: health outcome
+- $X$: treatment dose
+- $Z$: disease severity
 
-1. False positive (spurious correlation)
-2. $X$ causes $Y$
-3. $Y$ causes $X$
-4. Both have common cause $U$ [possibly unobserved]
-
---
-
-Statistically indistinguishable cases (without "experimental" data)
+Without considering $Z$, it might seem like larger doses of $X$ correlate with worse health outcomes
 
 --
 
-Importantly different consequences!
+### Solution: add more variables to the model
+
+Including (measured) confounders in the regression model may give us a more accurate estimate
+
+---
+class: middle
+
+(My conjecture: Fisher used genes as his example confounder because, in his day, they could not be measured, so his theory would be harder to disprove)
+
+*Confounder adjustment* is why some people think **multiple** regression is One Weird Trick that lets us make causal conclusions
+
+(Statisticians Don't Want You To Know!)
+
+It's not that simple, and DAGs can help us understand why!
 
 ---
 
-## A simple mathematical model of causality
+## Simple models for causality
 
 Think about **interventions** that change some target variable $T$
 
 - Forget about the arrows pointing into $T$ (intervention makes them irrelevant)
 
---
-
 - Change $T$, e.g. setting it to some arbitrary new value $T = t$
-
---
 
 - This change propagates along directed paths out of $T$ to all descendant variables of $T$ in the graph, causing their values to change
 
---
-
-All of these changes could be deterministic, but most likely in our usage they are probabilistic
+(All of these changes could be deterministic, but most likely in our usage they are probabilistic)
 
 ---
 
@@ -439,10 +427,26 @@ U -> Y
     geom_dag_edges(aes(edge_linetype = linetype), edge_width = 1.5) +
   scale_color_grey() +
   theme_dag_blank()
-
 ```
 
 ]
+
+---
+
+## Explaining an observed correlation
+
+We find a statistically significant correlation between $X$ and $Y$
+
+What does it mean?
+
+1. False positive (spurious correlation)
+2. $X$ causes $Y$
+3. $Y$ causes $X$
+4. Both have common cause $U$ [possibly unobserved]
+
+Statistically indistinguishable cases (without "experimental" data)
+
+Importantly different consequences!
 
 ---
 
@@ -466,7 +470,139 @@ ggdag_mediation_triangle() +
 $$x \gets x',  \quad m \gets f(x') + \varepsilon_m, \quad y \gets g(f(x') + \varepsilon_m) + \varepsilon_y$$
 ---
 
-### Causal inference: much more difficult
+### If we intervene on $m$ instead:
+
+$$x = x,  \quad m \gets m', \quad y \gets g(m') + \varepsilon_y$$
+
+```{r echo = FALSE, fig.height = 3.5, fig.width = 5, fig.align='center'}
+dag('{
+x [exposure,pos="0,0"]
+y [outcome,pos="4,0"]
+m [pos="2,.5"]
+m -> y
+}') |>
+  tidy_dagitty() |>
+  ggplot(aes(x = x, y = y, xend = xend, yend = yend)) + 
+    geom_dag_point(size = 18, show.legend = FALSE) +
+    geom_dag_text(size = 10) + 
+    geom_dag_edges(edge_width = 1.5) +
+  scale_color_grey() +
+  theme_dag_blank()
+```
+We can ask different causal questions about the same model, and communicate clearly/visually
+
+
+---
+
+### Strategy: two staged regression
+
+You might have learned "two-stage least squares" (**2SLS**)
+
+Suppose we want to learn the causal relationship of $D$ on $Y$, but (**Exercise**: draw the DAG for this)
+
+$$
+Y = D \theta + X \beta + \varepsilon_Y
+$$
+
+$$
+D = X \alpha + \varepsilon_D
+$$
+In words: $X$ is confounding the relationship 
+
+- First stage: regress out $X$
+
+- Second stage: using residuals from first stage,
+
+$$\text{regress } Y - X \hat \beta \text{ on } D - X \hat \alpha$$ 
+
+
+---
+
+### Strategy: double machine learning (DML)
+
+For various reasons (e.g. nonlinearity) we might replace linear regression in 2SLS with more complex, machine learning predictive models
+
+- First stage: regress out $X$ using ML models
+
+- Second stage: using residuals from first stage,
+
+$$\text{regress } Y - \hat Y \text{ on } D - \hat D$$ 
+
+(This is an exciting and active field of research now!)
+
+---
+
+This is pretty cool
+
+To see why, let's remember the other of the two common reasons regression coefficients are often misinterpreted: **nonlinearity**
+
+
+---
+
+## Non-linear example
+
+Suppose there is one predictor $x$, and a (global) non-linear model fits the CEF:
+
+$$\mathbb E[\mathbf y |X = x] = \beta_0 + \beta_1 x + \beta_2 x^2$$
+
+We don't know the $\beta$'s but we have some data, and we use multiple linear regression to fit the coefficients
+
+```{r eval = FALSE}
+x2 <- x^2
+lm(y ~ x + x2)
+```
+
+--
+
+The model fits well, but there's an **interpretation problem**:
+
+$$\frac{\partial}{\partial x} \mathbb E[\mathbf y | x] = \beta_1 + 2\beta_2 x \neq \beta_1 \approx \hat \beta_1$$
+
+---
+
+## What went wrong?
+
+In this simple example we know the problem is that $x_2$ is actually a function of $x$. **Solution**: interpret $\frac{\partial}{\partial x}$ locally as a function of $x$, not as a global constant
+
+--
+
+Sometimes simplifying assumptions are *importantly wrong*. Sometimes we must reject simple interpretations and use more complex models (ML)
+
+**Problem**: ML models may be more difficult to interpret, e.g. not having coefficients like regression models
+
+**Preview**: later in the course we will learn new methods for interpreting some ML models
+
+---
+class: inverse
+
+# Conclusions
+
+Wisdom from one of the great early statistical explorers
+
+[Udny Yule](https://mathshistory.st-andrews.ac.uk/Biographies/Yule/quotations/):
+
+> **Measurement does not necessarily mean progress**. Failing the possibility of measuring that which you desire, the lust for measurement may, for example, merely result in your measuring something else - and perhaps forgetting the difference - or in your ignoring some things because they cannot be measured.
+
+Remember: regression coefficients do not necessarily mean causal relationships
+
+---
+class: inverse, center
+
+### Experiments
+
+Actually do interventions while collecting data
+
+### Observational studies
+
+Try to infer causal relationships without interventions, by using ~~dark arts~~ more/specialized assumptions/methods that require careful interpretation
+
+(increasingly common due to superabundance of data)
+
+Scientific progress: be wrong in more interesting/specific ways
+
+---
+
+### Causal inference isn't easy!
 
 *Predictive* machine learning is about
 
@@ -484,149 +620,6 @@ p(y|\text{do}[X=x]), \quad \text{i.e.} \quad p_{}(y| X \gets x)
 $$
 i.e. what happens to $Y$ when we actually **intervene** on $X$
 
-If we actively change $x$, what would we observe about $y$?
-
----
-class: inverse, center
-
-### Experiments
-
-Actually do interventions while collecting data
-
---
-
-### Observational studies
-
-Try to infer causal relationships without interventions, by using ~~dark arts~~ more/specialized assumptions/methods that require careful interpretation
-
---
-
-Scientific progress: be wrong in more interesting/specific ways
-
----
-
-### Potential outcomes: another causal framework
-
-Relative strengths/weaknesses compared to DAGs
-
-- Narrow focus: goal is to estimate one edge in a graph
-- Difficult to express more complex relationships
-
---
-
-### This is not a course on causal inference
-
-Covering a few basics for interesting connections to ML!
-
-#### So when is ML (and e.g. regression) useful for causal inference?
-
----
-
-## Idea: adjusting for confounders
-
-**Confounders**: other variables that obscure the (causal) relationship from $X$ to $Y$, e.g.
-
-- $Y$: health outcome
-- $X$: treatment dose
-- $Z$: disease severity
-
---
-
-Without considering $Z$, it might seem like larger doses of $X$ correlate with worse health outcomes
-
---
-
-### Solution: add more variables to the model
-
-Make model complex enough to capture important factors
-
-Similarly, might need to model *non-linear causal relationships*
-
----
-
-### Strategy: two staged regression
-
-Two-stage least squares (2SLS)
-
-Suppose we want to learn the causal relationship of $D$ on $Y$, but
-
-$$
-Y = D \theta + X \beta + \varepsilon_Y
-$$
-
-$$
-D = X \alpha + \varepsilon_D
-$$
-In words: $X$ is confounding the relationship
-
---
-
-- First stage: regress out $X$
-
-- Second stage: using residuals from first stage,
-
-$$\text{regress } Y - X \hat \beta \text{ on } D - X \hat \alpha$$ 
-
----
-class: inverse, center, middle
-
-# Powerful, intuitive idea
-
-## Orthogonal projection
-
-### We'll come back to this
-
-(Think about fitting the relationships using ML instead of regression)
-
----
-
-## Propensity
-
-General theme: applying ML strengths to causality
-
-Special case: if the "treatment" (causal) variable is categorical
-
-Many causal methods for this case involve predicting the treatment itself
-
-i.e. prediction with categorical outcome, **classification**
-
-We'll also come back to this ([propensity methods](https://en.wikipedia.org/wiki/Propensity_score_matching)) after covering classification
-
---
-
-#### Summary: a key ingredient in many causal inference methods involves classification, can leverage ML tools
-
----
-class: inverse
-
-## Guiding ideas / warnings
-
-- More complex models (ML) do not guarantee better causal inference
-
-Might even make things worse (just like with prediction)
-
---
-
-- Models with better predictions may be worse for causal inference
-
-Even if prediction accuracy is measured on test data!
-
---
-
-- Inference = causal inference...?
-
-Or, at least, causal interpretations can be special case of trade-off between prediction and inference/interpretation
-
----
-class: inverse
-
-# the end
-
-Wisdom from one of the great early statistical explorers
-
-[Udny Yule](https://mathshistory.st-andrews.ac.uk/Biographies/Yule/quotations/):
-
-> Measurement does not necessarily mean progress. Failing the possibility of measuring that which you desire, the lust for measurement may, for example, merely result in your measuring something else - and perhaps forgetting the difference - or in your ignoring some things because they cannot be measured.
 
 ---
 class: inverse, center, middle
@@ -638,5 +631,3 @@ class: inverse, center, middle
 ### Practically important, connections to ML
 
 > "Data scientists have hitherto only predicted the world in various ways; the point is to change it" - Joshua Loftus
-
-Mixtape... remix? `r emo::ji_completion("think")`
