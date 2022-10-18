@@ -8,6 +8,7 @@ output: html_document
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 library(tidyverse)
+theme_set(theme_minimal(base_size = 12))
 ```
 
 ## Generating simulated data
@@ -17,11 +18,12 @@ library(tidyverse)
 set.seed(1)
 # Try changing some parameters
 n <- 200
-p <- 4
+p <- 5
 sparsity <- 2
-nonzero_beta <- 
-  rep(1, sparsity) # or e.g. runif(sparsity, min = -1, max = 1)
-true_beta <- c(0, nonzero_beta, rep(0, p - sparsity))
+nonzero_beta <- c(1, -1)
+# or, e.g. rep(1, sparsity), runif(sparsity, min = -1, max = 1)
+true_beta <- c(.5, nonzero_beta, rep(0, p - sparsity))
+# Note: we set the intercept to 0
 ```
 
 ```{r}
@@ -31,13 +33,13 @@ mu <- X %*% true_beta
 px <- exp(mu)/(1+exp(mu))
 Y <- rbinom(n, 1, prob = px)
 train_ld <- data.frame(y = as.factor(Y), x = X)
-fit_glm <- glm(Y ~ X, family = "binomial")
+fit_glm <- glm(Y ~ X-1, family = "binomial")
 ```
 
 ## Log-likelihood function
 
 ```{r}
-# See lecture slides
+# See e.g. lecture slides 
 logL <- function(X, Y, beta) {
   Xbeta <- X %*% beta
   expXbeta <- exp(-Xbeta)
@@ -51,9 +53,13 @@ logL <- function(X, Y, beta) {
 Reference: [Wikipedia](https://en.wikipedia.org/wiki/Numerical_differentiation)
 
 ```{r}
+# Note: the step size h here is chosen to be
+# on the order of magnitude of the cube-root
+# of .Machine$double.eps, which helps avoid
+# some numerical approximation errors
 numeric_grad <- function(X, Y, beta, h = 1e-06) {
-  numerator <- sapply(1:p, function(j) {
-    H <- rep(0, p)
+  numerator <- sapply(1:length(beta), function(j) {
+    H <- rep(0, length(beta))
     H[j] <- h # step in coordinate j
     logL(X, Y, beta + H) - logL(X, Y, beta - H)
   })
@@ -63,21 +69,31 @@ numeric_grad <- function(X, Y, beta, h = 1e-06) {
 
 ## Gradient descent
 
+Reference: [Wikipedia](https://en.wikipedia.org/wiki/Gradient_descent)
+
+Note: Below we use the *Barzilai–Borwein method* for choosing a step size. If we did not use an *adaptive* method like this then we would have to experiment to find something that worked, and most likely we would need to redo that trial and error each time we tried a different problem
+
 ```{r}
 # Initialize and take first step
-beta_prev2 <- rnorm(p+1) 
+beta_prev2 <- rnorm(ncol(X)) 
 grad_prev2 <- numeric_grad(X, Y, beta_prev2)
 beta_prev1 <- beta_prev2 + 0.1 * grad_prev2 / sqrt(sum(grad_prev2^2))
 grad_prev1 <- numeric_grad(X, Y, beta_prev1)
 previous_loss <- logL(X, Y, beta_prev2)
 next_loss <- logL(X, Y, beta_prev1)
+beta_mat <- rbind(beta_prev2,
+                  beta_prev1,
+                  matrix(0, nrow = 50, ncol = ncol(X)))
+rownames(beta_mat) <- NULL
+beta_path <- data.frame(step = 0:51, b = beta_mat)
 steps <- 1
 ```
 
 
 ```{r}
 # Repeat until convergence
-while (abs(previous_loss - next_loss) > 0.001) {
+tol <- 1e-5 # (error) tolerance
+while (abs(previous_loss - next_loss) > tol) {
   grad_diff <- grad_prev1 - grad_prev2
   step_BB <- sum((beta_prev1 - beta_prev2) * grad_diff) / sum(grad_diff^2)
   
@@ -90,22 +106,46 @@ while (abs(previous_loss - next_loss) > 0.001) {
   previous_loss <- next_loss
   next_loss <- logL(X, Y, beta_prev1)
   
-  #if (round(steps/10) == steps/10)
-  print(previous_loss)
+  if (round(steps/5) == steps/5) print(previous_loss)
   steps <- steps + 1
+  beta_path[steps, 2:ncol(beta_path)] <- beta_prev1
 }
 ```
+
+How many steps?
 
 ```{r}
 steps
 ```
 
-```{r}
-beta_prev1
-```
+#### Did it work?
 
 ```{r}
-fit_glm |>
-  coef()
+rbind(
+  fit_glm |> coef(),
+  beta_prev1,
+  true_beta
+)
 ```
 
+Coefficient paths
+
+```{r}
+beta_path <- beta_path[1:steps, ]
+beta_path |>
+  pivot_longer(cols = starts_with("b"),
+               names_to = "variable",
+               values_to = "beta_hat") |>
+  ggplot(aes(x = step, y = beta_hat, color = variable)) +
+  geom_point() + geom_line() #+ scale_color_viridis_d()
+```
+
+(Note: the coefficient indexes may be a bit confusing because of the intercept term)
+
+## How cool is this, exactly?
+
+**Note**: with numeric differentiation we did not need to do the calculus ourselves to find an expression for the gradient. (People have done a lot of work clearing this path for us, though...)
+
+**Question**: Suppose that instead of logistic regression we wanted to fit some other kind of model. What would we need to change about the code?
+
+**Answer**: Only the `logL` function! 
