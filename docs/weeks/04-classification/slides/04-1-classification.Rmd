@@ -1,16 +1,16 @@
 ---
 title: "Machine learning"
-subtitle: "Classification, part 1"
+subtitle: "Classification and logistic regression"
 author: "Joshua Loftus"
 #institute: "LSE"
 #date: "`r Sys.Date()`"
 output:
   xaringan::moon_reader:
-    css: ["default", "xaringan-themer.css", "../../../theme.css"]
-#    seal: false    
+    css: ["default", "xaringan-themer.css"]
+    seal: true    
     lib_dir: libs
     nature:
-      titleSlideClass: ["bottom", "left"]
+      titleSlideClass: ["top", "left"]
       countdown: 59000
       highlightStyle: github
       highlightLines: true
@@ -43,9 +43,6 @@ style_duo_accent(
 ```{r xaringanextra, include=FALSE, warning=FALSE}
 library(xaringanExtra)
 xaringanExtra::use_animate_all("slide_left")
-xaringanExtra::use_tile_view()
-xaringanExtra::use_panelset()
-xaringanExtra::style_panelset_tabs(font_family = "inherit")
 ```
 
 ```{r tidyverse, include=FALSE, warning=FALSE}
@@ -70,18 +67,17 @@ library(modelr)
 
 (in contrast to regression, with numeric outcomes)
 
---
-
 - Often called "labels", $K$ = number of unique classes
-
-*Label names not mathematically important* - e.g. use $1, ..., K$
---
 
 - Binary: positive/negative or 0/1 or yes/no or success/fail etc
 
-- Binary thinking easier $\rightarrow$ bin / discretise other outcomes and do binary classification instead of regression or $K > 2$ classification (warning: information loss)
+*Label names not mathematically important* - e.g. use $1, ..., K$
 
-- Plots with 2 predictors, use color/point shape for outcomes
+--
+
+- Limitations: labels already defined (not learned from data-- that  would be unsupervised learning), $K$ is fixed
+
+- Plots: often use color/point shape for categorical variables
 
 ---
 
@@ -90,21 +86,21 @@ library(modelr)
 ### Logistic regression 
 
 $$\mathbb E(Y| \mathbf X = \mathbf x) =  g^{-1}(\mathbf x^T \beta)$$
-for
 $$g(p) = \log{\left(\frac{p}{1-p}\right)}$$
-
 --
 
-- Other GLMs have different "link" functions $g$
-- (Linear regression is a special case with $g = \text{id}$)
-- Multi-class / multinomial / "softmax" regression
-- Estimation/optimization: maximum-likelihood via Newton-Raphson / IRLS
+### Generalized linear models (GLMs)
+
+- [Various](https://en.wikipedia.org/wiki/Generalized_linear_model#General_linear_models) "link" functions $g$
+- Linear regression is a special case with $g = \text{id}$
+- Logistic in `R`: `glm(..., family = binomial())`
+- Others: Poisson, multinomial, ..., see `?family` in `R`
 
 ---
 
 ```{r logit-data, echo = FALSE}
 set.seed(42)
-n <- 50
+n <- 80
 Y <- rbinom(n, 1, .5)
 train <- data.frame(
   y = factor(Y),
@@ -201,7 +197,7 @@ ggplot(
     alpha = .3,
     ) +
   geom_abline(slope = -coef(logit_model)[2]/coef(logit_model)[3],
-              intercept = 3.05, linetype = "dashed", size = 1, color = "blue") +
+              intercept = 1.45, linetype = "dashed", size = 1, color = "blue") +
   geom_point(
     data = train,
              aes(shape = y, color = y),
@@ -213,7 +209,7 @@ ggplot(
   geom_point(
     data = augment(logit_model,
                    type.predict = "response") %>%
-      mutate(yhat = as.numeric(.fitted > .56),
+      mutate(yhat = as.numeric(.fitted > .5),
              class = as.numeric(y)-1 == yhat) %>%
       filter(class == FALSE),
     aes(shape = y, color = y),
@@ -239,7 +235,77 @@ class: middle, center
 
 ---
 
-### Fitting/estimation
+### Interpretation: coefficients
+
+```{r}
+model_fit <- glm(y ~ x1 + x2, family = "binomial", data = train)
+broom::tidy(model_fit)
+```
+
+Coefficient scale: log-odds? Exponentiate $\to$ odds
+
+```{r}
+broom::tidy(model_fit, exponentiate = TRUE)
+```
+
+---
+
+### Interpretation: inference and diagnostics
+
+- MLEs $\to$ asymptotic normality for intervals/tests
+
+`summary()`, `coef()`, `confint()`, `anova()`, etc in `R`
+
+- "Deviance" instead of RSS
+
+```{r}
+broom::glance(model_fit)
+```
+
+
+- Because $y$ is 0 or 1, residual plots will show patterns, not as easy to interpret geometrically
+
+
+---
+
+###  Challenges
+
+#### Separable case (guaranteed if $p > n$)
+
+If classes can be perfectly separated, the MLE is undefined, fitting algorithm diverges as $\hat \beta$ coordinates $\to \pm \infty$
+
+Awkwardly, classification is *too easy*(!?) for this probabilistic approach
+
+--
+
+#### Curse of dimensionality
+
+Biased MLE and wrong variance/asymp. dist. if $n/p \to \text{const}$, even if $> 1$
+
+.footnote[See [Sur and Candès, (2019)](https://www.pnas.org/content/116/29/14516)]
+
+---
+class: inverse
+
+### Classification summary
+
+- Numeric prediction $\to$ classification
+
+$$\hat y = \mathbb I(\hat p > c) = \begin{cases} 0 & \text{ if } \hat y \leq c \\  1 & \text{ if } \hat y > c \end{cases}$$
+
+Log-odds function is monotonic, so (hyperplanes)
+
+$$\hat p > c \leftrightarrow x^T \beta > c'$$
+
+- More classes: transform to binary, predict using largest $\hat p_k$
+
+- Non-linear boundaries: transformation of predictors, or use methods other than GLMs (we'll learn more soon)
+
+- Some classification methods output categorical classes, not probabilities (or other numeric scores)
+
+---
+
+### Fitting logistic regression
 
 How do we estimate $\beta$? **Maximum likelihood**:
 
@@ -248,15 +314,11 @@ $$
 $$
 (assuming the data is i.i.d.)
 
---
-
-It's good to have some understanding of what's involved (it's not magic)
-
-Next slide: consider a one-parameter case, one predictor and no intercept, so the calculus simplifies
+Next slide: a bit of mathematics
 
 ---
 
-### Logistic regression fitting: MLE `r emo::ji("scream")` jk `r emo::ji("sunglasses")` 
+### MLE
 
 $$
 L(\beta ; \mathbf y | \mathbf x) = \prod_{i=1}^n \left( \frac{1}{1+e^{-x_i \beta}} \right)^{y_i} \left(1- \frac{1}{1+e^{-x_i \beta}} \right)^{1-y_i}
@@ -285,9 +347,7 @@ Set this equal to 0 and solve for $\beta$ using Newton-Raphson
 - Find the roots of a function
 - Iteratively approximating the function by its tangent
 - Root of the tangent line is used as starting point for next approximation
-- See the animation on [Wikipedia](https://en.wikipedia.org/wiki/Newton%27s_method)
-
---
+- See the [animation](https://en.wikipedia.org/wiki/Newton%27s_method#/media/File:NewtonIteration_Ani.gif) on [Wikipedia](https://en.wikipedia.org/wiki/Newton%27s_method)
 
 **Exercise**: using result from previous slide, compute the second derivative of $\ell$ and derive the expressions needed to apply Newton-Raphson
 
@@ -308,7 +368,7 @@ $$
 \end{eqnarray}
 $$
 
-and then update parameter estimate:
+and then update parameter estimate (LS sub-problem)
 
 $$\hat{\beta}_{t+1} = \arg \min_{\beta} (\hat{\mathbf{y}}_t - \mathbf X \beta)^T \mathbf W_t (\hat{\mathbf{y}}_t - \mathbf X \beta)$$ 
 
@@ -320,95 +380,68 @@ $$\hat{\beta}_{t+1} = \arg \min_{\beta} (\hat{\mathbf{y}}_t - \mathbf X \beta)^T
 
 ---
 
-### Inference
+### Optimization algorithms
 
-- MLEs $\to$ asymptotic normality for intervals/tests
+Downside of Newton-Raphson: requires second derivatives, including *inverting the $p \times p$ Hessian matrix* when optimizing over $p > 1$ parameters
 
-`summary()`, `coef()`, `confint()`, `anova()`, etc in `R`
-
-- "Deviance" instead of RSS
-
-- Because $y$ is 0 or 1, residual plots will show patterns, not as easy to interpret geometrically
-
-Reference: [CASI](https://web.stanford.edu/~hastie/CASI/) Chapter 4 for MLE theory, Chapter 8 for logistic regression and GLMs
-
----
-
-###  Challenges
-
-#### Separable case (guaranteed if $p > n$)
-
-If classes can be perfectly separated, the MLE is undefined, fitting algorithm diverges as $\hat \beta$ coordinates $\to \pm \infty$
-
-Awkwardly, classification is *too easy*(!?) for this probabilistic approach
+If $p$ is large, **second-order** optimization methods like Newton's are very costly
 
 --
 
-#### Curse of dimensionality
+First order methods only require computing the $p \times 1$ gradient vector
 
-Biased MLE and wrong variance/asymp. dist. if $n/p \to \text{const}$, even if $> 1$
-
-.footnote[See [Sur and Candès, (2019)](https://www.pnas.org/content/116/29/14516)]
+Recall that the gradient is a vector in the *direction of steepest increase* in the parameter space
 
 ---
 
-### Recap: numeric outcome $\to$ categorical
+### Gradient (steepest) descent
 
-**Warning**: *arbitrary* binning may be unwise. "*Carve nature at its joints*"
+i.e. skiing as fast as possible. Notation, let
 
-.pull-left[
-```{r bimodal, echo = FALSE}
-set.seed(1)
-Y <- c(rnorm(100), rnorm(70, mean = 4))
-X <- c(rnorm(100), rnorm(70, mean = 2))
-true_class <- factor(c(rep("A", 100), rep("B", 70)))
-cutoff <- Y > 2
-data.frame(x = X, y = Y, cutoff = cutoff, class = true_class) %>%
-ggplot(aes(X, Y)) + 
-  geom_point(aes(shape = class, color = class), show.legend = FALSE) +
-  geom_hline(yintercept = 2) +
-  geom_rug() +
-  scale_color_viridis_d(option = "D", end = .8)
-```
-]
-.pull-right[
-```{r unimodal, echo = FALSE}
-set.seed(1)
-Y <- c(rnorm(100), rnorm(70, mean = 2))
-X <- c(rnorm(100), rnorm(70, mean = 2))
-true_class <- factor(c(rep("A", 100), rep("B", 70)))
-cutoff <- Y > 1
-data.frame(x = X, y = Y, cutoff = cutoff, class = true_class) %>%
-ggplot(aes(X, Y)) + 
-  geom_point(aes(shape = class, color = class), show.legend = FALSE) +
-  geom_hline(yintercept = 1) +
-  geom_rug() +
-  scale_color_viridis_d(option = "D", end = .8)
-```
-]
+$$L(\beta) = L(\mathbf X, \mathbf y, g_\beta) \color{skyblue}{\text{ (loss function)}}$$
+
+1. Start at an initial point $\beta^{(0)}$
+
+2. For step $n = 1, \ldots$
+  - Compute $\mathbf d_n = \nabla L(\beta^{(n-1)}) \color{skyblue}{\text{ (gradient)}}$
+  
+  - Update $\beta^{(n)} = \beta^{(n-1)} - \gamma_n \mathbf d_n$
+  
+3. Until some **convergence criteria** is satisfied
+
+--
+
+Where the **step size** $\gamma_n > 0$ is made small enough to not "overshoot" and increase the loss, i.e. the loss only decreases
+
 
 ---
 class: inverse
 
-### Recap
+## Optimization more generally
 
-- Numeric prediction $\to$ classification
+- Components: objective functions, algorithms, local/global optima, approximate solutions
 
-$$\hat y = \mathbb I(\hat p > c) = \begin{cases} 0 & \text{ if } \hat y \leq c \\  1 & \text{ if } \hat y > c \end{cases}$$
+- Computational cost: speed, storage (time and space)
 
---
+#### Closed form / analytic solutions
 
-- Logistic regression
+e.g. OLS formula for $\hat \beta$ (remember?)
 
-Log-odds of $\hat p =$ linear function of $x$, so $\hat p > c \leftrightarrow x^T \beta > c'$
+#### Iterative algorithms (e.g. Newton-Raphon)
 
-Linear classification boundary (hyperplanes)
+- Rates of convergence
 
---
+- Might have guarantees, e.g. if objective is **convex**
 
-- Optimization problems
+---
+class: inverse
 
-Iterative algorithms (e.g. Newton-Raphon)
+Machine learning = optimization algorithms applied to data
 
-Adapting to "most interesting" (difficult to classify) data
+Understanding optimization is very important!
 
+- Intuition (challenge: dimensionality)
+
+- Mathematical guarantees (challenge: relevance)
+
+- Empirical evaluation (challenge: overfitting...)

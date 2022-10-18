@@ -64,10 +64,10 @@
     ],
     "date": "2021-10-08",
     "categories": [],
-    "contents": "\nCarving nature at its joints\n\n“A good cook gets a new knife every year; he chops! Mediocre cooks change knives monthly; they hack. My knife now has 19 years on it; it’s carved several thousand oxen and the edge is as if I had just taken it from the sharpener. Those joints have gaps, and the knife’s edge no thickness, to put something infinitesimally thin in an empty space?! Effortless! It even allows the edge wander in with ample room to play. That is why, with 19 years on it, this knife’s edge is grindstone fresh.” - Butcher Ding, the Zhuangzi\n\nSlides, notebooks, exercises\nSlides for logistic regression lecture (PDF)\nSlides for SVM lecture (PDF)\nNotebook for seminar\n\n\n\n",
+    "contents": "\nMaterials\nLink\nType\nDescription\nhtml pdf\nSlides\nClassification and logistic\nregression\nRmd\nNotebook\nClassification and logistic\nregression\nRmd\nNotebook\nGradient descent and numeric\ndifferentiation\nTo be updated\nPreparation\nRequired reading\nISLR Chapter 4. This\nchapter is a bit lengthy, so it’s OK if you don’t carefully follow all\nthe mathematics in sections 4.4 and 4.5 as long as you understand the\nconcepts.\nMLstory Start Chapter 5 on\noptimization, read the first two sections on Optimization Basics and on\nGradient Descent. You can stop when you reach Proposition 3.\nSupplemental reading\nWikipedia on Newton’s\nmethod and gradient\ndescent (good for pictures and animations)\nCASI Chapter 4 for MLE\ntheory, Chapter 8 sections 8.1-8.3 (more advanced material)\nCarving nature at its joints\n\n“A good cook gets a new knife every year; he chops! Mediocre cooks\nchange knives monthly; they hack. My knife now has 19 years on it; it’s\ncarved several thousand oxen and the edge is as if I had just taken it\nfrom the sharpener. Those joints have gaps, and the knife’s edge no\nthickness, to put something infinitesimally thin in an empty space?!\nEffortless! It even allows the edge wander in with ample room to play.\nThat is why, with 19 years on it, this knife’s edge is grindstone\nfresh.” - Butcher Ding, the\nZhuangzi\n\n\n\n\n",
     "preview": {},
-    "last_modified": "2022-09-18T15:01:05+01:00",
-    "input_file": {}
+    "last_modified": "2022-10-18T20:43:32+01:00",
+    "input_file": "04-classification.knit.md"
   },
   {
     "path": "weeks/05-optimization/",

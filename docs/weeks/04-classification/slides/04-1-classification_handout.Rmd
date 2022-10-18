@@ -7,7 +7,7 @@ author: "Joshua Loftus"
 output:
   xaringan::moon_reader:
     css: ["default", "xaringan-themer.css"]
-    seal: true    
+    seal: false    
     lib_dir: libs
     nature:
       titleSlideClass: ["top", "left"]
@@ -18,7 +18,7 @@ output:
       countIncrementalSlides: false
 ---
 
-class: inverse
+
 
 ```{r setup, include=FALSE}
 options(htmltools.dir.version = FALSE)
@@ -73,8 +73,6 @@ library(modelr)
 
 *Label names not mathematically important* - e.g. use $1, ..., K$
 
---
-
 - Limitations: labels already defined (not learned from data-- that  would be unsupervised learning), $K$ is fixed
 
 - Plots: often use color/point shape for categorical variables
@@ -87,7 +85,7 @@ library(modelr)
 
 $$\mathbb E(Y| \mathbf X = \mathbf x) =  g^{-1}(\mathbf x^T \beta)$$
 $$g(p) = \log{\left(\frac{p}{1-p}\right)}$$
---
+
 
 ### Generalized linear models (GLMs)
 
@@ -276,8 +274,6 @@ If classes can be perfectly separated, the MLE is undefined, fitting algorithm d
 
 Awkwardly, classification is *too easy*(!?) for this probabilistic approach
 
---
-
 #### Curse of dimensionality
 
 Biased MLE and wrong variance/asymp. dist. if $n/p \to \text{const}$, even if $> 1$
@@ -285,7 +281,6 @@ Biased MLE and wrong variance/asymp. dist. if $n/p \to \text{const}$, even if $>
 .footnote[See [Sur and Candès, (2019)](https://www.pnas.org/content/116/29/14516)]
 
 ---
-class: inverse
 
 ### Classification summary
 
@@ -324,13 +319,9 @@ $$
 L(\beta ; \mathbf y | \mathbf x) = \prod_{i=1}^n \left( \frac{1}{1+e^{-x_i \beta}} \right)^{y_i} \left(1- \frac{1}{1+e^{-x_i \beta}} \right)^{1-y_i}
 $$
 
---
-
 $$
 \ell(\beta ; \mathbf y | \mathbf x) = \sum_{i=1}^n y_i \log \left( \frac{1}{1+e^{-x_i \beta}} \right) + (1-y_i) \log \left(1- \frac{1}{1+e^{- x_i \beta}} \right)
 $$
-
---
 
 $$
 \frac{\partial}{\partial \beta} \ell(\beta ; \mathbf y | \mathbf x) = \sum_{i=1}^n y_i  \left( \frac{x_i e^{-x_i \beta}}{1+e^{-x_i \beta}} \right) + (1-y_i) \left(\frac{-x_i}{1+e^{- x_i \beta}} \right)
@@ -372,8 +363,6 @@ and then update parameter estimate (LS sub-problem)
 
 $$\hat{\beta}_{t+1} = \arg \min_{\beta} (\hat{\mathbf{y}}_t - \mathbf X \beta)^T \mathbf W_t (\hat{\mathbf{y}}_t - \mathbf X \beta)$$ 
 
---
-
 **Note**: larger weights on observations with $\hat p$ closer to 1/2, i.e. the most difficult to classify (***look for variations of this theme***)
 
 .footnote[See Section 4.4.1 of [ESL](https://web.stanford.edu/~hastie/ElemStatLearn/)]
@@ -385,8 +374,6 @@ $$\hat{\beta}_{t+1} = \arg \min_{\beta} (\hat{\mathbf{y}}_t - \mathbf X \beta)^T
 Downside of Newton-Raphson: requires second derivatives, including *inverting the $p \times p$ Hessian matrix* when optimizing over $p > 1$ parameters
 
 If $p$ is large, **second-order** optimization methods like Newton's are very costly
-
---
 
 First order methods only require computing the $p \times 1$ gradient vector
 
@@ -409,13 +396,10 @@ $$L(\beta) = L(\mathbf X, \mathbf y, g_\beta) \color{skyblue}{\text{ (loss funct
   
 3. Until some **convergence criteria** is satisfied
 
---
-
 Where the **step size** $\gamma_n > 0$ is made small enough to not "overshoot" and increase the loss, i.e. the loss only decreases
 
 
 ---
-class: inverse
 
 ## Optimization more generally
 
@@ -434,7 +418,7 @@ e.g. OLS formula for $\hat \beta$ (remember?)
 - Might have guarantees, e.g. if objective is **convex**
 
 ---
-class: inverse
+
 
 Machine learning = optimization algorithms applied to data
 

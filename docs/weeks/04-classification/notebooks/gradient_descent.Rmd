@@ -1,0 +1,111 @@
+---
+title: "Gradient descent"
+author: "Joshua Loftus"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+```
+
+## Generating simulated data
+
+```{r}
+# Setting parameters
+set.seed(1)
+# Try changing some parameters
+n <- 200
+p <- 4
+sparsity <- 2
+nonzero_beta <- 
+  rep(1, sparsity) # or e.g. runif(sparsity, min = -1, max = 1)
+true_beta <- c(0, nonzero_beta, rep(0, p - sparsity))
+```
+
+```{r}
+# Generating simulated data
+X <- cbind(rep(1, n), matrix(rnorm(n*p), nrow = n))
+mu <- X %*% true_beta
+px <- exp(mu)/(1+exp(mu))
+Y <- rbinom(n, 1, prob = px)
+train_ld <- data.frame(y = as.factor(Y), x = X)
+fit_glm <- glm(Y ~ X, family = "binomial")
+```
+
+## Log-likelihood function
+
+```{r}
+# See lecture slides
+logL <- function(X, Y, beta) {
+  Xbeta <- X %*% beta
+  expXbeta <- exp(-Xbeta)
+  exp_ratio <- 1/(1+expXbeta)
+  sum(Y * log(exp_ratio) + (1-Y) * log(1-exp_ratio))
+}
+```
+
+## Numeric differentiation
+
+Reference: [Wikipedia](https://en.wikipedia.org/wiki/Numerical_differentiation)
+
+```{r}
+numeric_grad <- function(X, Y, beta, h = 1e-06) {
+  numerator <- sapply(1:p, function(j) {
+    H <- rep(0, p)
+    H[j] <- h # step in coordinate j
+    logL(X, Y, beta + H) - logL(X, Y, beta - H)
+  })
+  numerator / (2*h)
+}
+```
+
+## Gradient descent
+
+```{r}
+# Initialize and take first step
+beta_prev2 <- rnorm(p+1) 
+grad_prev2 <- numeric_grad(X, Y, beta_prev2)
+beta_prev1 <- beta_prev2 + 0.1 * grad_prev2 / sqrt(sum(grad_prev2^2))
+grad_prev1 <- numeric_grad(X, Y, beta_prev1)
+previous_loss <- logL(X, Y, beta_prev2)
+next_loss <- logL(X, Y, beta_prev1)
+steps <- 1
+```
+
+
+```{r}
+# Repeat until convergence
+while (abs(previous_loss - next_loss) > 0.001) {
+  grad_diff <- grad_prev1 - grad_prev2
+  step_BB <- sum((beta_prev1 - beta_prev2) * grad_diff) / sum(grad_diff^2)
+  
+  beta_prev2 <- beta_prev1
+  beta_prev1 <- beta_prev1 - step_BB * grad_prev1
+  
+  grad_prev2 <- grad_prev1
+  grad_prev1 <- numeric_grad(X, Y, beta_prev1)  
+  
+  previous_loss <- next_loss
+  next_loss <- logL(X, Y, beta_prev1)
+  
+  #if (round(steps/10) == steps/10)
+  print(previous_loss)
+  steps <- steps + 1
+}
+```
+
+```{r}
+steps
+```
+
+```{r}
+beta_prev1
+```
+
+```{r}
+fit_glm |>
+  coef()
+```
+

@@ -1,0 +1,263 @@
+---
+title: "Classification"
+author: "Joshua Loftus"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+# install.packages("broom") # if necessary
+library(broom)
+# install.packages("yardstick") # if necessary
+library(yardstick)
+library(GGally)
+```
+
+## Generating simulated data
+
+The true model in this case is a logistic regression model.
+
+Check: Can you understand the true data generating process by reading the code?
+
+```{r}
+# Setting parameters
+set.seed(1)
+# Try changing some parameters
+n <- 500
+p <- 4
+sparsity <- 2
+nonzero_beta <- 
+  rep(1, sparsity) # or e.g. runif(sparsity, min = -1, max = 1)
+true_beta <- c(nonzero_beta, rep(0, p - sparsity))
+class_shift <- 2.5 # change this
+```
+
+```{r message=FALSE}
+# Generating simulated data
+X <- matrix(rnorm(n*p), nrow = n)
+mu <- class_shift + X %*% true_beta
+px <- exp(mu)/(1+exp(mu))
+Y <- rbinom(n, 1, prob = px)
+train_ld <- data.frame(y = as.factor(Y), x = X)
+train_ld |>
+  select(y, num_range("x.", 1:4)) |>
+  ggpairs(progress = F)
+```
+ 
+Check: Do these plots fit with your understanding of the true data generating process?
+
+```{r}
+# Class (im)balance
+table(train_ld$y)
+train_ld |> count(y)
+```
+
+**Question**: What would the accuracy be for a classifier that always predicts the most common class?
+
+```{r}
+const_yhat_success <- mean(train_ld$y == 1)
+max(const_yhat_success, 1 - const_yhat_success)
+```
+
+
+## Logistic regression model
+
+### Coefficients
+
+```{r}
+c(class_shift, true_beta)
+```
+
+
+```{r}
+fit_glm <- glm(y ~ ., family = binomial(), data = train_ld)
+fit_glm |> ggcoef()
+```
+
+Coefficients on the odds scale:
+
+```{r}
+fit_glm |> 
+  tidy(exponentiate = TRUE) |> knitr::kable()
+```
+
+### Predictions
+
+```{r}
+fit_glm_predictions <- augment(fit_glm, type.predict = "response")
+fit_glm_predictions |> pull(.fitted) |> mean()
+```
+
+**Question**: Does this number look familiar? Why?
+
+**Answer**: It's the proportion of the majority class that we saw before. Any other value here would indicate an overall bias in the predictions of the model.
+
+```{r}
+# Note: the event_level option is currently required because
+# of a mismatch between glm() and yardstick
+fit_glm_predictions |>
+  roc_curve(truth = y, .fitted,
+            event_level = "second") |>
+  autoplot()
+```
+
+
+**Note**: When a classification model outputs class probabilities or numeric scores these can be converted into classifications by setting thresholds or cutoffs. If we keep the model fixed but change the cutoff, we can achieve different trade-offs between false positives and false negatives (or specificity and sensitivity, precision and recall, etc--these are just other names). Plots like this `roc_curve` (see also `?pr_curve`) show all the possible trade-off values for one model.
+
+**Question**: Using curves like this how can we compare different models? Give at least two suggestions.
+
+**Answer**: We could compare at a specific point on the curve, for example if that point corresponds to a certain false positive rate that has some practical or domain-specific importance (e.g. regulations). Or we could compute the area under the curves, e.g. using the `roc_auc` function.
+
+Classify at several different thresholds
+
+```{r}
+# Note: true and predicted classes must use same
+# label names, hence the factor(as.numeric()) 
+higher_cutoff <- const_yhat_success + .05
+confusion_matrix_higher <-
+  fit_glm_predictions |>
+  mutate(yhat = factor(as.numeric(.fitted > higher_cutoff))) |>
+  conf_mat(truth = y, estimate = yhat)
+```
+
+
+```{r}
+lower_cutoff <- .2
+confusion_matrix_lower <-
+  fit_glm_predictions |>
+  mutate(yhat = factor(as.numeric(.fitted > lower_cutoff))) |>
+  conf_mat(truth = y, estimate = yhat)
+```
+
+```{r}
+confusion_matrix_higher
+```
+
+```{r}
+confusion_matrix_lower
+```
+
+```{r}
+confusion_matrix_higher |> autoplot(type = "heatmap")
+```
+
+```{r}
+confusion_matrix_lower |> autoplot(type = "heatmap")
+```
+
+Comparing across various metrics:
+
+```{r}
+higher_summary <- summary(confusion_matrix_higher) |>
+  mutate(higher = .estimate) |>
+  select(.metric, higher)
+lower_summary <- summary(confusion_matrix_lower) |>
+  mutate(lower = .estimate) |>
+  select(lower)
+cbind(higher_summary, lower_summary) |>
+  knitr::kable()
+```
+
+Note the `accuracy`, for example, which is the proportion of data where the predicted class and true class are equal.
+
+### Sub-sampling for class balance
+
+```{r}
+rare_class_size <- min(table(train_ld$y))
+train_subsampled <- train_ld |>
+  group_by(y) |>
+  sample_n(rare_class_size) |>
+  ungroup()
+  
+fit_glm_subs <- glm(y ~ ., family = binomial(), data = train_subsampled)
+```
+
+Does this change coefficients or inferences about them?
+
+```{r}
+cbind(
+  tidy(fit_glm) |> select(term, estimate, std.error),
+  tidy(fit_glm_subs) |> select(estimate, std.error)) |>
+  knitr::kable()
+```
+
+**Note**: With a smaller sample size, the balanced training data gives us larger `std.errors` for our estimates. (Wider confident intervals, larger p-values).
+
+```{r}
+fit_glm_subs_predictions <- augment(fit_glm_subs, type.predict = "response")
+fit_glm_subs_predictions |> pull(.fitted) |> mean()
+```
+
+Training data classes are balanced so the predictions are also balanced.
+
+```{r}
+# Note: the event_level option is currently required because
+# of a mismatch between glm() and yardstick
+fit_glm_subs_predictions |>
+  roc_curve(truth = y, .fitted,
+            event_level = "second") |>
+  autoplot()
+```
+
+Classify at several different thresholds
+
+```{r}
+# Note: true and predicted classes must use same
+# label names, hence the factor(as.numeric()) 
+higher_cutoff <- const_yhat_success + .05
+confusion_matrix_subs_higher <-
+  fit_glm_subs_predictions |>
+  mutate(yhat = factor(as.numeric(.fitted > higher_cutoff))) |>
+  conf_mat(truth = y, estimate = yhat)
+```
+
+
+```{r}
+lower_cutoff <- .2
+confusion_matrix_subs_lower <-
+  fit_glm_subs_predictions |>
+  mutate(yhat = factor(as.numeric(.fitted > lower_cutoff))) |>
+  conf_mat(truth = y, estimate = yhat)
+```
+
+```{r}
+confusion_matrix_subs_higher
+```
+
+```{r}
+confusion_matrix_subs_lower
+```
+
+```{r}
+confusion_matrix_subs_higher |> autoplot(type = "heatmap")
+```
+
+```{r}
+confusion_matrix_subs_lower |> autoplot(type = "heatmap")
+```
+
+Comparing across various metrics:
+
+```{r}
+higher_subs_summary <- summary(confusion_matrix_subs_higher) |>
+  mutate(higher = .estimate) |>
+  select(.metric, higher)
+lower_subs_summary <- summary(confusion_matrix_subs_lower) |>
+  mutate(lower = .estimate) |>
+  select(lower)
+metrics <- c("accuracy", "bal_accuracy") #, "precision", "recall")
+rbind(
+cbind(higher_summary, lower_summary) |>
+  filter(.metric %in% metrics) |>
+  mutate(subsampled = FALSE),
+cbind(higher_subs_summary, lower_subs_summary) |>
+  filter(.metric %in% metrics) |>
+  mutate(subsampled = TRUE)) |>
+  knitr::kable()
+```
+
+**Question**: Suppose we have trained a model on data that was subsampled to create class balance. Then we choose classification cutoffs to achieve a desired trade-off between precision/recall (or false positives and false negatives), and we do this still while using the subsampled training data. What will happen if we start using that model to classify data from a new or full dataset that hasn't been subsampled?
+
+**Answer**: Predictions on imbalanced data will achieve a different trade-off between false positives and false negatives. To calibrate this we would need to choose a different classification threshold that works on imbalanced data.

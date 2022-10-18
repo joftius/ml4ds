@@ -19,14 +19,32 @@ library(gapminder)
 theme_set(theme_minimal(base_size = 22))
 ```
 
+
+## Materials
+
+| Link | Type | Description             |
+|:----:|:----:|:------------------------|
+| [html](slides/04-1-classification.html)  [pdf](slides/04-1-classification_handout.pdf) | Slides | Classification and logistic regression
+| [Rmd](notebooks/classification.Rmd) | Notebook | Classification and logistic regression |
+| [Rmd](notebooks/gradient_descent.html) | Notebook | Gradient descent and numeric differentiation |
+
+**To be updated**
+
+## Preparation
+
+### Required reading
+
+
+- [ISLR](https://www.statlearning.com/) Chapter 4. This chapter is a bit lengthy, so it's OK if you don't carefully follow all the mathematics in sections 4.4 and 4.5 as long as you understand the concepts.
+- [MLstory](https://mlstory.org/) Start Chapter 5 on optimization, read the first two sections on Optimization Basics and on Gradient Descent. You can stop when you reach Proposition 3.
+
+### Supplemental reading
+
+- Wikipedia on [Newton's method](https://en.wikipedia.org/wiki/Newton%27s_method_in_optimization) and [gradient descent](https://en.wikipedia.org/wiki/Gradient_descent) (good for pictures and animations)
+- [CASI](https://hastie.su.domains/CASI/) Chapter 4 for MLE theory, Chapter 8 sections 8.1-8.3 (more advanced material)
+
 ## Carving nature at its joints
 
 > "A good cook gets a new knife every year; he chops! Mediocre cooks change knives monthly; they hack. My knife now has 19 years on it; it’s carved several thousand oxen and the edge is as if I had just taken it from the sharpener. Those joints have gaps, and the knife’s edge no thickness, to put something infinitesimally thin in an empty space?! Effortless! It even allows the edge wander in with ample room to play. That is why, with 19 years on it, this knife’s edge is grindstone fresh." - Butcher Ding, [the Zhuangzi](https://plato.stanford.edu/entries/zhuangzi/#PonP)
 
-## Slides, notebooks, exercises
 
-[Slides](slides/04-1-classification.html) for logistic regression lecture ([PDF](slides/classification_logistic.pdf))
-
-[Slides](slides/04-2-svm.html) for SVM lecture ([PDF](slides/classification_svm.pdf))
-
-[Notebook](notebooks/optimization.html) for seminar
