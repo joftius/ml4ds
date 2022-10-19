@@ -65,7 +65,7 @@ One common approach is to take a number $0 < \gamma < 1$, e.g. $\gamma \approx .
 gamma <- .9
 data.frame(step = 1:30) |> 
   mutate(step_size = gamma^step) |>
-  ggplot(aes(x = step, y = step_size)) + geom_point()
+  ggplot(aes(x = step, y = step_size)) + geom_point(size = 2)
 ```
 
 Let's see this in action trying to minimize $f(x) = x^2$.
@@ -114,8 +114,8 @@ ggplot() +
  geom_path(aes(x, f), linetype = "dashed",
     data = algorithm_path) + 
  geom_point(aes(x, f, color = step),
-    data = algorithm_path) +
-  scale_color_binned(type = "viridis", n.breaks = 8)
+    data = algorithm_path, size = 2) +
+  scale_color_binned(type = "viridis", n.breaks = 8, end = .9)
 ```
 
 Now we'll try a value of $\gamma$ which is too small. This time gradient descent converges too fast because the step sizes become numerically close to zero even though we have not yet reached the optimum (minimum of $f$).
@@ -145,8 +145,8 @@ ggplot() +
  geom_path(aes(x, f), linetype = "dashed",
     data = algorithm_path) + 
  geom_point(aes(x, f, color = step),
-    data = algorithm_path) +
-  scale_color_binned(type = "viridis", n.breaks = 8)
+    data = algorithm_path, size = 2) +
+  scale_color_binned(type = "viridis", n.breaks = 8, end = .9)
 ```
 
 Recall that at a (local) optimal value, the derivative (or gradient) should be zero (or undefined, as in the case of $|x|$). We can use this to check if gradient descent converged (stopped moving) because of the step size and has not yet reached an optimum:
@@ -170,7 +170,7 @@ In practice, people often try different values of $\gamma$, check to see if grad
 gamma <- c(rep(.95, 5), rep(.9, 5), rep(.85, 5), rep(.8, 10))
 data.frame(step = 1:25, gamma = gamma) |> 
   mutate(step_size = gamma^step) |>
-  ggplot(aes(x = step, y = step_size)) + geom_point()
+  ggplot(aes(x = step, y = step_size)) + geom_point(size = 2)
 ```
 
 Using these step sizes to minimize $f(x) = x^2$ again, this time the result would converge better:
@@ -203,8 +203,8 @@ ggplot() +
  geom_path(aes(x, f), linetype = "dashed",
     data = algorithm_path) + 
  geom_point(aes(x, f, color = step),
-    data = algorithm_path) +
-  scale_color_binned(type = "viridis", n.breaks = 8)
+    data = algorithm_path, size = 2) +
+  scale_color_binned(type = "viridis", n.breaks = 8, end = .9)
 ```
 
 
@@ -270,9 +270,9 @@ Now we create some data to fit logistic regression models.
 set.seed(1)
 # Try changing some parameters
 n <- 200
-p <- 5
-sparsity <- 2
-nonzero_beta <- c(1, -1)
+p <- 10
+sparsity <- p/2
+nonzero_beta <- runif(sparsity, min = -1, max = 1)
 # or, e.g. rep(1, sparsity), runif(sparsity, min = -1, max = 1)
 true_beta <- c(.5, nonzero_beta, rep(0, p - sparsity))
 ```
@@ -307,7 +307,8 @@ beta_mat <- rbind(beta_prev2,
 rownames(beta_mat) <- NULL
 beta_path <- data.frame(step = 0:max_steps,
                         logL = c(previous_loss, next_loss, rep(0, max_steps - 1)),
-                        b = beta_mat)
+                        b = beta_mat) |>
+  rename_with(~str_remove(.x, 'b.'))
 steps <- 1
 ```
 
@@ -346,12 +347,23 @@ steps - 1 # not counting starting point
 
 #### Did it work?
 
-```{r}
-rbind(
-  fit_glm |> coef(),
-  beta_prev1,
-  true_beta
-)
+The plot below compares the estimate from our gradient descent implementation to the estimate from the `glm()` function (hollow squares and diamonds, should be almost identical), and also displays the true coefficients (solid points).
+
+```{r echo=FALSE}
+beta_plot_df <- data.frame(
+  coordinate = 0:p,
+  beta = c(true_beta, fit_glm |> coef(), beta_prev1),
+  type = c(rep("true beta", p+1), rep("est: glm()", p+1), rep("est: grad. desc.", p+1)))
+beta_plot_df |>
+  filter(type != "true beta") |>
+    ggplot(aes(coordinate,
+               beta,
+               color = type)) +
+  geom_point(alpha = .8, size = 2, stroke = 1,
+              aes(shape = type)) +
+  scale_shape_manual(values = c(0, 5)) +
+  geom_point(size = 1.8, color = "black", alpha = .9,
+    data = beta_plot_df |> filter(type == "true beta")) + scale_color_viridis_d(begin = .1, end = .9, direction = 1)
 ```
 
 #### Coefficient paths
@@ -361,14 +373,18 @@ rbind(
 ```{r echo=FALSE}
 beta_path <- beta_path[1:steps, ]
 beta_long <- beta_path[-1, ] |>
-  pivot_longer(cols = starts_with("b"),
+  pivot_longer(cols = num_range("", 1:(p+1)),
                names_to = "variable",
-               values_to = "beta_hat")
+               values_to = "beta_hat") |>
+  mutate(variable = as.numeric(variable))
 beta_long |>
-  ggplot(aes(x = step, y = beta_hat, color = variable)) +
-  geom_point() + 
+  ggplot(aes(x = step,
+             y = beta_hat,
+             group = variable,
+             color = variable)) +
+  geom_point(size = 2) + 
   geom_line() + 
-  scale_color_viridis_d() +
+  scale_color_viridis_b(end = .9) +
   ggtitle("Coordinates of beta_hat at each step")
 ```
 
@@ -381,7 +397,7 @@ beta_long |>
 ```{r echo=FALSE}
 beta_path[-1, ] |>
   ggplot(aes(step, -logL)) +
-  geom_point() +
+  geom_point(size = 2) +
   scale_x_continuous(breaks = (1:4) * floor(steps/4)) +
   ggtitle("Function value at each step")
 ```
@@ -399,7 +415,7 @@ data.frame(step = 1:length(distances),
            distance = distances) |>
   ggplot(aes(step, distance)) + 
   scale_x_continuous(breaks = (1:4) * floor(steps/4)) +
-  geom_point() + ggtitle("Euclidean distance traversed per update")
+  geom_point(size = 2) + ggtitle("Euclidean distance traversed per update")
 ```
 
 
