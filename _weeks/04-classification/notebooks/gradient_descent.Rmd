@@ -219,13 +219,15 @@ We'll now create a version with adaptive step sizes and numeric differentiation,
 
 This is the function we want to minimize to fit a logistic regression model. This is a special case of [maximum likelihood estimation](https://en.wikipedia.org/wiki/Maximum_likelihood_estimation), which could also be applied to any other `glm` (or parametric probability model).
 
+Since gradient descent *minimizes*, we apply it to the negative of the log-likelihood in order to *maximize* the log-likelihood.
+
 ```{r}
 # See e.g. lecture slides 
-logL <- function(X, Y, beta) {
+neglogL <- function(X, Y, beta) {
   Xbeta <- X %*% beta
   expXbeta <- exp(-Xbeta)
   exp_ratio <- 1/(1+expXbeta)
-  sum(Y * log(exp_ratio) + (1-Y) * log(1-exp_ratio))
+  -sum(Y * log(exp_ratio) + (1-Y) * log(1-exp_ratio))
 }
 ```
 
@@ -249,7 +251,7 @@ numeric_grad <- function(X, Y, beta, h = 1e-06) {
   numerator <- sapply(1:length(beta), function(j) {
     H <- rep(0, length(beta))
     H[j] <- h # step in coordinate j
-    logL(X, Y, beta + H) - logL(X, Y, beta - H)
+    neglogL(X, Y, beta + H) - neglogL(X, Y, beta - H)
   })
   numerator / (2*h)
 }
@@ -290,30 +292,35 @@ fit_glm <- glm(Y ~ X-1, family = "binomial")
 
 ### Putting it all together
 
+Initialize and take a first step:
+
 ```{r}
-# Initialize and take first step
 max_steps <- 50 # try ~3 for comparison
 beta_prev2 <- rnorm(ncol(X)) # random start
 #beta_prev2 <- c(mean(Y), cor(X[,-1], Y)) # "warm" start
 grad_prev2 <- numeric_grad(X, Y, beta_prev2)
 beta_prev1 <- beta_prev2 + 0.1 * grad_prev2 / sqrt(sum(grad_prev2^2))
 grad_prev1 <- numeric_grad(X, Y, beta_prev1)
-previous_loss <- logL(X, Y, beta_prev2)
-next_loss <- logL(X, Y, beta_prev1)
+previous_loss <- neglogL(X, Y, beta_prev2)
+next_loss <- neglogL(X, Y, beta_prev1)
+steps <- 1
+```
+
+```{r echo=FALSE}
 # Store coefficient path
 beta_mat <- rbind(beta_prev2,
                   beta_prev1,
                   matrix(0, nrow = max_steps - 1, ncol = ncol(X)))
 rownames(beta_mat) <- NULL
 beta_path <- data.frame(step = 0:max_steps,
-                        logL = c(previous_loss, next_loss, rep(0, max_steps - 1)),
+                        neglogL = c(previous_loss, next_loss, rep(0, max_steps - 1)),
                         b = beta_mat) |>
   rename_with(~str_remove(.x, 'b.'))
-steps <- 1
 ```
 
+Repeat until convergence:
+
 ```{r}
-# Repeat until convergence
 tol <- 1e-5 # (error) tolerance
 while (abs(previous_loss - next_loss) > tol) {
   # Compute BB step size
@@ -322,13 +329,13 @@ while (abs(previous_loss - next_loss) > tol) {
   beta_prev2 <- beta_prev1
   
   # Update step
-  beta_prev1 <- beta_prev1 - step_BB * grad_prev1
+  beta_prev1 <- beta_prev1 - abs(step_BB) * grad_prev1
   
   # Shift previous steps
   grad_prev2 <- grad_prev1
   grad_prev1 <- numeric_grad(X, Y, beta_prev1)  
   previous_loss <- next_loss
-  next_loss <- logL(X, Y, beta_prev1)
+  next_loss <- neglogL(X, Y, beta_prev1)
   
   # Print loss every 5 steps, track path, control loop
   if (round(steps/5) == steps/5) print(previous_loss)
@@ -392,11 +399,11 @@ beta_long |>
 
 #### Values of the objective function
 
-(MLE: maximizing `logL` is the same as minimizing `-logL`)
+(MLE: maximizing `neglogL` is the same as minimizing `neglogL`)
 
 ```{r echo=FALSE}
 beta_path[-1, ] |>
-  ggplot(aes(step, -logL)) +
+  ggplot(aes(step, neglogL)) +
   geom_point(size = 2) +
   scale_x_continuous(breaks = (1:4) * floor(steps/4)) +
   ggtitle("Function value at each step")
@@ -425,7 +432,7 @@ data.frame(step = 1:length(distances),
 
 **Question**: Suppose that instead of logistic regression we wanted to fit some other kind of model. What would we need to change about the code?
 
-**Answer**: Only the `logL` function! We could optimize many functions (and therefore fit many models with MLE) with almost the same code.
+**Answer**: Only the `neglogL` function! We could optimize many functions (and therefore fit many models with MLE) with almost the same code.
 
 ### Some takeaways
 
