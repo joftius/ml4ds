@@ -11,7 +11,235 @@ library(tidyverse)
 theme_set(theme_minimal(base_size = 12))
 ```
 
-## Generating simulated data
+## Introduction
+
+First we introduce the basic algorithm and explore some of its important design components: **step sizes** and **convergence checking**. The final section shows a more sophisticated implementation of gradient descent for estimating logistic regression coefficients that uses a few slightly more advanced topics, so it's OK if you don't understand all the code the first time you read it. You can experiment with that section by changing (1) the data generating parameters in the simulation, or (2) the `max_steps` or `tol` settings later in the document.
+
+(Note: if there's any place where code is not displayed but you wish to see the source, look at the .Rmd file instead of the knitted .html version).
+
+## Gradient descent basics
+
+We can think of this iterative optimization algorithm as minimizing a function by taking steps in the direction of the steepest decrease (or descent). The path followed by the algorithm is like someone skiiing downhill as fast as possible by always turning in the direction with the steepest downward slope. Here's a simple example using the function $f(x) = x^4$.
+
+```{r}
+# Function to minimize
+f <- function(x) x^4
+# Derivative (because it's univariate)
+grad_f <- function(x) 4 * x^3
+xn <- 1 # starting point
+fn <- f(xn)
+step_size <- .1
+for (step in 1:5) {
+  # Update step
+  xn <- xn - step_size * grad_f(xn)
+  # Show results
+  cat(paste0("At step ", step,
+             ", xn = ", round(xn, 5),
+             " and f(xn) = ", round(f(xn), 5)), "\n")
+}
+```
+
+Notice that `xn` is getting closer to 0 and `f(xn)` is decreasing. However, I've chosen the values here carefully. Right now it converges  very slow, if you increase `max_steps` to 100 you'll see it still has not yet reached `xn = 0.1`. If you change the `step_size <- .1` or initial starting point `xn <- 1` to some other values it may converge faster, or it may diverge to infinity instead of converging to 0. This shows that step sizes and the number of steps are important parts of an implementation, and will also depend on the function (and its gradient) and starting points.
+
+### Step sizes 
+
+The step size (denoted $\gamma_n$ in the Wikipedia article) is one of the most important ingredients in an implementation of gradient descent. We need the step size to decrease to zero so that the algorithm doesn't get stuck jumping back and forth past the minimum value instead of getting closer to it. But how fast should it decrease? If it starts too small or decreases too fast then gradient descent will require many more tiny steps before it reaches the optimum. On the other hand, if it decreases too slowly then gradient descent may jump around the optimum many times before the step size decreases enough for it to get closer.
+
+#### Geometric decrease
+
+One common approach is to take a number $0 < \gamma < 1$, e.g. $\gamma \approx .9$, and make step $n$ have step size $\gamma^n$. The step sizes then would look like this:
+
+```{r}
+gamma <- .9
+data.frame(step = 1:30) |> 
+  mutate(step_size = gamma^step) |>
+  ggplot(aes(x = step, y = step_size)) + geom_point()
+```
+
+Let's see this in action trying to minimize $f(x) = x^2$.
+
+First we'll try a value of $\gamma$ which is too large.
+
+```{r}
+f <- function(x) x^2 # Function to optimize
+grad_f <- function(x) 2 * x # Gradient of f
+max_steps <- 15
+x0 <- 3 # starting point
+gamma <- .995
+# ... (rest of the code not displayed)
+```
+
+```{r echo=FALSE}
+# Tracking the path for plotting
+xnext <- x0
+algorithm_path <- 
+  data.frame(step = 1:max_steps,
+             x = numeric(max_steps),
+             f = numeric(max_steps))
+step <- 1
+algorithm_path$x[step] <- xnext
+algorithm_path$f[step] <- f(xnext)
+# Main loop of gradient descent
+while (step < max_steps) {
+  xlast <- xnext
+  step <- step + 1
+  # Updating x, notice the step size
+  xnext <- xlast - gamma^step * grad_f(xlast)
+  # Tracking x and f(x) for plot
+  algorithm_path$x[step] <- xnext
+  algorithm_path$f[step] <- f(xnext)
+}
+```
+
+Now we plot the path of the algorithm. We can see gradient descent keeps jumping past the optimum many times, wasting computation by converging too slowly.
+
+```{r echo=FALSE}
+ggplot() +
+  xlim(-x0 -.5, x0 +.5) +
+  # Show f(x)
+  geom_function(fun = f) + 
+  # Show alg. path
+ geom_path(aes(x, f), linetype = "dashed",
+    data = algorithm_path) + 
+ geom_point(aes(x, f, color = step),
+    data = algorithm_path) +
+  scale_color_binned(type = "viridis", n.breaks = 8)
+```
+
+
+Now we'll try a value of $\gamma$ which is too small. This time gradient descent converges too fast because the step sizes become numerically close to zero even though we have not yet reached the optimum (minimum of $f$).
+
+```{r}
+gamma <- .55
+```
+
+```{r echo=FALSE}
+algorithm_path <- 
+  data.frame(step = 1:max_steps,
+             x = numeric(max_steps),
+             f = numeric(max_steps))
+step <- 1
+algorithm_path$x[step] <- x0
+algorithm_path$f[step] <- f(x0)
+while (step < max_steps) {
+  xlast <- algorithm_path$x[step]
+  step <- step + 1
+  xnext <- xlast - gamma^step * grad_f(xlast)
+  algorithm_path$x[step] <- xnext
+  algorithm_path$f[step] <- f(xnext)
+}
+ggplot() +
+  xlim(-x0 -.5, x0 +.5) +
+  geom_function(fun = f) + 
+ geom_path(aes(x, f), linetype = "dashed",
+    data = algorithm_path) + 
+ geom_point(aes(x, f, color = step),
+    data = algorithm_path) +
+  scale_color_binned(type = "viridis", n.breaks = 8)
+```
+
+#### Hand-tuning
+
+In practice, people often try different values of $\gamma$ and then check to see if gradient descent is converging too slowly or quickly, and then trying other values. Sometimes people start with larger values of $\gamma$ to take big steps in the beginning and then switch to lower values (without restarting!), which might result in step sizes that look like this:
+
+```{r echo=FALSE}
+gamma <- c(rep(.95, 5), rep(.9, 5), rep(.85, 5), rep(.8, 10))
+data.frame(step = 1:25, gamma = gamma) |> 
+  mutate(step_size = gamma^step) |>
+  ggplot(aes(x = step, y = step_size)) + geom_point()
+```
+
+Using these step sizes to minimize $f(x) = x^2$ again, this time the result would converge better:
+
+```{r echo=FALSE}
+# Tracking the path for plotting
+algorithm_path <- 
+  data.frame(step = 1:max_steps,
+             x = numeric(max_steps),
+             f = numeric(max_steps))
+step <- 1
+algorithm_path$x[step] <- x0
+algorithm_path$f[step] <- f(x0)
+# Main loop of gradient descent
+while (step < max_steps) {
+  xlast <- algorithm_path$x[step]
+  step <- step + 1
+  # Updating x, notice the step size
+  xnext <- xlast - gamma[step]^step * grad_f(xlast)
+  # Tracking x and f(x) for plot
+  algorithm_path$x[step] <- xnext
+  algorithm_path$f[step] <- f(xnext)
+}
+# Plot results
+ggplot() +
+  xlim(-x0-.5, x0+.5) +
+  # Show f(x)
+  geom_function(fun = f) + 
+  # Show alg. path
+ geom_path(aes(x, f), linetype = "dashed",
+    data = algorithm_path) + 
+ geom_point(aes(x, f, color = step),
+    data = algorithm_path) +
+  scale_color_binned(type = "viridis", n.breaks = 8)
+```
+
+
+But strategies like this require "hand tuning," which we often prefer to avoid. Instead, if they are available we could use "adaptive" methods that work automatically (most of the time).
+
+
+## Final implementation
+
+We'll now create a version with adaptive step sizes and numeric differentiation, and apply it to a logistic regression model.
+
+### Log-likelihood function
+
+This is the function we want to minimize to fit a logistic regression model. This is a special case of [maximum likelihood estimation](https://en.wikipedia.org/wiki/Maximum_likelihood_estimation), which could also be applied to any other `glm` (or parametric probability model).
+
+```{r}
+# See e.g. lecture slides 
+logL <- function(X, Y, beta) {
+  Xbeta <- X %*% beta
+  expXbeta <- exp(-Xbeta)
+  exp_ratio <- 1/(1+expXbeta)
+  sum(Y * log(exp_ratio) + (1-Y) * log(1-exp_ratio))
+}
+```
+
+### Numeric differentiation
+
+Some functions are difficult to differentiate by hand, or may not even have a closed-form expression for their gradient. But we can still use numeric differentiation like this **finite difference** method to approximate the gradient. Instead of taking a limit (as in the definition of derivatives or gradients), we just substitute in a very small value of `h` and compute:
+
+$$\frac{f(x + h) - f(x - h)}{2h}$$
+
+Or, in code: `(f(x+h) - f(x-h))/(2*h)` (note: I spent a long time wondering why I was getting an error message because my code had `2h` instead of `2*h`... this happens sometimes even after many years of experience). The limit of this as `h` goes to zero would be the exact gradient (or derivative) rather than an approximation. But since we use this approximate method we don't need to do any calculus to find an expression for the gradient, we just need to evaluate the function itself.
+
+Reference: [Wikipedia](https://en.wikipedia.org/wiki/Numerical_differentiation)
+
+```{r}
+# Note: This value of h is chosen to be
+# on the order of magnitude of the cube-root
+# of .Machine$double.eps, which helps avoid
+# some numerical approximation errors
+numeric_grad <- function(X, Y, beta, h = 1e-06) {
+  # Approximate each coordinate of the gradient
+  numerator <- sapply(1:length(beta), function(j) {
+    H <- rep(0, length(beta))
+    H[j] <- h # step in coordinate j
+    logL(X, Y, beta + H) - logL(X, Y, beta - H)
+  })
+  numerator / (2*h)
+}
+```
+
+### Adaptive step sizes
+
+We'll  use the *Barzilai–Borwein method* for choosing a step size. This BB-method requires we keep track of two consecutive values of the function and its gradient in order to compute a step size, and that is why the code for our final implementation is a little more complicated.
+
+Reference: [Wikipedia](https://en.wikipedia.org/wiki/Gradient_descent)
+
+### Generating simulated data
+
+Now we create some data to fit logistic regression models.
 
 ```{r}
 # Setting parameters
@@ -33,88 +261,63 @@ px <- exp(mu)/(1+exp(mu))
 Y <- rbinom(n, 1, prob = px)
 train_ld <- data.frame(y = as.factor(Y), x = X)
 fit_glm <- glm(Y ~ X-1, family = "binomial")
+# to compare with our results later
 ```
 
-## Log-likelihood function
-
-```{r}
-# See e.g. lecture slides 
-logL <- function(X, Y, beta) {
-  Xbeta <- X %*% beta
-  expXbeta <- exp(-Xbeta)
-  exp_ratio <- 1/(1+expXbeta)
-  sum(Y * log(exp_ratio) + (1-Y) * log(1-exp_ratio))
-}
-```
-
-## Numeric differentiation
-
-Reference: [Wikipedia](https://en.wikipedia.org/wiki/Numerical_differentiation)
-
-```{r}
-# Note: the step size h here is chosen to be
-# on the order of magnitude of the cube-root
-# of .Machine$double.eps, which helps avoid
-# some numerical approximation errors
-numeric_grad <- function(X, Y, beta, h = 1e-06) {
-  numerator <- sapply(1:length(beta), function(j) {
-    H <- rep(0, length(beta))
-    H[j] <- h # step in coordinate j
-    logL(X, Y, beta + H) - logL(X, Y, beta - H)
-  })
-  numerator / (2*h)
-}
-```
-
-## Gradient descent
-
-Reference: [Wikipedia](https://en.wikipedia.org/wiki/Gradient_descent)
-
-Note: Below we use the *Barzilai–Borwein method* for choosing a step size. If we did not use an *adaptive* method like this then we would have to experiment to find something that worked, and most likely we would need to redo that trial and error each time we tried a different problem
+### Putting it all together
 
 ```{r}
 # Initialize and take first step
-beta_prev2 <- rnorm(ncol(X)) 
+max_steps <- 50 # try ~3 for comparison
+beta_prev2 <- rnorm(ncol(X)) # random start
+#beta_prev2 <- c(mean(Y), cor(X[,-1], Y)) # "warm" start
 grad_prev2 <- numeric_grad(X, Y, beta_prev2)
 beta_prev1 <- beta_prev2 + 0.1 * grad_prev2 / sqrt(sum(grad_prev2^2))
 grad_prev1 <- numeric_grad(X, Y, beta_prev1)
 previous_loss <- logL(X, Y, beta_prev2)
 next_loss <- logL(X, Y, beta_prev1)
+# Store coefficient path
 beta_mat <- rbind(beta_prev2,
                   beta_prev1,
-                  matrix(0, nrow = 50, ncol = ncol(X)))
+                  matrix(0, nrow = max_steps - 1, ncol = ncol(X)))
 rownames(beta_mat) <- NULL
-beta_path <- data.frame(step = 0:51, b = beta_mat)
+beta_path <- data.frame(step = 0:max_steps,
+                        logL = c(previous_loss, next_loss, rep(0, max_steps - 1)),
+                        b = beta_mat)
 steps <- 1
 ```
-
 
 ```{r}
 # Repeat until convergence
 tol <- 1e-5 # (error) tolerance
 while (abs(previous_loss - next_loss) > tol) {
+  # Compute BB step size
   grad_diff <- grad_prev1 - grad_prev2
   step_BB <- sum((beta_prev1 - beta_prev2) * grad_diff) / sum(grad_diff^2)
-  
   beta_prev2 <- beta_prev1
+  
+  # Update step
   beta_prev1 <- beta_prev1 - step_BB * grad_prev1
   
+  # Shift previous steps
   grad_prev2 <- grad_prev1
   grad_prev1 <- numeric_grad(X, Y, beta_prev1)  
-  
   previous_loss <- next_loss
   next_loss <- logL(X, Y, beta_prev1)
   
+  # Print loss every 5 steps, track path, control loop
   if (round(steps/5) == steps/5) print(previous_loss)
   steps <- steps + 1
-  beta_path[steps, 2:ncol(beta_path)] <- beta_prev1
+  beta_path[steps, 2] <- next_loss
+  beta_path[steps, 3:ncol(beta_path)] <- beta_prev1
+  if (steps > max_steps) break
 }
 ```
 
 How many steps?
 
 ```{r}
-steps
+steps - 1 # not counting starting point
 ```
 
 #### Did it work?
@@ -127,24 +330,59 @@ rbind(
 )
 ```
 
-Coefficient paths
+#### Coefficient paths
 
-```{r}
+(Leaving out the initial starting point)
+
+```{r echo=FALSE}
 beta_path <- beta_path[1:steps, ]
-beta_path |>
+beta_long <- beta_path[-1, ] |>
   pivot_longer(cols = starts_with("b"),
                names_to = "variable",
-               values_to = "beta_hat") |>
+               values_to = "beta_hat")
+beta_long |>
   ggplot(aes(x = step, y = beta_hat, color = variable)) +
-  geom_point() + geom_line() + scale_color_viridis_d()
+  geom_point() + 
+  geom_line() + 
+  scale_color_viridis_d() +
+  ggtitle("Coordinates of beta_hat at each step")
 ```
 
 (Note: the coefficient indexes may be a bit confusing because of the intercept term)
 
-## How cool is this, exactly?
+#### Values of the objective function
+
+(MLE: maximizing `logL` is the same as minimizing `-logL`)
+
+```{r echo=FALSE}
+beta_path[-1, ] |>
+  ggplot(aes(step, -logL)) +
+  geom_point() +
+  scale_x_continuous(breaks = (1:4) * floor(steps/4)) +
+  ggtitle("Function value at each step")
+```
+
+
+#### Update distances
+
+How far did gradient descent move (in Euclidean distance of the $p$-dimensional parameter space) in each step?
+
+```{r echo=FALSE}
+distances <- sapply(2:steps, function(step) {
+ sqrt(sum((beta_path[step, -c(1:2)] - beta_path[step-1, -c(1:2)])^2))
+})
+data.frame(step = 1:length(distances),
+           distance = distances) |>
+  ggplot(aes(step, distance)) + 
+  scale_x_continuous(breaks = (1:4) * floor(steps/4)) +
+  geom_point() + ggtitle("Euclidean distance traversed per update")
+```
+
+
+### How cool is this, exactly?
 
 **Note**: with numeric differentiation we did not need to do the calculus ourselves to find an expression for the gradient. (People have done a lot of work clearing this path for us, though...)
 
 **Question**: Suppose that instead of logistic regression we wanted to fit some other kind of model. What would we need to change about the code?
 
-**Answer**: Only the `logL` function! 
+**Answer**: Only the `logL` function! We could optimize many functions (and therefore fit many models with MLE) with almost the same code.
