@@ -2,7 +2,9 @@
 title: "Gradient descent"
 author: "Joshua Loftus"
 date: "`r Sys.Date()`"
-output: html_document
+output:
+  pdf_document: default
+  html_document: default
 ---
 
 ```{r setup, include=FALSE}
@@ -13,13 +15,15 @@ theme_set(theme_minimal(base_size = 12))
 
 ## Introduction
 
-First we introduce the basic algorithm and explore some of its important design components: **step sizes** and **convergence checking**. The final section shows a more sophisticated implementation of gradient descent for estimating logistic regression coefficients that uses a few slightly more advanced topics, so it's OK if you don't understand all the code the first time you read it. You can experiment with that section by changing (1) the data generating parameters in the simulation, or (2) the `max_steps` or `tol` settings later in the document.
+First we introduce the basic algorithm and explore some of its important design components: **step sizes** and **convergence checking**.
 
-(Note: if there's any place where code is not displayed but you wish to see the source, look at the .Rmd file instead of the knitted .html version).
+The final section of this notebook shows a more sophisticated implementation of gradient descent for estimating logistic regression coefficients that uses a few advanced topics, so it's OK to not understand all the code in a first read. Some interesting experiments to try in that section: changing the data generating parameters (`n`, `p`, `sparsity`, etc) or algorithm parameters (`max_steps`, `tol`).
+
+(Note: if there's any place where code is not displayed the source can be seen in the .Rmd file version of this notebook).
 
 ## Gradient descent basics
 
-We can think of this iterative optimization algorithm as minimizing a function by taking steps in the direction of the steepest decrease (or descent). The path followed by the algorithm is like someone skiiing downhill as fast as possible by always turning in the direction with the steepest downward slope. Here's a simple example using the function $f(x) = x^4$.
+We can think of this iterative optimization algorithm as minimizing a function by taking steps in the direction of the steepest decrease (or descent). The path followed by the algorithm is like someone skiiing downhill as fast as possible by always turning in the direction with the steepest downward slope. Here's a simple example using the function $f(x) = x^4$. This starts at the point $x_0 = 1$, and then computes a sequence of inputs $x_1, x_2, \ldots, x_n$ with the goal that $f(x_n)$ converges to a (potentially **local**!) minimum of $f$. In this case $f$ has a global minimum at $x = 0$ of $f(0) = 0$, and we hope our algorithm will give this correct answer.
 
 ```{r}
 # Function to minimize
@@ -39,11 +43,19 @@ for (step in 1:5) {
 }
 ```
 
-Notice that `xn` is getting closer to 0 and `f(xn)` is decreasing. However, I've chosen the values here carefully. Right now it converges  very slow, if you increase `max_steps` to 100 you'll see it still has not yet reached `xn = 0.1`. If you change the `step_size <- .1` or initial starting point `xn <- 1` to some other values it may converge faster, or it may diverge to infinity instead of converging to 0. This shows that step sizes and the number of steps are important parts of an implementation, and will also depend on the function (and its gradient) and starting points.
+Notice that `xn` is getting closer to 0 and `f(xn)` is decreasing. Perhaps if the algorithm takes more steps it will converge to the minimizer of $f$. 
+
+However, I've chosen the values here carefully. Right now it converges very slow. If we increase the number of steps from 5 to 100 it still has not yet reached even `xn = 0.1`, never mind the actual minimizer of 0. If we change the `step_size` or initial starting point `xn` to some other values it may converge faster, or it may diverge to infinity instead of converging to 0.
+
+This shows that **step sizes and the number of steps are important parts of any gradient descent implementation**, and performance will also depend on the function (and its gradient) and starting points.
 
 ### Step sizes 
 
-The step size (denoted $\gamma_n$ in the Wikipedia article) is one of the most important ingredients in an implementation of gradient descent. We need the step size to decrease to zero so that the algorithm doesn't get stuck jumping back and forth past the minimum value instead of getting closer to it. But how fast should it decrease? If it starts too small or decreases too fast then gradient descent will require many more tiny steps before it reaches the optimum. On the other hand, if it decreases too slowly then gradient descent may jump around the optimum many times before the step size decreases enough for it to get closer.
+The step size is a scalar multiplier of the gradient. It's denoted $\gamma_n$ in the Wikipedia article and we'll keep that convention.
+
+We need the step size to decrease to zero so that the algorithm doesn't get stuck jumping back and forth past the minimum value instead of getting closer to it. But how fast should it decrease?
+
+If it starts too small or decreases too fast then gradient descent will require many more tiny steps before it reaches the optimum. On the other hand, if it decreases too slowly then gradient descent may jump around the optimum many times before the step size decreases enough for it to get closer.
 
 #### Geometric decrease
 
@@ -106,7 +118,6 @@ ggplot() +
   scale_color_binned(type = "viridis", n.breaks = 8)
 ```
 
-
 Now we'll try a value of $\gamma$ which is too small. This time gradient descent converges too fast because the step sizes become numerically close to zero even though we have not yet reached the optimum (minimum of $f$).
 
 ```{r}
@@ -138,9 +149,22 @@ ggplot() +
   scale_color_binned(type = "viridis", n.breaks = 8)
 ```
 
+Recall that at a (local) optimal value, the derivative (or gradient) should be zero (or undefined, as in the case of $|x|$). We can use this to check if gradient descent converged (stopped moving) because of the step size and has not yet reached an optimum:
+
+```{r}
+grad_f(xnext) # numerically close to zero?
+```
+The gradient isn't close to zero, instead the algorithm has stopped because the overall step is small:
+
+```{r}
+gamma^step * grad_f(xnext)
+```
+
+**Summary**: Step sizes are decreasing too slow if gradient descent jumps around the optimum and takes a long time to converge. Step sizes are decreasing too fast if gradient descent converges but fails to reach an optimum.
+
 #### Hand-tuning
 
-In practice, people often try different values of $\gamma$ and then check to see if gradient descent is converging too slowly or quickly, and then trying other values. Sometimes people start with larger values of $\gamma$ to take big steps in the beginning and then switch to lower values (without restarting!), which might result in step sizes that look like this:
+In practice, people often try different values of $\gamma$, check to see if gradient descent is converging too slowly or quickly, then modify $\gamma$ and try again. Or they might pick a sequence of $\gamma$ values using multiple phases that looks something like this:
 
 ```{r echo=FALSE}
 gamma <- c(rep(.95, 5), rep(.9, 5), rep(.85, 5), rep(.8, 10))
@@ -184,7 +208,7 @@ ggplot() +
 ```
 
 
-But strategies like this require "hand tuning," which we often prefer to avoid. Instead, if they are available we could use "adaptive" methods that work automatically (most of the time).
+But strategies like this require "hand tuning," which we usually prefer to avoid. Instead, if they are available we could use "adaptive" methods that work automatically (most of the time).
 
 
 ## Final implementation
@@ -386,3 +410,17 @@ data.frame(step = 1:length(distances),
 **Question**: Suppose that instead of logistic regression we wanted to fit some other kind of model. What would we need to change about the code?
 
 **Answer**: Only the `logL` function! We could optimize many functions (and therefore fit many models with MLE) with almost the same code.
+
+### Some takeaways
+
+- Gradient descent can be implemented to converge to a **local** minimum of a function, provided the function is not badly behaved (e.g. discontinuous)
+
+- Many functions that we optimize in statistics and machine learning are [convex](https://en.wikipedia.org/wiki/Convex_function), in which case any minimizer is a global minimizer.
+
+- In non-convex optimization we have to be more careful about whether gradient descent converges to "bad" optimum values, i.e. ones which are locally optimal but far from globally optimal. This is a common concern in AI/deep networks.
+
+- Convergence usually requires step sizes that decrease to zero. We can use an adaptive step size method or experiment with various approaches by hand.
+
+- We can compute gradients either by having some closed form expression or using numeric approximation.
+
+- We can stop the algorithm after some number of steps and/or check for convergence by seeing if the objective function's value is changing by amounts small enough to be numerically insignificant.
