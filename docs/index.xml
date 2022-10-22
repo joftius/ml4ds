@@ -40,13 +40,13 @@
       <link>http://ml4ds.com/weeks/04-classification</link>
       <description>Categorical or qualitative outcome variables are ubiquitous. We review some supervised learning methods for classification, and see how these may be applied to observational causal inference.</description>
       <guid>http://ml4ds.com/weeks/04-classification</guid>
-      <pubDate>Thu, 07 Oct 2021 00:00:00 +0000</pubDate>
+      <pubDate>Fri, 08 Oct 2021 00:00:00 +0000</pubDate>
     </item>
     <item>
-      <title>5 Optimization and overfitting</title>
+      <title>5 Optimization and model complexity</title>
       <dc:creator>Joshua Loftus</dc:creator>
       <link>http://ml4ds.com/weeks/05-optimization</link>
-      <description>Optimization is about finding the best model. With greater model complexity it becomes increasingly important to avoid overfitting: finding a model that is best for one specific dataset but does not generalize well to others.</description>
+      <description>Machine learning is broadly about estimating functions using optimization algorithms. We can think of these as searching through a space of functions to find one that minimizes a measure of inaccuracy or loss.</description>
       <guid>http://ml4ds.com/weeks/05-optimization</guid>
       <pubDate>Thu, 07 Oct 2021 00:00:00 +0000</pubDate>
     </item>

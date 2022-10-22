@@ -67,12 +67,12 @@
     "contents": "\nMaterials\nLink\nType\nDescription\nhtml pdf\nSlides\nClassification and logistic\nregression\n[html] Rmd\nNotebook\nClassification, class balance, ROC\ncurves\npdf html Rmd\nNotebook\nGradient descent and numeric\ndifferentiation\nTo be updated\nPreparation\nRequired reading\nISLR Chapter 4. This\nchapter is a bit lengthy, so it’s OK if you don’t carefully follow all\nthe mathematics in sections 4.4 and 4.5 as long as you understand the\nconcepts.\nMLstory Start Chapter 5 on\noptimization, read the first two sections on Optimization Basics and on\nGradient Descent. You can stop when you reach Proposition 3.\nSupplemental reading\nWikipedia on Newton’s\nmethod and gradient\ndescent (good for pictures and animations)\nCASI Chapter 4 for MLE\ntheory, Chapter 8 sections 8.1-8.3 (more advanced material)\nCarving nature at its joints\n\n“A good cook gets a new knife every year; he chops! Mediocre cooks\nchange knives monthly; they hack. My knife now has 19 years on it; it’s\ncarved several thousand oxen and the edge is as if I had just taken it\nfrom the sharpener. Those joints have gaps, and the knife’s edge no\nthickness, to put something infinitesimally thin in an empty space?!\nEffortless! It even allows the edge wander in with ample room to play.\nThat is why, with 19 years on it, this knife’s edge is grindstone\nfresh.” - Butcher Ding, the\nZhuangzi\n\n\n\n\n",
     "preview": {},
     "last_modified": "2022-10-19T21:59:09+01:00",
-    "input_file": "04-classification.knit.md"
+    "input_file": {}
   },
   {
     "path": "weeks/05-optimization/",
-    "title": "5 Optimization and overfitting",
-    "description": "Optimization is about finding the best model. With greater model complexity it becomes increasingly important to avoid overfitting: finding a model that is best for one specific dataset but does not generalize well to others.",
+    "title": "5 Optimization and model complexity",
+    "description": "Machine learning is broadly about estimating functions using optimization algorithms. We can think of these as searching through a space of functions to find one that minimizes a measure of inaccuracy or loss.",
     "author": [
       {
         "name": "Joshua Loftus",
@@ -81,9 +81,9 @@
     ],
     "date": "2021-10-07",
     "categories": [],
-    "contents": "\nOptimization\nOverfitting\nSlides, notebooks, exercises\nSlides for optimization video (PDF)\nSlides for overfitting video (PDF)\nNotebook for generalization (partially complete)\nNotebook for optimization (partially complete)\nNotebook for regularization (partially complete)\nExercises\n\n\n\n",
+    "contents": "\nMaterials\nLink\nType\nDescription\nhtml pdf\nSlides\nOptimization and model complexity\n[html] [Rmd]\nNotebook\nSomething\npdf html Rmd\nNotebook\nGradient descent and numeric\ndifferentiation\nTo be updated\nPreparation\nRequired reading\nISLR Chapter 6, Section\n1 only.\nISLR Chapter 7, Sections\n1-3 and 6.\nMLstory Chapter 5 on\noptimization, read the section on Stochastic gradient descent\nand stop after the SGD quick start guide.\nSupplemental reading\nMLstory Chapter 5 on\noptimization, the rest of the chapter (note that it contains some more\nadvanced material).\nWikipedia on Newton’s\nmethod and gradient\ndescent (good for pictures and animations)\nOptimization\nOverfitting\nSlides, notebooks, exercises\nSlides for optimization\nvideo (PDF)\nSlides for overfitting\nvideo (PDF)\nNotebook for\ngeneralization (partially\ncomplete)\nNotebook for optimization\n(partially\ncomplete)\nNotebook for\nregularization (partially\ncomplete)\nExercises\n\n\n\n",
     "preview": {},
-    "last_modified": "2022-09-18T15:01:05+01:00",
+    "last_modified": "2022-10-22T10:48:09+01:00",
     "input_file": {}
   },
   {

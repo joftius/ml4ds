@@ -23,6 +23,7 @@
 pre > code.sourceCode { white-space: pre; position: relative; }
 pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
 pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
 code.sourceCode > span { color: inherit; text-decoration: inherit; }
 div.sourceCode { margin: 1em 0; }
 pre.sourceCode { margin: 0; }
@@ -49,16 +50,17 @@ pre.numberSource code > span > a:first-child::before
   }
 pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
 div.sourceCode
-  {   }
+  { color: #00769e; background-color: #f1f3f5; }
 @media screen {
 pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
+code span { color: #00769e; } /* Normal */
 code span.al { color: #ad0000; } /* Alert */
 code span.an { color: #5e5e5e; } /* Annotation */
-code span.at { color: #20794d; } /* Attribute */
+code span.at { color: #657422; } /* Attribute */
 code span.bn { color: #ad0000; } /* BaseN */
 code span.bu { } /* BuiltIn */
-code span.cf { color: #007ba5; } /* ControlFlow */
+code span.cf { color: #00769e; } /* ControlFlow */
 code span.ch { color: #20794d; } /* Char */
 code span.cn { color: #8f5902; } /* Constant */
 code span.co { color: #5e5e5e; } /* Comment */
@@ -72,11 +74,11 @@ code span.fl { color: #ad0000; } /* Float */
 code span.fu { color: #4758ab; } /* Function */
 code span.im { } /* Import */
 code span.in { color: #5e5e5e; } /* Information */
-code span.kw { color: #007ba5; } /* Keyword */
+code span.kw { color: #00769e; } /* Keyword */
 code span.op { color: #5e5e5e; } /* Operator */
-code span.ot { color: #007ba5; } /* Other */
+code span.ot { color: #00769e; } /* Other */
 code span.pp { color: #ad0000; } /* Preprocessor */
-code span.sc { color: #20794d; } /* SpecialChar */
+code span.sc { color: #5e5e5e; } /* SpecialChar */
 code span.ss { color: #20794d; } /* SpecialString */
 code span.st { color: #20794d; } /* String */
 code span.va { color: #111111; } /* Variable */
@@ -84,10 +86,11 @@ code span.vs { color: #20794d; } /* VerbatimString */
 code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 </style>
 
-  <!--radix_placeholder_meta_tags-->
-<title>machine learning 4 data science: 5 Optimization and overfitting</title>
 
-<meta property="description" itemprop="description" content="Optimization is about finding the best model. With greater model complexity it becomes increasingly important to avoid overfitting: finding a model that is best for one specific dataset but does not generalize well to others."/>
+  <!--radix_placeholder_meta_tags-->
+<title>machine learning 4 data science: 5 Optimization and model complexity</title>
+
+<meta property="description" itemprop="description" content="Machine learning is broadly about estimating functions using optimization algorithms. We can think of these as searching through a space of functions to find one that minimizes a measure of inaccuracy or loss."/>
 
 <link rel="canonical" href="http://ml4ds.com/weeks/05-optimization/"/>
 <link rel="license" href="https://creativecommons.org/licenses/by/4.0/"/>
@@ -98,22 +101,22 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 <meta name="article:author" content="Joshua Loftus"/>
 
 <!--  https://developers.facebook.com/docs/sharing/webmasters#markup -->
-<meta property="og:title" content="machine learning 4 data science: 5 Optimization and overfitting"/>
+<meta property="og:title" content="machine learning 4 data science: 5 Optimization and model complexity"/>
 <meta property="og:type" content="article"/>
-<meta property="og:description" content="Optimization is about finding the best model. With greater model complexity it becomes increasingly important to avoid overfitting: finding a model that is best for one specific dataset but does not generalize well to others."/>
+<meta property="og:description" content="Machine learning is broadly about estimating functions using optimization algorithms. We can think of these as searching through a space of functions to find one that minimizes a measure of inaccuracy or loss."/>
 <meta property="og:url" content="http://ml4ds.com/weeks/05-optimization/"/>
 <meta property="og:locale" content="en_US"/>
 <meta property="og:site_name" content="machine learning 4 data science"/>
 
 <!--  https://dev.twitter.com/cards/types/summary -->
 <meta property="twitter:card" content="summary"/>
-<meta property="twitter:title" content="machine learning 4 data science: 5 Optimization and overfitting"/>
-<meta property="twitter:description" content="Optimization is about finding the best model. With greater model complexity it becomes increasingly important to avoid overfitting: finding a model that is best for one specific dataset but does not generalize well to others."/>
+<meta property="twitter:title" content="machine learning 4 data science: 5 Optimization and model complexity"/>
+<meta property="twitter:description" content="Machine learning is broadly about estimating functions using optimization algorithms. We can think of these as searching through a space of functions to find one that minimizes a measure of inaccuracy or loss."/>
 <meta property="twitter:url" content="http://ml4ds.com/weeks/05-optimization/"/>
 <meta property="twitter:site" content="@joftius"/>
 
 <!--  https://scholar.google.com/intl/en/scholar/inclusion.html#indexing -->
-<meta name="citation_title" content="machine learning 4 data science: 5 Optimization and overfitting"/>
+<meta name="citation_title" content="machine learning 4 data science: 5 Optimization and model complexity"/>
 <meta name="citation_fulltext_html_url" content="http://ml4ds.com/weeks/05-optimization/"/>
 <meta name="citation_fulltext_world_readable" content=""/>
 <meta name="citation_online_date" content="2021/10/07"/>
@@ -123,12 +126,12 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
   <!--radix_placeholder_rmarkdown_metadata-->
 
 <script type="text/json" id="radix-rmarkdown-metadata">
-{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["creative_commons","title","description","author","date","output","citation_url","canonical_url"]}},"value":[{"type":"character","attributes":{},"value":["CC BY"]},{"type":"character","attributes":{},"value":["5 Optimization and overfitting"]},{"type":"character","attributes":{},"value":["Optimization is about finding the best model. With greater model complexity it becomes increasingly important to avoid overfitting: finding a model that is best for one specific dataset but does not generalize well to others."]},{"type":"list","attributes":{},"value":[{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name"]}},"value":[{"type":"character","attributes":{},"value":["Joshua Loftus"]}]}]},{"type":"character","attributes":{},"value":["10-07-2021"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["distill::distill_article"]}},"value":[{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["self_contained"]}},"value":[{"type":"logical","attributes":{},"value":[false]}]}]},{"type":"character","attributes":{},"value":["http://ml4ds.com/weeks/05-optimization/"]},{"type":"character","attributes":{},"value":["http://ml4ds.com/weeks/05-optimization/"]}]}
+{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["creative_commons","title","description","author","date","output","citation_url","canonical_url"]}},"value":[{"type":"character","attributes":{},"value":["CC BY"]},{"type":"character","attributes":{},"value":["5 Optimization and model complexity"]},{"type":"character","attributes":{},"value":["Machine learning is broadly about estimating functions using optimization algorithms. We can think of these as searching through a space of functions to find one that minimizes a measure of inaccuracy or loss."]},{"type":"list","attributes":{},"value":[{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name"]}},"value":[{"type":"character","attributes":{},"value":["Joshua Loftus"]}]}]},{"type":"character","attributes":{},"value":["10-07-2021"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["distill::distill_article"]}},"value":[{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["self_contained"]}},"value":[{"type":"logical","attributes":{},"value":[false]}]}]},{"type":"character","attributes":{},"value":["http://ml4ds.com/weeks/05-optimization/"]},{"type":"character","attributes":{},"value":["http://ml4ds.com/weeks/05-optimization/"]}]}
 </script>
 <!--/radix_placeholder_rmarkdown_metadata-->
   
   <script type="text/json" id="radix-resource-manifest">
-  {"type":"character","attributes":{},"value":["05-optimization_files/anchor-4.2.2/anchor.min.js","05-optimization_files/bowser-1.9.3/bowser.min.js","05-optimization_files/distill-2.2.21/template.v2.js","05-optimization_files/header-attrs-2.6/header-attrs.js","05-optimization_files/header-attrs-2.7/header-attrs.js","05-optimization_files/jquery-1.11.3/jquery.min.js","05-optimization_files/popper-2.6.0/popper.min.js","05-optimization_files/tippy-6.2.7/tippy-bundle.umd.min.js","05-optimization_files/tippy-6.2.7/tippy-light-border.css","05-optimization_files/tippy-6.2.7/tippy.css","05-optimization_files/tippy-6.2.7/tippy.umd.min.js","05-optimization_files/webcomponents-2.0.0/webcomponents.js","exercises/set2.html","exercises/set2.Rmd","notebooks/generalization_incomplete.html","notebooks/generalization_incomplete.Rmd","notebooks/generalization_working.html","notebooks/generalization_working.Rmd","notebooks/generalization.html","notebooks/generalization.Rmd","notebooks/optimization_incomplete.html","notebooks/optimization_incomplete.Rmd","notebooks/optimization.html","notebooks/optimization.Rmd","notebooks/regularization_incomplete.html","notebooks/regularization_incomplete.Rmd","notebooks/regularization.html","notebooks/regularization.Rmd","slides/05-1-optimization_files/figure-html/unnamed-chunk-2-1.png","slides/05-1-optimization_files/figure-html/unnamed-chunk-3-1.png","slides/05-1-optimization_files/figure-html/unnamed-chunk-50-1.png","slides/05-1-optimization_files/figure-html/unnamed-chunk-51-1.png","slides/05-1-optimization.html","slides/05-1-optimization.Rmd","slides/05-2-overfitting_files/figure-html/unnamed-chunk-1-1.png","slides/05-2-overfitting_files/figure-html/unnamed-chunk-10-1.png","slides/05-2-overfitting_files/figure-html/unnamed-chunk-11-1.png","slides/05-2-overfitting_files/figure-html/unnamed-chunk-12-1.png","slides/05-2-overfitting_files/figure-html/unnamed-chunk-13-1.png","slides/05-2-overfitting_files/figure-html/unnamed-chunk-14-1.png","slides/05-2-overfitting_files/figure-html/unnamed-chunk-15-1.png","slides/05-2-overfitting_files/figure-html/unnamed-chunk-16-1.png","slides/05-2-overfitting_files/figure-html/unnamed-chunk-17-1.png","slides/05-2-overfitting_files/figure-html/unnamed-chunk-2-1.png","slides/05-2-overfitting_files/figure-html/unnamed-chunk-3-1.png","slides/05-2-overfitting_files/figure-html/unnamed-chunk-37-1.png","slides/05-2-overfitting_files/figure-html/unnamed-chunk-39-1.png","slides/05-2-overfitting_files/figure-html/unnamed-chunk-4-1.png","slides/05-2-overfitting_files/figure-html/unnamed-chunk-43-1.png","slides/05-2-overfitting_files/figure-html/unnamed-chunk-5-1.png","slides/05-2-overfitting_files/figure-html/unnamed-chunk-52-1.png","slides/05-2-overfitting_files/figure-html/unnamed-chunk-54-1.png","slides/05-2-overfitting_files/figure-html/unnamed-chunk-57-1.png","slides/05-2-overfitting_files/figure-html/unnamed-chunk-6-1.png","slides/05-2-overfitting_files/figure-html/unnamed-chunk-7-1.png","slides/05-2-overfitting_files/figure-html/unnamed-chunk-8-1.png","slides/05-2-overfitting_files/figure-html/unnamed-chunk-84-1.png","slides/05-2-overfitting_files/figure-html/unnamed-chunk-86-1.png","slides/05-2-overfitting_files/figure-html/unnamed-chunk-9-1.png","slides/05-2-overfitting.html","slides/05-2-overfitting.Rmd","slides/islr2.10.png","slides/islr2.11.png","slides/islr9.12.png","slides/libs/animate.css-xaringan/animate.slide_left.css","slides/libs/header-attrs/header-attrs.js","slides/libs/panelset/panelset.css","slides/libs/panelset/panelset.js","slides/libs/remark-css/default.css","slides/libs/tile-view/tile-view.css","slides/libs/tile-view/tile-view.js","slides/optimization.pdf","slides/overfitting.pdf","slides/xaringan-themer.css"]}
+  {"type":"character","attributes":{},"value":["05-optimization_files/anchor-4.2.2/anchor.min.js","05-optimization_files/bowser-1.9.3/bowser.min.js","05-optimization_files/distill-2.2.21/template.v2.js","05-optimization_files/header-attrs-2.16/header-attrs.js","05-optimization_files/header-attrs-2.6/header-attrs.js","05-optimization_files/header-attrs-2.7/header-attrs.js","05-optimization_files/jquery-1.11.3/jquery.min.js","05-optimization_files/jquery-3.6.0/jquery-3.6.0.js","05-optimization_files/jquery-3.6.0/jquery-3.6.0.min.js","05-optimization_files/jquery-3.6.0/jquery-3.6.0.min.map","05-optimization_files/popper-2.6.0/popper.min.js","05-optimization_files/tippy-6.2.7/tippy-bundle.umd.min.js","05-optimization_files/tippy-6.2.7/tippy-light-border.css","05-optimization_files/tippy-6.2.7/tippy.css","05-optimization_files/tippy-6.2.7/tippy.umd.min.js","05-optimization_files/webcomponents-2.0.0/webcomponents.js","exercises/set2.html","exercises/set2.Rmd","notebooks/generalization_incomplete.html","notebooks/generalization_incomplete.Rmd","notebooks/generalization_working.html","notebooks/generalization_working.Rmd","notebooks/generalization.html","notebooks/generalization.Rmd","notebooks/optimization_incomplete.html","notebooks/optimization_incomplete.Rmd","notebooks/optimization.html","notebooks/optimization.Rmd","notebooks/regularization_incomplete.html","notebooks/regularization_incomplete.Rmd","notebooks/regularization.html","notebooks/regularization.Rmd","slides/05-1-optimization_files/figure-html/unnamed-chunk-2-1.png","slides/05-1-optimization_files/figure-html/unnamed-chunk-3-1.png","slides/05-1-optimization_files/figure-html/unnamed-chunk-50-1.png","slides/05-1-optimization_files/figure-html/unnamed-chunk-51-1.png","slides/05-1-optimization.html","slides/05-1-optimization.Rmd","slides/05-2-overfitting_files/figure-html/unnamed-chunk-1-1.png","slides/05-2-overfitting_files/figure-html/unnamed-chunk-10-1.png","slides/05-2-overfitting_files/figure-html/unnamed-chunk-11-1.png","slides/05-2-overfitting_files/figure-html/unnamed-chunk-12-1.png","slides/05-2-overfitting_files/figure-html/unnamed-chunk-13-1.png","slides/05-2-overfitting_files/figure-html/unnamed-chunk-14-1.png","slides/05-2-overfitting_files/figure-html/unnamed-chunk-15-1.png","slides/05-2-overfitting_files/figure-html/unnamed-chunk-16-1.png","slides/05-2-overfitting_files/figure-html/unnamed-chunk-17-1.png","slides/05-2-overfitting_files/figure-html/unnamed-chunk-2-1.png","slides/05-2-overfitting_files/figure-html/unnamed-chunk-3-1.png","slides/05-2-overfitting_files/figure-html/unnamed-chunk-37-1.png","slides/05-2-overfitting_files/figure-html/unnamed-chunk-39-1.png","slides/05-2-overfitting_files/figure-html/unnamed-chunk-4-1.png","slides/05-2-overfitting_files/figure-html/unnamed-chunk-43-1.png","slides/05-2-overfitting_files/figure-html/unnamed-chunk-5-1.png","slides/05-2-overfitting_files/figure-html/unnamed-chunk-52-1.png","slides/05-2-overfitting_files/figure-html/unnamed-chunk-54-1.png","slides/05-2-overfitting_files/figure-html/unnamed-chunk-57-1.png","slides/05-2-overfitting_files/figure-html/unnamed-chunk-6-1.png","slides/05-2-overfitting_files/figure-html/unnamed-chunk-7-1.png","slides/05-2-overfitting_files/figure-html/unnamed-chunk-8-1.png","slides/05-2-overfitting_files/figure-html/unnamed-chunk-84-1.png","slides/05-2-overfitting_files/figure-html/unnamed-chunk-86-1.png","slides/05-2-overfitting_files/figure-html/unnamed-chunk-9-1.png","slides/05-2-overfitting.html","slides/05-2-overfitting.Rmd","slides/islr2.10.png","slides/islr2.11.png","slides/islr9.12.png","slides/libs/animate.css-xaringan/animate.slide_left.css","slides/libs/header-attrs/header-attrs.js","slides/libs/panelset/panelset.css","slides/libs/panelset/panelset.js","slides/libs/remark-css/default.css","slides/libs/tile-view/tile-view.css","slides/libs/tile-view/tile-view.js","slides/optimization.pdf","slides/overfitting.pdf","slides/xaringan-themer.css"]}
   </script>
   <!--radix_placeholder_navigation_in_header-->
 <meta name="distill:offset" content="../.."/>
@@ -2183,8 +2186,8 @@ d-appendix d-footnote-list a.footnote-backlink {
   color: var(--hover-color, white);
 }</style>
 <!--/radix_placeholder_distill-->
-  <script src="../../site_libs/header-attrs-2.7/header-attrs.js"></script>
-  <script src="../../site_libs/jquery-1.11.3/jquery.min.js"></script>
+  <script src="../../site_libs/header-attrs-2.16/header-attrs.js"></script>
+  <script src="../../site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
   <script src="../../site_libs/popper-2.6.0/popper.min.js"></script>
   <link href="../../site_libs/tippy-6.2.7/tippy.css" rel="stylesheet" />
   <link href="../../site_libs/tippy-6.2.7/tippy-light-border.css" rel="stylesheet" />
@@ -2216,7 +2219,7 @@ cookieconsent.run({
 <!--radix_placeholder_front_matter-->
 
 <script id="distill-front-matter" type="text/json">
-{"title":"5 Optimization and overfitting","description":"Optimization is about finding the best model. With greater model complexity it becomes increasingly important to avoid overfitting: finding a model that is best for one specific dataset but does not generalize well to others.","authors":[{"author":"Joshua Loftus","authorURL":"#","affiliation":"&nbsp;","affiliationURL":"#","orcidID":""}],"publishedDate":"2021-10-07T00:00:00.000+01:00","citationText":"Loftus, 2021"}
+{"title":"5 Optimization and model complexity","description":"Machine learning is broadly about estimating functions using optimization algorithms. We can think of these as searching through a space of functions to find one that minimizes a measure of inaccuracy or loss.","authors":[{"author":"Joshua Loftus","authorURL":"#","affiliation":"&nbsp;","affiliationURL":"#","orcidID":""}],"publishedDate":"2021-10-07T00:00:00.000+01:00","citationText":"Loftus, 2021"}
 </script>
 
 <!--/radix_placeholder_front_matter-->
@@ -2256,10 +2259,13 @@ References
 <!--/radix_placeholder_site_before_body-->
 
 <div class="d-title">
-<h1>5 Optimization and overfitting</h1>
+<h1>5 Optimization and model complexity</h1>
 <!--radix_placeholder_categories-->
 <!--/radix_placeholder_categories-->
-<p><p>Optimization is about finding the best model. With greater model complexity it becomes increasingly important to avoid overfitting: finding a model that is best for one specific dataset but does not generalize well to others.</p></p>
+<p><p>Machine learning is broadly about estimating functions using
+optimization algorithms. We can think of these as searching through a
+space of functions to find one that minimizes a measure of inaccuracy or
+loss.</p></p>
 </div>
 
 <div class="d-byline">
@@ -2269,16 +2275,88 @@ References
 </div>
 
 <div class="d-article">
+<h2 id="materials">Materials</h2>
+<table>
+<colgroup>
+<col style="width: 16%" />
+<col style="width: 16%" />
+<col style="width: 67%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: center;">Link</th>
+<th style="text-align: center;">Type</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;"><a
+href="slides/05-1-optimization.html">html</a> <a
+href="slides/05-1-optimization_handout.pdf">pdf</a></td>
+<td style="text-align: center;">Slides</td>
+<td style="text-align: left;">Optimization and model complexity</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">[html] [Rmd]</td>
+<td style="text-align: center;">Notebook</td>
+<td style="text-align: left;">Something</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;"><a
+href="notebooks/gradient_descent.pdf">pdf</a> <a
+href="notebooks/gradient_descent.html">html</a> <a
+href="notebooks/gradient_descent.Rmd">Rmd</a></td>
+<td style="text-align: center;">Notebook</td>
+<td style="text-align: left;">Gradient descent and numeric
+differentiation</td>
+</tr>
+</tbody>
+</table>
+<p><strong>To be updated</strong></p>
+<h2 id="preparation">Preparation</h2>
+<h3 id="required-reading">Required reading</h3>
+<ul>
+<li><a href="https://www.statlearning.com/">ISLR</a> Chapter 6, Section
+1 only.</li>
+<li><a href="https://www.statlearning.com/">ISLR</a> Chapter 7, Sections
+1-3 and 6.</li>
+<li><a href="https://mlstory.org/">MLstory</a> Chapter 5 on
+optimization, read the section on <em>Stochastic gradient descent</em>
+and stop after the <em>SGD quick start guide</em>.</li>
+</ul>
+<h3 id="supplemental-reading">Supplemental reading</h3>
+<ul>
+<li><a href="https://mlstory.org/">MLstory</a> Chapter 5 on
+optimization, the rest of the chapter (note that it contains some more
+advanced material).</li>
+<li>Wikipedia on <a
+href="https://en.wikipedia.org/wiki/Newton%27s_method_in_optimization">Newton’s
+method</a> and <a
+href="https://en.wikipedia.org/wiki/Gradient_descent">gradient
+descent</a> (good for pictures and animations)</li>
+</ul>
 <h2 id="optimization">Optimization</h2>
 <h2 id="overfitting">Overfitting</h2>
 <h2 id="slides-notebooks-exercises">Slides, notebooks, exercises</h2>
-<p><a href="slides/05-1-optimization.html">Slides</a> for optimization video (<a href="slides/optimization.pdf">PDF</a>)</p>
-<p><a href="slides/05-2-overfitting.html">Slides</a> for overfitting video (<a href="slides/overfitting.pdf">PDF</a>)</p>
-<p><a href="notebooks/generalization.Rmd">Notebook</a> for generalization (<a href="notebooks/generalization_incomplete.html">partially complete</a>)</p>
-<p><a href="notebooks/optimization.Rmd">Notebook</a> for optimization (<a href="notebooks/optimization_incomplete.html">partially complete</a>)</p>
-<p><a href="notebooks/regularization.Rmd">Notebook</a> for regularization (<a href="notebooks/regularization_incomplete.html">partially complete</a>)</p>
+<p><a href="slides/05-1-optimization.html">Slides</a> for optimization
+video (<a href="slides/optimization.pdf">PDF</a>)</p>
+<p><a href="slides/05-2-overfitting.html">Slides</a> for overfitting
+video (<a href="slides/overfitting.pdf">PDF</a>)</p>
+<p><a href="notebooks/generalization.Rmd">Notebook</a> for
+generalization (<a
+href="notebooks/generalization_incomplete.html">partially
+complete</a>)</p>
+<p><a href="notebooks/optimization.Rmd">Notebook</a> for optimization
+(<a href="notebooks/optimization_incomplete.html">partially
+complete</a>)</p>
+<p><a href="notebooks/regularization.Rmd">Notebook</a> for
+regularization (<a
+href="notebooks/regularization_incomplete.html">partially
+complete</a>)</p>
 <p><a href="exercises/set2.html">Exercises</a></p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
 <!--radix_placeholder_article_footer-->
 <!--/radix_placeholder_article_footer-->
 </div>
@@ -2295,11 +2373,11 @@ References
   <p>Text and figures are licensed under Creative Commons Attribution <a rel="license" href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>. The figures that have been reused from other sources don't fall under this license and can be recognized by a note in their caption: "Figure from ...".</p>
   <h3 id="citation">Citation</h3>
   <p>For attribution, please cite this work as</p>
-  <pre class="citation-appendix short">Loftus (2021, Oct. 7). machine learning 4 data science: 5 Optimization and overfitting. Retrieved from http://ml4ds.com/weeks/05-optimization/</pre>
+  <pre class="citation-appendix short">Loftus (2021, Oct. 7). machine learning 4 data science: 5 Optimization and model complexity. Retrieved from http://ml4ds.com/weeks/05-optimization/</pre>
   <p>BibTeX citation</p>
   <pre class="citation-appendix long">@misc{loftus20215,
   author = {Loftus, Joshua},
-  title = {machine learning 4 data science: 5 Optimization and overfitting},
+  title = {machine learning 4 data science: 5 Optimization and model complexity},
   url = {http://ml4ds.com/weeks/05-optimization/},
   year = {2021}
 }</pre>

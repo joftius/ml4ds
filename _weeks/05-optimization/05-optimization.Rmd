@@ -1,7 +1,7 @@
 ---
-title: "5 Optimization and overfitting"
+title: "5 Optimization and model complexity"
 description: |
-  Optimization is about finding the best model. With greater model complexity it becomes increasingly important to avoid overfitting: finding a model that is best for one specific dataset but does not generalize well to others.
+  Machine learning is broadly about estimating functions using optimization algorithms. We can think of these as searching through a space of functions to find one that minimizes a measure of inaccuracy or loss.
 author:
   - name: Joshua Loftus
 date: 10-07-2021
@@ -18,6 +18,29 @@ library(knitr)
 library(gapminder)
 theme_set(theme_minimal(base_size = 22))
 ```
+
+## Materials
+
+| Link | Type | Description             |
+|:----:|:----:|:------------------------|
+| [html](slides/05-1-optimization.html)  [pdf](slides/05-1-optimization_handout.pdf) | Slides | Optimization and model complexity
+| [html] [Rmd] | Notebook | Something |
+| [pdf](notebooks/gradient_descent.pdf) [html](notebooks/gradient_descent.html) [Rmd](notebooks/gradient_descent.Rmd) | Notebook | Gradient descent and numeric differentiation |
+
+**To be updated**
+
+## Preparation
+
+### Required reading
+
+- [ISLR](https://www.statlearning.com/) Chapter 6, Section 1 only.
+- [ISLR](https://www.statlearning.com/) Chapter 7, Sections 1-3 and 6.
+- [MLstory](https://mlstory.org/) Chapter 5 on optimization, read the section on *Stochastic gradient descent* and stop after the *SGD quick start guide*.
+
+### Supplemental reading
+
+- [MLstory](https://mlstory.org/) Chapter 5 on optimization, the rest of the chapter (note that it contains some more advanced material).
+- Wikipedia on [Newton's method](https://en.wikipedia.org/wiki/Newton%27s_method_in_optimization) and [gradient descent](https://en.wikipedia.org/wiki/Gradient_descent) (good for pictures and animations)
 
 ## Optimization
 
