@@ -27,6 +27,7 @@ theme_set(theme_minimal(base_size = 22))
 | [html](slides/04-1-classification.html)  [pdf](slides/04-1-classification_handout.pdf) | Slides | Classification and logistic regression
 | [html] [Rmd](notebooks/classification.Rmd) | Notebook | Classification, class balance, ROC curves |
 | [pdf](notebooks/gradient_descent.pdf) [html](notebooks/gradient_descent.html) [Rmd](notebooks/gradient_descent.Rmd) | Notebook | Gradient descent and numeric differentiation |
+| [html](exercises/pset1.html) | Exercises | First exercise set |
 
 **To be updated**
 
