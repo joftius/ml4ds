@@ -6,8 +6,8 @@ author: "Joshua Loftus"
 #date: "`r Sys.Date()`"
 output:
   xaringan::moon_reader:
-    css: ["default", "xaringan-themer.css", "../../../theme.css"]
-#    seal: false    
+    css: ["default", "xaringan-themer.css"]
+    seal: true    
     lib_dir: libs
     nature:
       titleSlideClass: ["top", "left"]
@@ -44,9 +44,6 @@ style_duo_accent(
 ```{r xaringanextra, include=FALSE, warning=FALSE}
 library(xaringanExtra)
 xaringanExtra::use_animate_all("slide_left")
-xaringanExtra::use_tile_view()
-xaringanExtra::use_panelset()
-xaringanExtra::style_panelset_tabs(font_family = "inherit")
 ```
 
 ```{r tidyverse, include=FALSE, warning=FALSE}

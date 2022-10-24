@@ -25,7 +25,6 @@ theme_set(theme_minimal(base_size = 22))
 |:----:|:----:|:------------------------|
 | [html](slides/05-1-optimization.html)  [pdf](slides/05-1-optimization_handout.pdf) | Slides | Optimization and model complexity
 | [html] [Rmd] | Notebook | Something |
-| [pdf](notebooks/gradient_descent.pdf) [html](notebooks/gradient_descent.html) [Rmd](notebooks/gradient_descent.Rmd) | Notebook | Gradient descent and numeric differentiation |
 
 **To be updated**
 

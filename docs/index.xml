@@ -48,7 +48,7 @@
       <link>http://ml4ds.com/weeks/05-optimization</link>
       <description>Machine learning is broadly about estimating functions using optimization algorithms. We can think of these as searching through a space of functions to find one that minimizes a measure of inaccuracy or loss.</description>
       <guid>http://ml4ds.com/weeks/05-optimization</guid>
-      <pubDate>Thu, 07 Oct 2021 00:00:00 +0000</pubDate>
+      <pubDate>Wed, 06 Oct 2021 00:00:00 +0000</pubDate>
     </item>
     <item>
       <title>6 Regularization and validation</title>
