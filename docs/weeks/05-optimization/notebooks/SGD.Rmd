@@ -1,0 +1,196 @@
+---
+title: "Stochastic gradient descent"
+author: "LSE ST310"
+output: html_document
+---
+
+```{r setup, message = FALSE, echo=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+theme_set(theme_minimal(base_size = 16))
+```
+
+### Simulate high-dimensional data
+
+Generate data from a high-dimensional model. After your implementation is finished, you can come back here to experiment and see how the algorithm's performance depends on these values. (One interesting experiment: reduce `lambda` in `rpois` to have a sparser `beta` and see how the results change).
+
+```{r}
+set.seed(1) # comment/uncomment/change this
+n <- 100
+p <- 400
+X <- matrix(rnorm(n*p), nrow = n)
+beta <- rpois(p, lambda = 1.2)
+SGD_starting_beta <- rnorm(p) # generate once
+sigma <- 2
+y <- X %*% beta + rnorm(n, sd = sigma)
+# sparsity level
+sum(beta != 0)
+```
+
+**Question**: Can we fit OLS to estimate beta? Why or why not?
+
+### Implement stochastic gradient descent
+
+#### Helper functions
+
+```{r}
+# Loss function
+least_squares_loss <- function(x, y, beta) {
+  residuals <- y - x %*% beta
+  # TODO
+}
+```
+
+
+```{r}
+# Gradient of the loss function
+least_squares_gradient <- function(x, y, beta) {
+  # TODO
+}
+```
+
+#### Mini-batch example
+
+Computing gradient on a subset of the sample:
+
+```{r}
+batch_size <- 10
+batch_indices <- sample(1:nrow(X), batch_size)
+X_batch <- X[batch_indices, , drop = FALSE]
+y_batch <- y[batch_indices]
+gradient_batch <- least_squares_gradient(X_batch, y_batch, SGD_starting_beta)
+dim(X_batch)
+length(y_batch)
+dim(gradient_batch)
+```
+
+#### SGD: main loop
+
+Modify the code below to complete your implementation.
+
+In this implementation, normalize the gradient to make it a unit vector before taking a step. Recall that if `v` is vector, then `u <- v / sqrt(sum(v^2))` is a unit vector in the direction of `v`. (Optional: for numerical stability you could also add a small positive number in the denominator like `1e-8`).
+
+```{r}
+epochs <- 40 # decrease for early stopping?
+batch_size <- 8 # for batch SGD
+gamma <- 0.9
+beta_hat <- SGD_starting_beta # generated once above
+num_batches <- ceiling(n/batch_size)
+steps <- epochs * num_batches
+SGD_path <- data.frame(step = 1:steps,
+                       epoch = numeric(steps),
+                       gamma = numeric(steps),
+                       loss = numeric(steps),
+                       MSE = numeric(steps),
+                       beta_hat_norm = numeric(steps),
+                       gradient_norm = numeric(steps))
+start_time <- Sys.time()
+step <- 1
+for (epoch in 1:epochs) {
+  # Pass over sample in a random order each time
+  shuffled_indices <- sample(1:n, n, replace = TRUE)
+  
+  for (batch in 1:num_batches) {
+    batch_start <- 1 + batch_size * (batch - 1)
+    batch_end <- min(batch_size * batch, nrow(X))
+    batch_indices <- shuffled_indices[batch_start:batch_end]
+    # Mini-batch
+    # TODO copy/paste from example above
+    
+    # Update beta_hat
+    
+    # TODO beta_hat <- beta_hat - gamma^epoch * ...
+    LS_loss <- least_squares_loss(X, y, beta_hat)
+
+    # Store algorithm path information
+    SGD_path[step, ] <- c(step,
+                          epoch,
+                          gamma^epoch,
+                          LS_loss,
+                          mean((beta_hat - beta)^2),
+                          sqrt(sum(beta_hat^2)),
+                          gradient_norm)
+    step <- step + 1
+  }
+}
+
+print(Sys.time() - start_time)
+```
+
+## Plots by **epoch**
+
+(Averaged over all batches in that epoch)
+
+Note: the `loss` is plotted on a logarithmic scale so that large initial changes don't obscure later variation.
+
+```{r echo = FALSE, fig.align='center'}
+SGD_epoch <- SGD_path |>
+  select(-step) |>
+  group_by(epoch) |>
+  summarize(across(where(is.numeric), mean))
+SGD_epoch |>
+  ggplot(aes(epoch, gamma)) + geom_point() +
+  ylab("gamma^epoch")
+SGD_epoch |>
+  ggplot(aes(epoch, loss)) + geom_point() +
+  ylab("Loss") + scale_y_log10()
+SGD_epoch |>
+  ggplot(aes(epoch, MSE)) + geom_point() +
+  ylab("MSE(beta_hat)")
+SGD_epoch |>
+  ggplot(aes(epoch, beta_hat_norm)) + geom_point() +
+  ylab("norm(beta_hat)")
+SGD_epoch |>
+  ggplot(aes(epoch, gradient_norm)) + geom_point() +
+  ylab("norm(gradient)")
+```
+
+**Question**: Does the MSE of beta_hat level off? After roughly how many epochs? Is this happening because `gamma` decreased too fast?
+
+## Plots by **mini-batch**
+
+```{r echo = FALSE, fig.align='center'}
+SGD_path |>
+  ggplot(aes(step, gamma)) + geom_point() +
+  ylab("gamma^epoch")
+SGD_path |>
+  ggplot(aes(step, loss)) + geom_point() +
+  ylab("Loss") + scale_y_log10()
+SGD_path |>
+  ggplot(aes(step, MSE)) + geom_point() +
+  ylab("MSE(beta_hat)")
+SGD_path |>
+  ggplot(aes(step, beta_hat_norm)) + geom_point() +
+  ylab("norm(beta_hat)")
+SGD_path |>
+  ggplot(aes(step, gradient_norm)) + geom_point() +
+  ylab("norm(gradient)")
+```
+
+## Squared errors
+
+Has the algorithm pulled more of the squared errors closer to zero compared to the (random) initial starting point?
+
+```{r echo=FALSE}
+data.frame(
+  coordinate = c(1:p, 1:p),
+  estimate = c(rep("initial", p), rep("final", p)),
+  error = c(beta - SGD_starting_beta, beta - beta_hat)
+) |>
+  ggplot(aes(error^2, fill = estimate)) +
+  geom_density(alpha = .7) +
+  scale_fill_viridis_d()
+```
+
+Compute the (Euclidean) distances between the following points:
+
+```{r}
+# From algorithm starting point to end point
+sqrt(sum((beta_hat - SGD_starting_beta)^2))
+# From starting point to true beta
+sqrt(sum((beta - SGD_starting_beta)^2))
+# From end point to true beta
+sqrt(sum((beta - beta_hat)^2))
+```
+
+**Question**: Does SGD do better than a random guess (the starting point) at estimating the true coefficients?

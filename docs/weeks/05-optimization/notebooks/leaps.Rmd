@@ -1,0 +1,75 @@
+---
+title: "Variable selection"
+author: "LSE ST310"
+output: html_document
+---
+
+```{r setup, message = FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(broom)
+# install.packages("leaps") # if necessary
+library(leaps)
+library(ISLR)
+```
+
+## ISLR Lab 6.5.1
+
+**Instructions**: First complete Section 6.5.1 from ISLR in the space saved for it below. This should be relatively quick since you can just copy/paste. 
+
+#### Save original outcome
+
+```{r}
+# Don't change this
+Hitters <- na.omit(Hitters)
+original_Salary <- Hitters$Salary
+head(Hitters)
+```
+
+#### Simulated outcome
+
+```{r}
+X <- Hitters |> 
+  select(-Salary) |>
+  select(where(is.numeric)) |> 
+  as.matrix()
+true_beta <- rep(0, ncol(X))
+# Set some nonzero coefficients
+true_beta[c(2:5, 10)] <- c(2, 1, -1, 4, 1)
+true_beta
+```
+
+```{r}
+set.seed(1) # change this to any other number
+sigma <- 3 # change noise level
+Hitters$Salary <- 100 + # intercept term
+  X %*% true_beta + sigma * rnorm(nrow(X))
+```
+
+#### Step 1: Analyze the original `Hitters` data
+
+```{r temporary}
+# remove this after finishing 6.5.1
+Hitters$Salary <- original_Salary
+```
+
+Insert code chunks and complete the Lab 6.5.1 here
+
+```{r}
+# Begin 6.5.1 
+# regfit.full <- regsubsets(Salary ∼ ., Hitters) # etc
+```
+
+
+#### Step 2: Interpret the results
+
+**Question**: Should we expect to get the same models selected by best subsets, forward selection, and backward selection? Why or why not?
+
+**Question**: Change the `set.seed(1)` in the part about using a validation set approach to use a different number. Does anyone get different "best" models than the ones in the book?
+
+#### Step 3: Repeat with simulated `Salary` variable
+
+1. Now go back and remove the code chunk called `temporary`.
+2. Change the data generating process by choosing which predictor variables have nonzero coefficients and changing the values of the coefficients.
+3. Re-run the variable selection code and see if any of the methods choose the right variables.
+4. Repeat steps 2 and 3, trying several different values for `set.seed()`, `true_beta`, and `sigma`. Try to guess how the results will change and then check your guesses against the actual output. Take note of anything that seems sufficiently interesting.
