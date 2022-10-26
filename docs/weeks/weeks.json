@@ -81,9 +81,9 @@
     ],
     "date": "2021-10-07",
     "categories": [],
-    "contents": "\nMaterials\nLink\nType\nDescription\nhtml pdf\nSlides\nOptimization and model complexity\n[html] [Rmd]\nNotebook\nSomething\nTo be updated\nPreparation\nRequired reading\nISLR Chapter 6, Section\n1 only.\nISLR Chapter 7, Sections\n1-3 and 6.\nMLstory Chapter 5 on\noptimization, read the section on Stochastic gradient descent\nand stop after the SGD quick start guide.\nSupplemental reading\nMLstory Chapter 5 on\noptimization, the rest of the chapter (note that it contains some more\nadvanced material).\nWikipedia on Newton’s\nmethod and gradient\ndescent (good for pictures and animations)\nOptimization\nOverfitting\nSlides, notebooks, exercises\nSlides for optimization\nvideo (PDF)\nSlides for overfitting\nvideo (PDF)\nNotebook for\ngeneralization (partially\ncomplete)\nNotebook for optimization\n(partially\ncomplete)\nNotebook for\nregularization (partially\ncomplete)\nExercises\n\n\n\n",
+    "contents": "\nMaterials\nLink\nType\nDescription\nhtml pdf\nSlides\nOptimization and model complexity\nhtml\nNotebook\nGradient descent\nTo be updated\nPreparation\nRequired reading\nISLR Chapter 6, Section\n1 only.\nISLR Chapter 7, Sections\n1-3 and 6.\nMLstory Chapter 5 on\noptimization, read the section on Stochastic gradient descent\nand stop after the SGD quick start guide.\nSupplemental reading\nMLstory Chapter 5 on\noptimization, the rest of the chapter (note that it contains some more\nadvanced material).\nWikipedia on Newton’s\nmethod and gradient\ndescent (good for pictures and animations)\nOptimization\nOverfitting\nSlides, notebooks, exercises\nSlides for optimization\nvideo (PDF)\nSlides for overfitting\nvideo (PDF)\nNotebook for\ngeneralization (partially\ncomplete)\nNotebook for optimization\n(partially\ncomplete)\nNotebook for\nregularization (partially\ncomplete)\nExercises\n\n\n\n",
     "preview": {},
-    "last_modified": "2022-10-24T12:30:59+01:00",
+    "last_modified": "2022-10-26T10:40:02+01:00",
     "input_file": "05-optimization.knit.md"
   },
   {
