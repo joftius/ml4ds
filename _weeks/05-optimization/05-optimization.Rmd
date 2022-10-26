@@ -26,7 +26,7 @@ theme_set(theme_minimal(base_size = 22))
 | [html](slides/05-1-optimization.html)  [pdf](slides/05-1-optimization_handout.pdf) | Slides | Optimization and model complexity
 | [html](../04-classification/notebooks/gradient_descent.html) | Notebook | Gradient descent |
 
-**To be updated**
+*To be updated*
 
 ## Preparation
 

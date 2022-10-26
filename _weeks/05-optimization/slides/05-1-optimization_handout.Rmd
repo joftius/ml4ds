@@ -7,7 +7,7 @@ author: "Joshua Loftus"
 output:
   xaringan::moon_reader:
     css: ["default", "xaringan-themer.css"]
-    seal: true    
+    seal: false    
     lib_dir: libs
     nature:
       titleSlideClass: ["top", "left"]
@@ -41,7 +41,6 @@ style_duo_accent(
 
 ```{r xaringanextra, include=FALSE, warning=FALSE}
 library(xaringanExtra)
-xaringanExtra::use_animate_all("slide_left")
 ```
 
 ```{r tidyverse, include=FALSE, warning=FALSE}
@@ -119,16 +118,6 @@ $$
 
 $$\frac{1}{n} \sum_{i=1}^n [1 - y_i(\mathbf x_i^T \beta - \beta_0)]_+$$
 
-Next slide: ISLR Figure 9.2 plot of $L(y_i \hat y_i) = [1-y_i\hat y_i]_+$
-
----
-
-### Example: SVM
-
-```{r, echo=FALSE, out.width="80%"}
-knitr::include_graphics("islr9.12.png")
-```
-
 ---
 
 ### ML design choices
@@ -147,7 +136,7 @@ We'll focus more now on optimisation questions:
   - Scaling, **early stopping**
 
 ---
-class: inverse, center, middle
+class: center, middle
 
 
 ## Optimization strategies
@@ -157,7 +146,6 @@ class: inverse, center, middle
 ---
 
 ### Best subset selection
-
 
 - Try all $2^p$ subsets of predictor variables
 
@@ -236,14 +224,13 @@ Based on sparsity assumption
 Can think of it as a *less greedy* version of forward stepwise
 
 ---
-class: inverse, center, middle
+class: center, middle
 
 
 ## Optimization strategies
 
 ### Choosing tuning parameters
 
-![](https://upload.wikimedia.org/wikipedia/en/thumb/0/06/Spinal_Tap_-_Up_to_Eleven.jpg/330px-Spinal_Tap_-_Up_to_Eleven.jpg)
 
 e.g. number of predictors, flexibility for non-linear methods
 
@@ -283,7 +270,7 @@ e.g. For the `span` or fraction $s$ in local regression, try $s \in \{ 0.1, 0.25
 
 
 ---
-class: inverse, center, middle
+class: center, middle
 
 ## Optimization strategies
 
@@ -314,13 +301,12 @@ Cycle through coordinates until some convergence criteria is satisfied
 Can combine with any strategy for univariate optimization -- e.g. one-dimensional Newton's method -- treating other parameters as constants
 
 ---
-class: inverse, center, middle
+class: center, middle
 
 ## Optimization strategies
 
 ### Scale up *more*! Bigger data! 
 
-![](https://upload.wikimedia.org/wikipedia/en/9/9f/Over_9000%21.png)
 ---
 
 ### Stochastic/random descent
@@ -341,7 +327,7 @@ Compute update using one randomly sampled observation
 or a randomly sampled subset ("mini-batch SGD")
 
 ---
-class: inverse, center, middle
+class: center, middle
 
 ## Optimization strategies
 
@@ -396,7 +382,6 @@ Now if we're at a non-differentiable point we just need to compute any subgradie
 This is [early stopping](https://en.wikipedia.org/wiki/Early_stopping) -- we'll come back to it later
 
 ---
-class: inverse
 
 ## Optimization theory
 
@@ -417,7 +402,7 @@ class: inverse
 Deep learning: to hell with convexity `r emo::ji("cowboy")` "it just works"
 
 ---
-class: inverse, center, middle
+class: center, middle
 
 ### Conclusion: optimization in ML is a big topic
 

@@ -158,7 +158,6 @@ class: inverse, center, middle
 
 ### Best subset selection
 
-![](https://lh3.googleusercontent.com/proxy/GvHYARxXlkjglIBjtStHONXCcuMCDvrxRmVJs4wVtrPRjbwC_5yt3GZyQH3vARN-mCZ-0s9Tnw1Qzsx8mbUEL5bH5FinTeBFTd6CfIrXKnTsTX9CKreGTMXLaPQM189xct_y0QyIgHTLmXrwFPlRtI8ojtErPK8e3R4)
 
 - Try all $2^p$ subsets of predictor variables
 
