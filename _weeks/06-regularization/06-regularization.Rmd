@@ -25,6 +25,7 @@ theme_set(theme_minimal(base_size = 22))
 | Link | Type | Description             |
 |:----:|:----:|:------------------------|
 | [html](slides/06-1-overfitting.html)  [pdf](slides/06-1-overfitting_handout.pdf) | Slides | Overfitting and validation
+| [html] [Rmd](notebooks/validation.Rmd) | Notebook | Validation experiments |
 
 *To be updated*
 

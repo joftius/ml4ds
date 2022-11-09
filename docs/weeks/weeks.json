@@ -98,9 +98,9 @@
     ],
     "date": "2021-10-06",
     "categories": [],
-    "contents": "\nMaterials\nLink\nType\nDescription\nhtml pdf\nSlides\nOverfitting and validation\nTo be updated\nPreparation\nRequired reading\nISLR Chapter 5 on\nresampling methods.\nISLR Chapter 6, section\n6.2.\nSupplemental reading\nESL Chapter\n7, sections 1-6 and 10.\nRegularization\nValidation\nSlides, notebooks, exercises\nSlides for\nregularization video (PDF)\nSlides for lasso video (PDF)\nNotebook for validation\nNotebook for lasso\n\n\n\n",
+    "contents": "\nMaterials\nLink\nType\nDescription\nhtml pdf\nSlides\nOverfitting and validation\n[html] Rmd\nNotebook\nValidation experiments\nTo be updated\nPreparation\nRequired reading\nISLR Chapter 5 on\nresampling methods.\nISLR Chapter 6, section\n6.2.\nSupplemental reading\nESL Chapter\n7, sections 1-6 and 10.\nRegularization\nValidation\nSlides, notebooks, exercises\nSlides for\nregularization video (PDF)\nSlides for lasso video (PDF)\nNotebook for validation\nNotebook for lasso\n\n\n\n",
     "preview": {},
-    "last_modified": "2022-11-09T10:46:21+00:00",
+    "last_modified": "2022-11-09T22:37:25+00:00",
     "input_file": "06-regularization.knit.md"
   },
   {
