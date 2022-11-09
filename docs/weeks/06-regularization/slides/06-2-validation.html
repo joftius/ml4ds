@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Machine learning</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Joshua Loftus" />
+    <script src="libs/header-attrs/header-attrs.js"></script>
+    <link href="libs/remark-css/default.css" rel="stylesheet" />
+    <link href="libs/animate.css-xaringan/animate.slide_left.css" rel="stylesheet" />
+    <link rel="stylesheet" href="xaringan-themer.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: top, left, title-slide
+
+.title[
+# Machine learning
+]
+.subtitle[
+## Validation
+]
+.author[
+### Joshua Loftus
+]
+
+---
+
+
+class: inverse, center, middle
+
+
+
+
+
+
+
+
+
+&lt;style type="text/css"&gt;
+.remark-slide-content {
+    font-size: 1.2rem;
+    padding: 1em 4em 1em 4em;
+}
+&lt;/style&gt;
+
+# Validation
+
+## Estimate test error directly
+
+### using "**validation data**" / "**test data**"
+
+#### i.e. a new set of data, "unseen" by `\(\hat f\)`
+
+Indep. samples `\(D = \{  (\mathbf x_i, y_i) \}_{i=1}^n\)` and `\(D' = \{ (\mathbf x_i', y_i') \}_{i=1}^{n'}\)`
+
+Estimate `\(\hat f\)` on `\(D\)`, evaluate `\(\hat f\)` on `\(D'\)`
+
+---
+
+## Motives
+
+- Debiasing risk estimate. Since `\(\hat f\)` does not depend on `\(D'\)`, it is not **overfit to the variability** in `\(D'\)`
+
+- If `\(\hat f\)` is overfit to `\(D\)` then its test error on `\(D'\)` will be large (complexity too high, variability too high)
+
+- Actual practice: analogous to "deploying an ML model in production"
+
+- Philosophy of science: use novelty, actual prediction (not accommodation)
+
+- Tukey: [Exploratory Data Analysis](https://en.wikipedia.org/wiki/Exploratory_data_analysis) vs Confirmatory
+
+- Use test error to choose **model complexity** / **amount of regularization**
+
+---
+
+# Choosing model complexity
+
+## Using test/validation data
+
+Indep. samples `\(D = \{  (\mathbf x_i, y_i) \}_{i=1}^n\)` and `\(D' = \{ (\mathbf x_i', y_i') \}_{i=1}^{n'}\)`
+
+- Estimate `\(\hat f_\lambda\)` on `\(D\)` for a "path" or grid of `\(\lambda\)` values
+
+- Evaluate `\(\hat f_\lambda\)` on `\(D'\)` and choose `\(\hat \lambda\)` accordingly (e.g. with minimum loss)
+
+- Refit `\(\hat f_{\hat \lambda}\)` on full data `\(D \cup D'\)`, this is our final model
+
+*Common when computational cost of fitting one model is high*
+
+---
+
+## Cross-validation
+
+*When computational cost of fitting one model is not too high*
+
+**Idea**: swap `\(D\)` and `\(D'\)` in previous process and get two estimates, `\(\hat R(\hat f_\lambda)\)` and `\(\hat R(\hat f_\lambda')\)`
+
+Average these and choose `\(\hat \lambda\)` using the average (e.g. minimizer)
+
+**Idea**: apply the same process with multiple independent "folds" of data
+
+#### `\(K\)`-fold cross-validation
+
+Each subset used once as test set, and `\(K-1\)` times for training
+
+Minimize `\(\hat R_{K\text{-cv}}(\lambda) = \frac{1}{K} \sum_{k=1}^K \hat R_k(\hat f^{(k)}_\lambda)\)`
+
+---
+
+## Cross-validation cartoon
+
+![](cv.wikipedia.svg.png)
+
+Gives `\(K\)` estimates of test error (risk) at each `\(\lambda\)`
+
+Credit: [Wikipedia](https://en.wikipedia.org/wiki/Cross-validation)
+
+---
+
+## `\(K\)`-fold cross-validation
+
+Each subset used once as test set, and `\(K-1\)` times for training
+
+Choose `\(\hat \lambda\)` to minimize
+
+`$$\hat R_{K\text{-cv}}(\lambda) = \frac{1}{K} \sum_{k=1}^K \hat R_k(\hat f^{(k)}_\lambda)$$`
+where `\(\hat f^{(k)}_\lambda\)` is fit on the dataset that "holds out" the `\(k\)`th fold
+
+Then refit model `\(\hat f_{\hat \lambda}\)` at that value of `\(\hat \lambda\)` on the entire dataset
+
+---
+
+## plot(cv.glmnet) and plot(glmnet)
+
+
+
+
+.pull-left[
+
+```r
+cv_ridge &lt;- 
+ cv.glmnet(X, Y, alpha = 0)
+plot(cv_ridge)
+```
+
+&lt;img src="06-2-validation_files/figure-html/unnamed-chunk-2-1.png" width="504" /&gt;
+]
+.pull-right[
+
+```r
+ridge_fit &lt;- 
+ glmnet(X, Y, alpha = 0)
+plot_glmnet(ridge_fit,
+ s = cv_ridge$lambda.1se)
+```
+
+&lt;img src="06-2-validation_files/figure-html/unnamed-chunk-3-1.png" width="504" /&gt;
+]
+
+---
+
+### Lessons about cross-validation
+
+- Think of it as a way to **choose model complexity**
+
+- **Beware** common cross-validation errors! From Duda and Hart quoted in [MLstory](https://mlstory.org/data.html)
+
+&gt; ... the same data were often used for designing and testing the classifier. This mistake is frequently referred to as "testing on the training data." A related but less obvious problem arises *when a classifier undergoes a long series of refinements guided by the results of repeated testing on the same data. This form of "**training on the testing data**" often escapes attention until new test samples are obtained*.
+
+---
+
+### Lessons about cross-validation
+
+- **Beware** common cross-validation errors! From ESL:
+
+&gt; Ideally, the test set should be kept in a "vault," and be brought out only at the end of the data analysis. *Suppose instead that we use the test-set repeatedly, choosing the model with smallest test-set error. Then the test set error of the final chosen model will underestimate the true test error*, sometimes substantially.
+
+- Cross-validate entire model building pipeline (not just one step), and only do it once -- or at *least* not many times
+
+- Choosing `\(K\)`: larger `\(\to\)` `\(\hat R_{K\text{-cv}}\)` has lower bias, more variance. Often use `\(K = 5\)` or `\(10\)`
+
+---
+class: inverse
+
+### Bias can be good or bad
+
+- Good for estimation in high-dimension (lower MSE)
+- Bad for inference (intervals/hypothesis tests)
+- Uncertainty principle: better estimate *or* better inference
+
+### Regularization
+
+- Fancy sounding word for "simplification," simpler models
+- Increases bias to reduce variance
+
+### Cross-validation
+
+- Fit and evaluate models on different subsets of data
+- Choose amount of regularization/complexity
+- Re-using data *more than once* `\(\to\)` overfitting again
+
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "github",
+"highlightLines": true,
+"highlightSpans": true,
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+// add `data-at-shortcutkeys` attribute to <body> to resolve conflicts with JAWS
+// screen reader (see PR #262)
+(function(d) {
+  let res = {};
+  d.querySelectorAll('.remark-help-content table tr').forEach(tr => {
+    const t = tr.querySelector('td:nth-child(2)').innerText;
+    tr.querySelectorAll('td:first-child .key').forEach(key => {
+      const k = key.innerText;
+      if (/^[a-z]$/.test(k)) res[k] = t;  // must be a single letter (key)
+    });
+  });
+  d.body.setAttribute('data-at-shortcutkeys', JSON.stringify(res));
+})(document);
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+(function(time) {
+  var d2 = function(number) {
+    return ('0' + number).slice(-2); // left-pad 0 to minutes/seconds
+  },
+
+  time_format = function(total) {
+    var secs = Math.abs(total) / 1000;
+    var h = Math.floor(secs / 3600);
+    var m = Math.floor(secs % 3600 / 60);
+    var s = Math.round(secs % 60);
+    var res = d2(m) + ':' + d2(s);
+    if (h > 0) res = h + ':' + res;
+    return res;  // [hh:]mm:ss
+  },
+
+  slide_number_div = function(i) {
+    return document.getElementsByClassName('remark-slide-number').item(i);
+  },
+
+  current_page_number = function(i) {
+    return slide_number_div(i).firstChild.textContent;  // text "i / N"
+  };
+
+  var timer = document.createElement('span'); timer.id = 'slide-time-left';
+  var time_left = time, k = slideshow.getCurrentSlideIndex(),
+      last_page_number = current_page_number(k);
+
+  setInterval(function() {
+    time_left = time_left - 1000;
+    timer.innerHTML = ' ' + time_format(time_left);
+    if (time_left < 0) timer.style.color = 'red';
+  }, 1000);
+
+  slide_number_div(k).appendChild(timer);
+
+  slideshow.on('showSlide', function(slide) {
+    var i = slide.getSlideIndex(), n = current_page_number(i);
+    // reset timer when a new slide is shown and the page number is changed
+    if (last_page_number !== n) {
+      time_left = time; last_page_number = n;
+      timer.innerHTML = ' ' + time_format(time); timer.style.color = null;
+    }
+    slide_number_div(i).appendChild(timer);
+  });
+})(59000);
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>

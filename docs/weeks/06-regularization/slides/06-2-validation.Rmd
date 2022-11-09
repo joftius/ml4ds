@@ -1,0 +1,216 @@
+---
+title: "Machine learning"
+subtitle: "Validation"
+author: "Joshua Loftus"
+#institute: "LSE"
+#date: "`r Sys.Date()`"
+output:
+  xaringan::moon_reader:
+    css: ["default", "xaringan-themer.css"]
+    seal: true
+    lib_dir: libs
+    nature:
+      titleSlideClass: ["top", "left"]
+      countdown: 59000
+      highlightStyle: github
+      highlightLines: true
+      highlightSpans: true
+      countIncrementalSlides: false
+---
+
+class: inverse, center, middle
+
+```{r setup, include=FALSE}
+options(htmltools.dir.version = FALSE)
+knitr::opts_chunk$set(fig.retina = 3, warning = FALSE, message = FALSE)
+options(knitr.table.format = "html")
+```
+
+```{r xaringan-themer, include=FALSE, warning=FALSE}
+library(xaringanthemer)
+style_duo_accent(
+  primary_color = "#2d708e",
+  secondary_color = "#230433",
+  link_color = "#55c667",
+  text_bold_color = '#f68f46',
+#  title_slide_text_color = "#292929",
+  title_slide_background_color = "#ffffff", #"#042333",
+  title_slide_background_image = "../../../files/theme/LSE/hock_exterior.jpg",
+#    "https://upload.wikimedia.org/wikipedia/commons/1/1a/Workhouse_Nantwich.jpg",
+  title_slide_background_size = "cover",
+  ) #or contain
+```
+
+```{r xaringanextra, include=FALSE, warning=FALSE}
+library(xaringanExtra)
+xaringanExtra::use_animate_all("slide_left")
+```
+
+```{r tidyverse, include=FALSE, warning=FALSE}
+library(tidyverse)
+library(knitr)
+theme_set(theme_minimal(base_size = 20))
+set.seed(1)
+library(broom)
+library(modelr)
+```
+
+<style type="text/css">
+.remark-slide-content {
+    font-size: 1.2rem;
+    padding: 1em 4em 1em 4em;
+}
+</style>
+
+# Validation
+
+## Estimate test error directly
+
+### using "**validation data**" / "**test data**"
+
+#### i.e. a new set of data, "unseen" by $\hat f$
+
+Indep. samples $D = \{  (\mathbf x_i, y_i) \}_{i=1}^n$ and $D' = \{ (\mathbf x_i', y_i') \}_{i=1}^{n'}$
+
+Estimate $\hat f$ on $D$, evaluate $\hat f$ on $D'$
+
+---
+
+## Motives
+
+- Debiasing risk estimate. Since $\hat f$ does not depend on $D'$, it is not **overfit to the variability** in $D'$
+
+- If $\hat f$ is overfit to $D$ then its test error on $D'$ will be large (complexity too high, variability too high)
+
+- Actual practice: analogous to "deploying an ML model in production"
+
+- Philosophy of science: use novelty, actual prediction (not accommodation)
+
+- Tukey: [Exploratory Data Analysis](https://en.wikipedia.org/wiki/Exploratory_data_analysis) vs Confirmatory
+
+- Use test error to choose **model complexity** / **amount of regularization**
+
+---
+
+# Choosing model complexity
+
+## Using test/validation data
+
+Indep. samples $D = \{  (\mathbf x_i, y_i) \}_{i=1}^n$ and $D' = \{ (\mathbf x_i', y_i') \}_{i=1}^{n'}$
+
+- Estimate $\hat f_\lambda$ on $D$ for a "path" or grid of $\lambda$ values
+
+- Evaluate $\hat f_\lambda$ on $D'$ and choose $\hat \lambda$ accordingly (e.g. with minimum loss)
+
+- Refit $\hat f_{\hat \lambda}$ on full data $D \cup D'$, this is our final model
+
+*Common when computational cost of fitting one model is high*
+
+---
+
+## Cross-validation
+
+*When computational cost of fitting one model is not too high*
+
+**Idea**: swap $D$ and $D'$ in previous process and get two estimates, $\hat R(\hat f_\lambda)$ and $\hat R(\hat f_\lambda')$
+
+Average these and choose $\hat \lambda$ using the average (e.g. minimizer)
+
+**Idea**: apply the same process with multiple independent "folds" of data
+
+#### $K$-fold cross-validation
+
+Each subset used once as test set, and $K-1$ times for training
+
+Minimize $\hat R_{K\text{-cv}}(\lambda) = \frac{1}{K} \sum_{k=1}^K \hat R_k(\hat f^{(k)}_\lambda)$
+
+---
+
+## Cross-validation cartoon
+
+![](cv.wikipedia.svg.png)
+
+Gives $K$ estimates of test error (risk) at each $\lambda$
+
+Credit: [Wikipedia](https://en.wikipedia.org/wiki/Cross-validation)
+
+---
+
+## $K$-fold cross-validation
+
+Each subset used once as test set, and $K-1$ times for training
+
+Choose $\hat \lambda$ to minimize
+
+$$\hat R_{K\text{-cv}}(\lambda) = \frac{1}{K} \sum_{k=1}^K \hat R_k(\hat f^{(k)}_\lambda)$$
+where $\hat f^{(k)}_\lambda$ is fit on the dataset that "holds out" the $k$th fold
+
+Then refit model $\hat f_{\hat \lambda}$ at that value of $\hat \lambda$ on the entire dataset
+
+---
+
+## plot(cv.glmnet) and plot(glmnet)
+
+
+```{r echo = FALSE}
+library(glmnet)
+library(plotmo)
+n <- 100
+p <- 20
+X <- matrix(rnorm(n*p), nrow = n)
+beta = sample(c(-1,0,0,0,1), p, replace = TRUE)
+Y <- X %*% beta + rnorm(n)
+```
+
+.pull-left[
+```{r}
+cv_ridge <- 
+ cv.glmnet(X, Y, alpha = 0)
+plot(cv_ridge)
+```
+]
+.pull-right[
+```{r}
+ridge_fit <- 
+ glmnet(X, Y, alpha = 0)
+plot_glmnet(ridge_fit,
+ s = cv_ridge$lambda.1se)
+```
+]
+
+---
+
+### Lessons about cross-validation
+
+- Think of it as a way to **choose model complexity**
+
+- **Beware** common cross-validation errors! From Duda and Hart quoted in [MLstory](https://mlstory.org/data.html)
+
+> ... the same data were often used for designing and testing the classifier. This mistake is frequently referred to as "testing on the training data." A related but less obvious problem arises *when a classifier undergoes a long series of refinements guided by the results of repeated testing on the same data. This form of "**training on the testing data**" often escapes attention until new test samples are obtained*.
+
+---
+
+### Lessons about cross-validation
+
+- **Beware** common cross-validation errors! From ESL:
+
+> Ideally, the test set should be kept in a "vault," and be brought out only at the end of the data analysis. *Suppose instead that we use the test-set repeatedly, choosing the model with smallest test-set error. Then the test set error of the final chosen model will underestimate the true test error*, sometimes substantially.
+
+- Cross-validate entire model building pipeline (not just one step), and only do it once -- or at *least* not many times
+
+- Choosing $K$: larger $\to$ $\hat R_{K\text{-cv}}$ has lower bias, more variance. Often use $K = 5$ or $10$
+
+---
+class: inverse
+
+### Regularization
+
+- Fancy sounding word for "simplification," simpler models
+- Increases bias to reduce variance
+
+### Cross-validation
+
+- Fit and evaluate models on different subsets of data
+- Choose amount of regularization/complexity
+- Re-using data *more than once* $\to$ overfitting again
+

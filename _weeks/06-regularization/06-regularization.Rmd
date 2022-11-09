@@ -19,6 +19,26 @@ library(gapminder)
 theme_set(theme_minimal(base_size = 22))
 ```
 
+
+## Materials
+
+| Link | Type | Description             |
+|:----:|:----:|:------------------------|
+| [html](slides/06-1-overfitting.html)  [pdf](slides/06-1-overfitting_handout.pdf) | Slides | Overfitting and validation
+
+*To be updated*
+
+## Preparation
+
+### Required reading
+
+- [ISLR](https://www.statlearning.com/) Chapter 5 on resampling methods.
+- [ISLR](https://www.statlearning.com/) Chapter 6, section 6.2.
+
+### Supplemental reading
+
+- [ESL](https://hastie.su.domains/ElemStatLearn/) Chapter 7, sections 1-6 and 10.
+
 ## Regularization
 
 ## Validation
