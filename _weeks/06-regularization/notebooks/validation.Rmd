@@ -36,6 +36,7 @@ ggplot(data_full, aes(x,y)) +
   geom_point(alpha = .6) +
   stat_function(fun = f, size = 1)
 ```
+
 ### Split data
 
 Use some fraction of the sample (e.g. 2/3 or 8/10) as training data and the remainder as validation data. (Hint: `sample(1:n, replace = FALSE)` and look up `?setdiff`)
