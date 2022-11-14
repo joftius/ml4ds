@@ -1,0 +1,68 @@
+---
+title: "Exercise set 1"
+author: "Joshua Loftus"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(fig.retina = 3, warning = FALSE, message = FALSE)
+library(tidyverse)
+library(knitr)
+theme_set(theme_minimal(base_size = 14))
+```
+
+## ISLR exercises
+
+Solutions for these are available with a quick search online.
+
+Trying to solve the problems without any hints or help is a valuable form of practice, so *it's important to not consult any solutions until after fully writing your own answer*.
+
+For solutions involving code, I also recommend using some of the excellent functions available in packages, for example the `ggfortify::autoplot()` and `GGally::ggnostic()` functions for model diagnostic plots, or the `GGally::ggcoef()` function for showing coefficient estimates with confidence intervals.
+
+## Mixtape Chapter 3
+
+Choose one of the datasets analyzed in previous exercises, lectures, or seminars, and pick 2 or 3 variables in this dataset. Invent an unobserved variable that you believe may also be important but not included in the dataset. Using these variables:
+
+-   Propose and draw a DAG that you believe to be importantly wrong compared to the real world, and explain why you think it does not accurately model the causal relationships that you believe to exist.
+
+Consider the variables
+
+- `G = GDP per capita`
+- `L = Life expectancy`
+
+and the DAG
+
+```{r echo=FALSE}
+library(DiagrammeR)
+mermaid("
+graph LR
+  G-->L
+")
+```
+
+One reason this could be importantly wrong is that `G` measures many kinds of economic activity including things that could be beneficial or harmful to health. Larger values of `G` may allow increased consumption of alcohol and tobacco or increased expenditure on healthcare, and these different components may influence `L` in opposite directions.
+
+-   Propose and draw a DAG that you believe to be an improvement compared to the previous one. Comment in one or a few sentences why this second DAG is better, and also what you believe is its most important remaining weakness as a model for the real world causal relationships.
+
+We include new variables
+
+- `S = Consumption of alcohol and tobacco`
+- `H = Healthcare expenditure`
+
+```{r}
+library(DiagrammeR)
+mermaid("
+graph LR
+  G-->L
+  G-->S
+  G-->H
+  H-->L
+  S-->L
+")
+```
+
+This mediation analysis could help us separate which kinds of economic activity are beneficial or harmful to life expectancy, and hence understand what kind of interventions (policies) related to `GDP` may also help improve health outcomes.
+
+One important limitation is the dimension of time and, related to that, the directions of arrows. With time there could be feedback, for example larger values of `G` leading to larger values of `S` in the same year, but then larger values of `S` causing lower values of `G` at later years.
+
+There are many other acceptable kinds of answers. Another common story might involve the inclusion of a confounding variable which causally influences both the original predictor and outcome.

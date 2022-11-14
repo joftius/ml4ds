@@ -4,12 +4,10 @@ output: html_document
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = FALSE)
 knitr::opts_chunk$set(fig.retina = 3, warning = FALSE, message = FALSE)
 library(tidyverse)
 library(knitr)
-library(gapminder)
-theme_set(theme_minimal(base_size = 22))
+theme_set(theme_minimal(base_size = 14))
 ```
 
 ## ISLR Chapter 2, Section 2.4

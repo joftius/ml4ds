@@ -40,7 +40,7 @@
       <link>http://ml4ds.com/weeks/04-classification</link>
       <description>Categorical or qualitative outcome variables are ubiquitous. We review some supervised learning methods for classification, and see how these may be applied to observational causal inference.</description>
       <guid>http://ml4ds.com/weeks/04-classification</guid>
-      <pubDate>Fri, 08 Oct 2021 00:00:00 +0000</pubDate>
+      <pubDate>Thu, 07 Oct 2021 00:00:00 +0000</pubDate>
     </item>
     <item>
       <title>5 Optimization and model complexity</title>
@@ -56,7 +56,7 @@
       <link>http://ml4ds.com/weeks/06-regularization</link>
       <description>When optimizing an ML model there are a variety of strategies to improve generalization from the training data. We can add a complexity penalty to the loss function, and we can evaluate the loss function on validation data.</description>
       <guid>http://ml4ds.com/weeks/06-regularization</guid>
-      <pubDate>Tue, 05 Oct 2021 00:00:00 +0000</pubDate>
+      <pubDate>Wed, 06 Oct 2021 00:00:00 +0000</pubDate>
     </item>
     <item>
       <title>7 Nonlinear methods</title>
