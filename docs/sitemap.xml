@@ -22,7 +22,7 @@
   </url>
   <url>
     <loc>http://ml4ds.com/weeks/04-classification/</loc>
-    <lastmod>2022-11-14T11:04:00+00:00</lastmod>
+    <lastmod>2022-11-14T11:04:01+00:00</lastmod>
   </url>
   <url>
     <loc>http://ml4ds.com/weeks/05-optimization/</loc>
@@ -33,8 +33,12 @@
     <lastmod>2022-11-09T22:55:34+00:00</lastmod>
   </url>
   <url>
+    <loc>http://ml4ds.com/weeks/07-highdim/</loc>
+    <lastmod>2022-11-16T10:43:15+00:00</lastmod>
+  </url>
+  <url>
     <loc>http://ml4ds.com/weeks/07-nonlinear/</loc>
-    <lastmod>2022-09-18T15:01:06+01:00</lastmod>
+    <lastmod>2022-11-16T10:29:35+00:00</lastmod>
   </url>
   <url>
     <loc>http://ml4ds.com/weeks/08-nonlinear/</loc>

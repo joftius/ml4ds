@@ -23,6 +23,7 @@
 pre > code.sourceCode { white-space: pre; position: relative; }
 pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
 pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
 code.sourceCode > span { color: inherit; text-decoration: inherit; }
 div.sourceCode { margin: 1em 0; }
 pre.sourceCode { margin: 0; }
@@ -49,16 +50,17 @@ pre.numberSource code > span > a:first-child::before
   }
 pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
 div.sourceCode
-  {   }
+  { color: #00769e; background-color: #f1f3f5; }
 @media screen {
 pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
+code span { color: #00769e; } /* Normal */
 code span.al { color: #ad0000; } /* Alert */
 code span.an { color: #5e5e5e; } /* Annotation */
-code span.at { color: #20794d; } /* Attribute */
+code span.at { color: #657422; } /* Attribute */
 code span.bn { color: #ad0000; } /* BaseN */
 code span.bu { } /* BuiltIn */
-code span.cf { color: #007ba5; } /* ControlFlow */
+code span.cf { color: #00769e; } /* ControlFlow */
 code span.ch { color: #20794d; } /* Char */
 code span.cn { color: #8f5902; } /* Constant */
 code span.co { color: #5e5e5e; } /* Comment */
@@ -72,11 +74,11 @@ code span.fl { color: #ad0000; } /* Float */
 code span.fu { color: #4758ab; } /* Function */
 code span.im { } /* Import */
 code span.in { color: #5e5e5e; } /* Information */
-code span.kw { color: #007ba5; } /* Keyword */
+code span.kw { color: #00769e; } /* Keyword */
 code span.op { color: #5e5e5e; } /* Operator */
-code span.ot { color: #007ba5; } /* Other */
+code span.ot { color: #00769e; } /* Other */
 code span.pp { color: #ad0000; } /* Preprocessor */
-code span.sc { color: #20794d; } /* SpecialChar */
+code span.sc { color: #5e5e5e; } /* SpecialChar */
 code span.ss { color: #20794d; } /* SpecialString */
 code span.st { color: #20794d; } /* String */
 code span.va { color: #111111; } /* Variable */
@@ -84,8 +86,9 @@ code span.vs { color: #20794d; } /* VerbatimString */
 code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 </style>
 
+
   <!--radix_placeholder_meta_tags-->
-<title>machine learning 4 data science: 7 Nonlinear methods</title>
+<title>machine learning 4 data science: 8 Nonlinear methods</title>
 
 <meta property="description" itemprop="description" content="Non-linearity may result in models that trade interpretability for increased predictive accuracy. These notes discuss the challenges of non-linearity and introduce nearest neighbors and kernel methods."/>
 
@@ -93,12 +96,12 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 <link rel="license" href="https://creativecommons.org/licenses/by/4.0/"/>
 
 <!--  https://schema.org/Article -->
-<meta property="article:published" itemprop="datePublished" content="2021-10-05"/>
-<meta property="article:created" itemprop="dateCreated" content="2021-10-05"/>
+<meta property="article:published" itemprop="datePublished" content="2021-10-04"/>
+<meta property="article:created" itemprop="dateCreated" content="2021-10-04"/>
 <meta name="article:author" content="Joshua Loftus"/>
 
 <!--  https://developers.facebook.com/docs/sharing/webmasters#markup -->
-<meta property="og:title" content="machine learning 4 data science: 7 Nonlinear methods"/>
+<meta property="og:title" content="machine learning 4 data science: 8 Nonlinear methods"/>
 <meta property="og:type" content="article"/>
 <meta property="og:description" content="Non-linearity may result in models that trade interpretability for increased predictive accuracy. These notes discuss the challenges of non-linearity and introduce nearest neighbors and kernel methods."/>
 <meta property="og:url" content="http://ml4ds.com/weeks/07-nonlinear/"/>
@@ -107,28 +110,28 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 
 <!--  https://dev.twitter.com/cards/types/summary -->
 <meta property="twitter:card" content="summary"/>
-<meta property="twitter:title" content="machine learning 4 data science: 7 Nonlinear methods"/>
+<meta property="twitter:title" content="machine learning 4 data science: 8 Nonlinear methods"/>
 <meta property="twitter:description" content="Non-linearity may result in models that trade interpretability for increased predictive accuracy. These notes discuss the challenges of non-linearity and introduce nearest neighbors and kernel methods."/>
 <meta property="twitter:url" content="http://ml4ds.com/weeks/07-nonlinear/"/>
 <meta property="twitter:site" content="@joftius"/>
 
 <!--  https://scholar.google.com/intl/en/scholar/inclusion.html#indexing -->
-<meta name="citation_title" content="machine learning 4 data science: 7 Nonlinear methods"/>
+<meta name="citation_title" content="machine learning 4 data science: 8 Nonlinear methods"/>
 <meta name="citation_fulltext_html_url" content="http://ml4ds.com/weeks/07-nonlinear/"/>
 <meta name="citation_fulltext_world_readable" content=""/>
-<meta name="citation_online_date" content="2021/10/05"/>
-<meta name="citation_publication_date" content="2021/10/05"/>
+<meta name="citation_online_date" content="2021/10/04"/>
+<meta name="citation_publication_date" content="2021/10/04"/>
 <meta name="citation_author" content="Joshua Loftus"/>
 <!--/radix_placeholder_meta_tags-->
   <!--radix_placeholder_rmarkdown_metadata-->
 
 <script type="text/json" id="radix-rmarkdown-metadata">
-{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["creative_commons","title","description","author","date","output","citation_url","canonical_url"]}},"value":[{"type":"character","attributes":{},"value":["CC BY"]},{"type":"character","attributes":{},"value":["7 Nonlinear methods"]},{"type":"character","attributes":{},"value":["Non-linearity may result in models that trade interpretability for increased predictive accuracy. These notes discuss the challenges of non-linearity and introduce nearest neighbors and kernel methods."]},{"type":"list","attributes":{},"value":[{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name"]}},"value":[{"type":"character","attributes":{},"value":["Joshua Loftus"]}]}]},{"type":"character","attributes":{},"value":["10-05-2021"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["distill::distill_article"]}},"value":[{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["self_contained"]}},"value":[{"type":"logical","attributes":{},"value":[false]}]}]},{"type":"character","attributes":{},"value":["http://ml4ds.com/weeks/07-nonlinear/"]},{"type":"character","attributes":{},"value":["http://ml4ds.com/weeks/07-nonlinear/"]}]}
+{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["creative_commons","title","description","author","date","output","citation_url","canonical_url"]}},"value":[{"type":"character","attributes":{},"value":["CC BY"]},{"type":"character","attributes":{},"value":["8 Nonlinear methods"]},{"type":"character","attributes":{},"value":["Non-linearity may result in models that trade interpretability for increased predictive accuracy. These notes discuss the challenges of non-linearity and introduce nearest neighbors and kernel methods."]},{"type":"list","attributes":{},"value":[{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name"]}},"value":[{"type":"character","attributes":{},"value":["Joshua Loftus"]}]}]},{"type":"character","attributes":{},"value":["10-04-2021"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["distill::distill_article"]}},"value":[{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["self_contained"]}},"value":[{"type":"logical","attributes":{},"value":[false]}]}]},{"type":"character","attributes":{},"value":["http://ml4ds.com/weeks/07-nonlinear/"]},{"type":"character","attributes":{},"value":["http://ml4ds.com/weeks/07-nonlinear/"]}]}
 </script>
 <!--/radix_placeholder_rmarkdown_metadata-->
   
   <script type="text/json" id="radix-resource-manifest">
-  {"type":"character","attributes":{},"value":["07-nonlinear_files/anchor-4.2.2/anchor.min.js","07-nonlinear_files/bowser-1.9.3/bowser.min.js","07-nonlinear_files/distill-2.2.21/template.v2.js","07-nonlinear_files/header-attrs-2.6/header-attrs.js","07-nonlinear_files/header-attrs-2.7/header-attrs.js","07-nonlinear_files/jquery-1.11.3/jquery.min.js","07-nonlinear_files/popper-2.6.0/popper.min.js","07-nonlinear_files/tippy-6.2.7/tippy-bundle.umd.min.js","07-nonlinear_files/tippy-6.2.7/tippy-light-border.css","07-nonlinear_files/tippy-6.2.7/tippy.css","07-nonlinear_files/tippy-6.2.7/tippy.umd.min.js","07-nonlinear_files/webcomponents-2.0.0/webcomponents.js","notebooks/keras.html","notebooks/keras.Rmd","notebooks/kernel_complete.html","notebooks/kernel_complete.Rmd","notebooks/kernel.html","notebooks/kernel.Rmd","notebooks/knn_complete.html","notebooks/knn_complete.Rmd","notebooks/knn.html","notebooks/knn.Rmd","notebooks/ksvm_complete_files/figure-html/unnamed-chunk-2-1.png","notebooks/ksvm_complete_files/figure-html/unnamed-chunk-3-1.png","notebooks/ksvm_complete_files/figure-html/unnamed-chunk-5-1.png","notebooks/ksvm_complete.html","notebooks/ksvm_complete.Rmd","notebooks/nonlinear_knn_incomplete.html","notebooks/nonlinear_knn_incomplete.Rmd","slides/07-1-nonlinearity_cache/html/__packages","slides/07-1-nonlinearity_cache/html/unnamed-chunk-1_f1310944776c7a201ccd8ad193ce991e.RData","slides/07-1-nonlinearity_cache/html/unnamed-chunk-1_f1310944776c7a201ccd8ad193ce991e.rdb","slides/07-1-nonlinearity_cache/html/unnamed-chunk-1_f1310944776c7a201ccd8ad193ce991e.rdx","slides/07-1-nonlinearity_cache/html/unnamed-chunk-12_d8c36175d259ed6f425038cd60420b86.RData","slides/07-1-nonlinearity_cache/html/unnamed-chunk-12_d8c36175d259ed6f425038cd60420b86.rdb","slides/07-1-nonlinearity_cache/html/unnamed-chunk-12_d8c36175d259ed6f425038cd60420b86.rdx","slides/07-1-nonlinearity_cache/html/unnamed-chunk-13_c33498c5ecd8188dbdf81605f165655c.RData","slides/07-1-nonlinearity_cache/html/unnamed-chunk-13_c33498c5ecd8188dbdf81605f165655c.rdb","slides/07-1-nonlinearity_cache/html/unnamed-chunk-13_c33498c5ecd8188dbdf81605f165655c.rdx","slides/07-1-nonlinearity_cache/html/unnamed-chunk-14_674ee1b2e51d3b2c3ad83620bb58a9ba.RData","slides/07-1-nonlinearity_cache/html/unnamed-chunk-14_674ee1b2e51d3b2c3ad83620bb58a9ba.rdb","slides/07-1-nonlinearity_cache/html/unnamed-chunk-14_674ee1b2e51d3b2c3ad83620bb58a9ba.rdx","slides/07-1-nonlinearity_cache/html/unnamed-chunk-17_5534dd5f3f692c7ccdfa3f95f0473649.RData","slides/07-1-nonlinearity_cache/html/unnamed-chunk-17_5534dd5f3f692c7ccdfa3f95f0473649.rdb","slides/07-1-nonlinearity_cache/html/unnamed-chunk-17_5534dd5f3f692c7ccdfa3f95f0473649.rdx","slides/07-1-nonlinearity_cache/html/unnamed-chunk-2_93718521c3f1170022e9971d23f7c77d.RData","slides/07-1-nonlinearity_cache/html/unnamed-chunk-2_93718521c3f1170022e9971d23f7c77d.rdb","slides/07-1-nonlinearity_cache/html/unnamed-chunk-2_93718521c3f1170022e9971d23f7c77d.rdx","slides/07-1-nonlinearity_files/figure-html/circle-eg-1.png","slides/07-1-nonlinearity_files/figure-html/logit-0d-class-1.png","slides/07-1-nonlinearity_files/figure-html/logit-1d-class-1.png","slides/07-1-nonlinearity_files/figure-html/logit-1dm-1.png","slides/07-1-nonlinearity_files/figure-html/logit-contour-1.png","slides/07-1-nonlinearity_files/figure-html/logit-data-plot-1.png","slides/07-1-nonlinearity_files/figure-html/nonlinear-reg-simple-1.png","slides/07-1-nonlinearity_files/figure-html/nonlinear-reg-sin-1.png","slides/07-1-nonlinearity_files/figure-html/poly-eg-1.png","slides/07-1-nonlinearity_files/figure-html/unnamed-chunk-1-1.png","slides/07-1-nonlinearity_files/figure-html/unnamed-chunk-10-1.png","slides/07-1-nonlinearity_files/figure-html/unnamed-chunk-11-1.png","slides/07-1-nonlinearity_files/figure-html/unnamed-chunk-12-1.png","slides/07-1-nonlinearity_files/figure-html/unnamed-chunk-13-1.png","slides/07-1-nonlinearity_files/figure-html/unnamed-chunk-14-1.png","slides/07-1-nonlinearity_files/figure-html/unnamed-chunk-15-1.png","slides/07-1-nonlinearity_files/figure-html/unnamed-chunk-16-1.png","slides/07-1-nonlinearity_files/figure-html/unnamed-chunk-18-1.png","slides/07-1-nonlinearity_files/figure-html/unnamed-chunk-19-1.png","slides/07-1-nonlinearity_files/figure-html/unnamed-chunk-2-1.png","slides/07-1-nonlinearity_files/figure-html/unnamed-chunk-3-1.png","slides/07-1-nonlinearity_files/figure-html/unnamed-chunk-4-1.png","slides/07-1-nonlinearity_files/figure-html/unnamed-chunk-5-1.png","slides/07-1-nonlinearity_files/figure-html/unnamed-chunk-6-1.png","slides/07-1-nonlinearity_files/figure-html/unnamed-chunk-7-1.png","slides/07-1-nonlinearity_files/figure-html/unnamed-chunk-8-1.png","slides/07-1-nonlinearity_files/figure-html/unnamed-chunk-9-1.png","slides/07-1-nonlinearity-phd.html","slides/07-1-nonlinearity-phd.Rmd","slides/07-1-nonlinearity.html","slides/07-1-nonlinearity.Rmd","slides/07-2-knn_files/figure-html/circle-eg-1.png","slides/07-2-knn_files/figure-html/poly-eg-1.png","slides/07-2-knn_files/figure-html/poly-eg11-1.png","slides/07-2-knn_files/figure-html/poly-eg3-1.png","slides/07-2-knn_files/figure-html/poly-eg49-1.png","slides/07-2-knn_files/figure-html/poly-eg5-1.png","slides/07-2-knn_files/figure-html/poly-eg51-1.png","slides/07-2-knn_files/figure-html/poly-eg7-1.png","slides/07-2-knn.html","slides/07-2-knn.Rmd","slides/07-3-kernels_files/figure-html/circle-eg-1.png","slides/07-3-kernels_files/figure-html/grid1d_poly_ij-1.png","slides/07-3-kernels_files/figure-html/grid1d_poly-1.png","slides/07-3-kernels_files/figure-html/grid1d_rbf_ij-1.png","slides/07-3-kernels_files/figure-html/grid1d_rbf_x-1.png","slides/07-3-kernels_files/figure-html/grid1d_rbf-1.png","slides/07-3-kernels_files/figure-html/grid2d_facet-1.png","slides/07-3-kernels_files/figure-html/grid2d_ij-1.png","slides/07-3-kernels_files/figure-html/grid3d_facet-1.png","slides/07-3-kernels_files/figure-html/grid3d_ij-1.png","slides/07-3-kernels_files/figure-html/poly-eg-1.png","slides/07-3-kernels_files/figure-html/poly-eg11-1.png","slides/07-3-kernels_files/figure-html/poly-eg3-1.png","slides/07-3-kernels_files/figure-html/poly-eg49-1.png","slides/07-3-kernels_files/figure-html/poly-eg5-1.png","slides/07-3-kernels_files/figure-html/poly-eg51-1.png","slides/07-3-kernels_files/figure-html/poly-eg7-1.png","slides/07-3-kernels_files/figure-html/poly-svm-plot-1.png","slides/07-3-kernels_files/figure-html/rbf-svm-plot-1.png","slides/07-3-kernels_files/figure-html/train_facet-1.png","slides/07-3-kernels_files/figure-html/train_ij-1.png","slides/07-3-kernels_files/figure-html/unnamed-chunk-10-1.png","slides/07-3-kernels_files/figure-html/unnamed-chunk-16-1.png","slides/07-3-kernels_files/figure-html/unnamed-chunk-17-1.png","slides/07-3-kernels_files/figure-html/unnamed-chunk-19-1.png","slides/07-3-kernels_files/figure-html/unnamed-chunk-20-1.png","slides/07-3-kernels_files/figure-html/unnamed-chunk-22-1.png","slides/07-3-kernels_files/figure-html/unnamed-chunk-23-1.png","slides/07-3-kernels_files/figure-html/unnamed-chunk-3-1.png","slides/07-3-kernels_files/figure-html/unnamed-chunk-36-1.png","slides/07-3-kernels_files/figure-html/unnamed-chunk-37-1.png","slides/07-3-kernels_files/figure-html/unnamed-chunk-39-1.png","slides/07-3-kernels_files/figure-html/unnamed-chunk-4-1.png","slides/07-3-kernels_files/figure-html/unnamed-chunk-40-1.png","slides/07-3-kernels_files/figure-html/unnamed-chunk-42-1.png","slides/07-3-kernels_files/figure-html/unnamed-chunk-43-1.png","slides/07-3-kernels_files/figure-html/unnamed-chunk-45-1.png","slides/07-3-kernels_files/figure-html/unnamed-chunk-46-1.png","slides/07-3-kernels_files/figure-html/unnamed-chunk-5-1.png","slides/07-3-kernels_files/figure-html/unnamed-chunk-51-1.png","slides/07-3-kernels_files/figure-html/unnamed-chunk-52-1.png","slides/07-3-kernels_files/figure-html/unnamed-chunk-54-1.png","slides/07-3-kernels_files/figure-html/unnamed-chunk-55-1.png","slides/07-3-kernels_files/figure-html/unnamed-chunk-6-1.png","slides/07-3-kernels_files/figure-html/unnamed-chunk-7-1.png","slides/07-3-kernels_files/figure-html/unnamed-chunk-8-1.png","slides/07-3-kernels_files/figure-html/unnamed-chunk-9-1.png","slides/07-3-kernels.html","slides/07-3-kernels.Rmd","slides/CASI18.3.png","slides/deepnet_phd.pdf","slides/deepviz11.2.png","slides/DLbook7.6.png","slides/ESL11.2.png","slides/gtrendDL.png","slides/libs/animate.css-xaringan/animate.slide_left.css","slides/libs/DiagrammeR-styles/styles.css","slides/libs/grViz-binding/grViz.js","slides/libs/header-attrs/header-attrs.js","slides/libs/htmlwidgets/htmlwidgets.js","slides/libs/panelset/panelset.css","slides/libs/panelset/panelset.js","slides/libs/remark-css/default.css","slides/libs/tile-view/tile-view.css","slides/libs/tile-view/tile-view.js","slides/libs/viz/viz.js","slides/Raghuetal1.png","slides/xaringan-themer.css"]}
+  {"type":"character","attributes":{},"value":["07-nonlinear_files/anchor-4.2.2/anchor.min.js","07-nonlinear_files/bowser-1.9.3/bowser.min.js","07-nonlinear_files/distill-2.2.21/template.v2.js","07-nonlinear_files/header-attrs-2.6/header-attrs.js","07-nonlinear_files/header-attrs-2.7/header-attrs.js","07-nonlinear_files/jquery-1.11.3/jquery.min.js","07-nonlinear_files/popper-2.6.0/popper.min.js","07-nonlinear_files/tippy-6.2.7/tippy-bundle.umd.min.js","07-nonlinear_files/tippy-6.2.7/tippy-light-border.css","07-nonlinear_files/tippy-6.2.7/tippy.css","07-nonlinear_files/tippy-6.2.7/tippy.umd.min.js","07-nonlinear_files/webcomponents-2.0.0/webcomponents.js","notebooks/keras.html","notebooks/keras.Rmd","notebooks/kernel_complete.html","notebooks/kernel_complete.Rmd","notebooks/kernel_inprogress.Rmd","notebooks/kernel.html","notebooks/kernel.Rmd","notebooks/knn_complete.html","notebooks/knn_complete.Rmd","notebooks/knn_inprogress.Rmd","notebooks/knn.html","notebooks/knn.Rmd","notebooks/ksvm_complete_files/figure-html/unnamed-chunk-2-1.png","notebooks/ksvm_complete_files/figure-html/unnamed-chunk-3-1.png","notebooks/ksvm_complete_files/figure-html/unnamed-chunk-5-1.png","notebooks/ksvm_complete.html","notebooks/ksvm_complete.Rmd","notebooks/nonlinear_knn_incomplete.html","notebooks/nonlinear_knn_incomplete.Rmd","slides/07-1-nonlinearity_cache/html/__packages","slides/07-1-nonlinearity_cache/html/unnamed-chunk-1_f1310944776c7a201ccd8ad193ce991e.RData","slides/07-1-nonlinearity_cache/html/unnamed-chunk-1_f1310944776c7a201ccd8ad193ce991e.rdb","slides/07-1-nonlinearity_cache/html/unnamed-chunk-1_f1310944776c7a201ccd8ad193ce991e.rdx","slides/07-1-nonlinearity_cache/html/unnamed-chunk-12_d8c36175d259ed6f425038cd60420b86.RData","slides/07-1-nonlinearity_cache/html/unnamed-chunk-12_d8c36175d259ed6f425038cd60420b86.rdb","slides/07-1-nonlinearity_cache/html/unnamed-chunk-12_d8c36175d259ed6f425038cd60420b86.rdx","slides/07-1-nonlinearity_cache/html/unnamed-chunk-13_c33498c5ecd8188dbdf81605f165655c.RData","slides/07-1-nonlinearity_cache/html/unnamed-chunk-13_c33498c5ecd8188dbdf81605f165655c.rdb","slides/07-1-nonlinearity_cache/html/unnamed-chunk-13_c33498c5ecd8188dbdf81605f165655c.rdx","slides/07-1-nonlinearity_cache/html/unnamed-chunk-14_674ee1b2e51d3b2c3ad83620bb58a9ba.RData","slides/07-1-nonlinearity_cache/html/unnamed-chunk-14_674ee1b2e51d3b2c3ad83620bb58a9ba.rdb","slides/07-1-nonlinearity_cache/html/unnamed-chunk-14_674ee1b2e51d3b2c3ad83620bb58a9ba.rdx","slides/07-1-nonlinearity_cache/html/unnamed-chunk-17_5534dd5f3f692c7ccdfa3f95f0473649.RData","slides/07-1-nonlinearity_cache/html/unnamed-chunk-17_5534dd5f3f692c7ccdfa3f95f0473649.rdb","slides/07-1-nonlinearity_cache/html/unnamed-chunk-17_5534dd5f3f692c7ccdfa3f95f0473649.rdx","slides/07-1-nonlinearity_cache/html/unnamed-chunk-2_93718521c3f1170022e9971d23f7c77d.RData","slides/07-1-nonlinearity_cache/html/unnamed-chunk-2_93718521c3f1170022e9971d23f7c77d.rdb","slides/07-1-nonlinearity_cache/html/unnamed-chunk-2_93718521c3f1170022e9971d23f7c77d.rdx","slides/07-1-nonlinearity_files/figure-html/circle-eg-1.png","slides/07-1-nonlinearity_files/figure-html/logit-0d-class-1.png","slides/07-1-nonlinearity_files/figure-html/logit-1d-class-1.png","slides/07-1-nonlinearity_files/figure-html/logit-1dm-1.png","slides/07-1-nonlinearity_files/figure-html/logit-contour-1.png","slides/07-1-nonlinearity_files/figure-html/logit-data-plot-1.png","slides/07-1-nonlinearity_files/figure-html/nonlinear-reg-simple-1.png","slides/07-1-nonlinearity_files/figure-html/nonlinear-reg-sin-1.png","slides/07-1-nonlinearity_files/figure-html/poly-eg-1.png","slides/07-1-nonlinearity_files/figure-html/unnamed-chunk-1-1.png","slides/07-1-nonlinearity_files/figure-html/unnamed-chunk-10-1.png","slides/07-1-nonlinearity_files/figure-html/unnamed-chunk-11-1.png","slides/07-1-nonlinearity_files/figure-html/unnamed-chunk-12-1.png","slides/07-1-nonlinearity_files/figure-html/unnamed-chunk-13-1.png","slides/07-1-nonlinearity_files/figure-html/unnamed-chunk-14-1.png","slides/07-1-nonlinearity_files/figure-html/unnamed-chunk-15-1.png","slides/07-1-nonlinearity_files/figure-html/unnamed-chunk-16-1.png","slides/07-1-nonlinearity_files/figure-html/unnamed-chunk-18-1.png","slides/07-1-nonlinearity_files/figure-html/unnamed-chunk-19-1.png","slides/07-1-nonlinearity_files/figure-html/unnamed-chunk-2-1.png","slides/07-1-nonlinearity_files/figure-html/unnamed-chunk-3-1.png","slides/07-1-nonlinearity_files/figure-html/unnamed-chunk-4-1.png","slides/07-1-nonlinearity_files/figure-html/unnamed-chunk-5-1.png","slides/07-1-nonlinearity_files/figure-html/unnamed-chunk-6-1.png","slides/07-1-nonlinearity_files/figure-html/unnamed-chunk-7-1.png","slides/07-1-nonlinearity_files/figure-html/unnamed-chunk-8-1.png","slides/07-1-nonlinearity_files/figure-html/unnamed-chunk-9-1.png","slides/07-1-nonlinearity-phd.html","slides/07-1-nonlinearity-phd.Rmd","slides/07-1-nonlinearity.html","slides/07-1-nonlinearity.Rmd","slides/07-2-knn_files/figure-html/circle-eg-1.png","slides/07-2-knn_files/figure-html/poly-eg-1.png","slides/07-2-knn_files/figure-html/poly-eg11-1.png","slides/07-2-knn_files/figure-html/poly-eg3-1.png","slides/07-2-knn_files/figure-html/poly-eg49-1.png","slides/07-2-knn_files/figure-html/poly-eg5-1.png","slides/07-2-knn_files/figure-html/poly-eg51-1.png","slides/07-2-knn_files/figure-html/poly-eg7-1.png","slides/07-2-knn.html","slides/07-2-knn.Rmd","slides/07-3-kernels_files/figure-html/circle-eg-1.png","slides/07-3-kernels_files/figure-html/grid1d_poly_ij-1.png","slides/07-3-kernels_files/figure-html/grid1d_poly-1.png","slides/07-3-kernels_files/figure-html/grid1d_rbf_ij-1.png","slides/07-3-kernels_files/figure-html/grid1d_rbf_x-1.png","slides/07-3-kernels_files/figure-html/grid1d_rbf-1.png","slides/07-3-kernels_files/figure-html/grid2d_facet-1.png","slides/07-3-kernels_files/figure-html/grid2d_ij-1.png","slides/07-3-kernels_files/figure-html/grid3d_facet-1.png","slides/07-3-kernels_files/figure-html/grid3d_ij-1.png","slides/07-3-kernels_files/figure-html/poly-eg-1.png","slides/07-3-kernels_files/figure-html/poly-eg11-1.png","slides/07-3-kernels_files/figure-html/poly-eg3-1.png","slides/07-3-kernels_files/figure-html/poly-eg49-1.png","slides/07-3-kernels_files/figure-html/poly-eg5-1.png","slides/07-3-kernels_files/figure-html/poly-eg51-1.png","slides/07-3-kernels_files/figure-html/poly-eg7-1.png","slides/07-3-kernels_files/figure-html/poly-svm-plot-1.png","slides/07-3-kernels_files/figure-html/rbf-svm-plot-1.png","slides/07-3-kernels_files/figure-html/train_facet-1.png","slides/07-3-kernels_files/figure-html/train_ij-1.png","slides/07-3-kernels_files/figure-html/unnamed-chunk-10-1.png","slides/07-3-kernels_files/figure-html/unnamed-chunk-16-1.png","slides/07-3-kernels_files/figure-html/unnamed-chunk-17-1.png","slides/07-3-kernels_files/figure-html/unnamed-chunk-19-1.png","slides/07-3-kernels_files/figure-html/unnamed-chunk-20-1.png","slides/07-3-kernels_files/figure-html/unnamed-chunk-22-1.png","slides/07-3-kernels_files/figure-html/unnamed-chunk-23-1.png","slides/07-3-kernels_files/figure-html/unnamed-chunk-3-1.png","slides/07-3-kernels_files/figure-html/unnamed-chunk-36-1.png","slides/07-3-kernels_files/figure-html/unnamed-chunk-37-1.png","slides/07-3-kernels_files/figure-html/unnamed-chunk-39-1.png","slides/07-3-kernels_files/figure-html/unnamed-chunk-4-1.png","slides/07-3-kernels_files/figure-html/unnamed-chunk-40-1.png","slides/07-3-kernels_files/figure-html/unnamed-chunk-42-1.png","slides/07-3-kernels_files/figure-html/unnamed-chunk-43-1.png","slides/07-3-kernels_files/figure-html/unnamed-chunk-45-1.png","slides/07-3-kernels_files/figure-html/unnamed-chunk-46-1.png","slides/07-3-kernels_files/figure-html/unnamed-chunk-5-1.png","slides/07-3-kernels_files/figure-html/unnamed-chunk-51-1.png","slides/07-3-kernels_files/figure-html/unnamed-chunk-52-1.png","slides/07-3-kernels_files/figure-html/unnamed-chunk-54-1.png","slides/07-3-kernels_files/figure-html/unnamed-chunk-55-1.png","slides/07-3-kernels_files/figure-html/unnamed-chunk-6-1.png","slides/07-3-kernels_files/figure-html/unnamed-chunk-7-1.png","slides/07-3-kernels_files/figure-html/unnamed-chunk-8-1.png","slides/07-3-kernels_files/figure-html/unnamed-chunk-9-1.png","slides/07-3-kernels.html","slides/07-3-kernels.Rmd","slides/backprop.png","slides/CASI18.3.png","slides/deepnet_phd.pdf","slides/deepviz11.2.png","slides/DLbook7.6.png","slides/doubledescent.jpg","slides/ESL11.2.png","slides/gtrendDL.png","slides/libs/animate.css-xaringan/animate.slide_left.css","slides/libs/DiagrammeR-styles/styles.css","slides/libs/grViz-binding/grViz.js","slides/libs/header-attrs/header-attrs.js","slides/libs/htmlwidgets/htmlwidgets.js","slides/libs/panelset/panelset.css","slides/libs/panelset/panelset.js","slides/libs/remark-css/default.css","slides/libs/tile-view/tile-view.css","slides/libs/tile-view/tile-view.js","slides/libs/viz/viz.js","slides/Raghuetal1.png","slides/simpleplusspiky.png","slides/tuneddescent.png","slides/xaringan-themer.css"]}
   </script>
   <!--radix_placeholder_navigation_in_header-->
 <meta name="distill:offset" content="../.."/>
@@ -2183,8 +2186,8 @@ d-appendix d-footnote-list a.footnote-backlink {
   color: var(--hover-color, white);
 }</style>
 <!--/radix_placeholder_distill-->
-  <script src="../../site_libs/header-attrs-2.7/header-attrs.js"></script>
-  <script src="../../site_libs/jquery-1.11.3/jquery.min.js"></script>
+  <script src="../../site_libs/header-attrs-2.16/header-attrs.js"></script>
+  <script src="../../site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
   <script src="../../site_libs/popper-2.6.0/popper.min.js"></script>
   <link href="../../site_libs/tippy-6.2.7/tippy.css" rel="stylesheet" />
   <link href="../../site_libs/tippy-6.2.7/tippy-light-border.css" rel="stylesheet" />
@@ -2216,7 +2219,7 @@ cookieconsent.run({
 <!--radix_placeholder_front_matter-->
 
 <script id="distill-front-matter" type="text/json">
-{"title":"7 Nonlinear methods","description":"Non-linearity may result in models that trade interpretability for increased predictive accuracy. These notes discuss the challenges of non-linearity and introduce nearest neighbors and kernel methods.","authors":[{"author":"Joshua Loftus","authorURL":"#","affiliation":"&nbsp;","affiliationURL":"#","orcidID":""}],"publishedDate":"2021-10-05T00:00:00.000+01:00","citationText":"Loftus, 2021"}
+{"title":"8 Nonlinear methods","description":"Non-linearity may result in models that trade interpretability for increased predictive accuracy. These notes discuss the challenges of non-linearity and introduce nearest neighbors and kernel methods.","authors":[{"author":"Joshua Loftus","authorURL":"#","affiliation":"&nbsp;","affiliationURL":"#","orcidID":""}],"publishedDate":"2021-10-04T00:00:00.000+01:00","citationText":"Loftus, 2021"}
 </script>
 
 <!--/radix_placeholder_front_matter-->
@@ -2256,28 +2259,36 @@ References
 <!--/radix_placeholder_site_before_body-->
 
 <div class="d-title">
-<h1>7 Nonlinear methods</h1>
+<h1>8 Nonlinear methods</h1>
 <!--radix_placeholder_categories-->
 <!--/radix_placeholder_categories-->
-<p><p>Non-linearity may result in models that trade interpretability for increased predictive accuracy. These notes discuss the challenges of non-linearity and introduce nearest neighbors and kernel methods.</p></p>
+<p><p>Non-linearity may result in models that trade interpretability for
+increased predictive accuracy. These notes discuss the challenges of
+non-linearity and introduce nearest neighbors and kernel
+methods.</p></p>
 </div>
 
 <div class="d-byline">
   Joshua Loftus  
   
-<br/>10-05-2021
+<br/>10-04-2021
 </div>
 
 <div class="d-article">
 <h2 id="nearest-neighbors">Nearest neighbors</h2>
 <h2 id="kernel-methods">Kernel methods</h2>
 <h2 id="slides-notebooks">Slides, notebooks</h2>
-<p><a href="slides/07-1-nonlinearity.html">Slides</a> for non-linearity video ([PDF])</p>
-<p><a href="slides/07-2-knn.html">Slides</a> for <span class="math inline">\(k\)</span>-NN video ([PDF])</p>
-<p><a href="slides/07-3-kernels.html">Slides</a> for kernel video ([PDF])</p>
+<p><a href="slides/07-1-nonlinearity.html">Slides</a> for non-linearity
+video ([PDF])</p>
+<p><a href="slides/07-2-knn.html">Slides</a> for <span
+class="math inline">\(k\)</span>-NN video ([PDF])</p>
+<p><a href="slides/07-3-kernels.html">Slides</a> for kernel video
+([PDF])</p>
 <p><a href="notebooks/kernel.Rmd">Notebook</a> for kernels</p>
-<p><a href="notebooks/knn.Rmd">Notebook</a> for <span class="math inline">\(k\)</span>-NN</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
+<p><a href="notebooks/knn.Rmd">Notebook</a> for <span
+class="math inline">\(k\)</span>-NN</p>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
 <!--radix_placeholder_article_footer-->
 <!--/radix_placeholder_article_footer-->
 </div>
@@ -2303,11 +2314,11 @@ References
   <p>Text and figures are licensed under Creative Commons Attribution <a rel="license" href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>. The figures that have been reused from other sources don't fall under this license and can be recognized by a note in their caption: "Figure from ...".</p>
   <h3 id="citation">Citation</h3>
   <p>For attribution, please cite this work as</p>
-  <pre class="citation-appendix short">Loftus (2021, Oct. 5). machine learning 4 data science: 7 Nonlinear methods. Retrieved from http://ml4ds.com/weeks/07-nonlinear/</pre>
+  <pre class="citation-appendix short">Loftus (2021, Oct. 4). machine learning 4 data science: 8 Nonlinear methods. Retrieved from http://ml4ds.com/weeks/07-nonlinear/</pre>
   <p>BibTeX citation</p>
-  <pre class="citation-appendix long">@misc{loftus20217,
+  <pre class="citation-appendix long">@misc{loftus20218,
   author = {Loftus, Joshua},
-  title = {machine learning 4 data science: 7 Nonlinear methods},
+  title = {machine learning 4 data science: 8 Nonlinear methods},
   url = {http://ml4ds.com/weeks/07-nonlinear/},
   year = {2021}
 }</pre>

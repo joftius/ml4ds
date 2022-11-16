@@ -66,8 +66,8 @@
     "categories": [],
     "contents": "\nMaterials\nLink\nType\nDescription\nhtml pdf\nSlides\nClassification and logistic\nregression\n[html] Rmd\nNotebook\nClassification, class balance, ROC\ncurves\npdf html Rmd\nNotebook\nGradient descent and numeric\ndifferentiation\nhtml\nExercises\nFirst exercise set\nTo be updated\nPreparation\nRequired reading\nISLR Chapter 4. This\nchapter is a bit lengthy, so it’s OK if you don’t carefully follow all\nthe mathematics in sections 4.4 and 4.5 as long as you understand the\nconcepts.\nMLstory Start Chapter 5 on\noptimization, read the first two sections on Optimization Basics and on\nGradient Descent. You can stop when you reach Proposition 3.\nSupplemental reading\nWikipedia on Newton’s\nmethod and gradient\ndescent (good for pictures and animations)\nCASI Chapter 4 for MLE\ntheory, Chapter 8 sections 8.1-8.3 (more advanced material)\nCarving nature at its joints\n\n“A good cook gets a new knife every year; he chops! Mediocre cooks\nchange knives monthly; they hack. My knife now has 19 years on it; it’s\ncarved several thousand oxen and the edge is as if I had just taken it\nfrom the sharpener. Those joints have gaps, and the knife’s edge no\nthickness, to put something infinitesimally thin in an empty space?!\nEffortless! It even allows the edge wander in with ample room to play.\nThat is why, with 19 years on it, this knife’s edge is grindstone\nfresh.” - Butcher Ding, the\nZhuangzi\n\n\n\n\n",
     "preview": {},
-    "last_modified": "2022-11-14T11:04:00+00:00",
-    "input_file": "04-classification.knit.md"
+    "last_modified": "2022-11-14T11:04:01+00:00",
+    "input_file": {}
   },
   {
     "path": "weeks/05-optimization/",
@@ -84,7 +84,7 @@
     "contents": "\nMaterials\nLink\nType\nDescription\nhtml pdf\nSlides\nOptimization and model complexity\nhtml\nNotebook\nGradient descent\nRmd\nNotebook\nStochastic gradient descent\nRmd\nNotebook\nStepwise variable selection\nTo be updated\nPreparation\nRequired reading\nISLR Chapter 6, Section\n1 only.\nISLR Chapter 7, Sections\n1-3 and 6.\nMLstory Chapter 5 on\noptimization, read the section on Stochastic gradient descent\nand stop after the SGD quick start guide.\nSupplemental reading\nMLstory Chapter 5 on\noptimization, the rest of the chapter (note that it contains some more\nadvanced material).\nWikipedia on Newton’s\nmethod and gradient\ndescent (good for pictures and animations)\nOptimization\nOverfitting\nSlides, notebooks, exercises\nSlides for optimization\nvideo (PDF)\nSlides for overfitting\nvideo (PDF)\nNotebook for\ngeneralization (partially\ncomplete)\nNotebook for optimization\n(partially\ncomplete)\nNotebook for\nregularization (partially\ncomplete)\nExercises\n\n\n\n",
     "preview": {},
     "last_modified": "2022-10-26T21:12:00+01:00",
-    "input_file": "05-optimization.knit.md"
+    "input_file": {}
   },
   {
     "path": "weeks/06-regularization/",
@@ -101,12 +101,12 @@
     "contents": "\nMaterials\nLink\nType\nDescription\nhtml pdf\nSlides\nOverfitting and validation\n[html] Rmd\nNotebook\nValidation experiments\nTo be updated\nPreparation\nRequired reading\nISLR Chapter 5 on\nresampling methods.\nISLR Chapter 6, section\n6.2.\nSupplemental reading\nESL Chapter\n7, sections 1-6 and 10.\nRegularization\nValidation\nSlides, notebooks, exercises\nSlides for\nregularization video (PDF)\nSlides for lasso video (PDF)\nNotebook for validation\nNotebook for lasso\n\n\n\n",
     "preview": {},
     "last_modified": "2022-11-09T22:55:34+00:00",
-    "input_file": "06-regularization.knit.md"
+    "input_file": {}
   },
   {
-    "path": "weeks/07-nonlinear/",
-    "title": "7 Nonlinear methods",
-    "description": "Non-linearity may result in models that trade interpretability for increased predictive accuracy. These notes discuss the challenges of non-linearity and introduce nearest neighbors and kernel methods.",
+    "path": "weeks/07-highdim/",
+    "title": "7 High-dimensional regression",
+    "description": "Regression with many predictor variables can suffer from a statistical version of the curse of dimensionality. Penalized regression methods like ridge and lasso are useful in such high-dimensional settings.",
     "author": [
       {
         "name": "Joshua Loftus",
@@ -115,9 +115,26 @@
     ],
     "date": "2021-10-05",
     "categories": [],
-    "contents": "\nNearest neighbors\nKernel methods\nSlides, notebooks\nSlides for non-linearity video ([PDF])\nSlides for \\(k\\)-NN video ([PDF])\nSlides for kernel video ([PDF])\nNotebook for kernels\nNotebook for \\(k\\)-NN\n\n\n\n",
+    "contents": "\nMaterials\nLink\nType\nDescription\nhtml pdf\nSlides\nRidge and lasso regression\nTo be updated\nPreparation\nRequired reading\nISLR The rest of Chapter\n6.\nSupplemental reading\nESL Chapter\n3, sections 1-6 and 10.\nCASI Chapters 7 and\n16.\nRegularization\nValidation\nSlides, notebooks, exercises\nSlides for\nregularization video (PDF)\nSlides for lasso video (PDF)\nNotebook for validation\nNotebook for lasso\n\n\n\n",
     "preview": {},
-    "last_modified": "2022-09-18T15:01:06+01:00",
+    "last_modified": "2022-11-16T10:43:15+00:00",
+    "input_file": {}
+  },
+  {
+    "path": "weeks/07-nonlinear/",
+    "title": "8 Nonlinear methods",
+    "description": "Non-linearity may result in models that trade interpretability for increased predictive accuracy. These notes discuss the challenges of non-linearity and introduce nearest neighbors and kernel methods.",
+    "author": [
+      {
+        "name": "Joshua Loftus",
+        "url": {}
+      }
+    ],
+    "date": "2021-10-04",
+    "categories": [],
+    "contents": "\nNearest neighbors\nKernel methods\nSlides, notebooks\nSlides for non-linearity\nvideo ([PDF])\nSlides for \\(k\\)-NN video ([PDF])\nSlides for kernel video\n([PDF])\nNotebook for kernels\nNotebook for \\(k\\)-NN\n\n\n\n",
+    "preview": {},
+    "last_modified": "2022-11-16T10:29:35+00:00",
     "input_file": {}
   },
   {

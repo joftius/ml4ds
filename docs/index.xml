@@ -40,7 +40,7 @@
       <link>http://ml4ds.com/weeks/04-classification</link>
       <description>Categorical or qualitative outcome variables are ubiquitous. We review some supervised learning methods for classification, and see how these may be applied to observational causal inference.</description>
       <guid>http://ml4ds.com/weeks/04-classification</guid>
-      <pubDate>Thu, 07 Oct 2021 00:00:00 +0000</pubDate>
+      <pubDate>Fri, 08 Oct 2021 00:00:00 +0000</pubDate>
     </item>
     <item>
       <title>5 Optimization and model complexity</title>
@@ -59,12 +59,20 @@
       <pubDate>Wed, 06 Oct 2021 00:00:00 +0000</pubDate>
     </item>
     <item>
-      <title>7 Nonlinear methods</title>
+      <title>7 High-dimensional regression</title>
+      <dc:creator>Joshua Loftus</dc:creator>
+      <link>http://ml4ds.com/weeks/07-highdim</link>
+      <description>Regression with many predictor variables can suffer from a statistical version of the curse of dimensionality. Penalized regression methods like ridge and lasso are useful in such high-dimensional settings.</description>
+      <guid>http://ml4ds.com/weeks/07-highdim</guid>
+      <pubDate>Tue, 05 Oct 2021 00:00:00 +0000</pubDate>
+    </item>
+    <item>
+      <title>8 Nonlinear methods</title>
       <dc:creator>Joshua Loftus</dc:creator>
       <link>http://ml4ds.com/weeks/07-nonlinear</link>
       <description>Non-linearity may result in models that trade interpretability for increased predictive accuracy. These notes discuss the challenges of non-linearity and introduce nearest neighbors and kernel methods.</description>
       <guid>http://ml4ds.com/weeks/07-nonlinear</guid>
-      <pubDate>Tue, 05 Oct 2021 00:00:00 +0000</pubDate>
+      <pubDate>Mon, 04 Oct 2021 00:00:00 +0000</pubDate>
     </item>
     <item>
       <title>8 More nonlinear methods</title>

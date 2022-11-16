@@ -1,0 +1,55 @@
+---
+title: "7 High-dimensional regression"
+description: |
+  Regression with many predictor variables can suffer from a statistical version of the curse of dimensionality. Penalized regression methods like ridge and lasso are useful in such high-dimensional settings.
+author:
+  - name: Joshua Loftus
+date: 10-05-2021
+output:
+  distill::distill_article:
+    self_contained: false
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+knitr::opts_chunk$set(fig.retina = 3, warning = FALSE, message = FALSE)
+library(tidyverse)
+library(knitr)
+library(gapminder)
+theme_set(theme_minimal(base_size = 22))
+```
+
+
+## Materials
+
+| Link | Type | Description             |
+|:----:|:----:|:------------------------|
+| [html](slides/07-1-highdim.html)  [pdf](slides/07-1-highdim.html_handout.pdf) | Slides | Ridge and lasso regression
+
+
+*To be updated*
+
+## Preparation
+
+### Required reading
+
+- [ISLR](https://www.statlearning.com/) The rest of Chapter 6.
+
+### Supplemental reading
+
+- [ESL](https://hastie.su.domains/ElemStatLearn/) Chapter 3, sections 1-6 and 10.
+- [CASI](https://hastie.su.domains/CASI/) Chapters 7 and 16.
+
+## Regularization
+
+## Validation
+
+## Slides, notebooks, exercises
+
+[Slides](slides/06-1-regularization.html) for regularization video ([PDF](slides/regularization.pdf))
+
+[Slides](slides/06-2-lasso.html) for lasso video ([PDF](slides/validation.pdf))
+
+[Notebook](notebooks/validation.Rmd) for validation
+
+[Notebook](notebooks/lasso_inference.Rmd) for lasso 
