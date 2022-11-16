@@ -1,0 +1,203 @@
+---
+title: "Validation experiments"
+author: "ST310"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(broom)
+theme_set(theme_minimal(base_size = 14))
+```
+
+## Non-linear regression
+
+#### Complexity measure: wiggliness
+
+### Generate data
+
+Simulate data with one predictor, one outcome, a true conditional expectation given by some non-linear function, and normal errors.
+
+```{r}
+# e.g.
+set.seed(1) # remove/change
+f <- function(x) 2 * (x^3  + 1) * sin(pi * x)
+n <- 400
+noise_variance <- 0.5^2
+data_full <- data.frame(
+  x = runif(n, min = -1, max = 1)
+) |>
+  mutate(
+    true_CEF = f(x),
+    y = true_CEF + rnorm(n, sd = sqrt(noise_variance))
+  )
+ggplot(data_full, aes(x,y)) + 
+  geom_point(alpha = .6) +
+  stat_function(fun = f, size = 1)
+```
+
+### Split data
+
+Use some fraction of the sample (e.g. 2/3 or 8/10) as training data and the remainder as validation data. (Hint: `sample(1:n, replace = FALSE)` and look up `?setdiff`)
+
+Note: we need some way to deal with the fact that `loess` cannot `predict` outside the range of the training data. One imperfect solution is to remove any points from the test data that fall outside the range. Another is to remove `NA` values when predicting, i.e. computing MSE using `mean(..., na.rm = TRUE)`. I use `filter()` below to do this.
+
+```{r}
+prop_train <- 8/10 # can change
+n <- nrow(data_full)
+#train <- ...
+#test <- ...
+#data_train <- data_full[train, ]
+#data_test <- data_full[test, ] |>
+#  filter(x <= max(data_train$x), x >= min(data_train$x))
+# c(nrow(data_train), nrow(data_test))
+```
+
+### Fit models
+
+Fit non-linear regression models on the training data using several different values of the complexity/smoothness parameter
+
+```{r}
+
+```
+
+
+### Validate
+
+Compute the prediction error (MSE) on the training data and test data and compare these at each value of the complexity parameter.
+
+```{r}
+
+```
+
+
+**Question**: What do you notice about the comparison?
+
+
+
+**Question**: Which value of the complexity parameter has the lowest validation error?
+
+
+
+### Distribution shift / OOD generalization / bias
+
+Generate new test data that has a different distribution from the original data.
+
+**Question**: How many different ways can you think of to change the distribution of the new data?
+
+
+
+```{r}
+#data_OOD <- data.frame() |>
+#  mutate() |>
+#  filter(x <= max(data_train$x), x >= min(data_train$x))
+```
+
+Compute MSE on new OOD data
+
+```{r}
+
+```
+**Question**: Can you make the MSE on new data systematically higher? How about lower?
+
+
+
+**Question**: Does the complexity level that minimizes test error also minimize the OOD test error?
+
+
+
+## Stochastic gradient descent
+
+#### Complexity measure: optimization time
+
+Now repeat the previous steps in this new data generation and model fitting context. Start by copy/pasting code from a [previous notebook](https://ml4ds.com/weeks/05-optimization/notebooks/SGD_complete.html).
+
+### Generate data
+
+Simulate data from a linear model. 
+
+```{r}
+
+```
+
+### Split data
+
+```{r}
+# ...
+#X_train <- X[train, ]
+#X_test <- X[test, ] 
+#y_train <- y[train]
+#y_test <- y[test] 
+```
+
+### Fit models
+
+Fit linear regression models using SGD on the training data, with more than one epoch.
+
+Starting from the SGD implementation in the notebook linked above, be careful to change `X`, `y`, and `n` to something like `X_train`, `y_train`, and `nrow(X_train)`. You should also update `SGD_path` to track the test loss.
+
+Finally, be sure to change the `least_squares_loss` function to use `mean` instead of `sum` so that the result doesn't depend on the sizes of the training/test data.
+
+```{r}
+
+```
+
+### Validate
+
+Use the current estimate at the end of each epoch to compute the prediction error (MSE) on the training data and test data and compare them.
+
+```{r echo=FALSE}
+# This code assumes SGD_path has variables
+# named train_loss and test_loss
+SGD_path |>
+  group_by(epoch) |>
+  top_n(1, wt = step) |> #filter(epoch > 5, epoch < 50) |>
+  select(epoch, train_loss, test_loss) |>
+  pivot_longer(!epoch, names_to = "type", values_to = "loss") |>
+  ggplot(aes(epoch, loss, color = type, linetype = type)) +
+  geom_line(size = 1) + 
+  scale_color_viridis_d() + scale_y_log10()
+```
+
+```{r echo=FALSE}
+SGD_path |>
+  group_by(epoch) |>
+  top_n(1, wt = step) |>
+  ggplot(aes(epoch, MSE)) +
+  geom_line(size = 1)
+```
+
+**Question**: Do you observe any relationships between training error, test error, and MSE?
+
+
+
+### Optional: SGD loss on OOD data
+
+Generate new test data with a slightly different distribution.
+
+```{r}
+# ...
+#y_OOD <- X_OOD %*% beta_OOD + ...
+```
+
+Copy/paste the previous SGD implementation and modify it to also compute the OOD loss.
+
+```{r echo=FALSE}
+
+```
+
+Plot the results
+
+```{r echo=FALSE}
+SGD_path |>
+  group_by(epoch) |>
+  top_n(1, wt = step) |> #filter(epoch > 5, epoch < 50) |>
+  select(epoch, test_loss, OOD_loss) |> #, train_loss) |>
+  pivot_longer(!epoch, names_to = "type", values_to = "loss") |>
+  ggplot(aes(epoch, loss, color = type, linetype = type)) +
+  geom_line(size = 1) + 
+  scale_color_viridis_d() + scale_y_log10()
+```
+
+

@@ -1,0 +1,382 @@
+---
+title: "Validation experiments"
+author: "ST310"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(broom)
+theme_set(theme_minimal(base_size = 14))
+```
+
+## Non-linear regression
+
+#### Complexity measure: wiggliness
+
+### Generate data
+
+Simulate data with one predictor, one outcome, a true conditional expectation given by some non-linear function, and normal errors.
+
+```{r}
+# e.g.
+set.seed(1) # remove/change
+f <- function(x) 2 * (x^3  + 1) * sin(pi * x)
+n <- 400
+noise_variance <- 0.5^2
+data_full <- data.frame(
+  x = runif(n, min = -1, max = 1)
+) |>
+  mutate(
+    true_CEF = f(x),
+    y = true_CEF + rnorm(n, sd = sqrt(noise_variance))
+  )
+ggplot(data_full, aes(x,y)) + 
+  geom_point(alpha = .6) +
+  stat_function(fun = f, size = 1)
+```
+
+### Split data
+
+Use some fraction of the sample (e.g. 2/3 or 8/10) as training data and the remainder as validation data. (Hint: `sample(1:n, replace = FALSE)` and look up `?setdiff`)
+
+Note: we need some way to deal with the fact that `loess` cannot `predict` outside the range of the training data. One imperfect solution is to remove any points from the test data that fall outside the range. Another is to remove `NA` values when predicting, i.e. computing MSE using `mean(..., na.rm = TRUE)`. I use `filter()` below to do this.
+
+```{r}
+prop_train <- 8/10
+n <- nrow(data_full)
+train <- sample(1:n, floor(prop_train*n), replace = FALSE)
+test <- setdiff(1:n, train)
+data_train <- data_full[train, ]
+data_test <- data_full[test, ] |>
+  filter(x <= max(data_train$x), x >= min(data_train$x))
+c(nrow(data_train), nrow(data_test))
+```
+
+### Fit models
+
+Fit non-linear regression models on the training data using several different values of the complexity/smoothness parameter
+
+```{r}
+model1 <- loess(y ~ x, span = .9, data = data_train)
+model2 <- loess(y ~ x, span = .7, data = data_train)
+model3 <- loess(y ~ x, span = .5, data = data_train)
+model4 <- loess(y ~ x, span = .3, data = data_train)
+```
+
+or
+
+```{r}
+spans <- c(seq(from = .1, to = .9, by = .1), .95)
+models <- map(spans, function(s) 
+  loess(y ~ x, span = s, data = data_train)
+)
+```
+
+### Validate
+
+Compute the prediction error (MSE) on the training data and test data and compare these at each value of the complexity parameter.
+
+```{r}
+MSE_train <- c(
+  mean(residuals(model1)^2),
+  mean(residuals(model2)^2),
+  mean(residuals(model3)^2),
+  mean(residuals(model4)^2))
+
+MSE_test <- c(
+  mean((predict(model1, newdata = data_test) - data_test$y)^2),
+  mean((predict(model2, newdata = data_test) - data_test$y)^2),
+  mean((predict(model3, newdata = data_test) - data_test$y)^2),
+  mean((predict(model4, newdata = data_test) - data_test$y)^2)
+)
+
+MSEs <- cbind(MSE_train, MSE_test)
+rownames(MSEs) <- c(.9, .7, .5, .3)
+MSEs
+```
+
+or
+
+```{r}
+all_MSEs <- map_dfr(models, function(m) {
+  data.frame(train = mean(residuals(m)^2),
+  test = mean((predict(m, newdata = data_test) - data_test$y)^2))
+}) |>
+  mutate(span = spans)
+all_MSEs |>
+  pivot_longer(!span, names_to = "type", values_to = "MSE") |>
+  ggplot(aes(span, MSE, linetype = type)) + geom_line()
+```
+
+
+**Question**: What do you notice about the comparison?
+
+Usually the test error is larger than the training error
+
+**Question**: Which value of the complexity parameter has the lowest validation error?
+
+Roughly .3 for this data
+
+### Distribution shift / OOD generalization / bias
+
+Generate new test data that has a different distribution from the original data.
+
+**Question**: How many different ways can you think of to change the distribution of the new data?
+
+Change distribution of `x`, change true CEF `f`, change distribution of errors.
+
+```{r}
+data_OOD <- data.frame(
+    x = runif(n, min = -1, max = 1)
+) |>
+  mutate(
+    true_CEF = f(x) ,#- .6 * sin(pi * x),
+    y = true_CEF + rnorm(n, sd = 1.2 * sqrt(noise_variance))
+  ) |>
+  filter(x <= max(data_train$x), x >= min(data_train$x))
+```
+
+Compute MSE on new OOD data
+
+```{r}
+map_dfr(models, function(m) {
+  data.frame(OOD = mean((predict(m, newdata = data_OOD) - data_OOD$y)^2))
+}) |> 
+  cbind(all_MSEs) |>
+  pivot_longer(!span, names_to = "type", values_to = "MSE") |>
+  ggplot(aes(span, MSE, linetype = type)) + geom_line()
+```
+**Question**: Can you make the MSE on new data systematically higher? How about lower?
+
+Yes to both, changing the distribution by, for example, decreasing/increasing the variance of the noise (and keeping everything else the same).
+
+**Question**: Does the complexity level that minimizes test error also minimize the OOD test error?
+
+No, not in general (unless the new distribution is close enough to the original one). It's possible for a model with low test error to have high error on OOD data.
+
+## Stochastic gradient descent
+
+#### Complexity measure: optimization time
+
+Now repeat the previous steps in this new data generation and model fitting context. Start by copy/pasting code from a [previous notebook](https://ml4ds.com/weeks/05-optimization/notebooks/SGD_complete.html).
+
+### Generate data
+
+Simulate data from a linear model. 
+
+```{r}
+set.seed(1) # comment/uncomment/change this
+n <- 200
+p <- 400
+X <- matrix(rnorm(n*p), nrow = n)
+beta <- rpois(p, lambda = 1.5)
+SGD_starting_beta <- rnorm(p) # generate once
+#beta <- sample(c(-1, 0, 0, 1), p, replace = TRUE)
+sigma <- 2
+y <- X %*% beta + rnorm(n, sd = sigma)
+# sparsity level
+sum(beta != 0)
+```
+
+### Split data
+
+```{r}
+prop_train <- 7/10
+n <- nrow(X)
+train <- sample(1:n, floor(prop_train*n), replace = FALSE)
+test <- setdiff(1:n, train)
+X_train <- X[train, ]
+X_test <- X[test, ] 
+y_train <- y[train]
+y_test <- y[test] 
+```
+
+### Fit models
+
+Fit linear regression models using SGD on the training data, with more than one epoch.
+
+Starting from the SGD implementation in the notebook linked above, be careful to change `X`, `y`, and `n` to something like `X_train`, `y_train`, and `nrow(X_train)`. You should also update `SGD_path` to track the test loss.
+
+Finally, be sure to change the `least_squares_loss` function to use `mean` instead of `sum` so that the result doesn't depend on the sizes of the training/test data.
+
+```{r}
+# Loss function
+least_squares_loss <- function(x, y, beta) {
+  residuals <- y - x %*% beta
+  mean(residuals^2)
+}
+# Gradient of the loss function
+least_squares_gradient <- function(x, y, beta) {
+  residuals <- y - x %*% beta
+  -2 * t(x) %*% residuals
+}
+# SGD setup
+epochs <- 50 
+batch_size <- 20 # for batch SGD
+gamma <- 0.9
+beta_hat <- SGD_starting_beta # generated once above
+#beta_hat <- rnorm(p) # random start
+num_batches <- ceiling(nrow(X_train)/batch_size)
+steps <- epochs * num_batches
+SGD_path <- data.frame(step = 1:steps,
+                       epoch = numeric(steps),
+                       gamma = numeric(steps),
+                       train_loss = numeric(steps),
+                       test_loss = numeric(steps),
+                       MSE = numeric(steps),
+                       beta_hat_norm = numeric(steps),
+                       gradient_norm = numeric(steps))
+# Main SGD loop
+start_time <- Sys.time()
+step <- 1
+for (epoch in 1:epochs) {
+  # Pass over sample in a random order each time
+  shuffled_indices <- sample(1:nrow(X_train), nrow(X_train), replace = TRUE)
+  
+  for (batch in 1:num_batches) {
+    batch_start <- 1 + batch_size * (batch - 1)
+    batch_end <- min(batch_size * batch, nrow(X_train))
+    batch_indices <- shuffled_indices[batch_start:batch_end]
+   # Mini-batch
+    X_batch <- X_train[batch_indices, , drop = FALSE]
+    y_batch <- y_train[batch_indices]
+    # Update beta_hat
+   gradient_batch <- least_squares_gradient(X_batch, y_batch, beta_hat)
+   gradient_norm <- sqrt(sum(gradient_batch^2))
+   beta_hat <- beta_hat - gamma^epoch * gradient_batch / (1e-8 + gradient_norm)
+   train_loss <- least_squares_loss(X_train, y_train, beta_hat)
+   test_loss <- least_squares_loss(X_test, y_test, beta_hat)
+
+  # Store algorithm path information
+  SGD_path[step, ] <- c(step,
+                        epoch,
+                        gamma^epoch,
+                        train_loss,
+                        test_loss,
+                        mean((beta_hat - beta)^2),
+                        sqrt(sum(beta_hat^2)),
+                        gradient_norm)
+  step <- step + 1
+  }
+}
+
+print(Sys.time() - start_time)
+```
+
+### Validate
+
+Use the current estimate at the end of each epoch to compute the prediction error (MSE) on the training data and test data and compare them.
+
+```{r echo=FALSE}
+# This code assumes SGD_path has variables
+# named train_loss and test_loss
+SGD_path |>
+  group_by(epoch) |>
+  top_n(1, wt = step) |> #filter(epoch > 5, epoch < 50) |>
+  select(epoch, train_loss, test_loss) |>
+  pivot_longer(!epoch, names_to = "type", values_to = "loss") |>
+  ggplot(aes(epoch, loss, color = type, linetype = type)) +
+  geom_line(size = 1) + 
+  scale_color_viridis_d() + scale_y_log10()
+```
+
+```{r echo=FALSE}
+SGD_path |>
+  group_by(epoch) |>
+  top_n(1, wt = step) |>
+  ggplot(aes(epoch, MSE)) +
+  geom_line(size = 1)
+```
+
+**Question**: Do you observe any relationships between training error, test error, and MSE?
+
+Test error tends to decrease slower than training error and practically stops decreasing before training error does the same. 
+The shape of the MSE curve might be somewhere between: it seems to keep decreasing after test error has stopped, and then to stop decreasing before training error.
+
+### Optional: SGD loss on OOD data
+
+Generate new test data with a slightly different distribution.
+
+```{r}
+# Can also change dist. of X
+X_OOD <- matrix(rnorm(n*p, sd = 1), nrow = n)
+#beta_OOD <- beta
+beta_OOD <- beta + rnorm(p, sd = .1)
+# Set small coefficients to zero
+#beta_OOD[which(abs(beta) <= 1)] <- 0
+# Make some small coefficients larger
+#beta_OOD[which(abs(beta) <= 1)] <- 2 * beta_OOD[which(abs(beta) <= 1)]
+# noise sd reduced
+y_OOD <- X_OOD %*% beta_OOD + rnorm(n, sd = 1.0 * sigma)
+```
+
+Copy/paste the previous SGD implementation and modify it to also compute the OOD loss.
+
+```{r echo=FALSE}
+epochs <- 100
+beta_hat <- SGD_starting_beta # generated once above
+steps <- epochs * num_batches
+SGD_path <- data.frame(step = 1:steps,
+                       epoch = numeric(steps),
+                       gamma = numeric(steps),
+                       train_loss = numeric(steps),
+                       test_loss = numeric(steps),
+                       OOD_loss = numeric(steps),
+                       MSE = numeric(steps),
+                       beta_hat_norm = numeric(steps),
+                       gradient_norm = numeric(steps))
+# Main SGD loop
+start_time <- Sys.time()
+step <- 1
+for (epoch in 1:epochs) {
+  # Pass over sample in a random order each time
+  shuffled_indices <- sample(1:nrow(X_train), nrow(X_train), replace = TRUE)
+  
+  for (batch in 1:num_batches) {
+    batch_start <- 1 + batch_size * (batch - 1)
+    batch_end <- min(batch_size * batch, nrow(X_train))
+    batch_indices <- shuffled_indices[batch_start:batch_end]
+   # Mini-batch
+    X_batch <- X_train[batch_indices, , drop = FALSE]
+    y_batch <- y_train[batch_indices]
+    # Update beta_hat
+   gradient_batch <- least_squares_gradient(X_batch, y_batch, beta_hat)
+   gradient_norm <- sqrt(sum(gradient_batch^2))
+   beta_hat <- beta_hat - gamma^epoch * gradient_batch / (1e-8 + gradient_norm)
+   train_loss <- least_squares_loss(X_train, y_train, beta_hat)
+   test_loss <- least_squares_loss(X_test, y_test, beta_hat)
+   OOD_loss <- least_squares_loss(X_OOD, y_OOD, beta_hat)
+
+  # Store algorithm path information
+  SGD_path[step, ] <- c(step,
+                        epoch,
+                        gamma^epoch,
+                        train_loss,
+                        test_loss,
+                        OOD_loss,
+                        mean((beta_hat - beta)^2),
+                        sqrt(sum(beta_hat^2)),
+                        gradient_norm)
+  step <- step + 1
+  }
+}
+
+print(Sys.time() - start_time)
+```
+
+Plot the results
+
+```{r echo=FALSE}
+SGD_path |>
+  group_by(epoch) |>
+  top_n(1, wt = step) |> #filter(epoch > 5, epoch < 50) |>
+  select(epoch, test_loss, OOD_loss) |> #, train_loss) |>
+  pivot_longer(!epoch, names_to = "type", values_to = "loss") |>
+  ggplot(aes(epoch, loss, color = type, linetype = type)) +
+  geom_line(size = 1) + 
+  scale_color_viridis_d() + scale_y_log10()
+```
+
+
