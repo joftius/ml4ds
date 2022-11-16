@@ -25,7 +25,8 @@ theme_set(theme_minimal(base_size = 22))
 | Link | Type | Description             |
 |:----:|:----:|:------------------------|
 | [html](slides/07-1-highdim.html)  [pdf](slides/07-1-highdim.html_handout.pdf) | Slides | Ridge and lasso regression
-
+| [html](notebooks/lasso_estimation.html) [Rmd](notebooks/lasso_estimation.Rmd) | Notebook | Lasso estimation |
+| [html](notebooks/lasso_inference.html) [Rmd](notebooks/lasso_inference.Rmd) | Notebook | Lasso inference |
 
 *To be updated*
 

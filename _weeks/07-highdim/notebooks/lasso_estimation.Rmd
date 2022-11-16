@@ -1,7 +1,6 @@
 ---
-title: "Lasso experiments"
-author: "Joshua Loftus"
-date: "2/12/2021"
+title: "Lasso estimation"
+author: "ST310"
 output: html_document
 ---
 
@@ -11,19 +10,7 @@ library(tidyverse)
 library(broom)     
 library(modelr)    
 library(glmnet)    
-library(selectiveInference)
-theme_set(theme_minimal(base_size = 20))
-```
-
-## Warm-up: truncated normal
-
-- Generate some `rnorm` data
-- Truncate it above/below/both
-- Plot histogram of truncated data
-- Add conditional density to the plot
-
-```{r}
-
+theme_set(theme_minimal(base_size = 14))
 ```
 
 ## Lasso simulations
@@ -43,6 +30,8 @@ $$
 $$
 \text{MSE}(\hat \beta_\text{ridge}(\lambda))
 $$
+
+In a real dataset we would only see one of these lines, but the simulation gives us a sense of how the performance could vary depending on the randomness of the noise in the linear model. (Optional: change the functions so you can also specify the noise level and see how larger noise variance affect the results)
 
 ```{r}
 instance <- function(X, L, n, p, beta, mu) {
@@ -110,33 +99,3 @@ Copy/paste and modify the previous functions and use them to experiment with the
 - Choose some metric to plot, like MSE of $\hat \beta_\text{lasso}(\lambda)$, out of sample prediction accuracy, or true/false positive rates of selected variables.
 
 - Experiment with the parameters, $n$, $p$, sparsity, or making the design matrix $X$ have correlated columns, to see how the performance changes
-
-### Inference for the lasso
-
-Write code to use the `selectiveInference` package to compute p-values for a single simulated dataset. Compare these p-values to the same from the `summary` of OLS on the active variables. Run the code several times to get a sense for the 
-
-```{r}
-n <- 100
-p <- 200
-X <- matrix(rnorm(n*p), nrow = n)
-Y <- rnorm(n)
-# Compute lasso path
-# while storing information required for
-# conditional (truncated) inference
-lasso_path <- lar(X, Y)
-# Use AIC/BIC to choose model size
-# and compute adjusted p-values
-# in higher dimensions change mult
-# to log(n) for BIC, log(p) for RIC
-lasso_inference <- larInf(lasso_path, mult = 2, type = "aic", ntimes = 1)
-lasso_inference
-```
-
-OLS inference:
-
-```{r}
-relaxed_fit <- lm(Y ~ X[, lasso_inference$vars] - 1)
-tidy(relaxed_fit)
-```
-
-

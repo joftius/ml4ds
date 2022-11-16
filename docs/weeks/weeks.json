@@ -115,10 +115,10 @@
     ],
     "date": "2021-10-05",
     "categories": [],
-    "contents": "\nMaterials\nLink\nType\nDescription\nhtml pdf\nSlides\nRidge and lasso regression\nTo be updated\nPreparation\nRequired reading\nISLR The rest of Chapter\n6.\nSupplemental reading\nESL Chapter\n3, sections 1-6 and 10.\nCASI Chapters 7 and\n16.\nRegularization\nValidation\nSlides, notebooks, exercises\nSlides for\nregularization video (PDF)\nSlides for lasso video (PDF)\nNotebook for validation\nNotebook for lasso\n\n\n\n",
+    "contents": "\nMaterials\nLink\nType\nDescription\nhtml pdf\nSlides\nRidge and lasso regression\nhtml Rmd\nNotebook\nLasso estimation\nhtml Rmd\nNotebook\nLasso inference\nTo be updated\nPreparation\nRequired reading\nISLR The rest of Chapter\n6.\nSupplemental reading\nESL Chapter\n3, sections 1-6 and 10.\nCASI Chapters 7 and\n16.\nRegularization\nValidation\nSlides, notebooks, exercises\nSlides for\nregularization video (PDF)\nSlides for lasso video (PDF)\nNotebook for validation\nNotebook for lasso\n\n\n\n",
     "preview": {},
-    "last_modified": "2022-11-16T10:43:15+00:00",
-    "input_file": {}
+    "last_modified": "2022-11-16T17:28:56+00:00",
+    "input_file": "07-highdim.knit.md"
   },
   {
     "path": "weeks/07-nonlinear/",

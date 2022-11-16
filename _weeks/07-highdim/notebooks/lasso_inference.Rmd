@@ -10,7 +10,7 @@ library(tidyverse)
 library(broom)     
 library(glmnet)    
 library(selectiveInference)
-theme_set(theme_minimal(base_size = 20))
+theme_set(theme_minimal(base_size = 14))
 ```
 
 ## Inference for the lasso
