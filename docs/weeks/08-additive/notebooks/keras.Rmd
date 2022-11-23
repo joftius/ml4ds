@@ -1,0 +1,214 @@
+---
+title: "Deep learning"
+author: "LSE ST510"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+# maybe comment out next line
+reticulate::use_python("~/.pyenv/versions/tf/bin/python")
+library(tensorflow)
+library(keras)
+```
+
+
+## MNIST example
+
+#### Can we get to 99-percent accuracy on the test data?
+
+```{r}
+mnist <- dataset_mnist()
+```
+
+```{r}
+image(mnist$train$x[42,,])
+```
+
+```{r}
+mnist$train$y[42]
+```
+
+```{r}
+# Input dimensions
+num_classes <- 10
+img_rows <- 28
+img_cols <- 28
+x_train <- mnist$train$x
+y_train <- mnist$train$y
+x_test <- mnist$test$x
+y_test <- mnist$test$y
+
+# Redefine  dimension of train/test inputs
+x_train <- array_reshape(x_train, c(nrow(x_train), img_rows, img_cols, 1))
+x_test <- array_reshape(x_test, c(nrow(x_test), img_rows, img_cols, 1))
+input_shape <- c(img_rows, img_cols, 1)
+
+# Transform RGB values into [0,1] range
+x_train <- x_train / 255
+x_test <- x_test / 255
+
+cat('x_train_shape:', dim(x_train), '\n')
+cat(nrow(x_train), 'train samples\n')
+cat(nrow(x_test), 'test samples\n')
+
+# Convert class vectors to binary class matrices
+y_train <- to_categorical(y_train, num_classes)
+y_test <- to_categorical(y_test, num_classes)
+```
+
+### Try a large model
+
+- Sequential model specification: https://keras.io/guides/sequential_model/
+- Layer choices: https://keras.io/api/layers/
+
+Common strategy for images: convolution and pooling layers followed by dense layers. If someone says it works... try it? But don't let it become a superstition!
+
+```{r}
+# Define model
+model <- keras_model_sequential(input_shape = input_shape) %>%
+  layer_conv_2d(filters = 64, kernel_size = c(3,3), activation = 'relu') %>%
+  layer_max_pooling_2d(pool_size = c(2, 2)) %>%
+  layer_conv_2d(filters = 128, kernel_size = c(3,3), activation = 'relu', use_bias = FALSE) %>%
+  layer_max_pooling_2d(pool_size = c(2, 2)) %>%  
+  layer_flatten() %>%
+  layer_dense(units = 32, activation = 'relu') %>%
+  layer_dense(units = num_classes, activation = 'softmax')
+
+summary(model)
+```
+
+
+```{r}
+# devtools::install_github("andrie/deepviz")
+library(deepviz)
+plot_model(model)
+```
+
+- Loss functions: https://keras.io/api/losses/
+- Optimizers: https://keras.io/api/optimizers/
+
+Experiment with the [MLstory](https://mlstory.org/optimization.html) **SGD Quick Start Guide**:
+
+1. Pick as large a minibatch size as you can given your computer’s RAM.
+2. Set your momentum parameter to either 0 or 0.9. Your call!
+3. Find the largest constant stepsize such that SGD doesn’t diverge. This takes some trial and error, but you only need to be accurate to within a factor of 10 here.
+4. Run SGD with this constant stepsize until the empirical risk plateaus.
+5. Reduce the stepsize by a constant factor (say, 10)
+6. Repeat steps 4 and 5 until you converge.
+
+```{r}
+# Optimization parameters
+batch_size <- 512 # 1024 crashed me
+epochs <- 5
+
+# Compile model
+model %>% compile(
+  loss = loss_categorical_crossentropy,
+  #optimizer = optimizer_adadelta(),
+  optimizer = optimizer_sgd(momentum = .9, learning_rate = 0.05),
+  metrics = c('accuracy')
+)
+
+# Fit
+history <- model %>% 
+  fit(
+    x_train, y_train,
+    epochs = epochs,
+    batch_size = batch_size,
+    validation_split = 0.2,
+    verbose = 2
+  )
+```
+
+
+```{r}
+model %>% 
+  evaluate(x_test, y_test, verbose = 0)
+```
+
+```{r}
+model %>% 
+  predict(x_test) %>%
+  k_argmax() %>%
+  head()
+```
+
+```{r}
+mnist$test$y %>% head()
+```
+
+
+### Try to observe double descent
+
+Label noise
+
+```{r}
+y_train <- mnist$train$y
+y_test <- mnist$test$y
+
+n_train <- length(y_train)
+n_test <- length(y_test)
+inds_train <- sample(1:n_train, n_train/10, replace = FALSE)
+y_train[inds_train] <- sample(0:9, n_train/10, replace = TRUE)
+inds_test <- sample(1:n_test, n_test/10, replace = FALSE)
+y_test[inds_test] <- sample(0:9, n_test/10, replace = TRUE)
+
+# Convert class vectors to binary class matrices
+y_train <- to_categorical(y_train, num_classes)
+y_test <- to_categorical(y_test, num_classes)
+```
+
+
+
+```{r}
+N <- 5 # 1, 5, 10, 20, 50 
+
+model <- keras_model_sequential(input_shape = input_shape) %>%
+  layer_flatten() %>% 
+  layer_dense(units = 10*N, activation = 'relu') %>%
+  layer_dropout(rate = 0.25) %>%
+  layer_batch_normalization() %>%
+  layer_dense(units = 4*K, activation = 'relu') %>%
+  #layer_dropout(rate = 0.5) %>%    
+  layer_dense(units = num_classes, activation = 'softmax')
+
+summary(model)
+```
+
+
+- Run another `epochs` every time we press the play button
+- Repeat until we are pretty certain it has converged, then evaluate test error
+
+```{r}
+# Optimization parameters
+batch_size <- 512
+epochs <- 20
+
+# Compile model
+model %>% compile(
+  loss = loss_categorical_crossentropy,
+  optimizer = optimizer_adadelta(),
+  #sgd(momentum = .95, learning_rate = 0.0095),
+  metrics = c('accuracy')
+)
+
+# Fit
+history <- model %>% 
+  fit(
+    x_train, y_train,
+    epochs = epochs,
+    batch_size = batch_size,
+    validation_split = 0.2,
+    verbose = 1
+  )
+```
+
+
+```{r}
+model %>% 
+  evaluate(x_test, y_test, verbose = 0)
+```

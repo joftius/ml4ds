@@ -121,25 +121,8 @@
     "input_file": "07-highdim.knit.md"
   },
   {
-    "path": "weeks/07-nonlinear/",
-    "title": "8 Nonlinear methods",
-    "description": "Non-linearity may result in models that trade interpretability for increased predictive accuracy. These notes discuss the challenges of non-linearity and introduce nearest neighbors and kernel methods.",
-    "author": [
-      {
-        "name": "Joshua Loftus",
-        "url": {}
-      }
-    ],
-    "date": "2021-10-04",
-    "categories": [],
-    "contents": "\nNearest neighbors\nKernel methods\nSlides, notebooks\nSlides for non-linearity\nvideo ([PDF])\nSlides for \\(k\\)-NN video ([PDF])\nSlides for kernel video\n([PDF])\nNotebook for kernels\nNotebook for \\(k\\)-NN\n\n\n\n",
-    "preview": {},
-    "last_modified": "2022-11-16T10:29:35+00:00",
-    "input_file": {}
-  },
-  {
-    "path": "weeks/08-nonlinear/",
-    "title": "8 More nonlinear methods",
+    "path": "weeks/08-additive/",
+    "title": "8 Additive non-linearity",
     "description": "We continue our exploration of non-linear supervised machine learning approaches including tree based methods, GAMs, and neural networks and graphs structured learning.",
     "author": [
       {
@@ -147,12 +130,12 @@
         "url": {}
       }
     ],
-    "date": "2021-10-04",
+    "date": "2021-10-05",
     "categories": [],
-    "contents": "\nMaterials\nLink\nType\nDescription\nhtml\npdf\nSlides\nAdditive non-linearity\nTo be updated\nTrees and forests\nGAMS\nCompositional nonlinearity\n(not active yet)\nSlides, notebooks, exercises\nSlides for GAMs video ([PDF])\nSlides for trees and forests\nvideo ([PDF])\nNotebook for ?\nExercises\n\n\n\n",
+    "contents": "\nMaterials\nLink\nType\nDescription\nhtml\npdf\nSlides\nAdditive non-linearity\nRmd\nNotebook\nGeneralized additive models\nTo be updated\n\n\n\n",
     "preview": {},
-    "last_modified": "2022-11-23T10:59:20+00:00",
-    "input_file": "08-nonlinear.knit.md"
+    "last_modified": "2022-11-23T20:40:29+00:00",
+    "input_file": "08-additive.knit.md"
   },
   {
     "path": "weeks/09-uninterpretable/",
@@ -187,5 +170,22 @@
     "preview": {},
     "last_modified": "2022-09-18T15:01:07+01:00",
     "input_file": {}
+  },
+  {
+    "path": "weeks/11-future/",
+    "title": "11 To the future",
+    "description": "Some resources for learning more and suggestions on what to study next.",
+    "author": [
+      {
+        "name": "Joshua Loftus",
+        "url": {}
+      }
+    ],
+    "date": "2021-10-01",
+    "categories": [],
+    "contents": "\nTo be updated\n\n\n\n",
+    "preview": {},
+    "last_modified": "2022-11-23T18:28:46+00:00",
+    "input_file": "11-future.knit.md"
   }
 ]

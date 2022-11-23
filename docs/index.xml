@@ -67,20 +67,12 @@
       <pubDate>Tue, 05 Oct 2021 00:00:00 +0000</pubDate>
     </item>
     <item>
-      <title>8 Nonlinear methods</title>
+      <title>8 Additive non-linearity</title>
       <dc:creator>Joshua Loftus</dc:creator>
-      <link>http://ml4ds.com/weeks/07-nonlinear</link>
-      <description>Non-linearity may result in models that trade interpretability for increased predictive accuracy. These notes discuss the challenges of non-linearity and introduce nearest neighbors and kernel methods.</description>
-      <guid>http://ml4ds.com/weeks/07-nonlinear</guid>
-      <pubDate>Mon, 04 Oct 2021 00:00:00 +0000</pubDate>
-    </item>
-    <item>
-      <title>8 More nonlinear methods</title>
-      <dc:creator>Joshua Loftus</dc:creator>
-      <link>http://ml4ds.com/weeks/08-nonlinear</link>
+      <link>http://ml4ds.com/weeks/08-additive</link>
       <description>We continue our exploration of non-linear supervised machine learning approaches including tree based methods, GAMs, and neural networks and graphs structured learning.</description>
-      <guid>http://ml4ds.com/weeks/08-nonlinear</guid>
-      <pubDate>Sun, 03 Oct 2021 00:00:00 +0000</pubDate>
+      <guid>http://ml4ds.com/weeks/08-additive</guid>
+      <pubDate>Mon, 04 Oct 2021 00:00:00 +0000</pubDate>
     </item>
     <item>
       <title>9 Less interpretable methods</title>
@@ -97,6 +89,14 @@
       <description>Supervised machine learning methods excel at predicting an outcome. But being able to predict an outcome does not mean we know how to change it, or that we should.</description>
       <guid>http://ml4ds.com/weeks/10-action</guid>
       <pubDate>Sat, 02 Oct 2021 00:00:00 +0000</pubDate>
+    </item>
+    <item>
+      <title>11 To the future</title>
+      <dc:creator>Joshua Loftus</dc:creator>
+      <link>http://ml4ds.com/weeks/11-future</link>
+      <description>Some resources for learning more and suggestions on what to study next.</description>
+      <guid>http://ml4ds.com/weeks/11-future</guid>
+      <pubDate>Fri, 01 Oct 2021 00:00:00 +0000</pubDate>
     </item>
   </channel>
 </rss>

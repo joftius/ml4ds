@@ -1,0 +1,207 @@
+---
+title: "Generalized additive models"
+author: "ST310"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+theme_set(theme_minimal(base_size = 14))
+```
+
+## Simulate data from an additive model
+
+Change the functions, add other predictors with their own functions which could be linear or nonlinear, change the sample size or the `sd` of the `rnorm` noise (or the distribution of the noise if you're interested in robustness)
+
+```{r}
+set.seed(1) # change this
+f1 <- function(x) -1 + 2*x + x^2 
+f2 <- function(x) sin(pi*x) 
+f3 <- function(x) -1.2 * x
+n <- 1000
+
+df <- data.frame(
+  x1 = 2*(runif(n)-1/2),
+  x2 = sample(1:100 / 50,  n, replace = TRUE),
+  x3 = 2*rbeta(n, 1, 3)
+) |> 
+  mutate(
+    y = f1(x1) + f2(x2) + f3(x3) + rnorm(n, sd = 1)
+) |> mutate(y = y - mean(y)) # center outcome
+```
+
+
+Fit a GAM, show the partial dependence plots
+
+```{r message=FALSE}
+library(gam)
+fit_gam <- gam(y ~ lo(x1) + lo(x2) + lo(x3), data = df)
+```
+
+Try `plot`, and if you have the `plotmo` library try `plotmo` with `all2 = TRUE`
+
+```{r}
+par(mfrow = c(1, 3))
+plot(fit_gam)
+```
+
+
+```{r}
+# Don't need to change anything in this code chunk
+# predict for range of xj values
+# with other predictors replaced by their mean
+partial_predict <- function(j, df, obj) {
+  xj <- paste0("x", j)
+  newdf <- df |> 
+    mutate(across(starts_with("x") & -xj, mean))
+  predict(obj, newdata = newdf)
+}
+
+# plot y vs xj
+partial_plot <- function(j) {
+  xj <- paste0("x", j)
+  fj <- paste0("f", j)
+  ggplot(df, aes(get(xj), y)) +
+    geom_point(alpha = .5) +
+    geom_smooth() +
+    geom_line(aes(y = partial_predict(j, df, fit_gam)), color = "red") + 
+    xlab(xj) + ylab("") +
+    geom_function(fun = get(fj),
+                  size = 1,
+                  color = "green") +
+    theme(axis.text.x=element_blank(),
+          axis.ticks.x=element_blank())
+}
+```
+
+Might want to change below if you add more predictors
+
+```{r}
+p1 <- partial_plot(1) + ylab("y")
+p2 <- partial_plot(2)
+p3 <- partial_plot(3)
+```
+
+Side by side plots by adding with the `patchwork` library
+
+```{r message = FALSE, warning = FALSE}
+library(patchwork)
+p1 + p2 + p3
+```
+
+- Green: true function
+- Red: estimate from `gam` (one model with all predictors)
+- Blue: estimate from `geom_smooth` (separate models for each plot)
+
+**Question**: When/why might some of the estimated functions be shifted up/down?
+
+
+
+## Sparse additive non-linear models
+
+Generate more predictors which are just noise, but keep the original CEF and outcome
+
+```{r}
+n <- nrow(df)
+df <- df |> mutate(
+  x4 = rnorm(n, sd = 2),
+  x5 = runif(n),
+  x6 = rbeta(n, 2, 1)
+) 
+```
+
+Fit a GAM include all the new predictors
+
+```{r}
+fit_gam <- gam(y ~ lo(x1) + lo(x2) + lo(x3) +
+                 lo(x4) + lo(x5) + lo(x6),
+               data = df)
+```
+
+Plot the results
+
+```{r}
+f4 <- function(x) 0
+f5 <- function(x) 0 
+f6 <- function(x) 0 
+p1 <- partial_plot(1) + ylab("y") 
+p2 <- partial_plot(2)
+p3 <- partial_plot(3)
+p4 <- partial_plot(4) + ylab("y")
+p5 <- partial_plot(5)
+p6 <- partial_plot(6)
+```
+
+```{r message = FALSE}
+(p1 + p2 + p3) / (p4 + p5 + p6)
+```
+
+Use the `gamsel` package to select which variables to include, and which variables are modeled linearly vs non-linearly.
+
+```{r message = FALSE}
+library(gamsel) # install.packages("gamsel")
+X <- df |> select(-y)
+Y <- df$y
+fit_gamsel <- gamsel(X, Y)
+```
+
+
+```{r}
+par(mfrow = c(1, 2))
+summary(fit_gamsel)
+```
+
+
+```{r}
+cv_fit_gamsel <- cv.gamsel(X, Y)
+plot(cv_fit_gamsel)
+```
+
+
+```{r}
+cv_fit_gamsel$index.1se
+```
+
+```{r}
+par(mfrow = c(2, 3))
+plot(fit_gamsel, newx = X, index = cv_fit_gamsel$index.1se)
+```
+
+**Question**: Which variables are estimated as zero, linear, or non-linear? Did the estimated model match the true model in this respect?
+
+
+
+## Breaking assumptions
+
+Try generating data where the CEF does not satisfy the additivity assumption
+
+```{r message = FALSE}
+n <- 1000
+confounder <- rnorm(n, sd = 1.5)
+df <- data.frame(
+  x1 = 2*(runif(n)-1/2) + confounder,
+  x2 = sample(1:100 / 50,  n, replace = TRUE),
+  x3 = 2*rbeta(n, 1, 3) + confounder
+) |> 
+  mutate(
+#    y = x1 * x2^2  + 
+      y = f1(x1) + f2(x2) + f3(x3) + rnorm(n, sd = 1)
+) |> mutate(y = y - mean(y))
+
+fit_gam <- gam(y ~ lo(x1) + lo(x2) + lo(x3), data = df)
+
+p1 <- partial_plot(1) + ylab("y")
+p2 <- partial_plot(2)
+p3 <- partial_plot(3)
+p1 + p2 + p3
+```
+
+
+**Question**: What does the GAM get right that separate univariate plots (blue line) get wrong?
+
+
+
+**Question**: What does the GAM get wrong?
+
+

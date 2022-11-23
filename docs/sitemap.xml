@@ -37,12 +37,8 @@
     <lastmod>2022-11-16T17:28:56+00:00</lastmod>
   </url>
   <url>
-    <loc>http://ml4ds.com/weeks/07-nonlinear/</loc>
-    <lastmod>2022-11-16T10:29:35+00:00</lastmod>
-  </url>
-  <url>
-    <loc>http://ml4ds.com/weeks/08-nonlinear/</loc>
-    <lastmod>2022-11-23T10:59:20+00:00</lastmod>
+    <loc>http://ml4ds.com/weeks/08-additive/</loc>
+    <lastmod>2022-11-23T20:40:29+00:00</lastmod>
   </url>
   <url>
     <loc>http://ml4ds.com/weeks/09-uninterpretable/</loc>
@@ -51,5 +47,9 @@
   <url>
     <loc>http://ml4ds.com/weeks/10-action/</loc>
     <lastmod>2022-09-18T15:01:07+01:00</lastmod>
+  </url>
+  <url>
+    <loc>http://ml4ds.com/weeks/11-future/</loc>
+    <lastmod>2022-11-23T18:28:46+00:00</lastmod>
   </url>
 </urlset>

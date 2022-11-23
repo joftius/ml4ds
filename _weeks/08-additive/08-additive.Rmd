@@ -1,0 +1,29 @@
+---
+title: "8 Additive non-linearity"
+description: |
+  We continue our exploration of non-linear supervised machine learning approaches including tree based methods, GAMs, and neural networks and graphs structured learning.
+author:
+  - name: Joshua Loftus
+date: 10-05-2021
+output:
+  distill::distill_article:
+    self_contained: false
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+knitr::opts_chunk$set(fig.retina = 3, warning = FALSE, message = FALSE)
+library(tidyverse)
+library(knitr)
+theme_set(theme_minimal(base_size = 14))
+```
+
+## Materials
+
+| Link | Type | Description             |
+|:----:|:----:|:------------------------|
+| [html](slides/08-1-GAMs.html)  [pdf](slides/08-1-GAMs_handout.pdf) | Slides | Additive non-linearity
+| [Rmd](notebooks/GAMs.Rmd) | Notebook | Generalized additive models |
+
+*To be updated*
+
