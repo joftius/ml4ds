@@ -19,6 +19,16 @@ library(gapminder)
 theme_set(theme_minimal(base_size = 22))
 ```
 
+
+## Materials
+
+| Link | Type | Description             |
+|:----:|:----:|:------------------------|
+| [html](slides/08-1-GAMs.html)  [pdf](slides/08-1-GAMs_handout.pdf) | Slides | Additive non-linearity
+
+*To be updated*
+
+
 ## Trees and forests
 
 ## GAMS

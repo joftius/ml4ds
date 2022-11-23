@@ -149,10 +149,10 @@
     ],
     "date": "2021-10-04",
     "categories": [],
-    "contents": "\nTrees and forests\nGAMS\nCompositional nonlinearity\n(not active yet) Slides, notebooks, exercises\nSlides for GAMs video ([PDF])\nSlides for trees and forests video ([PDF])\nNotebook for ?\nExercises\n\n\n\n",
+    "contents": "\nMaterials\nLink\nType\nDescription\nhtml\npdf\nSlides\nAdditive non-linearity\nTo be updated\nTrees and forests\nGAMS\nCompositional nonlinearity\n(not active yet)\nSlides, notebooks, exercises\nSlides for GAMs video ([PDF])\nSlides for trees and forests\nvideo ([PDF])\nNotebook for ?\nExercises\n\n\n\n",
     "preview": {},
-    "last_modified": "2022-09-18T15:01:06+01:00",
-    "input_file": {}
+    "last_modified": "2022-11-23T10:59:20+00:00",
+    "input_file": "08-nonlinear.knit.md"
   },
   {
     "path": "weeks/09-uninterpretable/",
