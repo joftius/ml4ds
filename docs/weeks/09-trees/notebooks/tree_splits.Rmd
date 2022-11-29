@@ -1,0 +1,175 @@
+---
+title: "Tree splitting rules"
+author: "Joshua Loftus"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)  
+library(modelr)     
+library(gapminder)  
+theme_set(theme_minimal(base_size = 22))
+```
+
+## Sorting preliminaries
+
+Check the documentation for `?sort` and `?order` and then write code to output the values of `Y` sorted according to the order of `X`
+
+```{r}
+X <- runif(10)
+Y <- X + rnorm(10)
+qplot(X, Y)
+```
+
+Base R solution
+
+```{r}
+
+```
+
+
+#### Check with tidyverse solution
+
+```{r}
+egdf <- data.frame(X = X, Y = Y)
+egdf %>%
+  arrange(X)
+```
+
+## Within-leaf averages
+
+Below is some code that computes the average values of `Y` above and below a given split point
+
+Base R
+
+```{r}
+x_split <- 0.5
+c(mean(Y[X <= x_split]),
+  mean(Y[X > x_split]))
+```
+
+tidyverse
+
+```{r}
+egdf %>%
+  group_by(X <= x_split) %>%
+  summarize(avg_Y = mean(Y))
+```
+
+#### How much computation is required if we change the value of `x_split`?
+
+
+#### Write code that sorts the data on `X` only once, and then, taking each `X` value as a split point consecutively, computes the average `Y` values above and below that split point while minimizing unnecessary computation
+
+```{r}
+
+```
+
+#### How can we use this to decide the split point for a regression tree?
+
+
+#### How could we change this code to guarantee a minimum number of observations in each leaf?
+
+## Numeric predictor
+
+Write a function that inputs a single numeric predictor and outcome, and outputs a splitting point that achieves the lowest RSS
+
+```{r}
+
+```
+
+### Example data
+
+```{r}
+n <- 1000
+mixture_ids <- rbinom(n, 1, .5)
+x <- rnorm(n) + 3*mixture_ids
+y <- rnorm(n) + 3*mixture_ids
+qplot(x,y)
+```
+
+#### Apply your function to the example data. Try different values of minimum observations per leaf
+
+```{r}
+
+```
+
+#### Change the data generating process to make the example easier/harder and repeat the above initial split
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+#### Compare the initial tree split to a Bayes decision boundary in one of the above examples. Increase `n` and repeat
+
+#### Test the function on some `gapminder` data, plot the initial split point
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+
+## Multiple splits
+
+```{r}
+n <- 1000
+mixture_ids <- rbinom(n, 1, .5)
+x <- rnorm(n) + 3*mixture_ids
+y <- rnorm(n) + 3*mixture_ids
+x <- c(x, rnorm(n/2, mean = -2))
+y <- c(y, rnorm(n/2, mean = 5))
+egdf <- data.frame(x = x, y = y)
+egplot <- egdf %>%
+  ggplot(aes(x, y)) +
+  geom_point()
+egplot
+```
+
+#### Use your single split function once, then split the data and apply the function again on each subset
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+#### Plot the data and each split point
+
+```{r}
+
+```
+
+
+# Extra practice
+
+## Recursive splits
+
+#### Write a function taking data and a maximum number of splits as inputs, and outputting a decision tree
+
+#### How does computation scale in number of levels (tree depth)?
+
+## Categorical predictors
+
+#### Write a function for when the outcome variable is categorical and some splitting rule based on e.g. Gini index or entropy
+
+
+

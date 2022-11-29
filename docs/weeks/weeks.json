@@ -138,7 +138,7 @@
     "input_file": "08-additive.knit.md"
   },
   {
-    "path": "weeks/09-uninterpretable/",
+    "path": "weeks/09-trees/",
     "title": "9 Less interpretable methods",
     "description": "Neural networks and ensemble methods like bagging, random forests, and boosting can greatly increase predictive accuracy at the cost of ease of interpretation.",
     "author": [
@@ -149,10 +149,10 @@
     ],
     "date": "2021-10-03",
     "categories": [],
-    "contents": "\nTrees and forests\nCompositional nonlinearity\n(not active yet) Slides, notebooks, exercises\nSlides for (tree) ensembles ([PDF])\nSlides for deep learning ([PDF])\nNotebook for tree splitting\n\n\n\n",
+    "contents": "\nMaterials\nLink\nType\nDescription\nhtml pdf\nSlides\nTree-based methods\nRmd\nNotebook\nBasics of tree algorithms\nTo be updated\nTrees and forests\nCompositional nonlinearity\n(not active yet)\nSlides, notebooks, exercises\nSlides for (tree) ensembles\n([PDF])\nSlides for deep learning\n([PDF])\nNotebook for tree\nsplitting\n\n\n\n",
     "preview": {},
-    "last_modified": "2022-09-18T15:01:06+01:00",
-    "input_file": {}
+    "last_modified": "2022-11-29T17:01:32-06:00",
+    "input_file": "09-trees.knit.md"
   },
   {
     "path": "weeks/10-action/",

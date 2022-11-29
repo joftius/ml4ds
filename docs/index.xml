@@ -72,14 +72,14 @@
       <link>http://ml4ds.com/weeks/08-additive</link>
       <description>We continue our exploration of non-linear supervised machine learning approaches including tree based methods, GAMs, and neural networks and graphs structured learning.</description>
       <guid>http://ml4ds.com/weeks/08-additive</guid>
-      <pubDate>Mon, 04 Oct 2021 00:00:00 +0000</pubDate>
+      <pubDate>Tue, 05 Oct 2021 00:00:00 +0000</pubDate>
     </item>
     <item>
       <title>9 Less interpretable methods</title>
       <dc:creator>Joshua Loftus</dc:creator>
-      <link>http://ml4ds.com/weeks/09-uninterpretable</link>
+      <link>http://ml4ds.com/weeks/09-trees</link>
       <description>Neural networks and ensemble methods like bagging, random forests, and boosting can greatly increase predictive accuracy at the cost of ease of interpretation.</description>
-      <guid>http://ml4ds.com/weeks/09-uninterpretable</guid>
+      <guid>http://ml4ds.com/weeks/09-trees</guid>
       <pubDate>Sun, 03 Oct 2021 00:00:00 +0000</pubDate>
     </item>
     <item>
