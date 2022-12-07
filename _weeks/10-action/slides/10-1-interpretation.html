@@ -11,15 +11,20 @@
     <link href="libs/panelset/panelset.css" rel="stylesheet" />
     <script src="libs/panelset/panelset.js"></script>
     <link rel="stylesheet" href="xaringan-themer.css" type="text/css" />
-    <link rel="stylesheet" href="../../../theme.css" type="text/css" />
   </head>
   <body>
     <textarea id="source">
 class: bottom, left, title-slide
 
+.title[
 # Machine learning
-## Interpreting ML models
+]
+.subtitle[
+## Interpreting models, changing the world
+]
+.author[
 ### Joshua Loftus
+]
 
 ---
 
@@ -57,26 +62,6 @@ We often want to interpret/explain the model, not just predict
 
 ---
 
-## Interpretation/communication limits
-
-- Human cognition: plots, simple models, **1 or 2 variables**
-
-- Audience: simpler interpretation `\(\to\)` broader audience
-
-- People are usually thinking about **causality**
-
-"Abstract: This paper studies the *association* of `\(X\)` and `\(Y\)`..." *influence* - *tied to* - *drives* - just because you don't use the word "cause" doesn't mean you are communicating clearly or honestly
-
---
-
-**Danger**: part of the audience will interpret wrongly/causally no matter how careful we are (but we still must try our best)
-
-**Danger**: can't choose audience, information escapes context
-
----
-class: inverse
-
-
 ## Conditioning / observation
 
 `\(\mathbb P(\mathbf y | \mathbf X = \mathbf x)\)`, coefficients, dependence plots, CEF, etc
@@ -86,7 +71,7 @@ class: inverse
 `\(\mathbb P(\mathbf y | \text{do}(\mathbf X = \mathbf x))\)`, ATE, [CATE](https://en.wikipedia.org/wiki/Average_treatment_effect#Heterogenous_treatment_effects), etc
 
 
-#### All interpretations are non-causal by default
+**All interpretations are non-causal by default**
 
 Without explicit causal assumptions there are no causal conclusions
 
@@ -100,7 +85,7 @@ Without explicit causal assumptions there are no causal conclusions
 
 - Plot predictor `\(\mathbf x_j\)` vs `\(\hat f(\mathbf x)\)`
 
-- We saw this with GAMs, which we could interpret this way: slope in plot shows (locally) `\(\frac{\partial}{\partial x_j}\)` of CEF
+- We saw this with GAMs
 
 --
 
@@ -110,7 +95,7 @@ Next we'll walk-through two examples
 
 First when the true CEF is additive, and second when it is not
 
-We'll see how **partial dependence plots** interpret models in both cases, including when an additive model is fit to a truly non-additive relationship
+We'll see how **partial dependence plots** can be used to interpret models
 
 ---
 
@@ -332,10 +317,11 @@ Prediction task: unknown
 Analysed data:
 Sampling from data.frame with 240 rows and 3 columns.
 
+
 Head of results:
    .feature .interaction
-1:       x1 7.552791e-17
-2:       x2 1.445957e-16
+1:       x1 1.449399e-16
+2:       x2 1.225800e-16
 3:        y 0.000000e+00
 ```
 ]
@@ -391,10 +377,11 @@ Prediction task: unknown
 Analysed data:
 Sampling from data.frame with 240 rows and 3 columns.
 
+
 Head of results:
    .feature .interaction
-1:       x1 1.222305e-16
-2:       x2 1.674288e-16
+1:       x1 1.401751e-16
+2:       x2 1.156637e-16
 3:        y 0.000000e+00
 ```
 ]
@@ -454,10 +441,11 @@ Prediction task: unknown
 Analysed data:
 Sampling from data.frame with 240 rows and 3 columns.
 
+
 Head of results:
    .feature .interaction
-1:       x1    0.7504087
-2:       x2    0.7715073
+1:       x1    0.7247983
+2:       x2    0.6523332
 3:        y    0.0000000
 ```
 ]
@@ -538,10 +526,11 @@ Prediction task: unknown
 Analysed data:
 Sampling from data.frame with 240 rows and 2 columns.
 
+
 Head of results:
    .feature .interaction
-1:       x1    0.7838063
-2:       x2    0.8538608
+1:       x1    0.7047211
+2:       x2    0.7269615
 ```
 ]
 
@@ -665,25 +654,25 @@ lime_ksvm$results
 ```
 
 ```
-##           beta x.recoded     effect x.original feature feature.value
-## x1 0.016956854       0.9 0.01526117        0.9      x1        x1=0.9
-## x2 0.008163716       0.0 0.00000000          0      x2          x2=0
+##            beta x.recoded    effect x.original feature feature.value
+## x1  0.254412004       0.9 0.2289708        0.9      x1        x1=0.9
+## x2 -0.002814105       0.0 0.0000000          0      x2          x2=0
 ```
 
 
 
 ```
-##           beta x.recoded      effect x.original feature feature.value
-## x1 -0.02745069       0.9 -0.02470562        0.9      x1        x1=0.9
-## x2 -0.04194215       1.0 -0.04194215          1      x2          x2=1
+##          beta x.recoded     effect x.original feature feature.value
+## x1 -0.2923272       0.9 -0.2630945        0.9      x1        x1=0.9
+## x2 -0.3746932       1.0 -0.3746932          1      x2          x2=1
 ```
 
 
 
 ```
-##           beta x.recoded      effect x.original feature feature.value
-## x1 -0.21064259       0.9 -0.18957833        0.9      x1        x1=0.9
-## x2 -0.02547879       2.0 -0.05095757          2      x2          x2=2
+##          beta x.recoded     effect x.original feature feature.value
+## x1 -0.7984347       0.9 -0.7185913        0.9      x1        x1=0.9
+## x2 -0.1282582       2.0 -0.2565163          2      x2          x2=2
 ```
 
 Recall the CEF `\(= x_1^2 \cos(\pi x_2 / 2)\)`
@@ -720,23 +709,23 @@ ksvm_shapley$results
 ```
 
 ```
-##   feature        phi    phi.var feature.value
-## 1      x1 0.09011933 0.07374733        x1=0.9
-## 2      x2 0.35289048 0.16499725          x2=0
+##   feature       phi   phi.var feature.value
+## 1      x1 0.1302725 0.0691334        x1=0.9
+## 2      x2 0.2993309 0.1255579          x2=0
 ```
 
 
 ```
 ##   feature        phi   phi.var feature.value
-## 1      x1 0.04709425 0.1306717        x1=0.9
-## 2      x2 0.45565173 0.2050496          x2=0
+## 1      x1 0.03226445 0.1132297        x1=0.9
+## 2      x2 0.40410080 0.2060785          x2=0
 ```
 
 
 ```
-##   feature          phi    phi.var feature.value
-## 1      x1 -0.009760708 0.05625744          x1=0
-## 2      x2  0.046407324 0.03980042          x2=1
+##   feature        phi    phi.var feature.value
+## 1      x1 0.01575709 0.03429754          x1=0
+## 2      x2 0.04087980 0.05024968          x2=1
 ```
 
 
@@ -796,6 +785,345 @@ Many of these tools are popular because software makes it easy to get simple out
 - [R tutorial](https://uc-r.github.io/lime) on lime
 
 - [lime homepage](https://homes.cs.washington.edu/~marcotcr/blog/lime/) with links to Python package
+
+
+---
+
+### Should/do we always care about causality?
+
+&gt; How does the model depend on a specific variable or set of variables?
+
+*Why* focus on that variable (those variables)?
+
+&gt; Which variables does the model depend on most?
+
+What will you do with this information?
+
+&gt; I don't care about interpretation, I just want the most accurate predictions!
+
+Predictions are (usually) used to make decisions / take actions
+
+---
+
+### Causality assumptions
+
+Remember: "[No causes in, no causes out](https://oxford.universitypressscholarship.com/view/10.1093/0198235070.001.0001/acprof-9780198235071-chapter-3)"
+
+1. Assume some mathematical (probability) model relating variables (possibly including unobserved variables)
+
+2. **Also** assume a direction for each relationship
+
+3. **Also** assume that changing/manipulating/intervening a variable results in corresponding changes in other variables (or their distributions) which are functionally "downstream"
+
+Deterministic e.g.: `\(X \to Y\)`, so `\(y = f(x)\)` and changing `\(x\)` to `\(x'\)` means `\(y\)` also changes to `\(f(x')\)` [but if `\(f\)` has an inverse, this model does *not* mean that changing `\(y\)` to `\(y'\)` results in `\(x\)` changing to `\(f^{-1}(y')\)`] (temperature `\(\to\)` thermometer)
+
+---
+
+### This is how we *want* to interpret regression
+
+Suppose we estimate a CEF `\(\hat f(x) \approx \mathbb E[Y |X = x]\)`
+
+We would like to interpret this as meaning
+
+&gt; If we change `\(x\)` to `\(x'\)` then `\(\mathbb E[Y|X=x]\)` will change from `\(\hat f(x)\)` to `\(\hat f(x')\)`
+
+But this interpretation depends on the extra, causal assumptions (2 and 3 on the previous slide)
+
+#### *These assumptions are often **importantly wrong***
+
+We must use them carefully, always be clear about it, and try to improve
+
+---
+
+## Various inferential goals/methods
+
+- **Causal discovery**: learn a graph (DAG) from data (very difficult especially if there are many variables)
+
+Otherwise we may assume the DAG structure is known and want to estimate the functions
+
+- **Estimation/inference** 
+
+  - *Parametric*: estimate `\(f\)` and/or `\(g\)` assuming they are linear or have some other (low-dimensional) parametric form, get CIs
+
+  - *Non-parametric*: use machine learning instead
+
+- **Optimization**: find the "best" intervention/policy
+
+
+---
+class: inverse, middle, center
+
+### A few examples of estimation tasks and ML
+
+---
+
+### Mediation analysis
+
+Does `\(X\)` influence `\(Y\)` directly, and/or through a mediator variable `\(M\)`?
+
+*How much* of the relationship between `\(X\)` and `\(Y\)` is "explained" by `\(M\)`?
+
+e.g. Does `gdp per capita` influence `life expectancy` directly, and/or through `healthcare expenditure`?
+
+e.g. Does `SES` influence `graduation rate` directly, and/or through `major`?
+
+e.g. (dear to me) How much of `weightlifting` influences `strength` directly, vs how much of the change in `strength` is mediated through `muscle size`?
+
+---
+
+
+### Simple model for mediation
+
+If we know/estimate functions, we can simulate/compute the consequences of an intervention
+
+`$$x = \text{exogeneous}, \quad  m = f(x) + \varepsilon_m, \quad y = g(m, x) + \varepsilon_y$$`
+
+&lt;img src="10-1-interpretation_files/figure-html/unnamed-chunk-32-1.png" width="504" style="display: block; margin: auto;" /&gt;
+
+Counterfactual: `\(x \gets x'\)`, so
+`$$m \gets f(x') + \varepsilon_m, \quad y \gets g(f(x') + \varepsilon_m, x') + \varepsilon_y$$`
+
+---
+
+### Mediation questions
+
+Direct/indirect effects: holding `\(m\)` constant or allowing it to be changed by `\(x\)`, various comparisons ("controlled" or "natural")
+
+#### Direct effect
+
+Quantifying/estimating the strength of the arrow `\(X \to Y\)`
+
+#### Total and indirect effects
+
+How much of the resulting change in `\(Y\)` (total effect) goes through the path `\(X \to M \to Y\)` (i.e. indirectly)?
+
+---
+
+### Treatment with **observed** confounding
+
+Let's relabel from `\(M\)` to `\(T\)`, a "treatment" (or "exposure") of interest but for which we do not have experimental data
+
+#### The effect of `\(T\)`, "controlling" for `\(X\)`
+
+Counterfactual: `\(T \gets t\)`, so
+`\(Y^t := Y \gets g(t, X) + \varepsilon_y\)`
+
+--
+
+Often `\(T\)` is binary, and we are interested in
+
+- Average treatment effect (ATE) 
+
+`$$\tau = \mathbb E[Y^1 - Y^0]$$`
+
+- Conditional ATE  (CATE)
+
+`$$\tau(x) = \mathbb E[Y^1 - Y^0 | X = x]$$`
+
+---
+
+### Strategy: two staged regression
+
+- Parametric
+
+$$
+Y = T \theta + X \beta + \varepsilon_Y
+$$
+
+$$
+T = X \alpha + \varepsilon_T
+$$
+Estimate `\(\hat \theta\)` from e.g. 2SLS
+
+--
+
+- Non/semi-parametric [PLM](https://en.wikipedia.org/wiki/Partially_linear_model) ("*double machine learning*")
+
+$$
+Y = T \theta + g(X) + \varepsilon_Y
+$$
+
+$$
+T = m(X) + \varepsilon_T
+$$
+Replace LS (least squares) with machine learning methods to estimate "*nuisance functions*" `\(\hat g\)` and `\(\hat m\)`
+
+---
+
+### High-dimensional regression example
+
+**Double selection** ("post-double-selection")
+
+Use a high-dimensional regression method that chooses sparse regression models, like lasso, in the first stage of a two stage procedure
+
+1. Estimate nuisance functions with e.g. lasso
+
+  - Fit `\(T \sim X\)`, get a subset of predictors `\(X_m\)`
+
+  - Fit `\(Y \sim X\)`, get a subset of predictors `\(X_g\)`
+
+2. Fit least squares `\(Y \sim T +  X_m + X_g\)`
+
+The coefficient of `\(T\)` in the least squares model is our estimate
+
+---
+class: middle
+
+### Note
+
+Can combine (sparse) variable selection (e.g. lasso) with (global) non-linearity, e.g. selecting interaction/polynomial/spline basis functions
+
+Even if our original predictors satisfy `\(p \ll n\)`, we can still select (sparse) models from a high-dimensional model space this way
+
+---
+
+### Binary treatment and propensity models
+
+When `\(T\)` is binary we may keep the same *outcome model* (e.g. if `\(Y\)` is numeric then we usually use)
+
+$$
+Y = T \theta + g(X) + \varepsilon_Y
+$$
+
+But now the treatment model is called a *propensity function*
+
+$$
+\pi(x) = \mathbb P(T = 1 | X = x)
+$$
+
+e.g. `\(T\)` smoking, `\(Y\)` some health outcome, `\(X\)` could be SES etc
+
+--
+
+Intuition: can't randomize, so compare people who have similar values of `\(\hat \pi(x)\)`
+
+Use ML **classification** methods to get `\(\hat \pi(x)\)`
+
+---
+
+### Tree based: causal forests
+
+Suppose we want to learn the CATE `\(\tau(x)\)` - *heterogeneous treatment effects* - could be used for *individualized treatments*
+
+e.g. Randomized trial, but we want to learn how `\(X\)` interacts with the treatment effect. When is `\(T\)` more/less effective?
+
+Idea: search predictor space `\(X\)` for regions where `\(Y\)` is maximally different between the treated and controls
+
+Causal forests use this splitting strategy when growing trees, instead of splitting to improve predictions
+
+---
+class: inverse, middle, center
+
+### Validation for causal ML
+
+---
+
+### Causal relationships should generalize
+
+(Specifically, the *kinds of causal relationships we study with statistical methods* should generalize, otherwise why are we using probability?)
+
+- If `\(T \to Y\)` and we estimate this causal relationship well then it should be useful for predicting on new data
+
+- If `\(X \to T\)` then we should be able to predict `\(T\)` (using `\(\hat m\)` or `\(\hat \pi\)`) on test data
+
+- If `\(X \to Y\)` then `\(\hat g\)` should be accurate on test data, etc
+
+Causal ML applies this in various ways to different problems
+
+---
+
+## Cross-fitting
+
+Sample splitting, using separate subsets of data to compute
+
+1. estimates of nuisance functions, like `\(\hat g\)` or `\(\hat \pi\)`
+2. the desired causal estimates, like `\(\hat \theta\)`
+
+Why? e.g. if `\(\hat g\)` is (a little) overfit, this has less effect on `\(\hat \theta\)` because `\(\hat g\)` is overfit to a different subset of the data (than the one used to estimate `\(\hat \theta\)`)
+
+Can be iterated: swap subsets and average `\(\hat \theta\)` estimates
+
+---
+
+## Honest trees/forests
+
+Split training data, use one subset for deciding tree structure (which variables to use for splitting) and the other subset for predictions
+
+e.g. Suppose we fit a tree with depth 1, on one subset of data we find the best split is `\(X_7 &lt; c\)`. Then for predictions we use the values of `\(Y\)` *in a separate subset of data*, averaging/voting those `\(Y\)` values with `\(X_7 &lt; c\)` for one prediction and those with `\(X_7 \geq c\)` for the other prediction. (No test/validation yet)
+
+--
+
+**Exercise**: explain how this is different from the out-of-bag validation approach in bagging. Draw diagrams (perhaps with inspiration from ISLR Figure 5.5) to represent the two cases
+
+---
+class: inverse, middle, center
+
+### These methods can be importantly wrong
+
+---
+
+### Why causal inference (and ML) is difficult
+
+#### Out-of-distribution generalization
+
+An ML model which is not overfit--has good test error, good in-distribution generalization--can still fail at OOD generalization
+
+For a different data-generating process, the *probability distribution changes*, and (maybe) *causal relationships change*
+
+#### Identifiability
+
+The same data can be consistent with many different causal structures. We rely on assumptions which may be wrong
+
+ML specific: flexible models can relax some assumptions
+
+---
+
+### Unobserved confounding
+
+*Observed* predictors must capture *everything* about how treatment assignment and treatment effectiveness are related
+
+&lt;img src="10-1-interpretation_files/figure-html/unnamed-chunk-33-1.png" width="360" style="display: block; margin: auto;" /&gt;
+
+Practically all methods assume this isn't happening (some conduct sensitivity analysis)
+
+---
+class: middle
+
+**Exercise**: draw a few DAGs representing the partially linear model and give real-world examples both with and without unobserved confounders. For the case with unobserved confounding, explain how our estimates of `\(\theta\)` would fail to capture the correct causal relationship (i.e. why an intervention on `\(T\)` would fail to have the estimated effect)
+
+---
+
+### More warnings for data about humans
+
+Social science is hard! Health is also (at least partially) social. It is very difficult to [predict life outcomes](https://www.pnas.org/content/117/15/8398), even with machine learning models and [big data](https://hdsr.mitpress.mit.edu/pub/uan1b4m9/release/3)
+
+Strategic/adversarial/adaptive behavior: [Goodhart's law / Campbell's law](https://twitter.com/CT_Bergstrom/status/1329175501882019841) / [Lucas critique](https://en.wikipedia.org/wiki/Lucas_critique) / [Friedman's thermostat](https://worthwhile.typepad.com/worthwhile_canadian_initi/2012/07/why-are-almost-all-economists-unaware-of-milton-friedmans-thermostat.html) / [Washback effect](https://en.wikipedia.org/wiki/Washback_effect) / [Performativity](https://en.wikipedia.org/wiki/Performativity) / [Reflexivity](https://en.wikipedia.org/wiki/Reflexivity_(social_theory%29) / [Hammer's law](https://twitter.com/MCHammer/status/1363908982289559553)
+
+For these reasons, *when dealing with human data*:
+
+- Almost all variables correlate
+- Unconfoundedness assumptions are always wrong
+- Can't separate "normative vs scientific" (ethics always important)
+
+Remember: focus on what is **importantly wrong**
+
+---
+class: inverse, center, middle
+
+### You are close to the cutting edge of research
+
+Practice using some of these methods, combine them with interpretable plots (previous lecture), and your labor will be in high demand!
+
+---
+
+## R packages
+
+[DoubleML](https://cran.r-project.org/web/packages/DoubleML/vignettes/DoubleML.html) package
+
+Causal forests in [grf](https://grf-labs.github.io/grf/index.html) package, and a [blog post](https://www.markhw.com/blog/causalforestintro) introduction
+
+A few [DML packages](https://github.com/MCKnaus) by Michael C. Knaus
+
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
@@ -844,6 +1172,19 @@ if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
     deleted = true;
   });
 })();
+// add `data-at-shortcutkeys` attribute to <body> to resolve conflicts with JAWS
+// screen reader (see PR #262)
+(function(d) {
+  let res = {};
+  d.querySelectorAll('.remark-help-content table tr').forEach(tr => {
+    const t = tr.querySelector('td:nth-child(2)').innerText;
+    tr.querySelectorAll('td:first-child .key').forEach(key => {
+      const k = key.innerText;
+      if (/^[a-z]$/.test(k)) res[k] = t;  // must be a single letter (key)
+    });
+  });
+  d.body.setAttribute('data-at-shortcutkeys', JSON.stringify(res));
+})(document);
 (function() {
   "use strict"
   // Replace <script> tags in slides area to make them executable

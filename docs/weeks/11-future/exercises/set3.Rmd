@@ -1,0 +1,36 @@
+---
+title: "Exercise set 3"
+author: Joshua Loftus
+output: html_document
+---
+
+## Conceptual
+
+### ISLR Section 5.4
+
+- 2 (a-f), and calculate $e^{-1}$ to a few decimal places for comparison
+- 3
+
+### ISLR Section 6.6
+
+- 2
+- 5 
+
+## Optional
+
+The remaining exercises are option and will not be graded.
+
+### Mathematics practice
+
+- Can resampling methods be useful for addressing OOD generalization? If not, then why? If so, then how?
+
+- Write out the objective function of the lasso for the case of linear regression with one predictor variable. Use calculus to find an expression for the solution (hint: you may need to consider cases)
+
+
+### Applied practice
+
+- ISLR Section 5.4, problem 8
+
+- ISLR Section 6.6, problem 9 (a-d)
+
+- ISLR Section 7.9, problem 9 (a-c)
