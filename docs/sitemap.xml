@@ -2,11 +2,11 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd" version="1.0">
   <url>
     <loc>http://ml4ds.com/about.html</loc>
-    <lastmod>2022-10-05T08:08:23-05:00</lastmod>
+    <lastmod>2022-10-05T14:08:23+01:00</lastmod>
   </url>
   <url>
     <loc>http://ml4ds.com/</loc>
-    <lastmod>2022-10-22T04:48:17-05:00</lastmod>
+    <lastmod>2022-10-22T10:48:17+01:00</lastmod>
   </url>
   <url>
     <loc>http://ml4ds.com/weeks/01-introduction-foundations/</loc>
@@ -38,11 +38,15 @@
   </url>
   <url>
     <loc>http://ml4ds.com/weeks/08-additive/</loc>
-    <lastmod>2022-11-23T20:40:29+00:00</lastmod>
+    <lastmod>2022-11-23T20:40:31+00:00</lastmod>
+  </url>
+  <url>
+    <loc>http://ml4ds.com/weeks/11-future/old-nonlinear/</loc>
+    <lastmod>2022-11-23T10:59:21+00:00</lastmod>
   </url>
   <url>
     <loc>http://ml4ds.com/weeks/09-trees/</loc>
-    <lastmod>2022-11-29T17:01:32-06:00</lastmod>
+    <lastmod>2022-11-29T23:01:33+00:00</lastmod>
   </url>
   <url>
     <loc>http://ml4ds.com/weeks/10-action/</loc>
@@ -50,6 +54,6 @@
   </url>
   <url>
     <loc>http://ml4ds.com/weeks/11-future/</loc>
-    <lastmod>2022-11-23T18:28:46+00:00</lastmod>
+    <lastmod>2022-11-23T18:28:48+00:00</lastmod>
   </url>
 </urlset>

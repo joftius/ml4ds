@@ -118,7 +118,7 @@
     "contents": "\nMaterials\nLink\nType\nDescription\nhtml pdf\nSlides\nRidge and lasso regression\nhtml Rmd\nNotebook\nLasso estimation\nhtml Rmd\nNotebook\nLasso inference\nTo be updated\nPreparation\nRequired reading\nISLR The rest of Chapter\n6.\nSupplemental reading\nESL Chapter\n3, sections 1-6 and 10.\nCASI Chapters 7 and\n16.\nRegularization\nValidation\nSlides, notebooks, exercises\nSlides for\nregularization video (PDF)\nSlides for lasso video (PDF)\nNotebook for validation\nNotebook for lasso\n\n\n\n",
     "preview": {},
     "last_modified": "2022-11-16T17:28:56+00:00",
-    "input_file": "07-highdim.knit.md"
+    "input_file": {}
   },
   {
     "path": "weeks/08-additive/",
@@ -134,8 +134,25 @@
     "categories": [],
     "contents": "\nMaterials\nLink\nType\nDescription\nhtml\npdf\nSlides\nAdditive non-linearity\nRmd\nNotebook\nGeneralized additive models\nTo be updated\n\n\n\n",
     "preview": {},
-    "last_modified": "2022-11-23T20:40:29+00:00",
-    "input_file": "08-additive.knit.md"
+    "last_modified": "2022-11-23T20:40:31+00:00",
+    "input_file": {}
+  },
+  {
+    "path": "weeks/11-future/old-nonlinear/",
+    "title": "8 More nonlinear methods",
+    "description": "We continue our exploration of non-linear supervised machine learning approaches including tree based methods, GAMs, and neural networks and graphs structured learning.",
+    "author": [
+      {
+        "name": "Joshua Loftus",
+        "url": {}
+      }
+    ],
+    "date": "2021-10-04",
+    "categories": [],
+    "contents": "\nMaterials\nLink\nType\nDescription\nhtml\npdf\nSlides\nAdditive non-linearity\nTo be updated\nTrees and forests\nGAMS\nCompositional nonlinearity\n(not active yet)\nSlides, notebooks, exercises\nSlides for GAMs video ([PDF])\nSlides for trees and forests\nvideo ([PDF])\nNotebook for ?\nExercises\n\n\n\n",
+    "preview": {},
+    "last_modified": "2022-11-23T10:59:21+00:00",
+    "input_file": {}
   },
   {
     "path": "weeks/09-trees/",
@@ -151,8 +168,8 @@
     "categories": [],
     "contents": "\nMaterials\nLink\nType\nDescription\nhtml pdf\nSlides\nTree-based methods\nRmd\nNotebook\nBasics of tree algorithms\nTo be updated\nTrees and forests\nCompositional nonlinearity\n(not active yet)\nSlides, notebooks, exercises\nSlides for (tree) ensembles\n([PDF])\nSlides for deep learning\n([PDF])\nNotebook for tree\nsplitting\n\n\n\n",
     "preview": {},
-    "last_modified": "2022-11-29T17:01:32-06:00",
-    "input_file": "09-trees.knit.md"
+    "last_modified": "2022-11-29T23:01:33+00:00",
+    "input_file": {}
   },
   {
     "path": "weeks/10-action/",
@@ -185,7 +202,7 @@
     "categories": [],
     "contents": "\nTo be updated\n\n\n\n",
     "preview": {},
-    "last_modified": "2022-11-23T18:28:46+00:00",
-    "input_file": "11-future.knit.md"
+    "last_modified": "2022-11-23T18:28:48+00:00",
+    "input_file": {}
   }
 ]
