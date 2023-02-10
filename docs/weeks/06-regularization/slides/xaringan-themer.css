@@ -54,7 +54,7 @@
   --inverse-header-color: #FFFFFF;
   --inverse-link-color: #55c667;
   --title-slide-background-color: #ffffff;
-  --title-slide-text-color: #292929;
+  --title-slide-text-color: #FFFFFF;
   --header-background-color: #2d708e;
   --header-background-text-color: #FFFFFF;
   --primary: #2d708e;
@@ -141,7 +141,7 @@ a, a > code {
 }
 .title-slide {
   background-color: var(--title-slide-background-color);
-  background-image: url("../../../files/theme/LSE/spiral_stairs.jpg");
+  background-image: url("../../../files/theme/LSE/hock_exterior.jpg");
   background-size: cover;
 }
 .title-slide .remark-slide-number {

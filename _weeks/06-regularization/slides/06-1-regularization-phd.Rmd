@@ -6,7 +6,7 @@ author: "Joshua Loftus"
 #date: "`r Sys.Date()`"
 output:
   xaringan::moon_reader:
-    css: ["default", "xaringan-themer.css", "../../../theme.css"]
+    css: ["default", "xaringan-themer.css"]
 #    seal: false    
     lib_dir: libs
     nature:
@@ -135,12 +135,12 @@ JS_MC <- function(n, p, instances = 10000) {
 set.seed(42) # reproducibility
 ```
 
-```{r jsn5p4, cache = TRUE}
+```{r jsn5p4, cache = FALSE}
 JS_MC(n = 5, p = 4)
 JS_MC(n = 5, p = 4)
 ```
 
-```{r jsn50p4, cache = TRUE}
+```{r jsn50p4, cache = FALSE}
 JS_MC(n = 50, p = 4) # larger sample size
 JS_MC(n = 50, p = 4)
 ```
@@ -149,12 +149,12 @@ JS_MC(n = 50, p = 4)
 
 ### Higher-dimensional, now $p > n$
 
-```{r jsn5p100, cache = TRUE}
+```{r jsn5p100, cache = FALSE}
 JS_MC(n = 2, p = 1000)
 JS_MC(n = 2, p = 1000)
 ```
 
-```{r jsn50p100, cache = TRUE}
+```{r jsn50p100, cache = FALSE}
 JS_MC(n = 20, p = 100) # larger sample size
 JS_MC(n = 20, p = 100)
 ```
@@ -204,16 +204,16 @@ high_dim_MSE_MC <- function(n, p, instances = 1000) {
 ### MSE(ridge) vs MSE(OLS)
 
 
-```{r ridgen100p10, cache = TRUE}
+```{r ridgen100p10, cache = FALSE}
 high_dim_MSE_MC(n = 100, p = 10)
 ```
 
-```{r ridgen100p90, cache = TRUE}
+```{r ridgen100p90, cache = FALSE}
 high_dim_MSE_MC(n = 100, p = 90)
 high_dim_MSE_MC(n = 100, p = 90)
 ```
 
-```{r ridgen1000p990, cache = TRUE}
+```{r ridgen1000p990, cache = FALSE}
 high_dim_MSE_MC(n = 1000, p = 990, instances = 2000)
 high_dim_MSE_MC(n = 1000, p = 990, instances = 2000)
 ```
