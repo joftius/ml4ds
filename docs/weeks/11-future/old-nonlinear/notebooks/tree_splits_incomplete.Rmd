@@ -1,0 +1,99 @@
+---
+title: "Tree splitting rules"
+author: "Joshua Loftus"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)  
+library(modelr)     
+library(gapminder)  
+theme_set(theme_minimal(base_size = 22))
+```
+
+## Numeric predictor
+
+Write a function that inputs a single numeric predictor and outcome, and outputs a splitting point that achieves the greatest reduction in RSS
+
+```{r}
+tree_split <- function(x, y, min.obs = 10) {
+  x_order <- order(x)
+  X <- x[x_order]
+  Y <- y[x_order]
+  n <- length(x)
+  RSSs <- numeric(length = n-1)
+  RSSs[1:length(RSSs)] <- Inf
+  for (i in min.obs:(n-min.obs)) {
+    Y_left <- Y[1:i]
+    Y_right <- Y[(i+1):n]
+    RSSs[i] <- sum((Y_left - mean(Y_left))^2) + 
+      sum((Y_right - mean(Y_right))^2)
+  }
+  X[which.min(RSSs)]
+}
+```
+
+
+
+```{r}
+n <- 1000
+mixture_ids <- rbinom(n, 1, .5)
+x <- rnorm(n) + 3*mixture_ids
+y <- rnorm(n) + 3*mixture_ids
+x <- c(x, rnorm(n/2, mean = -2))
+y <- c(y, rnorm(n/2, mean = 5))
+plot(x,y)
+```
+
+```{r}
+tree_split(x, y, min.obs = 40)
+```
+
+
+
+Now change the function to include the case when the outcome variable is categorical, and allow different splitting rules using the Gini index or entropy
+
+
+## Categorical predictor
+
+Repeat the above for categorical predictors
+
+How does computation scale in number of levels?
+
+What if any levels have very few observations?
+
+```{r}
+
+```
+
+## Recursive splitting
+
+Write a function taking data and a maximum number of splits as inputs, and outputting a decision tree
+
+```{r}
+split1 <- tree_split(x, y)
+split1
+```
+
+```{r}
+inds1 <- which(x <= split1)
+inds2 <- setdiff(1:length(x), inds1)
+```
+
+```{r}
+tree_split(x[inds1], y[inds1])
+```
+
+```{r}
+tree_split(x[inds2], y[inds2])
+```
+
+Test the function on some `gapminder` data
+
+Try data from different years and see how the trees vary
+
+```{r}
+
+```
+

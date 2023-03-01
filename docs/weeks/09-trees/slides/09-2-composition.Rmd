@@ -6,7 +6,7 @@ author: "Joshua Loftus"
 #date: "`r Sys.Date()`"
 output:
   xaringan::moon_reader:
-    css: ["default", "xaringan-themer.css", "../../../theme.css"]
+    css: ["default", "xaringan-themer.css"]
 #    seal: false    
     lib_dir: libs
     nature:
@@ -112,7 +112,7 @@ $$\mathbb E[\mathbf y | \mathbf x] = g^{-1}(\mathbf x^T \beta)$$
 Multilayer perceptron (MLP), feedforward network. ESL:
 
 ```{r, echo=FALSE, out.width="80%"}
-knitr::include_graphics("../../07-nonlinear/slides/ESL11.2.png")
+knitr::include_graphics("../../08-additive/slides/ESL11.2.png")
 ```
 
 ---
