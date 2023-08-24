@@ -1,0 +1,124 @@
+---
+title: "Exercise set 2"
+author: your candidate number
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(warning = FALSE, message = FALSE)
+# install.packages("glmnet") #if necessary
+library(glmnet) 
+library(tidyverse)
+library(knitr)
+```
+
+## High-dimensional regression
+
+
+
+#### Background reading. **Delete this section before submitting**
+
+Wikipedia: [Singular value decomposition](https://en.wikipedia.org/wiki/Singular_value_decomposition). Read the introduction, Example, and Pseudoinverse sections.
+
+Wikipedia: [Pseudoinverse](https://en.wikipedia.org/wiki/Moore%E2%80%93Penrose_inverse). Read the introduction and sections on Projectors, Examples, Linearly independent rows, and Applications.
+
+ISLR: See section 12.5.2 for some example use of the `svd` function.
+
+#### **Delete** from here to the previous line about deletion.
+
+#### Generate data (3 points)
+
+```{r}
+set.seed(1) # change this to some other number
+# Generate a matrix of predictors X
+# with 3 rows, 10 columns, and i.i.d. normal entries
+p <- 10
+n <- 3
+X <- matrix(rnorm(n * p), nrow = n)
+# Create a sparse coefficient vector beta
+# with only 1 or 2 nonzero entries
+beta <- rep(0, p)
+beta[1] <- 1
+# Compute outcome y from the noise-free linear model
+y <- X %*% beta
+```
+
+#### Compute pseudoinverse (3 points)
+
+Use output from the `svd` function to compute a right pseudoinverse of `X`. (Note: if you use a source aside from the Wikipedia articles above to figure out how to do this you should cite your source and include a link if it's a website)
+
+```{r}
+S <- svd(X)
+X_pseudoinv <- S$v %*% diag(1/S$d) %*% t(S$u)
+```
+
+#### Verify right-inverse property (3 points)
+
+```{r}
+X %*% X_pseudoinv
+```
+
+**Explanation**: (1 point) Expected to be the identity matrix, and the diagonal entries are numerically close to 1 and off diagonal close to zero, i.e. the matrix is numerically close to the identity matrix.
+
+#### Note: delete this comment after reading. If you are unable to compute the pseudoinverse using the svd function, you can increase the sample size to p+1 and use OLS to estimate beta instead to receive partial credit.
+
+#### Compare estimated beta to true beta (3 points)
+
+```{r}
+beta_hat <- X_pseudoinv %*% y
+cbind(beta, beta_hat) |> kable()
+```
+
+**Explanation**: (1 point) Expected they are not equal, because we do not have enough data to exactly solve for or estimate beta
+
+#### Compute MSE for predicting y (3 points)
+
+```{r}
+y_hat <- X %*% beta_hat
+mean((y - y_hat)^2)
+```
+
+**Explanation**: (1 point) Expected to be numerically close to zero, because perfect prediction is possible when `p > n`.
+
+#### Generate a new sample of test data and compute the (in-distribution) test MSE (3 points)
+
+```{r}
+X_test <- matrix(rnorm(n * p), nrow = n)
+y_test <- X_test %*% beta
+y_test_hat <- X_test %*% X_pseudoinv %*% y
+mean((y_test_hat - y_test)^2)
+```
+
+**Explanation**: (1 point) Expected that this would be larger than zero, because test error is generally higher than training error.
+
+#### Use penalized regression to estimate beta (4 points)
+
+Compute the ridge and lasso estimates using `lambda = 0.1`, and compare these with the estimate from using `svd`. You may want to read the documentation for `?glmnet` and `?coef.glmnet`
+
+```{r}
+beta_ridge <- coef(glmnet(X, y, intercept = FALSE, alpha = 0, lambda = .1))
+beta_lasso <- coef(glmnet(X, y, intercept = FALSE, lambda = .1))
+```
+
+
+```{r}
+# Comparison
+cbind(beta, beta_lasso[-1], beta_ridge[-1], beta_hat) |>
+  kable()
+```
+
+**Explanation**: (1 point) Expected lasso solution to be sparse and ridge solution to not be sparse.
+
+#### Compute test MSE using penalized regression estimates (3 points)
+
+```{r}
+y_test_hat <- X_test %*% beta_lasso[-1]
+mean((y_test_hat - y_test)^2)
+
+y_test_hat <- X_test %*% beta_ridge[-1]
+mean((y_test_hat - y_test)^2)
+```
+
+**Explanation**: (1 point) Expected or not, the lasso estimate is closest to the true beta and the test error is lower for the lasso compared to the other methods.
+
