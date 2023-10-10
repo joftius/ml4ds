@@ -13,15 +13,32 @@ theme_set(theme_minimal(base_size = 14))
 
 ## ISLR exercises
 
-Solutions for these are available with a quick search online.
+Solutions for these are available with a quick search online. You can check your answers against these solutions, and if you have any remaining questions raise them with your seminar teacher or course lecturer.
 
-Trying to solve the problems without any hints or help is a valuable form of practice, so *it's important to not consult any solutions until after fully writing your own answer*.
+Note: Trying to solve the problems without any hints or help is a valuable form of practice, so *it's important to not consult any solutions until after fully writing your own answer*. The following sources are generally decent for the quality of most of their solutions:
+
+- https://onmee.github.io/ISLR-Solutions/
+- https://blog.princehonest.com/stat-learning/
+- https://onepounchman.github.io/ISLR-Exercises-Solutions/
 
 For solutions involving code, I also recommend using some of the excellent functions available in packages, for example the `ggfortify::autoplot()` and `GGally::ggnostic()` functions for model diagnostic plots, or the `GGally::ggcoef()` function for showing coefficient estimates with confidence intervals.
 
-## Mixtape Chapter 3
+## ISLR Chapter 3, Exercise 1
 
-Choose one of the datasets analyzed in previous exercises, lectures, or seminars, and pick 2 or 3 variables in this dataset. Invent an unobserved variable that you believe may also be important but not included in the dataset. Using these variables:
+Note that it is still unfortunately common to see flawed/inaccurate language when describing regression coefficients. This even happens in some textbooks, and you may see people who are experts getting it wrong.
+
+A more accurate and responsible description should **always** emphasize that the effects being described are, by default, *not causal effects*.
+
+Taking the `radio` variable as an example, we could say something like
+
+> The null hypothesis states there is **no linear association** between `radio` and **predicted average** `sales` **after controlling for linear associations with** `TV` and `newspaper`. Since the $p$-value for this hypothesis is small, less than 0.0001, we may reject the null hypothesis (at any level larger than this)
+
+Important things to remember:
+
+- Linear association is limited in two ways, by the inflexible assumption of linearity and by the fact that association is not causation
+- In multiple regression, the meaning of one coefficient depends on what other predictors are also included in the model. It measures linear association while "controlling for" the other predictors. But be careful: this meaning of "controlling for" is about something that happens in the model, not in the real world, which makes it different from "controlling" something in an experiment.
+
+## Causality
 
 -   Propose and draw a DAG that you believe to be importantly wrong compared to the real world, and explain why you think it does not accurately model the causal relationships that you believe to exist.
 

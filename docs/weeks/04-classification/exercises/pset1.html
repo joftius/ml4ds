@@ -297,23 +297,17 @@ overflow-y: auto;
 border: 1px solid #ddd;
 border-radius: 4px;
 }
-.tabset-dropdown > .nav-tabs > li.active:before {
-content: "";
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+content: "\e259";
 font-family: 'Glyphicons Halflings';
 display: inline-block;
 padding: 10px;
 border-right: 1px solid #ddd;
 }
 .tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
-content: "";
-border: none;
-}
-.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
-content: "";
+content: "\e258";
 font-family: 'Glyphicons Halflings';
-display: inline-block;
-padding: 10px;
-border-right: 1px solid #ddd;
+border: none;
 }
 .tabset-dropdown > .nav-tabs > li.active {
 display: block;
@@ -359,26 +353,12 @@ display: none;
 </div>
 
 
-<div id="islr-chapter-2-section-2.4" class="section level2">
-<h2>ISLR Chapter 2, Section 2.4</h2>
-<p>Exercises 1 and 3</p>
-</div>
-<div id="islr-chapter-3-section-3.6" class="section level2">
-<h2>ISLR Chapter 3, Section 3.6</h2>
-<p>Read the <code>R</code> lab, especially Sections 3.6.3-3.6.6</p>
-<p>(You don’t have to write anything about this, just be sure to read
-it)</p>
-</div>
-<div id="islr-chapter-3-section-3.7" class="section level2">
-<h2>ISLR Chapter 3, Section 3.7</h2>
-<p>Exercises 13 and 14</p>
-</div>
-<div id="mixtape-chapter-3" class="section level2">
-<h2>Mixtape Chapter 3</h2>
+<div id="causality" class="section level2">
+<h2>Causality</h2>
 <p>Choose one of the datasets analyzed in previous exercises, lectures,
-or seminars, and pick 2 or 3 variables in this dataset. Invent an
-unobserved variable that you believe may also be important but not
-included in the dataset. Using these variables:</p>
+or seminars, and pick 2 or 3 variables in this dataset. You can also
+invent an unobserved variable that you believe might be important but is
+not included in the dataset. Using these variables:</p>
 <ul>
 <li><p>Propose and draw a DAG that you believe to be importantly wrong
 compared to the real world, and explain why you think it does not
@@ -393,6 +373,20 @@ relationships.</p></li>
 <p>This is a conceptual exercise which would not be graded based on any
 kind of accuracy in relating to the real world, but only on your
 reasoning.</p>
+</div>
+<div id="islr-chapter-2-section-2.4" class="section level2">
+<h2>ISLR Chapter 2, Section 2.4</h2>
+<p>Exercises 1 and 3</p>
+</div>
+<div id="islr-chapter-3-section-3.6" class="section level2">
+<h2>ISLR Chapter 3, Section 3.6</h2>
+<p>Read the <code>R</code> lab, especially Sections 3.6.3-3.6.6</p>
+<p>(You don’t have to write anything about this, just be sure to read
+it)</p>
+</div>
+<div id="islr-chapter-3-section-3.7" class="section level2">
+<h2>ISLR Chapter 3, Section 3.7</h2>
+<p>Exercises 1, 13, and 14</p>
 </div>
 
 
