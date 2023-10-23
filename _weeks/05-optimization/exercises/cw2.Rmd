@@ -106,7 +106,7 @@ set.seed(1) # change 1 to your candidate number
 - The question should test for understanding of some material covered in the readings, lectures, or notebooks, and you should give a reference to the relevant source material that would help in solving the question
 - The question should be different, in an important way (e.g. not just a simple substitution of different numbers), from the example questions in the same sources
 - Include your own solution to the question
-- Qualitative marking: [10 marks] for the quality of the question, [10 marks] for the quality of the answer (quality includes technical correctness, whether the question is interesting and important, creativity or different from other questions and examples, whether the question is appropriately challenging, i.e. not too difficult or too easy)
+- Qualitative marking: [10 marks] for the quality of the question, [10 marks] for the quality of the answer (quality includes technical correctness, whether the question is interesting and important, creativity or difference from other questions and examples, whether the question is appropriately challenging, i.e. not too difficult or too easy, and teacher's holistic judgment of quality)
 - Delete these instructions and knit the document one final time before submitting (do not delete your instructions for the question)
 
 - Your instructions here

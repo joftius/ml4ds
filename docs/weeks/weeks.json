@@ -83,7 +83,7 @@
     "categories": [],
     "contents": "\nMaterials\nLink\nType\nDescription\nhtml pdf\nSlides\nOptimization and model complexity\nhtml\nNotebook\nGradient descent\nRmd\nNotebook\nStochastic gradient descent\nRmd\nNotebook\nStepwise variable selection\nTo be updated\nPreparation\nRequired reading\nISLR Chapter 6, Section 1 only.\nISLR Chapter 7, Sections 1-3 and 6.\nMLstory Chapter 5 on optimization, read the section on Stochastic gradient descent and stop after the SGD quick start guide.\nSupplemental reading\nMLstory Chapter 5 on optimization, the rest of the chapter (note that it contains some more advanced material).\nWikipedia on Newton’s method and gradient descent (good for pictures and animations)\nOptimization\nOverfitting\nSlides, notebooks, exercises\nSlides for optimization video (PDF)\nSlides for overfitting video (PDF)\nNotebook for generalization (partially complete)\nNotebook for optimization (partially complete)\nNotebook for regularization (partially complete)\nExercises\n\n\n\n",
     "preview": {},
-    "last_modified": "2023-10-23T15:42:49+01:00",
+    "last_modified": "2023-10-23T15:45:28+01:00",
     "input_file": "05-optimization.knit.md"
   },
   {
