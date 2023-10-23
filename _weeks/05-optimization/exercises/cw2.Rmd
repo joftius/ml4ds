@@ -1,0 +1,120 @@
+---
+title: "Coursework 2"
+author: your candidate number
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(warning = FALSE, message = FALSE)
+library(tidyverse)
+library(knitr)
+```
+
+## Regression and its limitations
+
+### Instructions [10 marks]
+
+- Read all the instructions below before beginning
+- You may wish to review the [week 3 notebook](https://ml4ds.com/weeks/03-causality/notebooks/regression_causality.html)
+- In each **Explanation**, write a sentence or two--*in your own words*--explaining the output, for example by referring to the numeric values or part of a plot to focus on to see that the example satisfies the conditions of the instructions
+- [10 marks] for following all instructions carefully
+- Delete these instructions and knit the document one final time before submitting
+
+### Generate data [10 marks]
+
+- Simulate a dataset for regression. See `?Distributions`, the `?runif` and `?rnorm` distributions are useful choices for predictors
+- [5 marks] To use more than one predictor variable
+- [5 marks] The true CEF in your example should be non-linear. Choose your CEF to be unique (different from the examples in lectures, notebooks, or the textbook) but still simple enough to understand (see e.g. `?log`, `?sqrt`, `?Trig`, etc)
+- Note that if you are re-running individual code chunks which generate data, the results you see may differ from when you knit the whole document. For this reason, you may want to knit the whole document and use the results you see then when writing any explanations
+- Delete these instructions and knit the document one final time before submitting
+
+```{r}
+set.seed(1) # change 1 to your candidate number
+
+```
+
+**Explanation**: 
+
+### Linear model is a poor fit [15 marks]
+
+- [5 marks] Fit a linear regression model
+- [5 marks] Estimate the regression coefficients using the `svd` function and compare that estimate to the one from the `lm` function. Wikipedia: [Singular value decomposition](https://en.wikipedia.org/wiki/Singular_value_decomposition). Read the introduction, Example, and Pseudoinverse sections. Wikipedia: [Pseudoinverse](https://en.wikipedia.org/wiki/Moore%E2%80%93Penrose_inverse). Read the introduction and sections on Projectors, Examples, Linearly independent rows, and Applications. ISLR: See section 12.5.2 for some example use of the `svd` function.
+- [5 marks] Use a diagnostic plot to show that the linear model is a poor fit
+- Delete these instructions and knit the document one final time before submitting
+
+```{r}
+
+```
+
+**Explanation**: 
+
+### Regression coefficient vs causal effect [15 marks]
+
+- [5 marks] Using the data generating code, estimate the causal effect of increasing a predictor variable by 1 unit. If you have more than one predictor, you can choose which causal effect to demonstrate (e.g. direct, indirect, total)
+- [5 marks] Compute the confidence interval for this same predictor, and check whether the interval contains the estimated causal effect
+- [5 marks] If the interval above does contain the causal effect, modify your CEF and re-run the code, using trial and error until the confidence interval does not contain the estimated causal effect
+- Delete these instructions and knit the document one final time before submitting
+
+```{r}
+
+```
+
+
+**Explanation**: 
+
+### A good non-linear model [10 marks]
+
+- [5 marks] Find another predictive model which is a better fit (by including non-linear transformations of predictors, or using a local non-linear regression method)
+- [5 marks] Show that the diagnostic plot for this better model no longer gives evidence of a poor fit
+- Delete these instructions and knit the document one final time before submitting
+
+```{r}
+
+```
+
+**Explanation**: 
+
+### Causal relationship vs fitted [10 marks]
+
+- [5 marks] Demonstrate that even though the non-linear model succeeds at prediction, it fails to show the causal effect of increasing a predictor variable
+- [5 marks] If you have more than one predictor, estimate a different causal effect than the direct effect. Change your data generating code at the beginning, if necessary, to make this effect different from the direct one
+- Delete these instructions and knit the document one final time before submitting
+
+```{r}
+
+```
+
+**Explanation**: 
+
+### A bad non-linear model [10 marks]
+
+- [5 marks] Finally, fit another non-linear model which is too complex
+- [5 marks] Using the data generating code, demonstrate that this model has significantly worse prediction accuracy on a new sample of test data
+- Delete these instructions and knit the document one final time before submitting
+
+```{r}
+
+```
+
+**Explanation**: 
+
+### Open-ended question [20 marks]
+
+- Propose your own additional question here
+- Write the instructions for the question and leave them (do not delete)
+- The question should test for understanding of some material covered in the readings, lectures, or notebooks, and you should give a reference to the relevant source material that would help in solving the question
+- The question should be different, in an important way (e.g. not just a simple substitution of different numbers), from the example questions in the same sources
+- Include your own solution to the question
+- Qualitative marking: [10 marks] for the quality of the question, [10 marks] for the quality of the answer (quality includes technical correctness, whether the question is interesting and important, creativity or different from other questions and examples, whether the question is appropriately challenging, i.e. not too difficult or too easy)
+- Delete these instructions and knit the document one final time before submitting (do not delete your instructions for the question)
+
+- Your instructions here
+
+```{r}
+
+```
+
+**Explanation**: 
+
+
