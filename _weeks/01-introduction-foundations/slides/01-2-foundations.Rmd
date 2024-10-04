@@ -379,6 +379,6 @@ mean(residuals(candy_complex)^2))
 
 ### A victory for machine learning!
 
-... or is it? Find out in our first seminar
+... or is it? What did you learn in the first seminar?
 
 

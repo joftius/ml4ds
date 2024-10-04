@@ -62,9 +62,7 @@ theme_set(theme_minimal(base_size = 22))
 
 Lecturer: [Joshua Loftus](https://joshualoftus.com/)
 
-Teachers: [Phil Chan](https://www.lse.ac.uk/Statistics/People/Dr-Phil-Chan), [Shakeel Gavioli-Akilagun](https://www.lse.ac.uk/Statistics/People/Shakeel-Gavioli-Akilagun), [Domenico Mergoni](https://www.lse.ac.uk/Mathematics/people/Research-Students/Domenico-Mergoni)
-
-Website: [ml4ds.com](https://ml4ds.com)
+Website: Moodle and also [ml4ds.com](https://ml4ds.com)
 
 ???
 
@@ -98,28 +96,31 @@ class: inverse, center, middle
 # Format
 
 - *Mostly* self-contained -- ask if you need help!
-- Seminars: pre-work, Zoom links on Moodle
-- Course page http://ml4ds.com/ (links, slides, misc. notes)
+- Seminars: pre-work
+- http://ml4ds.com/ (links, slides, misc. notes)
 - Participation, active learning
-- Assigned weekly readings, attendance of lectures and seminars
-- Readings / supplemental references
-  - **ISLR** [Introduction to Statistical Learning](https://statlearning.com/) 
+- Weekly readings, seminars, lectures
+- Reading
+  - **ISLR** [Introduction to Statistical Learning](https://statlearning.com/)
+  - **Mixtape** [Causal Inference: The Mixtape](https://mixtape.scunning.com/index.html)
+  - **MLstory** [Patterns, Predictions, and Actions](https://mlstory.org/)
+- Supplemental references
+  - **R4DS** [R for Data Science](https://r4ds.had.co.nz/)
   - **ESL** [Elements of Statistical Learning](https://web.stanford.edu/~hastie/ElemStatLearn/)
   - **CASI** [Computer Age Statistical Inference](https://web.stanford.edu/~hastie/CASI/)
-  - **Mixtape** [Causal Inference: The Mixtape](https://mixtape.scunning.com/index.html)
-  - **R4DS** [R for Data Science](https://r4ds.had.co.nz/)
+
 
 ---
 
 # Assessments
 
-As described in the [course listing](https://www.lse.ac.uk/resources/calendar2022-2023/courseGuides/ST/2022_ST310.htm)
+As described in the [course listing](https://www.lse.ac.uk/resources/calendar/courseGuides/undergraduate.htm) for ST310
 
-- Problem sets: 4 total, 2 are summative
+- Formative: problem sets
 - Summative
-  - Problem sets (30%)
-  - Individual project (40%) in LT
-  - Group project (30%) in LT
+  - Problem set(s)
+  - Individual project: prediction competition
+  - Group project: open-ended data analysis
 
 ---
 class: inverse, center, middle
@@ -220,7 +221,7 @@ Source: [xkcd](https://xkcd.com/2048/)
 
 &nbsp; 
 
-Yes, there will be memes, [videos](https://twitter.com/Reza_Zadeh/status/1045124253006192640), etc...
+Machine learning in one picture
 
 ]
 
@@ -242,7 +243,7 @@ But! Value added by lectures
 # Recurring themes
 
 - Human-centric ML
-  - Tools for us to control, not conversely...
+  - Tools for us to control (not conversely)
   - Ethics of data science
 
 --
@@ -299,18 +300,15 @@ class: bottom
 
 .pull-right[
 
-&nbsp; 
 
-&nbsp; 
-&nbsp; 
-
-- New to LSE! 
+- From the US
 - Used to teach at NYU
 - Cambridge postdoc
 - Stats PhD from Stanford
-- Reproducibility, fairness
+- Reproducibility, fairness, interpretability, causality
+- First-gen at university
+- Travel, reading, audiobooks, lifting
 
-![](https://statweb.stanford.edu/~joftius/yosemite.jpg)
 ]
 
 ???

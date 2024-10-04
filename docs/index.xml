@@ -7,14 +7,14 @@
     <description>ml4ds
 </description>
     <generator>Distill</generator>
-    <lastBuildDate>2022-10-05</lastBuildDate>
+    <lastBuildDate>Wed, 05 Oct 2022 00:00:00 +0000</lastBuildDate>
     <item>
       <title>1 Introduction and foundations</title>
       <dc:creator>Joshua Loftus</dc:creator>
       <link>http://ml4ds.com/weeks/01-introduction-foundations</link>
       <description>A brief introduction to the course, preview of things to come, and some foundational background material.</description>
       <guid>http://ml4ds.com/weeks/01-introduction-foundations</guid>
-      <pubDate>2022-10-05</pubDate>
+      <pubDate>Wed, 05 Oct 2022 00:00:00 +0000</pubDate>
       <media:content url="https://ml4ds.com/weeks/01-introduction-foundations/slides/01-2-foundations_files/figure-html/gapminder-loess-1.png" medium="image" type="image/png"/>
     </item>
     <item>
@@ -23,7 +23,7 @@
       <link>http://ml4ds.com/weeks/02-linear-regression</link>
       <description>Reviewing linear regression and framing it as a prototypical example and source of intuition for other machine learning methods.</description>
       <guid>http://ml4ds.com/weeks/02-linear-regression</guid>
-      <pubDate>2021-10-10</pubDate>
+      <pubDate>Sun, 10 Oct 2021 00:00:00 +0000</pubDate>
       <media:content url="http://ml4ds.com/weeks/02-linear-regression/candy.png" medium="image" type="image/png" width="1226" height="1002"/>
     </item>
     <item>
@@ -32,7 +32,7 @@
       <link>http://ml4ds.com/weeks/03-causality</link>
       <description>Multiple linear regression does not, by default, tell us anything about causality. But with the right data and careful interpretation we might be able to learn some causal relationships.</description>
       <guid>http://ml4ds.com/weeks/03-causality</guid>
-      <pubDate>2021-10-09</pubDate>
+      <pubDate>Sat, 09 Oct 2021 00:00:00 +0000</pubDate>
     </item>
     <item>
       <title>4 Classification</title>
@@ -40,7 +40,7 @@
       <link>http://ml4ds.com/weeks/04-classification</link>
       <description>Categorical or qualitative outcome variables are ubiquitous. We review some supervised learning methods for classification, and see how these may be applied to observational causal inference.</description>
       <guid>http://ml4ds.com/weeks/04-classification</guid>
-      <pubDate>2021-10-08</pubDate>
+      <pubDate>Fri, 08 Oct 2021 00:00:00 +0000</pubDate>
     </item>
     <item>
       <title>5 Optimization and model complexity</title>
@@ -48,7 +48,7 @@
       <link>http://ml4ds.com/weeks/05-optimization</link>
       <description>Machine learning is broadly about estimating functions using optimization algorithms. We can think of these as searching through a space of functions to find one that minimizes a measure of inaccuracy or loss.</description>
       <guid>http://ml4ds.com/weeks/05-optimization</guid>
-      <pubDate>2021-10-06</pubDate>
+      <pubDate>Thu, 07 Oct 2021 00:00:00 +0000</pubDate>
     </item>
     <item>
       <title>6 Regularization and validation</title>
@@ -56,7 +56,7 @@
       <link>http://ml4ds.com/weeks/06-regularization</link>
       <description>When optimizing an ML model there are a variety of strategies to improve generalization from the training data. We can add a complexity penalty to the loss function, and we can evaluate the loss function on validation data.</description>
       <guid>http://ml4ds.com/weeks/06-regularization</guid>
-      <pubDate>2021-10-06</pubDate>
+      <pubDate>Wed, 06 Oct 2021 00:00:00 +0000</pubDate>
     </item>
     <item>
       <title>7 High-dimensional regression</title>
@@ -64,7 +64,7 @@
       <link>http://ml4ds.com/weeks/07-highdim</link>
       <description>Regression with many predictor variables can suffer from a statistical version of the curse of dimensionality. Penalized regression methods like ridge and lasso are useful in such high-dimensional settings.</description>
       <guid>http://ml4ds.com/weeks/07-highdim</guid>
-      <pubDate>2021-10-05</pubDate>
+      <pubDate>Tue, 05 Oct 2021 00:00:00 +0000</pubDate>
     </item>
     <item>
       <title>8 Additive non-linearity</title>
@@ -72,7 +72,7 @@
       <link>http://ml4ds.com/weeks/08-additive</link>
       <description>We continue our exploration of non-linear supervised machine learning approaches including tree based methods, GAMs, and neural networks and graphs structured learning.</description>
       <guid>http://ml4ds.com/weeks/08-additive</guid>
-      <pubDate>2021-10-05</pubDate>
+      <pubDate>Tue, 05 Oct 2021 00:00:00 +0000</pubDate>
     </item>
     <item>
       <title>8 More nonlinear methods</title>
@@ -80,7 +80,7 @@
       <link>http://ml4ds.com/weeks/11-future/old-nonlinear</link>
       <description>We continue our exploration of non-linear supervised machine learning approaches including tree based methods, GAMs, and neural networks and graphs structured learning.</description>
       <guid>http://ml4ds.com/weeks/11-future/old-nonlinear</guid>
-      <pubDate>2021-10-04</pubDate>
+      <pubDate>Mon, 04 Oct 2021 00:00:00 +0000</pubDate>
     </item>
     <item>
       <title>9 Less interpretable methods</title>
@@ -88,7 +88,7 @@
       <link>http://ml4ds.com/weeks/09-trees</link>
       <description>Neural networks and ensemble methods like bagging, random forests, and boosting can greatly increase predictive accuracy at the cost of ease of interpretation.</description>
       <guid>http://ml4ds.com/weeks/09-trees</guid>
-      <pubDate>2021-10-03</pubDate>
+      <pubDate>Sun, 03 Oct 2021 00:00:00 +0000</pubDate>
     </item>
     <item>
       <title>10 From prediction to action</title>
@@ -96,7 +96,7 @@
       <link>http://ml4ds.com/weeks/10-action</link>
       <description>Supervised machine learning methods excel at predicting an outcome. But being able to predict an outcome does not mean we know how to change it, or that we should.</description>
       <guid>http://ml4ds.com/weeks/10-action</guid>
-      <pubDate>2021-10-02</pubDate>
+      <pubDate>Sat, 02 Oct 2021 00:00:00 +0000</pubDate>
     </item>
     <item>
       <title>11 To the future</title>
@@ -104,7 +104,7 @@
       <link>http://ml4ds.com/weeks/11-future</link>
       <description>Some resources for learning more and suggestions on what to study next.</description>
       <guid>http://ml4ds.com/weeks/11-future</guid>
-      <pubDate>2021-10-01</pubDate>
+      <pubDate>Fri, 01 Oct 2021 00:00:00 +0000</pubDate>
     </item>
   </channel>
 </rss>
