@@ -209,31 +209,76 @@ The first coursework questions are available at: https://ml4ds.com/weeks/04-clas
 
 #### Week 4 classification
 
+Required reading
 
+    ISLR Chapter 4. This chapter is a bit lengthy, so it’s OK if you don’t carefully follow all the mathematics in sections 4.4 and 4.5 as long as you understand the concepts.
+    MLstory Start Chapter 5 on optimization, read the first two sections on Optimization Basics and on Gradient Descent. You can stop when you reach Proposition 3.
+
+Supplemental reading
+
+    Wikipedia on Newton’s method and gradient descent (good for pictures and animations)
+    CASI Chapter 4 for MLE theory, Chapter 8 sections 8.1-8.3 (more advanced material)
+
+Coursework 1
+
+You can find solutions for Coursework 1 here https://ml4ds.com/weeks/04-classification/exercises/pset1_answers.html
+
+As a reminder, this coursework will not count toward final marks. You can compare your work to the example solutions, and if you still have any unresolved questions you can then submit your work on Moodle along with any specific feedback requests until the cut-off date.
 
 ####  Week 5 optimization
 
+Required reading
+
+    ISLR Chapter 6, Section 1 only.
+    ISLR Chapter 7, Sections 1-3 and 6.
+    MLstory Chapter 5 on optimization, read the section on Stochastic gradient descent and stop after the SGD quick start guide.
+
+Supplemental reading
+
+    MLstory Chapter 5 on optimization, the rest of the chapter (note that it contains some more advanced material).
+    Wikipedia on Newton’s method and gradient descent (good for pictures and animations)
 
 
-#### Week 6
+#### Week 6-7 reading week, validation
 
-reading week
+Required reading
 
-####  Week 7 validation
+    ISLR Finish reading Chapter 6 on linear models and regularisation (you can skim quickly through sections 6.3 and 6.5)
+    ISLR Chapter 5 on resampling methods
 
+Supplemental reading
 
+    ESL Chapter 3, sections 1-6 and 10.
+    CASI Chapters 7 and 16.
 
 ####  Week 8 high-dimensional regression
 
+Hi, in this week's seminars and lectures we'll focus on high-dimensional regression. In the upcoming weeks we will cover non-linear methods in ISLR Chapters 7 and 8. This week is a good time to start reading ahead so that you'll have more time for the coursework which will be announced soon.
+Required reading
 
+    ISLR Chapter 7, particularly sections 7.7 and 7.8.3 on GAMs
 
 #### Week 9 additive models
 
+Required reading
 
+    You should have already finished ISLR Chapter 7, especially sections 7.7 and 7.8.3 on GAMs
+    Start ISLR Chapter 8, at least section 8.1 on basics of tree methods
+    Start IML book Chapter 8, particularly Chapter 8.1 on PDPs, but skip Section 8.1.1 on feature importance
+
+Next week we'll finish ISLR Chapter 8, and cover IML Chapter 8.3
 
 #### Week 10 tree-based models
 
+Required reading
 
+    Finish ISLR Chapter 8
+    IML book: Chapter 8.3 on feature interaction, but you can skip Section 8.3.2 on the theory
+
+Supplemental reading
+
+    Review the parts of ISLR Chapter 2 about k-nn, and also chapter/sections 3.5 and 4.7.6 (optionally, skim Chapter 12 section 4, especially 12.4.1, to remember the difference between k-nn and another method with a name that sounds somewhat similar--forgetting the difference between these can be a common cause of embarrassment in job interviews!)
+    Read ISLR Chapter 9, especially section 9.3. We will be less interested in the details of SVMs and more focused on kernels as a generally useful concept/method.
 
 #### Week 11 interpretation and causal redux
 
