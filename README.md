@@ -282,3 +282,60 @@ Supplemental reading
 
 #### Week 11 interpretation and causal redux
 
+For reading this week, choose one of the
+  ethical guidelines from the <a
+    href="https://www.amstat.org/your-career/ethical-guidelines-for-statistical-practice">American
+    Statistical Association</a> and <a
+    href="https://rss.org.uk/RSS/media/News-and-publications/Publications/Reports%20and%20guides/A-Guide-for-Ethical-Data-Science-Final-Oct-2019.pdf">Royal
+    Statistical Society</a> to read carefully, and perhaps skim the other one as
+  well.</p>
+<p dir="ltr" style="text-align: left;">We have <strong><u>no lecture this
+      week</u></strong>. We covered more material in the last two weeks, and you
+  can use the extra time this week to focus on coursework. I also want to make
+  available to you extra content that you can review any time. Some of these are
+  about the extra material from the last two weeks, since we covered that
+  quickly, and some of it is new and wasn't covered in any lectures this year
+</p>
+<p dir="ltr" style="text-align: left;">Deep learning: <a
+    href="https://echo360.org.uk/lesson/6a563b1b-d5d7-4fa5-a20c-753478a2ff5f/classroom">video</a>
+  <a
+    href="https://ml4ds.com/weeks/09-trees/slides/09-2-composition.html">slides</a>
+</p>
+<p dir="ltr" style="text-align: left;">Kernel methods: <a
+    href="https://echo360.org.uk/lesson/44b9c288-8abd-4c26-a371-0a40ef36238f/classroom">video</a>
+  <a
+    href="https://ml4ds.com/weeks/08-additive/slides/07-3-kernels.html">slides</a>
+</p>
+<p dir="ltr" style="text-align: left;">Nearest neighbours: <a
+    href="https://echo360.org.uk/lesson/a76b64fc-9515-4711-9786-0cada36ba0ab/classroom">video</a>
+  <a href="https://ml4ds.com/weeks/08-additive/slides/07-2-knn.html">slides</a>
+</p>
+<p dir="ltr" style="text-align: left;">Interpretability <a
+    href="https://ml4ds.com/weeks/10-action/slides/10-1-interpretation.html">slides</a>
+</p>
+<p dir="ltr"><strong>Additional, optional readings on ML for causal
+    inference</strong>:</p>
+<p dir="ltr"><a
+    href="https://medium.com/teconomics-blog/using-ml-to-resolve-experiments-faster-bd8053ff602e">Blog
+    post</a> - simple read</p>
+<p dir="ltr"><a
+    href="https://towardsdatascience.com/double-machine-learning-simplified-part-1-basic-causal-inference-applications-3f7afc9852ee">A
+    more detailed blog post</a></p>
+<p dir="ltr"><a href="https://docs.doubleml.org/stable/guide/basics.html">User
+    guide</a> to doubleML package (in both R and Python) - more technical</p>
+<p dir="ltr"><a
+    href="https://grf-labs.github.io/grf/articles/grf_guide.html">User guide</a>
+  to grf package - more technical</p>
+
+
+#### Group project announcements
+
+If you have not yet formed a group with 3 students, please fill out this form: (link to group recruitment google form)
+
+If you do have a group, you can
+
+1) Refresh your memory about project requirements by reading these preliminary instructions: https://ml4ds.com/weeks/11-future/exercises/project_outline.html
+
+2) Working together to answer each question, have one member of your team enter your group's answers to this survey: (link to project proposal form)
+
+   
