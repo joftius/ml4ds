@@ -5,7 +5,7 @@ description: |
 toc: true
 ---
 
-[Course guide listing](https://www.lse.ac.uk/resources/calendar2026-2027/courseGuides/ST/2026_ST310.htm): includes information about requirements and assessments. Where this website and the guide disagree, the guide wins.
+[Course guide listing](https://www.lse.ac.uk/resources/calendar2026-2027/courseGuides/ST/2026_ST310.htm): includes information about requirements and assessments.
 
 Lecturer: [Joshua Loftus](https://joshualoftus.com/). Seminars are run by the class teachers and by me.
 
@@ -60,7 +60,3 @@ This is every package the seminar notebooks load, for the whole term (`MASS`, al
 The course guide requires students with no experience of R to complete the Digital Skills Lab's pre-sessional R course; if that is you and you have not done it, do it in the first week, because the seminars assume it from week 1 (writing a function and a `for` loop) and build on it (numerical linear algebra, recursion, several package interfaces). The Lab lists the current term's courses on Moodle and runs daily online drop-in sessions: [Digital Skills Lab](https://info.lse.ac.uk/current-students/digital-skills-lab/r). The first seminar starts with a chunk that loads the packages, so you will know at once whether your installation works.
 
 **Note**: on a Mac or Linux computer you may prefer to install R and RStudio with a package manager. Personally, on a Mac I use [Homebrew](https://brew.sh/).
-
-## A request
-
-As a courtesy, please don't use any "AI" tools in your communications with me or the teaching staff. This also applies to all aspects of this course. We are here to train our own minds, not to replace them. I'll say more about why during the term; I'm an interested party, and you're welcome to argue with me about it.

@@ -6,9 +6,9 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="description" content="A core set of commonly used machine learning tools, practised in R, with attention to their mathematical foundations, their statistical limitations, and what they do and do not tell you.">
+<meta name="description" content="A core set of commonly used machine learning tools, practiced in R, with attention to their mathematical foundations, their statistical limitations, and what they do and do not tell you.">
 
-<title>Weekly content – machine learning 4 data science</title>
+<title>ST310 course page – machine learning 4 data science</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -168,17 +168,17 @@ window.Quarto = {
     <h2 id="toc-title">On this page</h2>
    
   <ul class="collapse">
-  <li><a href="#week-1-prediction-competitions-and-nearest-neighbours" id="toc-week-1-prediction-competitions-and-nearest-neighbours" class="nav-link active" data-scroll-target="#week-1-prediction-competitions-and-nearest-neighbours">Week 1: prediction competitions and nearest neighbours</a></li>
+  <li><a href="#week-1-prediction-competitions-and-nearest-neighbors" id="toc-week-1-prediction-competitions-and-nearest-neighbors" class="nav-link active" data-scroll-target="#week-1-prediction-competitions-and-nearest-neighbors">Week 1: prediction competitions and nearest neighbors</a></li>
   <li><a href="#week-2-linear-regression" id="toc-week-2-linear-regression" class="nav-link" data-scroll-target="#week-2-linear-regression">Week 2: linear regression</a></li>
   <li><a href="#week-3-classification-and-causality-part-1" id="toc-week-3-classification-and-causality-part-1" class="nav-link" data-scroll-target="#week-3-classification-and-causality-part-1">Week 3: classification, and causality (part 1)</a></li>
-  <li><a href="#week-4-optimisation-or-how-models-actually-get-fitted" id="toc-week-4-optimisation-or-how-models-actually-get-fitted" class="nav-link" data-scroll-target="#week-4-optimisation-or-how-models-actually-get-fitted">Week 4: optimisation, or how models actually get fitted</a></li>
-  <li><a href="#week-5-validation-or-honest-evaluation" id="toc-week-5-validation-or-honest-evaluation" class="nav-link" data-scroll-target="#week-5-validation-or-honest-evaluation">Week 5: validation, or honest evaluation</a></li>
+  <li><a href="#week-4-optimization-and-model-fitting" id="toc-week-4-optimization-and-model-fitting" class="nav-link" data-scroll-target="#week-4-optimization-and-model-fitting">Week 4: optimization and model fitting</a></li>
+  <li><a href="#week-5-validation-and-honest-evaluation" id="toc-week-5-validation-and-honest-evaluation" class="nav-link" data-scroll-target="#week-5-validation-and-honest-evaluation">Week 5: validation and honest evaluation</a></li>
   <li><a href="#week-6-reading-week" id="toc-week-6-reading-week" class="nav-link" data-scroll-target="#week-6-reading-week">Week 6: reading week</a></li>
-  <li><a href="#week-7-many-predictors-regularisation-and-reusing-the-test-set" id="toc-week-7-many-predictors-regularisation-and-reusing-the-test-set" class="nav-link" data-scroll-target="#week-7-many-predictors-regularisation-and-reusing-the-test-set">Week 7: many predictors, regularisation, and reusing the test set</a></li>
-  <li><a href="#week-8-additive-models-and-what-a-curve-holds-fixed" id="toc-week-8-additive-models-and-what-a-curve-holds-fixed" class="nav-link" data-scroll-target="#week-8-additive-models-and-what-a-curve-holds-fixed">Week 8: additive models, and what a curve holds fixed</a></li>
+  <li><a href="#week-7-regularization-and-high-dimensions" id="toc-week-7-regularization-and-high-dimensions" class="nav-link" data-scroll-target="#week-7-regularization-and-high-dimensions">Week 7: regularization and high-dimensions</a></li>
+  <li><a href="#week-8-additive-models-and-interpretation" id="toc-week-8-additive-models-and-interpretation" class="nav-link" data-scroll-target="#week-8-additive-models-and-interpretation">Week 8: additive models and interpretation</a></li>
   <li><a href="#week-9-trees-and-ensembles" id="toc-week-9-trees-and-ensembles" class="nav-link" data-scroll-target="#week-9-trees-and-ensembles">Week 9: trees and ensembles</a></li>
   <li><a href="#week-10-explaining-intervening-shifting" id="toc-week-10-explaining-intervening-shifting" class="nav-link" data-scroll-target="#week-10-explaining-intervening-shifting">Week 10: explaining, intervening, shifting</a></li>
-  <li><a href="#week-11-what-did-winning-establish" id="toc-week-11-what-did-winning-establish" class="nav-link" data-scroll-target="#week-11-what-did-winning-establish">Week 11: what did winning establish?</a></li>
+  <li><a href="#week-11-what-does-winning-mean" id="toc-week-11-what-does-winning-mean" class="nav-link" data-scroll-target="#week-11-what-does-winning-mean">Week 11: what does winning mean?</a></li>
   </ul>
 </nav>
     </div>
@@ -187,12 +187,12 @@ window.Quarto = {
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Weekly content</h1>
+<h1 class="title">ST310 course page</h1>
 </div>
 
 <div>
   <div class="description">
-    <p>A core set of commonly used machine learning tools, practised in R, with attention to their mathematical foundations, their statistical limitations, and what they do and do not tell you.</p>
+    <p>A core set of commonly used machine learning tools, practiced in R, with attention to their mathematical foundations, their statistical limitations, and what they do and do not tell you.</p>
   </div>
 </div>
 
@@ -209,10 +209,10 @@ window.Quarto = {
 </header>
 
 
-<p>Each week has one lecture and one seminar. Do the reading before the lecture, and bring a laptop with R and RStudio to the seminar (see <a href="about.html">about</a> for setup). The seminar notebook for each week is linked below; the <code>.qmd</code> link is the source file to open in RStudio, the other link is the same notebook rendered so you can read it in a browser.</p>
-<p>Weeks begin on Mondays: week 1 is 28 September, week 6 is reading week, week 11 is 7 December.</p>
-<section id="week-1-prediction-competitions-and-nearest-neighbours" class="level2">
-<h2 class="anchored" data-anchor-id="week-1-prediction-competitions-and-nearest-neighbours">Week 1: prediction competitions and nearest neighbours</h2>
+<p>Readings and lectures are complementary so do both, and bring a laptop with R and RStudio to the seminar (see <a href="about.html">about</a> for setup). The seminar notebook for each week is linked below; the <code>.qmd</code> link is the source file to open in RStudio, the other link is the same notebook rendered so you can read it in a browser.</p>
+<section id="week-1-prediction-competitions-and-nearest-neighbors" class="level2">
+<h2 class="anchored" data-anchor-id="week-1-prediction-competitions-and-nearest-neighbors">Week 1: prediction competitions and nearest neighbors</h2>
+<p>What machine learning is and where it came from: two lineages, one field, and the prediction competition (the common task framework) as its working definition, with the Netflix prize as the cautionary tale. A first prediction task, the rule that a prediction may use only what is available at prediction time, a held-out set as the score, and <span class="math inline">\(k\)</span>-nearest neighbors as the first method. The bias–variance decomposition derived for <span class="math inline">\(k\)</span>-NN at the board, and why nearest neighbors stop working in many dimensions.</p>
 <p><strong>Reading</strong></p>
 <ul>
 <li>ISLR Chapter 1 (Introduction), pp.&nbsp;1–14. A quick read; don’t skip the section on notation and simple matrix algebra.</li>
@@ -221,10 +221,11 @@ window.Quarto = {
 </ul>
 <p>If you finish these quickly you may want to start Chapter 3, because it’s a long one.</p>
 <p><strong>Lecture:</strong> <a href="weeks/01-introduction-foundations/slides/01-1-introduction.html">slides</a></p>
-<p><strong>Seminar:</strong> <a href="weeks/01-introduction-foundations/notebooks/notebook1_incomplete.html">notebook</a> (<a href="./weeks/01-introduction-foundations/notebooks/notebook1_incomplete.html">.qmd</a>)</p>
+<p><strong>Seminar:</strong> <a href="weeks/01-introduction-foundations/notebooks/notebook1.html">notebook</a> (<a href="./weeks/01-introduction-foundations/notebooks/notebook1.html">.qmd</a>)</p>
 </section>
 <section id="week-2-linear-regression" class="level2">
 <h2 class="anchored" data-anchor-id="week-2-linear-regression">Week 2: linear regression</h2>
+<p>Regression as the first fitted model rather than a review: least squares and the hat matrix, and the conditional mean as the target that every regression method is aiming at (the optimal model theorem). Multiple regression and what a coefficient holds fixed: the partialling-out theorem, derived at the board and reused in weeks 8 and 10, and omitted variables as its failure case.</p>
 <p><strong>Reading</strong></p>
 <ul>
 <li>ISLR Chapter 3 (Linear Regression), sections 3.1–3.3 and 3.5, pp.&nbsp;61–110. Mostly review from your regression course; read 3.2.1 (estimating the coefficients in multiple regression) and 3.3.3 (potential problems) slowly. The lab in 3.6 goes with the seminar.</li>
@@ -236,29 +237,32 @@ window.Quarto = {
 </section>
 <section id="week-3-classification-and-causality-part-1" class="level2">
 <h2 class="anchored" data-anchor-id="week-3-classification-and-causality-part-1">Week 3: classification, and causality (part 1)</h2>
+<p>Classification: logistic regression, a threshold and the two kinds of error on either side of it, and the metrics that follow. Causal block 1: prediction against intervention, a world in which the causation runs the other way from the correlation, and why a model that predicts well can still give the wrong answer to a what-if question.</p>
 <p><strong>Reading</strong></p>
 <ul>
-<li>ISLR Chapter 4 (Classification), sections 4.1–4.3, pp.&nbsp;130–141. Section 4.4 (LDA, QDA, naive Bayes) is not part of this course; skim 4.5, pp.&nbsp;158–164, for the comparison with <span class="math inline">\(k\)</span>-nearest neighbours.</li>
+<li>ISLR Chapter 4 (Classification), sections 4.1–4.3, pp.&nbsp;130–141. Section 4.4 (LDA, QDA, naive Bayes) is not part of this course; skim 4.5, pp.&nbsp;158–164, for the comparison with <span class="math inline">\(k\)</span>-nearest neighbors.</li>
 <li>PPA Chapter 2, “Types of errors and successes” and “The Neyman–Pearson lemma”, pp.&nbsp;21–26, and “Decisions that discriminate”, pp.&nbsp;26–31.</li>
 <li>PPA Chapter 9 (Causality), “The limitations of observation”, pp.&nbsp;179–181. Optional now and needed in week 8: “Confounding”, pp.&nbsp;189–192.</li>
 </ul>
 <p><strong>Lecture and seminar:</strong> released here at the start of the week. Data: the Palmer penguins; the (fictional) attrition data as an alternative.</p>
 </section>
-<section id="week-4-optimisation-or-how-models-actually-get-fitted" class="level2">
-<h2 class="anchored" data-anchor-id="week-4-optimisation-or-how-models-actually-get-fitted">Week 4: optimisation, or how models actually get fitted</h2>
+<section id="week-4-optimization-and-model-fitting" class="level2">
+<h2 class="anchored" data-anchor-id="week-4-optimization-and-model-fitting">Week 4: optimization and model fitting</h2>
+<p>How a model actually gets fitted: gradient descent, the quadratic case, step sizes and what goes wrong with them, then stochastic gradient descent and why its steps are unbiased. Empirical risk minimization as the common form of every method so far, the bias–variance decomposition in that form, and early stopping as a first kind of regularization.</p>
 <p><strong>Reading</strong></p>
 <ul>
-<li>PPA Chapter 5 (Optimization), pp.&nbsp;70–97: gradient descent, the quadratic case, stochastic gradient descent and its analysis, regularisation. The two convergence bounds stated in the lecture are proved here.</li>
+<li>PPA Chapter 5 (Optimization), pp.&nbsp;70–97: gradient descent, the quadratic case, stochastic gradient descent and its analysis, regularization. The two convergence bounds stated in the lecture are proved here.</li>
 <li>ISLR Chapter 6, section 6.1, pp.&nbsp;227–237 (subset selection). Section 6.2, pp.&nbsp;237–252 (ridge and the lasso), is week 7’s; reading week is a good time for it.</li>
 </ul>
 <p><strong>Lecture and seminar:</strong> released here at the start of the week. You will write gradient descent yourself, once, and use it twice. Data: gapminder and the penguins, then simulated data.</p>
 </section>
-<section id="week-5-validation-or-honest-evaluation" class="level2">
-<h2 class="anchored" data-anchor-id="week-5-validation-or-honest-evaluation">Week 5: validation, or honest evaluation</h2>
+<section id="week-5-validation-and-honest-evaluation" class="level2">
+<h2 class="anchored" data-anchor-id="week-5-validation-and-honest-evaluation">Week 5: validation and honest evaluation</h2>
+<p>Why training error flatters a model (the optimism theorem), the standard error of a held-out score, and cross-validation written out. Then the ways an honest-looking evaluation goes wrong: a leak between training and evaluation data, two leaderboards that disagree, and a score computed on data the model will never meet again (in-distribution against out-of-distribution).</p>
 <p><strong>Reading</strong></p>
 <ul>
 <li>ISLR Chapter 5, section 5.1, pp.&nbsp;197–209 (the validation set, leave-one-out and <span class="math inline">\(K\)</span>-fold cross-validation, and the bias–variance trade-off in choosing <span class="math inline">\(K\)</span>). Section 5.2, the bootstrap, is not part of this course.</li>
-<li>PPA Chapter 6, pp.&nbsp;100–106 (the generalisation gap; what happens empirically with over-parameterised models), and Chapter 8, pp.&nbsp;146–148 (the holdout method and Kaggle’s secret holdout).</li>
+<li>PPA Chapter 6, pp.&nbsp;100–106 (the generalization gap; what happens empirically with over-parameterized models), and Chapter 8, pp.&nbsp;146–148 (the holdout method and Kaggle’s secret holdout).</li>
 </ul>
 <p><strong>Lecture and seminar:</strong> released here at the start of the week. Cross-validation written out, with and without a leak; a competition run cleanly; a held-out score under three kinds of shift. Data: the (fictional) attrition outcome, the penguins, simulated data.</p>
 <p>Problem set 1 is due this week.</p>
@@ -267,8 +271,9 @@ window.Quarto = {
 <h2 class="anchored" data-anchor-id="week-6-reading-week">Week 6: reading week</h2>
 <p>No lecture or seminar. Read ISLR section 6.2, pp.&nbsp;237–252 (ridge regression and the lasso), for week 7.</p>
 </section>
-<section id="week-7-many-predictors-regularisation-and-reusing-the-test-set" class="level2">
-<h2 class="anchored" data-anchor-id="week-7-many-predictors-regularisation-and-reusing-the-test-set">Week 7: many predictors, regularisation, and reusing the test set</h2>
+<section id="week-7-regularization-and-high-dimensions" class="level2">
+<h2 class="anchored" data-anchor-id="week-7-regularization-and-high-dimensions">Week 7: regularization and high-dimensions</h2>
+<p>Many predictors: ridge regression and the lasso, their bias and variance against the tuning parameter (the bias–variance decomposition in its third form, with ridge written in the SVD basis), soft thresholding, and what changes when <span class="math inline">\(p &gt; n\)</span>. Then the held-out protocol under stress: the same evaluation set used many times, adaptive overfitting, and what the CIFAR-10 and ImageNet replications found.</p>
 <p><strong>Reading</strong></p>
 <ul>
 <li>ISLR Chapter 6, section 6.2, pp.&nbsp;237–252 (ridge regression and the lasso, choosing the tuning parameter), and section 6.4, from p.&nbsp;261 (what changes when <span class="math inline">\(p &gt; n\)</span>). The lab in section 6.5 goes with the seminar. Section 6.3 (principal components and partial least squares), which sits between them, is not part of this course.</li>
@@ -277,8 +282,8 @@ window.Quarto = {
 <p>Deeper, optional: ESL section 3.4, pp.&nbsp;61–79 (ridge in the SVD basis; the lasso); CASI Chapter 7 (James–Stein) and Chapter 16 (the lasso).</p>
 <p><strong>Lecture and seminar:</strong> released here at the start of the week. Bias and variance of ridge and the lasso against <span class="math inline">\(\lambda\)</span>, by simulation; tuning with <code>glmnet</code> on the Hitters data with a test set reserved first; the evaluation set reused, and what it does to a score. Data: simulated, and ISLR’s Hitters (baseball salaries, 1987).</p>
 </section>
-<section id="week-8-additive-models-and-what-a-curve-holds-fixed" class="level2">
-<h2 class="anchored" data-anchor-id="week-8-additive-models-and-what-a-curve-holds-fixed">Week 8: additive models, and what a curve holds fixed</h2>
+<section id="week-8-additive-models-and-interpretation" class="level2">
+<h2 class="anchored" data-anchor-id="week-8-additive-models-and-interpretation">Week 8: additive models and interpretation</h2>
 <p>One curve per predictor: how an additive model is fitted (each component to what the others leave), why it escapes the curse of dimensionality, and when it is wrong. Then a curve on any fitted model: partial dependence and ICE, computed by hand, and the question they answer. Causal block 2: direct against total dependence on a simulation where the two curves disagree, and when a model’s response is also an effect.</p>
 <p><strong>Reading</strong></p>
 <ul>
@@ -291,7 +296,7 @@ window.Quarto = {
 </section>
 <section id="week-9-trees-and-ensembles" class="level2">
 <h2 class="anchored" data-anchor-id="week-9-trees-and-ensembles">Week 9: trees and ensembles</h2>
-<p>A machine that asks the data one question at a time: how a split is found, why a tree is local averaging with the neighbourhoods chosen by the data, and how big to grow one. Then two ways to use many trees: bagging and random forests, with the variance of an average of correlated predictions derived at the board and the out-of-bag error as a built-in estimate of held-out error; boosting as gradient descent one small tree at a time, with its three knobs. Permutation importance in the loss-difference convention, and no free lunch retrieved on four entrants.</p>
+<p>A machine that asks the data one question at a time: how a split is found, why a tree is local averaging with the neighborhoods chosen by the data, and how big to grow one. Then two ways to use many trees: bagging and random forests, with the variance of an average of correlated predictions derived at the board and the out-of-bag error as a built-in estimate of held-out error; boosting as gradient descent one small tree at a time, with its three knobs. Permutation importance in the loss-difference convention, and no free lunch retrieved on four entrants.</p>
 <p><strong>Reading</strong></p>
 <ul>
 <li>ISLR Chapter 8, sections 8.1 and 8.2, pp.&nbsp;327–353 (trees; bagging, random forests and boosting). The lab in section 8.3 goes with the seminar.</li>
@@ -313,8 +318,8 @@ window.Quarto = {
 <p>Deeper, optional: Chernozhukov et al., “Double/debiased machine learning for treatment and structural parameters”, <em>Econometrics Journal</em> 2018, sections 1–2; Shimodaira, “Improving predictive inference under covariate shift by weighting the log-likelihood function”, <em>Journal of Statistical Planning and Inference</em> 2000.</p>
 <p><strong>Lecture and seminar:</strong> released here at the start of the week. SHAP by hand on a three-unit table, then by software on the penguins forest with the identity checked; permutation importance against leave-one-covariate-out on one fit; one effect estimated by residual on residual with cross-fitting, two wrong versions and a hidden confounder; a shift diagnosed on gapminder 1952 against 2007. Data: penguins, gapminder, and supplied simulations. Problem set 2 is due this week.</p>
 </section>
-<section id="week-11-what-did-winning-establish" class="level2">
-<h2 class="anchored" data-anchor-id="week-11-what-did-winning-establish">Week 11: what did winning establish?</h2>
+<section id="week-11-what-does-winning-mean" class="level2">
+<h2 class="anchored" data-anchor-id="week-11-what-does-winning-mean">Week 11: what does winning mean?</h2>
 <p>The competition re-read with everything since: outcome reasoning against model reasoning, the four MARA(s) questions a deployment has to answer and for whom, and the seven recurring flaws of systems that predict something about a person and decide about them. The week-1 task re-run with every entrant the term taught you. One unfamiliar case diagnosed live. The theorems and results in one view. If time allows, the last method: a neural network as composition, fitted by hand.</p>
 <p><strong>Reading</strong></p>
 <p>Delivered in lecture, for reference rather than preparation:</p>

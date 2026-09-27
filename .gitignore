@@ -2,3 +2,6 @@ instructor/
 _freeze/
 .DS_Store
 .quarto/
+
+/.quarto/
+**/*.quarto_ipynb
