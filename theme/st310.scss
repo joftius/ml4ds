@@ -1,0 +1,172 @@
+/*-- scss:defaults --*/
+// ST310 revealjs theme, 2026-27. Structure from the 25 September 2026 build
+// (ST310/elthree/theme/st310.scss); colours changed to viridis, with magma
+// where a second scale is needed (convenor, 26 September 2026).
+//
+// Palette (viridisLite::viridis / magma):
+//   viridis  #440154 (dark purple)  #3b528b  #31688e  #21918c (teal)
+//            #5ec962 (green)  #fde725 (yellow)
+//   magma    #000004  #721f81  #8c2981  #b73779  #fc8961  #fcfdbf
+//
+// WCAG contrast on white (#ffffff), computed 26 Sept 2026:
+//   #440154 15.24   #31688e 6.00   #2a788e 5.03   #21918c 3.82 (large text only)
+//   #8c2981 7.64    #b73779 5.47   #5ec962 2.10 (never as text on white)
+//   #fde725 1.26 (never as text on white)
+// On the inverse background #440154:
+//   #ffffff 15.24   #fde725 12.07   #5ec962 7.26
+// So: text colours are #440154, #31688e, #8c2981, #b73779; #5ec962 and
+// #fde725 are borders, backgrounds and text on dark slides only.
+
+$font-family-sans-serif: "Source Sans Pro", "Helvetica Neue", Helvetica, Arial, sans-serif;
+$font-family-monospace: "Fira Mono", "Source Code Pro", Menlo, Consolas, monospace;
+$presentation-font-size-root: 34px;
+$presentation-line-height: 1.35;
+$presentation-heading-font-weight: 600;
+
+$body-bg: #ffffff;
+$body-color: #1f1f1f;
+$link-color: #31688e;
+$link-color-hover: #21918c;
+$selection-bg: #fde725;
+
+$presentation-heading-color: #440154;
+$presentation-h1-font-size: 1.9em;
+$presentation-h2-font-size: 1.4em;
+$presentation-h3-font-size: 1.15em;
+
+$code-block-font-size: 0.7em;
+$code-color: #440154;
+$code-block-bg: #f6f6f6;
+
+/*-- scss:rules --*/
+
+// Emphasised text: magma, the "alternative" scale, so it reads against the
+// viridis headings. 7.64:1 on white.
+.reveal strong { color: #8c2981; }
+
+// Section-divider slides: class="inverse" (same word as the xaringan decks).
+.reveal .slide.inverse,
+.reveal .slides section.inverse {
+  background-color: #440154;
+  color: #ffffff;
+}
+.reveal .inverse h1, .reveal .inverse h2, .reveal .inverse h3 { color: #ffffff; }
+.reveal .inverse a { color: #fde725; }
+.reveal .inverse strong { color: #5ec962; }
+// An inverse slide with a background image: let the image show through
+// (give the slide background-color="#440154" too, so the image sits on dark).
+.reveal .slides section.inverse[data-background-image] { background-color: transparent; }
+
+// ---------------------------------------------------------------------
+// Backup derivation slides. Every board-paced item ships its derivation as
+// backup slides marked skippable: give them class="backup". They get a
+// visible left rule, a corner label, and are uncounted in the progress bar
+// (data-visibility="uncounted" is added in the slide attributes).
+// ---------------------------------------------------------------------
+.reveal .slide.backup,
+.reveal .slides section.backup {
+  border-left: 10px solid #fc8961;
+  padding-left: 0.6em;
+}
+.reveal .slides section.backup::before {
+  content: "backup · skippable — the board version comes first";
+  position: absolute;
+  top: 0.35em;
+  right: 0.8em;
+  font-size: 0.5em;
+  color: #b73779;
+  letter-spacing: 0.04em;
+}
+.reveal .slides section.backup h2 { color: #b73779; }
+
+// ---------------------------------------------------------------------
+// The "board" marker. Put [board]{.board} in a slide title or line to mark
+// where the lecturer moves to the board. Rendered as a small badge.
+// ---------------------------------------------------------------------
+.reveal .board {
+  display: inline-block;
+  background: #440154;
+  color: #fde725;
+  font-size: 0.5em;
+  font-weight: 600;
+  padding: 0.05em 0.5em;
+  border-radius: 0.3em;
+  vertical-align: middle;
+  letter-spacing: 0.06em;
+}
+
+// Recall boxes: a fact from ST102 / MA100 the derivation uses (notation only;
+// a fact the board elicits is asked as a question instead).
+.reveal .recall {
+  border: 2px solid #31688e;
+  border-radius: 0.3em;
+  padding: 0.3em 0.7em;
+  background: #f0f4f8;
+  font-size: 0.85em;
+}
+.reveal .recall::before {
+  content: "Recall";
+  display: block;
+  font-size: 0.75em;
+  font-weight: 700;
+  color: #31688e;
+  letter-spacing: 0.06em;
+}
+
+// The statement to leave on the board (and the retrieval prompts).
+.reveal .leave {
+  border-left: 6px solid #5ec962;
+  padding: 0.2em 0.7em;
+  background: #f2faf3;
+  font-size: 0.95em;
+}
+.reveal .retrieval {
+  border-left: 6px solid #fc8961;
+  padding: 0.2em 0.7em;
+  background: #fff6f1;
+}
+
+// A question the room answers before the reveal: commit first.
+.reveal .ask {
+  border: 2px dashed #b73779;
+  border-radius: 0.3em;
+  padding: 0.3em 0.8em;
+  background: #fdf4f8;
+}
+.reveal .ask::before {
+  content: "You first";
+  display: block;
+  font-size: 0.7em;
+  font-weight: 700;
+  color: #8c2981;
+  letter-spacing: 0.06em;
+}
+
+// Image credit line under a photo. 5.74:1 on white.
+.reveal .credit { font-size: 0.45em; color: #666; margin-top: 0.2em; }
+
+// Big number slides.
+.reveal .big { font-size: 2.2em; font-weight: 700; color: #440154; line-height: 1.1; }
+
+// Minute target shown in the top-left of a segment's first slide.
+.reveal .minutes {
+  position: absolute; top: 0.3em; left: 0.6em;
+  font-size: 0.45em; color: #666;
+}
+
+// Smaller text helper (the old decks used .small a lot).
+.reveal .small { font-size: 0.75em; }
+.reveal .smaller { font-size: 0.6em; }
+
+// Two-column helper spacing. border-box, or the padding pushes two columns
+// whose widths sum to 100% onto two lines.
+.reveal .columns .column { padding: 0 0.4em; box-sizing: border-box; }
+
+// Footnote-size source lines under figures.
+.reveal .source { font-size: 0.5em; color: #666; }
+
+// Tables a little tighter.
+.reveal table { font-size: 0.75em; }
+
+// Boxes keep dark text on inverse (dark) slides.
+.reveal .inverse .ask, .reveal .inverse .leave, .reveal .inverse .recall { color: #1f1f1f; }

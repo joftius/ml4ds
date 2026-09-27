@@ -1,0 +1,263 @@
+---
+title: "Week 1 seminar: a competition, by hand"
+author: "ST310"
+format:
+  html:
+    toc: true
+    embed-resources: false
+execute:
+  echo: true
+  warning: false
+  message: false
+  error: false
+---
+
+::: {.callout-note}
+This is the student version of the notebook: the blanks are `...`. A code chunk that contains a blank starts with `#| eval: false`, so the file renders as it stands; delete that line once you have filled the blank. Working through the chunks one at a time in RStudio (Ctrl/Cmd+Enter) is unaffected.
+:::
+
+```{r}
+#| label: setup
+library(tidyverse)  # install.packages("tidyverse") if needed
+library(gapminder)  # install.packages("gapminder") if needed
+theme_set(theme_minimal())
+```
+
+## Before you start {.retrieval}
+
+<!-- 5 min -->
+
+Without looking anything up: for the `gapminder` data, write down the four parts of a prediction competition (the unit, the inputs and outcome, the score, how the held-out set is chosen). Then, for each input: would you have it at the moment you need the prediction, for a country whose life expectancy you don't know? "All of them" is an acceptable answer if you can say why.
+
+
+## Problems
+
+<!-- 25 min. Pen and paper. Compare with a neighbour before asking. -->
+
+**1.** A held-out set of $m = 50$ units gives squared-error losses with mean $12.0$ and standard deviation $20.0$. Report the test error and its standard error. A second entrant scores $10.5$ on the same 50 units. Is the difference between the two entrants established? What extra information would settle it?
+
+
+**2.** Inputs are uniform on the cube $[0,1]^{d}$. An axis-aligned cube of edge $e$ inside it holds what fraction of the population? Write down the edge $e_d(r)$ a cube needs to hold a fraction $r$, as a function of $d$, and say what happens to it as $d$ grows with $r$ fixed. Now fix the sample size $n$ and use $k = n/100$ neighbours: what does this say about how local a nearest-neighbour average is in high dimensions?
+
+
+**3.** A model is fitted to 142 countries in 2002 and tested on the *same 142 countries in 1997*, with low error. Say what this does and does not show, name the assumption it violates, and design a test that answers "can we predict a country we have not seen?"
+
+
+**4.** (If time.) A 1-nearest-neighbour predictor has training error exactly zero. Explain why from the definition of the predictor. In Theorem A, which term is zero when $x_0$ is a training point and $k = 1$, and which term is not?
+
+
+## Coding
+
+<!-- 49 min: part 1 11, part 2 24, part 3 14. Skeleton lines in comments are scaffolds: the statistical operation is what you write. -->
+
+### 1. The competition
+
+<!-- 11 min -->
+
+Take the countries observed in 2007. Split them at random into 100 countries you may use for fitting and 42 whose life expectancy is hidden from you. (You have it, of course. Don't look at it until the end of each part; that is the rule of the competition.)
+
+```{r}
+gm <- gapminder |>
+  filter(year == 2007) |>
+  mutate(lgdp = log10(gdpPercap))
+test_id <- sample(nrow(gm), 42)
+train <- gm[-test_id, ]
+test <- gm[test_id, ]
+```
+
+Your split is different from your neighbour's. Keep that in mind all the way through.
+
+Plot the training data: `lgdp` on the horizontal axis, `lifeExp` on the vertical axis.
+
+```{r}
+#| eval: false
+# ggplot(train, aes(____, ____)) + geom_point()
+...
+```
+
+**The baseline.** The simplest entrant predicts the same number for every country: the training mean of `lifeExp`. Compute its mean squared error on the test set.
+
+```{r}
+#| eval: false
+baseline <- mean(train$lifeExp)
+# mse_baseline <- mean((____ - ____)^2)
+...
+```
+
+**A second entrant.** Fit a straight line and compute its test MSE: the fit is `model_lm <- lm(lifeExp ~ lgdp, data = train)`; you write the predictions with `predict(model_lm, newdata = ____)` and the MSE line.
+
+```{r}
+#| eval: false
+model_lm <- lm(lifeExp ~ lgdp, data = train)
+# mse_lm <- mean((____ - predict(model_lm, newdata = ____))^2)
+...
+```
+
+**Question 1.** How much better than the baseline is the line? Is "better" here a statement about these 42 countries or about all countries?
+
+
+### 2. Nearest neighbours, by hand
+
+<!-- 24 min -->
+
+You may use `abs`, `order`, `mean` and a `for` loop, but not a library that does nearest neighbours for you. The point is to see the mechanism: a prediction is an average of the outcomes of the nearest training points.
+
+**Step 1.** Write a function that takes one new input `x0`, the training inputs `x` and outcomes `y`, and a number of neighbours `k`, and returns the average outcome of the `k` training points nearest to `x0`. The distances are computed for you; you write the two lines that pick the neighbours and average their outcomes.
+
+```{r}
+#| eval: false
+knn_predict <- function(x0, x, y, k) {
+  distances <- abs(x - x0)
+  ...
+}
+```
+
+<details><summary>Hint (open after your first attempt)</summary>
+
+`order(distances)` gives the positions of the distances from smallest to largest, so its first `k` entries are the positions of the `k` nearest points.
+
+</details>
+
+Check it on one country. For `x0 = 4` (GDP per capita of 10,000 dollars) and `k = 5`, which five training countries are used, and what is the prediction?
+
+```{r}
+#| eval: false
+...
+```
+
+Checkpoint (run it; if it stops, fix step 1 before going on):
+
+```{r}
+#| eval: !expr exists("knn_predict")
+stopifnot(length(knn_predict(4, train$lgdp, train$lifeExp, k = 5)) == 1,
+          knn_predict(4, train$lgdp, train$lifeExp, k = 1) %in% train$lifeExp)
+```
+
+**Step 2.** Predict for all 42 test countries with `k = 5`: the loop is set up for you; fill in the one line that makes the prediction for test country `j`, then compute the test MSE.
+
+```{r}
+#| eval: false
+pred <- numeric(nrow(test))
+# for (j in seq_len(nrow(test))) {
+#   pred[j] <- ____
+# }
+# mse_knn5 <- mean((____ - ____)^2)
+...
+```
+
+Checkpoint:
+
+```{r}
+#| eval: !expr exists("mse_knn5")
+stopifnot(length(pred) == nrow(test), all(is.finite(pred)), mse_knn5 > 0)
+```
+
+**Step 3.** Wrap step 2 in a function `knn_mse(k, newdata)` that returns the MSE of the `k`-nearest-neighbour predictor on any data frame with columns `lgdp` and `lifeExp`; the skeleton is given, you write the prediction line and the MSE line. Then compute the **training** MSE and the **test** MSE for `k = 1, 2, 3, 5, 10, 25, 50`.
+
+**Question 2.** Before you run it: what do you expect the training MSE at `k = 1` to be, and why? Write your prediction down first.
+
+
+```{r}
+#| eval: false
+knn_mse <- function(k, newdata) {
+  pred <- numeric(nrow(newdata))
+  for (j in seq_len(nrow(newdata))) {
+    # pred[j] <- ____
+    ...
+  }
+  # mean((____ - ____)^2)
+  ...
+}
+ks <- c(1, 2, 3, 5, 10, 25, 50)
+results <- tibble(
+  k = ks,
+  train_mse = sapply(ks, knn_mse, newdata = train),
+  test_mse = sapply(ks, knn_mse, newdata = test)
+)
+results
+```
+
+```{r}
+#| eval: !expr exists("results")
+results |>
+  pivot_longer(-k, names_to = "set", values_to = "MSE") |>
+  ggplot(aes(k, MSE, colour = set)) +
+  geom_line() +
+  geom_point() +
+  scale_x_log10()
+```
+
+Checkpoint:
+
+```{r}
+#| eval: !expr exists("results")
+stopifnot(nrow(results) == 7, results$train_mse[1] == 0 || any(duplicated(train$lgdp)))
+```
+
+**Question 3.** Which `k` would you submit, and what did you use to decide? You are about to report the same held-out score you chose on: is there a problem with that?
+
+
+### 3. The score is a random variable
+
+<!-- 14 min -->
+
+Your test MSE is an average of 42 losses. Two different things make it random: which 42 countries were held out, and which 100 were used for fitting. Repeating the competition below re-splits the same 142 countries each time, so what it shows is the variability under repeated splits of this dataset, not a fresh sample from a larger world.
+
+**Step 1.** From the split you already have, compute the 42 individual squared errors of the `k = 5` predictor, their mean (the test MSE again) and the standard error of that mean, $\text{sd(losses)}/\sqrt{42}$. (This standard error treats the 42 losses as independent draws; that is an assumption about the countries, not a fact about them.)
+
+```{r}
+#| eval: false
+# losses <- ____
+# c(mean = mean(losses), se = ____)
+...
+```
+
+**Step 2.** Repeat the whole competition 50 times: a new random split each time, the same `k = 5` predictor fitted on the new training set and scored on the new test set. The loop is written for you; fill in the two lines that do the work.
+
+```{r}
+#| eval: false
+one_competition <- function(k = 5) {
+  test_id <- sample(nrow(gm), 42)
+  train_i <- gm[-test_id, ]
+  test_i <- gm[test_id, ]
+  pred_i <- numeric(nrow(test_i))
+  for (j in seq_len(nrow(test_i))) {
+    ...
+  }
+  ...
+}
+many_mse <- replicate(50, one_competition(k = 5))
+ggplot(data.frame(mse = many_mse), aes(mse)) +
+  geom_histogram(bins = 15)
+c(mean = mean(many_mse), sd = sd(many_mse))
+```
+
+**Question 4.** Compare the standard deviation of the 50 scores with the standard error from step 1. Are they the same kind of number? Which of the two could a competition organiser compute?
+
+
+## Before you leave {.retrieval}
+
+<!-- 5 min -->
+
+Compare your table from part 2 with your neighbour's. Did the same `k` win? Write one sentence on what that means for a leaderboard, and one on what the organiser should report next to each score.
+
+
+## Alternative datasets
+
+The same code runs on any data frame with a numeric input and a numeric outcome. Rename the columns to `lgdp` and `lifeExp`, or edit the code, and redo parts 1 to 3. See the data notes ([candy](https://ml4ds.com/data/candy.html), [concrete](https://ml4ds.com/data/concrete.html)) for provenance.
+
+```{r}
+#| eval: false
+# The column names lgdp and lifeExp are reused on purpose, so that parts 1 to 3 run unchanged.
+# Candy rankings (fivethirtyeight): predict the win percentage from the sugar percentile.
+# Several candies share a sugar percentile, so the k = 1 training error is not zero here.
+library(fivethirtyeight)
+alt <- candy_rankings |>
+  transmute(lgdp = sugarpercent, lifeExp = winpercent)    # 85 candies, hold out 25
+
+# Concrete compressive strength (AppliedPredictiveModeling): predict strength from cement content.
+library(AppliedPredictiveModeling)
+data(concrete)
+alt <- concrete |>
+  transmute(lgdp = Cement, lifeExp = CompressiveStrength)  # 1030 mixtures, hold out 300
+```

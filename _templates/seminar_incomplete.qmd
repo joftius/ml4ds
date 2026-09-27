@@ -1,0 +1,89 @@
+---
+title: "Week N seminar: <topic>"
+author: "ST310"
+format:
+  html:
+    toc: true
+    embed-resources: false
+execute:
+  echo: true
+  warning: false
+  message: false
+  error: false
+---
+
+<!--
+TEMPLATE (delete in a real notebook). Student version. Rules:
+  - About 25 minutes of problems (mostly mathematical, some conceptual, from the
+    item bank, with light scaffolding; the teacher reveals hints after enough
+    time), then the rest coding. Minutes go in HTML comments, not student text.
+  - Blanks are `...`. The generator gives every chunk that contains a blank
+    `#| eval: false`, so the student notebook renders with the blanks unfilled
+    and no error blocks; a chunk that only *uses* an object defined in a
+    blanked chunk needs `#| eval: !expr exists("that_object")` in the complete
+    file. `error: false` in both files, so a broken solution fails the
+    instructor render rather than rendering an error block.
+  - Minutes go in HTML comments (`<!-- 25 min -->`), never in headings or
+    student text. Scaffold the boilerplate (a plot skeleton, a loop skeleton,
+    a function signature) as a commented line above the blank; the student
+    writes the statistical operation.
+  - Hints go in `<!-- HINT: ... -->` and come out collapsed; a checkpoint chunk
+    (`stopifnot(...)`, guarded with `eval: !expr exists(...)`) after each
+    stage of a long coding block lets a stuck student see which stage to fix.
+  - Code is minimal: no RNGkind, no set.seed unless it is essential (students
+    should see how much changes with a different split), no `;`, but keep the
+    theme settings and other aesthetics.
+  - Retrieval opener first, exit task last.
+  - Default dataset first, alternatives at the end with a loader chunk each and
+    a link to the data note in data/.
+  - Attrition data, wherever used, are labelled fictional in the student text.
+  - Never move answers from the _complete version into this file; the student
+    file is generated from the complete one by _build_env/make_incomplete.py.
+-->
+
+```{r}
+#| label: setup
+library(tidyverse)
+theme_set(theme_minimal())
+```
+
+## Before you start {.retrieval}
+
+<!-- 5 min -->
+
+Without looking anything up, ...
+
+## Problems
+
+<!-- 25 min -->
+
+**1.** ...
+
+**2.** ...
+
+## Coding
+
+<!-- 55 min -->
+
+### <segment>
+
+```{r}
+# ...
+```
+
+**Question.** ...
+
+## Before you leave {.retrieval}
+
+<!-- 5 min -->
+
+In two sentences: ...
+
+## Alternative datasets
+
+If you would rather work with different data, each loader below produces the same columns the code above expects. See the data notes for provenance and licence.
+
+```{r}
+#| eval: false
+# alternative 1 (data/<name>.md)
+```

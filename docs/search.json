@@ -1,0 +1,548 @@
+[
+  {
+    "objectID": "weeks/01-introduction-foundations/slides/01-1-introduction.html#section",
+    "href": "weeks/01-introduction-foundations/slides/01-1-introduction.html#section",
+    "title": "Machine learning",
+    "section": "",
+    "text": "ST310: Machine Learning (for Data Science)\nLecturer: Joshua Loftus\nWebsite: Moodle, and ml4ds.com\nSeminars start this week. Bring a laptop with R and RStudio (see about).\nA request. As a courtesy to me, please don’t use “AI” tools in your communications with me or the teaching staff. This also applies to all aspects of this course. We are here to train our own minds, not to replace them. I’ll say more about why during the term."
+  },
+  {
+    "objectID": "weeks/01-introduction-foundations/slides/01-1-introduction.html#about-the-course",
+    "href": "weeks/01-introduction-foundations/slides/01-1-introduction.html#about-the-course",
+    "title": "Machine learning",
+    "section": "About the course",
+    "text": "About the course\nCourse info, teaching philosophy, ML overview"
+  },
+  {
+    "objectID": "weeks/01-introduction-foundations/slides/01-1-introduction.html#format",
+    "href": "weeks/01-introduction-foundations/slides/01-1-introduction.html#format",
+    "title": "Machine learning",
+    "section": "Format",
+    "text": "Format\n\n\n\nMostly self-contained – ask if you need help!\nWeekly readings, lectures, seminars\nSeminars: problems on paper first, then computing. Bring a laptop\nml4ds.com: links, slides, notebooks\n\n\nReading\n\nISLR Introduction to Statistical Learning\nCausalML Applied Causal Inference Powered by ML and AI\nPPA Patterns, Predictions, and Actions\n\nSupplemental\n\nR4DS R for Data Science\nESL Elements of Statistical Learning\nCASI Computer Age Statistical Inference"
+  },
+  {
+    "objectID": "weeks/01-introduction-foundations/slides/01-1-introduction.html#quick-preview",
+    "href": "weeks/01-introduction-foundations/slides/01-1-introduction.html#quick-preview",
+    "title": "Machine learning",
+    "section": "Quick preview",
+    "text": "Quick preview\nDon’t worry about following all the details now\nWe’ll introduce R coding gradually"
+  },
+  {
+    "objectID": "weeks/01-introduction-foundations/slides/01-1-introduction.html#the-gapminder-data",
+    "href": "weeks/01-introduction-foundations/slides/01-1-introduction.html#the-gapminder-data",
+    "title": "Machine learning",
+    "section": "The gapminder data",
+    "text": "The gapminder data\n\nDataCodePlotModifyPlot again\n\n\n\n\n\n\n\ncountry\ncontinent\nyear\nlifeExp\npop\ngdpPercap\n\n\n\n\nAfghanistan\nAsia\n1952\n28.801\n8425333\n779.4453\n\n\nAfghanistan\nAsia\n1957\n30.332\n9240934\n820.8530\n\n\nAfghanistan\nAsia\n1962\n31.997\n10267083\n853.1007\n\n\nAfghanistan\nAsia\n1967\n34.020\n11537966\n836.1971\n\n\nAfghanistan\nAsia\n1972\n36.088\n13079460\n739.9811\n\n\nAfghanistan\nAsia\n1977\n38.438\n14880372\n786.1134\n\n\n\n\n\n\n\n\ngdp_data &lt;- gapminder |&gt;\n  filter(year == max(year))\n\nlife_exp_plot &lt;-\n  ggplot(gdp_data, aes(x = gdpPercap, y = lifeExp)) +\n  geom_point(aes(color = continent,\n                 shape = continent,\n                 size = pop))\n\nlife_exp_plot +\n  stat_smooth(formula = y ~ x, method = \"loess\", span = 1)\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nlife_exp_plot +\n  scale_x_log10() +\n  stat_smooth(formula = y ~ x, method = \"lm\") +\n  xlab(\"GDP per capita\") +\n  ylab(\"Life expectancy\")"
+  },
+  {
+    "objectID": "weeks/01-introduction-foundations/slides/01-1-introduction.html#machine-learning-in-one-picture",
+    "href": "weeks/01-introduction-foundations/slides/01-1-introduction.html#machine-learning-in-one-picture",
+    "title": "Machine learning",
+    "section": "Machine learning in one picture",
+    "text": "Machine learning in one picture\n\n\n\n\nSource: xkcd 2048, CC BY-NC 2.5"
+  },
+  {
+    "objectID": "weeks/01-introduction-foundations/slides/01-1-introduction.html#teachingcourse-philosophy",
+    "href": "weeks/01-introduction-foundations/slides/01-1-introduction.html#teachingcourse-philosophy",
+    "title": "Machine learning",
+    "section": "Teaching/course philosophy",
+    "text": "Teaching/course philosophy"
+  },
+  {
+    "objectID": "weeks/01-introduction-foundations/slides/01-1-introduction.html#recurring-themes",
+    "href": "weeks/01-introduction-foundations/slides/01-1-introduction.html#recurring-themes",
+    "title": "Machine learning",
+    "section": "Recurring themes",
+    "text": "Recurring themes\nConcepts that keep coming back\n\nHeld-out evaluation: a model is judged on data it never saw\nBias–variance: flexible models need data near the point\nPrediction \\(\\neq\\) explanation \\(\\neq\\) intervention\nFitting to residuals: one operation in regression, additive models, boosting, causal ML\nDistribution shift: test data look like training data by construction; the world need not\n\n\nHow the course runs\n\nLearning takes work: productive struggle, two words, both necessary\nKnowing a method includes knowing what it does not establish"
+  },
+  {
+    "objectID": "weeks/01-introduction-foundations/slides/01-1-introduction.html#please-allow-me-to-introduce-myself",
+    "href": "weeks/01-introduction-foundations/slides/01-1-introduction.html#please-allow-me-to-introduce-myself",
+    "title": "Machine learning",
+    "section": "Please allow me to introduce myself",
+    "text": "Please allow me to introduce myself\n\n\nI’m Joshua Loftus\n\nFrom the US; used to teach at NYU\nCambridge postdoc; Stats PhD from Stanford\nReproducibility, fairness, interpretability, causality\nFirst-gen at university\nTravel, reading, audiobooks, lifting and, NEW: parenting"
+  },
+  {
+    "objectID": "weeks/01-introduction-foundations/slides/01-1-introduction.html#what-is-machine-learning",
+    "href": "weeks/01-introduction-foundations/slides/01-1-introduction.html#what-is-machine-learning",
+    "title": "Machine learning",
+    "section": "What is “Machine Learning”?",
+    "text": "What is “Machine Learning”?\nAnd why is it that?"
+  },
+  {
+    "objectID": "weeks/01-introduction-foundations/slides/01-1-introduction.html#machine-learning-applications",
+    "href": "weeks/01-introduction-foundations/slides/01-1-introduction.html#machine-learning-applications",
+    "title": "Machine learning",
+    "section": "Machine learning applications",
+    "text": "Machine learning applications\nCan you think of an example? (Write it down)\n\n\nElectronic health records to predict which patients will require more care\n\n\n\n\nGenome sequence data for tissue samples to detect different kinds of cancer\n\n\n\n\nText scraped from social media to predict events of social unrest, or track spread of misinformation\n\n\n\n\nTech platform user data to target relevant content, or detect policy/regulation violations\n\n\n\n\nLearning adaptive control of robot prosthesis\n\netc…"
+  },
+  {
+    "objectID": "weeks/01-introduction-foundations/slides/01-1-introduction.html#machine-learning-proper",
+    "href": "weeks/01-introduction-foundations/slides/01-1-introduction.html#machine-learning-proper",
+    "title": "Machine learning",
+    "section": "Machine learning, proper",
+    "text": "Machine learning, proper\nThese application examples help motivate the value of ML\n(Actually, much of the value comes from work specific to the application, like the creation/gathering/processing of the data, and the real world actions taken based on the output of ML)\n\nWe’ll use “ML” to refer to the theory and general methods\n(Skills like gathering and cleaning data are very useful–and we’ll practice them a little–but they’re not the main focus of this course)"
+  },
+  {
+    "objectID": "weeks/01-introduction-foundations/slides/01-1-introduction.html#machine-learning-the-field",
+    "href": "weeks/01-introduction-foundations/slides/01-1-introduction.html#machine-learning-the-field",
+    "title": "Machine learning",
+    "section": "Machine learning, the field",
+    "text": "Machine learning, the field\n\n\nTwo lineages\n\nStatistics: least squares (Gauss, Legendre, c. 1805), regression, likelihood. Models of how data arise\nComputer science: the perceptron (1958), learning theory (Valiant 1984). Algorithms that improve with data\n\nBreiman (2001) called them the two cultures\n\nWhere the field meets\n\nICML, first held 1980\nNeurIPS (as NIPS), 1987\nCOLT, 1988\nMachine Learning journal, 1986; JMLR, 2001\n\nConference papers, not journal articles, are the main currency (unusual among sciences)"
+  },
+  {
+    "objectID": "weeks/01-introduction-foundations/slides/01-1-introduction.html#what-is-artificial-intelligence",
+    "href": "weeks/01-introduction-foundations/slides/01-1-introduction.html#what-is-artificial-intelligence",
+    "title": "Machine learning",
+    "section": "What is “artificial intelligence”?",
+    "text": "What is “artificial intelligence”?\n(Don’t tell anyone I said this, but) It’s a collection of computational tools that people use to create mathematically structured data out of non-mathematically structured data\ne.g. a (possibly randomized) function from \\(\\{ \\text{some image file type} \\} \\to \\mathbb R^d\\) for some \\(d\\).\n\n\ne.g. word embedding for text data: each word becomes a vector\nWe’ll usually assume our data is already mathematically structured"
+  },
+  {
+    "objectID": "weeks/01-introduction-foundations/slides/01-1-introduction.html#abstraction-and-notation",
+    "href": "weeks/01-introduction-foundations/slides/01-1-introduction.html#abstraction-and-notation",
+    "title": "Machine learning",
+    "section": "Abstraction and notation",
+    "text": "Abstraction and notation\nAlong came some data which someone formats as a collection of \\(p\\) distinct variables\n\\[\nX = (X_1, X_2, \\ldots, X_p) \\in \\mathbb R^p\n\\]\nWe assume each observation is a point in a vector space (which we also implicitly assumed is finite-dimensional, and that’s OK by any practical standard)\n\nQuestion: is there a \\(Y\\) variable?\nThink about your application example (the one you wrote down)"
+  },
+  {
+    "objectID": "weeks/01-introduction-foundations/slides/01-1-introduction.html#categories-of-ml-tasks",
+    "href": "weeks/01-introduction-foundations/slides/01-1-introduction.html#categories-of-ml-tasks",
+    "title": "Machine learning",
+    "section": "Categories of ML tasks",
+    "text": "Categories of ML tasks\nSupervised learning (this whole course)\nOften we focus on one variable, name it \\(Y\\), and give it the special status of being an “outcome”/“response”\nNot this course: unsupervised learning (clustering, dimension reduction), ranking, anomaly detection, network data, embeddings, recommender systems, bandits, etc."
+  },
+  {
+    "objectID": "weeks/01-introduction-foundations/slides/01-1-introduction.html#supervised-ml-sub-categories",
+    "href": "weeks/01-introduction-foundations/slides/01-1-introduction.html#supervised-ml-sub-categories",
+    "title": "Machine learning",
+    "section": "Supervised ML sub-categories",
+    "text": "Supervised ML sub-categories\nIf \\(Y\\) is numeric: regression\n\nConcentration levels of a protein (disease status/severity)\nSelling price of a house\n\nIf \\(Y\\) is categorical: classification\n\nShould this item be flagged for (human) review? yes/no\nIdentify type of cancer: lymphoma, sarcoma, neuroblastoma, etc\n\nSpecial cases: \\(Y\\) binary with rare cases (anomaly detection); \\(Y\\) a time to event (survival analysis); multi-class, hierarchical classes, etc."
+  },
+  {
+    "objectID": "weeks/01-introduction-foundations/slides/01-1-introduction.html#focus-on-regression",
+    "href": "weeks/01-introduction-foundations/slides/01-1-introduction.html#focus-on-regression",
+    "title": "Machine learning",
+    "section": "Focus on regression",
+    "text": "Focus on regression\n\n\n\nSimpler math (orthogonal projection, Euclidean geometry)\nIntuition pump for other cases\nOften underlies other cases\n\n\n\n\n\ne.g. binary classification by thresholding a numeric score, or ranking (ordinal outcome) / set selection (select items with \\(\\text{top-}k\\) scores)"
+  },
+  {
+    "objectID": "weeks/01-introduction-foundations/slides/01-1-introduction.html#how-to-predict-y-from-x",
+    "href": "weeks/01-introduction-foundations/slides/01-1-introduction.html#how-to-predict-y-from-x",
+    "title": "Machine learning",
+    "section": "How to predict \\(Y\\) from \\(X\\)?",
+    "text": "How to predict \\(Y\\) from \\(X\\)?\n\nWould be sweet if \\(\\exists f\\) such that the graph of the function \\(y = f(x)\\) fit the data perfectly\nProblem: what if \\((x_1, y_1) = (1, 0)\\) and \\((x_2, y_2) = (1, 1)\\)?\nProblem: even our most tested and verified physical laws won’t fit data perfectly\n\n\nSolution: applied mathematics\nFor any function \\(f\\) we can always write \\(\\varepsilon \\equiv y - f(x)\\). Look for an \\(f\\) which makes these “errors” “small” for the observed data"
+  },
+  {
+    "objectID": "weeks/01-introduction-foundations/slides/01-1-introduction.html#uncertainty-opens-the-door-for-probability",
+    "href": "weeks/01-introduction-foundations/slides/01-1-introduction.html#uncertainty-opens-the-door-for-probability",
+    "title": "Machine learning",
+    "section": "Uncertainty opens the door for probability",
+    "text": "Uncertainty opens the door for probability\n\nAssume a probability distribution (adequately) models the data/errors\n\nDefine a good function as one that minimizes\n\\[\n\\mathbb E[\\varepsilon^2] = \\mathbb E\\{[Y - f(X)]^2\\}\n\\]\n\n\nAssume the data/error is sampled independently\n\nMotivates the plug-in principle: compute an estimate \\(\\hat f\\) of the good function \\(f\\) by solving the corresponding problem on the dataset, i.e.\n\\[\n\\text{minimize} \\sum_{i=1}^n \\left[y_i - \\hat f(x_i)\\right]^2\n\\]"
+  },
+  {
+    "objectID": "weeks/01-introduction-foundations/slides/01-1-introduction.html#very-useful-assumptions",
+    "href": "weeks/01-introduction-foundations/slides/01-1-introduction.html#very-useful-assumptions",
+    "title": "Machine learning",
+    "section": "Very useful assumptions!",
+    "text": "Very useful assumptions!\nThe why of machine learning: “it works”\n\nSquared error \\(\\rightarrow\\) simpler math\n\n(we’ll come back to this and consider other loss functions)\n\ni.i.d. sampling \\(\\rightarrow\\) simpler estimation, justifies generalization\n\n(we’ll come back to this too)"
+  },
+  {
+    "objectID": "weeks/01-introduction-foundations/slides/01-1-introduction.html#machine-learning-as-competition",
+    "href": "weeks/01-introduction-foundations/slides/01-1-introduction.html#machine-learning-as-competition",
+    "title": "Machine learning",
+    "section": "Machine learning as competition",
+    "text": "Machine learning as competition\nA prediction competition:\n\ncurated data, the same for every competitor\na task: submit a model that predicts \\(y\\) from \\(x\\) for units nobody has seen\nan agreed score\nan evaluation dataset the competitors cannot see\n\nWinning model chosen by best score"
+  },
+  {
+    "objectID": "weeks/01-introduction-foundations/slides/01-1-introduction.html#history-common-task-framework",
+    "href": "weeks/01-introduction-foundations/slides/01-1-introduction.html#history-common-task-framework",
+    "title": "Machine learning",
+    "section": "History: common task framework",
+    "text": "History: common task framework\n\n\n\n\n\n\n\n\n1986\nDARPA funds speech recognition on the condition that every group is scored on the same held-out data by an outside referee (NIST). Progress, measured, for the first time\n\n\n2006\nNetflix offers $1,000,000 for a 10% improvement on its own recommender\n\n\n2010\nKaggle opens; ImageNet’s first yearly challenge (ILSVRC)\n\n\n\n\nDonoho (2017) called the recipe the common task framework and credited it with most of what “machine learning” has achieved since"
+  },
+  {
+    "objectID": "weeks/01-introduction-foundations/slides/01-1-introduction.html#netflix-challenge",
+    "href": "weeks/01-introduction-foundations/slides/01-1-introduction.html#netflix-challenge",
+    "title": "Machine learning",
+    "section": "Netflix challenge",
+    "text": "Netflix challenge\n\n\n$1,000,000\nfor the first team to beat Netflix’s own recommender by 10%\n100 million ratings; score on 3 million held back\n\n3 years\n5,000 teams submitted"
+  },
+  {
+    "objectID": "weeks/01-introduction-foundations/slides/01-1-introduction.html#and-then",
+    "href": "weeks/01-introduction-foundations/slides/01-1-introduction.html#and-then",
+    "title": "Machine learning",
+    "section": "And then",
+    "text": "And then\nThe winning blend of hundreds of models was never put into production\nNetflix said the gain wasn’t worth the engineering, and the business had moved to streaming\nThe sequel was cancelled: researchers had re-identified “anonymous” users from their ratings\n\nWinning a competition is not always useful. This course will help you understand why"
+  },
+  {
+    "objectID": "weeks/01-introduction-foundations/slides/01-1-introduction.html#prediction-loss-held-out-set",
+    "href": "weeks/01-introduction-foundations/slides/01-1-introduction.html#prediction-loss-held-out-set",
+    "title": "Machine learning",
+    "section": "Prediction, loss, held-out set",
+    "text": "Prediction, loss, held-out set\nTraining data: \\(n\\) units \\((x_i, y_i)\\), \\(i = 1, \\ldots, n\\), inputs \\(x_i\\) and outcomes \\(y_i\\), both known\nTest data (held out): \\(m\\) more units \\((x_j^{\\text{test}}, y_j^{\\text{test}})\\), \\(j = 1, \\ldots, m\\); competitors see only the \\(x_j^{\\text{test}}\\)\nA predictor \\(\\hat f\\) is built from the training data alone\nA loss scores one prediction: today, \\(\\ell(y, \\hat y) = (y - \\hat y)^2\\)\nThe test error is the average loss over the test data: \\[\n\\widehat{\\text{Err}} = \\frac{1}{m} \\sum_{j=1}^{m} \\ell\\big(y_j^{\\text{test}}, \\hat f(x_j^{\\text{test}})\\big)\n\\]\nThat number is the leaderboard."
+  },
+  {
+    "objectID": "weeks/01-introduction-foundations/slides/01-1-introduction.html#one-rule-before-we-start",
+    "href": "weeks/01-introduction-foundations/slides/01-1-introduction.html#one-rule-before-we-start",
+    "title": "Machine learning",
+    "section": "One rule before we start",
+    "text": "One rule before we start\nAn input is fair game only if you would have it at the moment you need the prediction\nPredict 2007 life expectancy from GDP: fine\nPredict a patient’s readmission from the discharge letter written after readmission: not fine\nPredict a house’s sale price from its list price: fine. From the price it eventually sold for: that’s the answer, not an input"
+  },
+  {
+    "objectID": "weeks/01-introduction-foundations/slides/01-1-introduction.html#your-first-task",
+    "href": "weeks/01-introduction-foundations/slides/01-1-introduction.html#your-first-task",
+    "title": "Machine learning",
+    "section": "Your first task",
+    "text": "Your first task\n\n\nYou are given GDP per capita for all 142 countries\nand life expectancy for 100 of them\nPredict life expectancy for the other 42\nSomeone else has the answers and will score you\n\n\n\n\n\n\n\n\n\n\ncrosses: the 42 countries you must predict\n\n\nWrite down, in one line, how you would do it."
+  },
+  {
+    "objectID": "weeks/01-introduction-foundations/slides/01-1-introduction.html#where-would-you-look",
+    "href": "weeks/01-introduction-foundations/slides/01-1-introduction.html#where-would-you-look",
+    "title": "Machine learning",
+    "section": "Where would you look?",
+    "text": "Where would you look?\nYou know nothing about a country except its GDP.\nWhere would you look for its life expectancy?\nRemember that you have life expectancy data about some other countries…"
+  },
+  {
+    "objectID": "weeks/01-introduction-foundations/slides/01-1-introduction.html#history-k-nearest-neighbors",
+    "href": "weeks/01-introduction-foundations/slides/01-1-introduction.html#history-k-nearest-neighbors",
+    "title": "Machine learning",
+    "section": "History: k-nearest neighbors",
+    "text": "History: k-nearest neighbors\n\n\nEvelyn Fix and Joseph Hodges, Berkeley\nA report for the US Air Force School of Aviation Medicine, Texas\nThe idea: to classify a new case, look at the cases nearest to it\nUnpublished until 1989. By then it had a name and was everywhere\n\nCover and Hart, 1967: with enough data, one nearest neighbor gets within a factor of two of the best possible error (for classification, as \\(n \\to \\infty\\))"
+  },
+  {
+    "objectID": "weeks/01-introduction-foundations/slides/01-1-introduction.html#k-nearest-neighbors",
+    "href": "weeks/01-introduction-foundations/slides/01-1-introduction.html#k-nearest-neighbors",
+    "title": "Machine learning",
+    "section": "\\(k\\) nearest neighbors",
+    "text": "\\(k\\) nearest neighbors\nFor a new input \\(x_0\\): find the \\(k\\) training inputs closest to it, \\((x_{(1)}, y_{(1)}), \\ldots, (x_{(k)}, y_{(k)})\\), and average their outcomes \\[\n\\hat f_k(x_0) = \\frac{1}{k} \\sum_{l=1}^{k} y_{(l)}\n\\]\n\nNo formula, no parameters. One choice: \\(k\\)."
+  },
+  {
+    "objectID": "weeks/01-introduction-foundations/slides/01-1-introduction.html#ctf-competition-which-k-would-you-submit",
+    "href": "weeks/01-introduction-foundations/slides/01-1-introduction.html#ctf-competition-which-k-would-you-submit",
+    "title": "Machine learning",
+    "section": "CTF competition: which \\(k\\) would you submit?",
+    "text": "CTF competition: which \\(k\\) would you submit?\n\nLook at the three panels again. Write down the \\(k\\) you would enter in the competition, and one reason."
+  },
+  {
+    "objectID": "weeks/01-introduction-foundations/slides/01-1-introduction.html#the-score-for-every-k",
+    "href": "weeks/01-introduction-foundations/slides/01-1-introduction.html#the-score-for-every-k",
+    "title": "Machine learning",
+    "section": "The score, for every \\(k\\)",
+    "text": "The score, for every \\(k\\)\n\nAt \\(k = 1\\) the training error is exactly zero. Is that good news?"
+  },
+  {
+    "objectID": "weeks/01-introduction-foundations/slides/01-1-introduction.html#the-leaderboard",
+    "href": "weeks/01-introduction-foundations/slides/01-1-introduction.html#the-leaderboard",
+    "title": "Machine learning",
+    "section": "The leaderboard",
+    "text": "The leaderboard\n\nWhich model wins? What about those error bars?…"
+  },
+  {
+    "objectID": "weeks/01-introduction-foundations/slides/01-1-introduction.html#the-smooth-cousin",
+    "href": "weeks/01-introduction-foundations/slides/01-1-introduction.html#the-smooth-cousin",
+    "title": "Machine learning",
+    "section": "The smooth cousin",
+    "text": "The smooth cousin\nInstead of “the \\(k\\) nearest, equally”, weight every training point by how close it is: \\[\n\\hat f_h(x_0) = \\frac{\\sum_i K\\!\\left(\\frac{x_i - x_0}{h}\\right) y_i}{\\sum_i K\\!\\left(\\frac{x_i - x_0}{h}\\right)},\n\\qquad K(u) = e^{-u^2/2}\n\\]\n\nBoth are local averages. What number is a local average trying to land on?"
+  },
+  {
+    "objectID": "weeks/01-introduction-foundations/slides/01-1-introduction.html#what-makes-a-nearest-neighbor-prediction-wrong-board",
+    "href": "weeks/01-introduction-foundations/slides/01-1-introduction.html#what-makes-a-nearest-neighbor-prediction-wrong-board",
+    "title": "Machine learning",
+    "section": "What makes a nearest-neighbor prediction wrong? board",
+    "text": "What makes a nearest-neighbor prediction wrong? board\n\\(y_i = f(x_i) + \\varepsilon_i\\), inputs fixed, noise independent, mean \\(0\\), variance \\(\\sigma^2\\); new \\(Y_0 = f(x_0) + \\varepsilon_0\\).\nWe want \\(\\mathbb E\\big[(Y_0 - \\hat f_k(x_0))^2\\big]\\), the expected squared error of the \\(k\\)-nearest-neighbor prediction at \\(x_0\\).\n\nTwo facts from ST102 do all the work at the board. Which two? Write them down before we start."
+  },
+  {
+    "objectID": "weeks/01-introduction-foundations/slides/01-1-introduction.html#biasvariance-decomposition-board",
+    "href": "weeks/01-introduction-foundations/slides/01-1-introduction.html#biasvariance-decomposition-board",
+    "title": "Machine learning",
+    "section": "Bias–variance decomposition board",
+    "text": "Bias–variance decomposition board\n\\(y_i = f(x_i) + \\varepsilon_i\\), inputs fixed, noise independent, mean \\(0\\), variance \\(\\sigma^2\\); new \\(Y_0 = f(x_0) + \\varepsilon_0\\).\nBias–variance decomposition. \\[\n\\mathbb E\\big[(Y_0 - \\hat f_k(x_0))^2\\big]\n= \\underbrace{\\sigma^2}_{\\text{noise}}\n+ \\underbrace{\\Big[f(x_0) - \\tfrac{1}{k}\\textstyle\\sum_{l=1}^k f(x_{(l)})\\Big]^2}_{\\text{bias}^2}\n+ \\underbrace{\\frac{\\sigma^2}{k}}_{\\text{variance}}\n\\]\n\nnoise + bias² + variance. Variance falls in \\(k\\), always. Bias typically grows too, but it need not be monotonic (a constant \\(f\\) keeps it at zero for every \\(k\\))."
+  },
+  {
+    "objectID": "weeks/01-introduction-foundations/slides/01-1-introduction.html#biasvariance-decomposition-line-1",
+    "href": "weeks/01-introduction-foundations/slides/01-1-introduction.html#biasvariance-decomposition-line-1",
+    "title": "Machine learning",
+    "section": "Bias–variance decomposition, line 1",
+    "text": "Bias–variance decomposition, line 1\n\\[\nY_0 - \\hat f_k(x_0) = \\varepsilon_0 + \\big[f(x_0) - \\hat f_k(x_0)\\big]\n\\]\nSquare, take expectations: \\[\n\\mathbb E\\big[(Y_0 - \\hat f_k(x_0))^2\\big] = \\mathbb E[\\varepsilon_0^2] + 2\\,\\mathbb E\\big[\\varepsilon_0 \\,(f(x_0) - \\hat f_k(x_0))\\big] + \\mathbb E\\big[(f(x_0) - \\hat f_k(x_0))^2\\big]\n\\]"
+  },
+  {
+    "objectID": "weeks/01-introduction-foundations/slides/01-1-introduction.html#biasvariance-decomposition-line-2",
+    "href": "weeks/01-introduction-foundations/slides/01-1-introduction.html#biasvariance-decomposition-line-2",
+    "title": "Machine learning",
+    "section": "Bias–variance decomposition, line 2",
+    "text": "Bias–variance decomposition, line 2\n\\(\\varepsilon_0\\) is independent of everything in \\(\\hat f_k(x_0)\\) and has mean \\(0\\): \\[\n\\mathbb E\\big[\\varepsilon_0 \\,(f(x_0) - \\hat f_k(x_0))\\big] = \\mathbb E[\\varepsilon_0]\\; \\mathbb E\\big[f(x_0) - \\hat f_k(x_0)\\big] = 0\n\\]\nLeft with \\[\n\\sigma^2 + \\mathbb E\\big[(f(x_0) - \\hat f_k(x_0))^2\\big]\n\\]"
+  },
+  {
+    "objectID": "weeks/01-introduction-foundations/slides/01-1-introduction.html#biasvariance-decomposition-line-3",
+    "href": "weeks/01-introduction-foundations/slides/01-1-introduction.html#biasvariance-decomposition-line-3",
+    "title": "Machine learning",
+    "section": "Bias–variance decomposition, line 3",
+    "text": "Bias–variance decomposition, line 3\nAdd and subtract \\(\\mathbb E \\hat f_k(x_0)\\) inside the square: \\[\n\\mathbb E\\big[(f(x_0) - \\hat f_k(x_0))^2\\big] = \\big[f(x_0) - \\mathbb E\\hat f_k(x_0)\\big]^2 + \\mathrm{Var}\\big(\\hat f_k(x_0)\\big)\n\\]\n(The cross term is \\(2[f(x_0) - \\mathbb E\\hat f_k(x_0)]\\,\\mathbb E[\\mathbb E\\hat f_k(x_0) - \\hat f_k(x_0)] = 0\\).)"
+  },
+  {
+    "objectID": "weeks/01-introduction-foundations/slides/01-1-introduction.html#biasvariance-decomposition-lines-4-and-5",
+    "href": "weeks/01-introduction-foundations/slides/01-1-introduction.html#biasvariance-decomposition-lines-4-and-5",
+    "title": "Machine learning",
+    "section": "Bias–variance decomposition, lines 4 and 5",
+    "text": "Bias–variance decomposition, lines 4 and 5\nThe neighborhood is fixed, so \\[\n\\mathbb E\\hat f_k(x_0) = \\frac{1}{k}\\sum_{l=1}^k f(x_{(l)}),\n\\qquad\n\\mathrm{Var}\\big(\\hat f_k(x_0)\\big) = \\frac{1}{k^2}\\sum_{l=1}^k \\sigma^2 = \\frac{\\sigma^2}{k}\n\\]\nSubstitute: \\[\n\\mathbb E\\big[(Y_0 - \\hat f_k(x_0))^2\\big] = \\sigma^2 + \\Big[f(x_0) - \\tfrac{1}{k}\\textstyle\\sum_{l=1}^k f(x_{(l)})\\Big]^2 + \\frac{\\sigma^2}{k} \\qquad \\blacksquare\n\\]\n(ESL §7.3, equation 7.10. cc’s Theorem A.)"
+  },
+  {
+    "objectID": "weeks/01-introduction-foundations/slides/01-1-introduction.html#where-the-bias-comes-from",
+    "href": "weeks/01-introduction-foundations/slides/01-1-introduction.html#where-the-bias-comes-from",
+    "title": "Machine learning",
+    "section": "Where the bias comes from",
+    "text": "Where the bias comes from\n\nPink: the neighbors used at the dashed line. Dark curve: a stand-in for \\(f\\). With 30 neighbors the average of \\(f\\) over the pink points is not \\(f\\) at the line."
+  },
+  {
+    "objectID": "weeks/01-introduction-foundations/slides/01-1-introduction.html#the-curse-of-dimensionality",
+    "href": "weeks/01-introduction-foundations/slides/01-1-introduction.html#the-curse-of-dimensionality",
+    "title": "Machine learning",
+    "section": "The curse of dimensionality",
+    "text": "The curse of dimensionality\nInputs uniform on \\([0,1]^d\\). Take an axis-aligned cube of edge length \\(e\\) that sits inside the unit cube.\n\nWhat fraction of the population lies inside it? So how long must the edge be to hold a fraction \\(r\\)? Write the formula, then evaluate it for \\(d = 10\\) and \\(r = 0.01\\)."
+  },
+  {
+    "objectID": "weeks/01-introduction-foundations/slides/01-1-introduction.html#the-curse-of-dimensionality-edge-length",
+    "href": "weeks/01-introduction-foundations/slides/01-1-introduction.html#the-curse-of-dimensionality-edge-length",
+    "title": "Machine learning",
+    "section": "The curse of dimensionality: edge length",
+    "text": "The curse of dimensionality: edge length\nHow long must the edge be, to hold a fraction \\(r\\) of the population, in \\(d\\) dimensions?"
+  },
+  {
+    "objectID": "weeks/01-introduction-foundations/slides/01-1-introduction.html#far-away-in-many-directions",
+    "href": "weeks/01-introduction-foundations/slides/01-1-introduction.html#far-away-in-many-directions",
+    "title": "Machine learning",
+    "section": "Far away, in many directions",
+    "text": "Far away, in many directions\n\n\n\n\\(d\\)\nedge to hold 1%\nto hold 10%\n\n\n\n\n1\n0.01\n0.10\n\n\n2\n0.10\n0.32\n\n\n10\n0.63\n0.79\n\n\n100\n0.95\n0.98\n\n\n\nIn ten dimensions, a cube holding 1% of the population spans 63% of each axis. That is not local.\nA nearest-neighbor set is a ball around the query, not a cube, and near the boundary the calculation changes, but the lesson carries: the nearest 1% of the data is far away. So the decomposition’s bias term is where dimension bites: the neighbors are far away, and \\(f\\) has room to drift."
+  },
+  {
+    "objectID": "weeks/01-introduction-foundations/slides/01-1-introduction.html#distances-concentrate",
+    "href": "weeks/01-introduction-foundations/slides/01-1-introduction.html#distances-concentrate",
+    "title": "Machine learning",
+    "section": "Distances concentrate",
+    "text": "Distances concentrate\n\nWhy: \\(\\|X - X'\\|^2/2d\\) is an average of \\(d\\) independent coordinate terms, each with mean \\(1\\), so its spread falls like \\(1/\\sqrt d\\): the same averaging that gave the bias–variance decomposition its variance term."
+  },
+  {
+    "objectID": "weeks/01-introduction-foundations/slides/01-1-introduction.html#distance-concentration",
+    "href": "weeks/01-introduction-foundations/slides/01-1-introduction.html#distance-concentration",
+    "title": "Machine learning",
+    "section": "Distance concentration",
+    "text": "Distance concentration\nDistance concentration (stated, not proved). For \\(X, X'\\) independent \\(N(0, I_d)\\), \\(\\|X - X'\\|^2/2d\\) has mean \\(1\\) and variance \\(2/d\\), so by Chebyshev \\[\n\\Pr\\!\\left( \\Big| \\tfrac{\\|X - X'\\|^2}{2d} - 1 \\Big| &gt; \\varepsilon \\right) \\le \\tfrac{2}{d\\varepsilon^2},\n\\] and by a union bound over the \\(n-1\\) distances from a query point, every neighbor’s squared distance lies within \\(2d(1 \\pm \\varepsilon)\\) with probability at least \\(1 - 2(n-1)/(d\\varepsilon^2)\\). So for \\(n\\) fixed as \\(d\\) grows, the nearest neighbor is about as far as the farthest."
+  },
+  {
+    "objectID": "weeks/01-introduction-foundations/slides/01-1-introduction.html#two-things-to-think-about",
+    "href": "weeks/01-introduction-foundations/slides/01-1-introduction.html#two-things-to-think-about",
+    "title": "Machine learning",
+    "section": "Two things to think about",
+    "text": "Two things to think about\n1. Your 1-NN submission had training error zero. What is that number measuring, and what would the competition have scored instead?\n2. Suppose we fit a model to the 142 countries in 2002 and test it on the same 142 countries in 1997, and it does well. Has it predicted anything new?"
+  },
+  {
+    "objectID": "weeks/01-introduction-foundations/slides/01-1-introduction.html#until-the-seminar",
+    "href": "weeks/01-introduction-foundations/slides/01-1-introduction.html#until-the-seminar",
+    "title": "Machine learning",
+    "section": "Until the seminar",
+    "text": "Until the seminar\n\nFor the gapminder data, write down the four parts of the competition: the unit, the inputs and outcome, the score, and how the held-out set is chosen.\nThen, for each input in the dataset: would you have it at the moment you need the prediction, for a country whose life expectancy you don’t know?\n\nBring it to the seminar."
+  },
+  {
+    "objectID": "weeks/01-introduction-foundations/slides/01-1-introduction.html#reading",
+    "href": "weeks/01-introduction-foundations/slides/01-1-introduction.html#reading",
+    "title": "Machine learning",
+    "section": "Reading",
+    "text": "Reading\n\nISLR ch. 1 (don’t skip the section on notation and simple matrix algebra), and ch. 2 sections 2.1–2.2. Section 2.2.2 is the bias–variance decomposition in words. The lab in 2.3 if R is new to you.\nPPA ch. 1.\n\nDeeper: ESL §2.5 (the curse) and §7.3 (the bias–variance decomposition)."
+  },
+  {
+    "objectID": "weeks/01-introduction-foundations/notebooks/notebook1.html",
+    "href": "weeks/01-introduction-foundations/notebooks/notebook1.html",
+    "title": "Week 1 seminar",
+    "section": "",
+    "text": "Note\n\n\n\nThis is the student version of the notebook: the blanks are .... A code chunk that contains a blank starts with #| eval: false, so the file renders as it stands; delete that line once you have filled the blank. Working through the chunks one at a time in RStudio (Ctrl/Cmd+Enter) is unaffected. Answers are revealed in the seminar.\nlibrary(tidyverse) # should've already install.packages(\"tidyverse\")\nlibrary(gapminder) # might need to install.packages(\"gapminder\")\nlibrary(broom)     # might need to install.packages(\"broom\")\ntheme_set(theme_minimal())"
+  },
+  {
+    "objectID": "weeks/01-introduction-foundations/notebooks/notebook1.html#before-you-start",
+    "href": "weeks/01-introduction-foundations/notebooks/notebook1.html#before-you-start",
+    "title": "Week 1 seminar",
+    "section": "Before you start",
+    "text": "Before you start\n\nWithout looking anything up: for the gapminder data, write down the four parts of a prediction competition (the unit, the inputs and outcome, the score, how the held-out set is chosen). Then, for each input: would you have it at the moment you need the prediction, for a country whose life expectancy you don’t know? “All of them” is an acceptable answer if you can say why."
+  },
+  {
+    "objectID": "weeks/01-introduction-foundations/notebooks/notebook1.html#problems",
+    "href": "weeks/01-introduction-foundations/notebooks/notebook1.html#problems",
+    "title": "Week 1 seminar",
+    "section": "Problems",
+    "text": "Problems\n\nThese four problems rebuild the pieces of the lecture’s bias–variance decomposition. They use nothing beyond first-year probability.\nProblem 1. Let \\(Z\\) be a random variable with mean \\(\\mu\\) and variance \\(\\sigma^2\\).\n\nShow that \\(\\mathbb E[Z^2] = \\sigma^2 + \\mu^2\\).\nIn the lecture’s model \\(Y_0 = f(x_0) + \\varepsilon_0\\), the noise has mean \\(0\\) and variance \\(\\sigma^2\\). What is \\(\\mathbb E[\\varepsilon_0^2]\\)?\nNow let \\(Z = f(x_0) - \\hat f(x_0)\\), where \\(f(x_0)\\) is a fixed number and \\(\\hat f(x_0)\\) is a random predictor with mean \\(m\\) and variance \\(v\\). Write \\(\\mathbb E[Z^2]\\) in terms of \\(f(x_0)\\), \\(m\\) and \\(v\\). Which piece is a bias, and which a variance?\n\nProblem 2. Let \\(Y_1, \\ldots, Y_k\\) be independent random variables, each with variance \\(\\sigma^2\\), and let \\(\\bar Y = \\frac1k \\sum_{l=1}^k Y_l\\).\n\nWhat is \\(\\mathrm{Var}(\\bar Y)\\)? Say where independence is used.\nSuppose instead that \\(Y_1 = Y_2 = \\cdots = Y_k\\) (the same random variable repeated). What is \\(\\mathrm{Var}(\\bar Y)\\) now? What does this say about averaging things that are not really different?\n\nProblem 3. In the lecture’s setting, the new outcome’s noise \\(\\varepsilon_0\\) has mean \\(0\\) and is independent of the training data. Let \\(g\\) be any function of the training data (for example, \\(g = f(x_0) - \\hat f_k(x_0)\\)).\n\nShow that \\(\\mathbb E[\\varepsilon_0\\, g] = 0\\).\nGive an example where \\(\\mathbb E[\\varepsilon_0] = 0\\) but \\(\\mathbb E[\\varepsilon_0\\, g] \\neq 0\\). (Think about what happens if the “new” point is one of the training points.)\n\nProblem 4. Five training points, one input each:\n\n\n\n\\(x\\)\n1\n2\n4\n7\n8\n\n\n\n\n\\(y\\)\n3\n5\n4\n10\n9\n\n\n\n\nCompute the \\(k\\)-nearest-neighbor prediction at \\(x_0 = 3.5\\) for \\(k = 1\\), \\(k = 3\\) and \\(k = 5\\).\nWhat is the \\(k = 1\\) prediction at \\(x_0 = 4\\)? At \\(x_0 = 7\\)? What is the training error of the \\(1\\)-NN predictor on these five points?\nWhat is the \\(k = 5\\) predictor, as a function of \\(x_0\\)?"
+  },
+  {
+    "objectID": "weeks/01-introduction-foundations/notebooks/notebook1.html#coding",
+    "href": "weeks/01-introduction-foundations/notebooks/notebook1.html#coding",
+    "title": "Week 1 seminar",
+    "section": "Coding",
+    "text": "Coding\n\n\n1. The competition\n\nAfter running library(gapminder) you can access the dataset. Try typing View(gapminder) in the Console.\nTake the countries observed in 2007. Split them at random into 100 countries you may use for fitting and 42 whose life expectancy is hidden from you. (You have it, of course. Don’t look at it until the end of each part; that is the rule of the competition.)\n\ngm &lt;- gapminder |&gt;\n  filter(year == 2007) |&gt;\n  mutate(lgdp = log10(gdpPercap))\ntest_id &lt;- sample(nrow(gm), 42)\ntrain &lt;- gm[-test_id, ]\ntest &lt;- gm[test_id, ]\n\nYour split is different from your neighbor’s. Keep that in mind all the way through.\n\nCreate a scatterplot of the training data\nlgdp on the horizontal axis, lifeExp on the vertical axis (hint: geom_point).\n\n# gm_scatterplot &lt;- ggplot(train, aes(x = ____, y = ____)) + geom_point()\n# gm_scatterplot\n...\n\n\n\nThe baseline competitor\nThe simplest competitor predicts the same number for every country: the training mean of lifeExp. Compute its mean squared error on the test set.\n\nbaseline &lt;- mean(train$lifeExp)\n# mse_baseline &lt;- mean((____ - ____)^2)\n...\n\n\n\nA second competitor: a straight line\nFit model_lm &lt;- lm(lifeExp ~ lgdp, data = train). Get its predictions on the test countries with predict(model_lm, newdata = ____), then compute the test MSE.\n\nmodel_lm &lt;- lm(lifeExp ~ lgdp, data = train)\n# mse_lm &lt;- mean((____ - predict(model_lm, newdata = ____))^2)\n...\n\nQuestion 1. How much better than the baseline is the line? Is “better” here a statement about these 42 countries or about all countries?\n\n\n\n2. Nearest neighbors, by hand\n\nYou may use abs, order, mean and a for loop, but not a library that does nearest neighbors for you. The point is to see the mechanism: a prediction is an average of the outcomes of the nearest training points (problem 4, in code).\nStep 1. Write a function that takes one new input x0, the training inputs x and outcomes y, and a number of neighbors k, and returns the average outcome of the k training points nearest to x0. The distances are computed for you; you write the two lines that pick the neighbors and average their outcomes.\n\nknn_predict &lt;- function(x0, x, y, k) {\n  distances &lt;- abs(x - x0)\n  ...\n}\n\n\n\nHint (open after your first attempt)\n\norder(distances) gives the positions of the distances from smallest to largest, so its first k entries are the positions of the k nearest points.\n\nCheck it on problem 4’s data first: knn_predict(3.5, c(1, 2, 4, 7, 8), c(3, 5, 4, 10, 9), k = 3) should give the number you computed by hand.\n\nknn_predict(3.5, c(1, 2, 4, 7, 8), c(3, 5, 4, 10, 9), k = 3)\n\nNow on one country. For x0 = 4 (GDP per capita of 10,000 dollars) and k = 5, which five training countries are used, and what is the prediction?\n\n# nearest5 &lt;- order(abs(train$lgdp - 4))[1:5]\n# train[nearest5, c(\"country\", \"gdpPercap\", \"lifeExp\")]\n# knn_predict(4, ____, ____, k = 5)\n...\n\nCheckpoint (run it; if it stops, fix step 1 before going on):\n\nstopifnot(length(knn_predict(4, train$lgdp, train$lifeExp, k = 5)) == 1,\n          knn_predict(4, train$lgdp, train$lifeExp, k = 1) %in% train$lifeExp)\n\nStep 2. Predict for all 42 test countries with k = 5: the loop is set up for you; fill in the one line that makes the prediction for test country j, then compute the test MSE.\n\npred &lt;- numeric(nrow(test))\nfor (j in seq_len(nrow(test))) {\n  # pred[j] &lt;- ____\n  ...\n}\n# mse_knn5 &lt;- mean((____ - ____)^2)\n...\n\nCheckpoint:\n\nstopifnot(length(pred) == nrow(test), all(is.finite(pred)), mse_knn5 &gt; 0)\n\nStep 3. Wrap step 2 in a function knn_mse(k, newdata) that returns the MSE of the k-nearest-neighbor predictor on any data frame with columns lgdp and lifeExp; the skeleton is given, you write the prediction line and the MSE line. Then compute the training MSE and the test MSE for k = 1, 2, 3, 5, 10, 25, 50.\nQuestion 2. Before you run it: what do you expect the training MSE at k = 1 to be, and why? Write your prediction down first.\n\nknn_mse &lt;- function(k, newdata) {\n  pred &lt;- numeric(nrow(newdata))\n  for (j in seq_len(nrow(newdata))) {\n    # pred[j] &lt;- ____\n    ...\n  }\n  # mean((____ - ____)^2)\n  ...\n}\nks &lt;- c(1, 2, 3, 5, 10, 25, 50)\nresults &lt;- tibble(\n  k = ks,\n  train_mse = sapply(ks, knn_mse, newdata = train),\n  test_mse = sapply(ks, knn_mse, newdata = test)\n)\nresults\n\n\nresults |&gt;\n  pivot_longer(-k, names_to = \"set\", values_to = \"MSE\") |&gt;\n  ggplot(aes(k, MSE, colour = set)) +\n  geom_line() +\n  geom_point() +\n  scale_x_log10() +\n  scale_colour_viridis_d(end = 0.7)\n\nCheckpoint:\n\nstopifnot(nrow(results) == 7, results$train_mse[1] == 0 || any(duplicated(train$lgdp)))\n\nQuestion 3. Which k would you submit, and what did you use to decide? You are about to report the same held-out score you chose on: is there a problem with that?\n\n\n3. The score is a random variable\n\nYour test MSE is an average of 42 losses. From the split you already have, compute the 42 individual squared errors of the k = 5 predictor, their mean (the test MSE again) and the standard error of that mean, \\(\\text{sd(losses)}/\\sqrt{42}\\). (This standard error treats the 42 losses as independent draws; that is an assumption about the countries, not a fact about them.)\n\n# losses &lt;- ____\n# c(mean = mean(losses), se = ____)\n...\n\nQuestion 4. Compare your test MSE and its standard error with your neighbor’s. Are the two test MSEs within a standard error of each other? What made them different?\n\n\n4. Predicting on new data\n\nModels are supposed to capture structure in the data that corresponds to structure in the real world, and if the real world isn’t misbehaving, that structure should be somewhat stable. Suppose the relationship changed dramatically from one time period to another: then a model fit on one period would be less useful, because it might fit poorly on data from another.\nCreate the 1997 data, then get predictions for every 1997 country from the straight line (fitted on 2007 training countries) with the newdata argument, and compute the MSE.\n\ngm1997 &lt;- gapminder |&gt; filter(year == 1997) |&gt; mutate(lgdp = log10(gdpPercap))\n# mse_lm_1997 &lt;- mean((gm1997$lifeExp - predict(model_lm, newdata = ____))^2)\n...\n\nQuestion 5. Is it surprising how well the model does on 1997? The 1997 rows are the same 142 countries, ten years earlier. Has the model predicted anything new? What question does this test answer, and what question did the held-out split in part 1 answer?"
+  },
+  {
+    "objectID": "weeks/01-introduction-foundations/notebooks/notebook1.html#before-you-leave",
+    "href": "weeks/01-introduction-foundations/notebooks/notebook1.html#before-you-leave",
+    "title": "Week 1 seminar",
+    "section": "Before you leave",
+    "text": "Before you leave\n\nCompare your table from part 2 with your neighbor’s. Did the same k win? Write one sentence on what that means for a leaderboard, and one on what the organizer should report next to each score."
+  },
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Weekly content",
+    "section": "",
+    "text": "Each week has one lecture and one seminar. Do the reading before the lecture, and bring a laptop with R and RStudio to the seminar (see about for setup). The seminar notebook for each week is linked below; the .qmd link is the source file to open in RStudio, the other link is the same notebook rendered so you can read it in a browser.\nWeeks begin on Mondays: week 1 is 28 September, week 6 is reading week, week 11 is 7 December."
+  },
+  {
+    "objectID": "index.html#week-1-prediction-competitions-and-nearest-neighbours",
+    "href": "index.html#week-1-prediction-competitions-and-nearest-neighbours",
+    "title": "Weekly content",
+    "section": "Week 1: prediction competitions and nearest neighbours",
+    "text": "Week 1: prediction competitions and nearest neighbours\nReading\n\nISLR Chapter 1 (Introduction), pp. 1–14. A quick read; don’t skip the section on notation and simple matrix algebra.\nISLR Chapter 2 (Statistical Learning), sections 2.1 and 2.2, pp. 15–42. If R is new to you, also do the lab in section 2.3, pp. 42–52.\nPPA Chapter 1 (Introduction), pp. 1–10.\n\nIf you finish these quickly you may want to start Chapter 3, because it’s a long one.\nLecture: slides\nSeminar: notebook (.qmd)"
+  },
+  {
+    "objectID": "index.html#week-2-linear-regression",
+    "href": "index.html#week-2-linear-regression",
+    "title": "Weekly content",
+    "section": "Week 2: linear regression",
+    "text": "Week 2: linear regression\nReading\n\nISLR Chapter 3 (Linear Regression), sections 3.1–3.3 and 3.5, pp. 61–110. Mostly review from your regression course; read 3.2.1 (estimating the coefficients in multiple regression) and 3.3.3 (potential problems) slowly. The lab in 3.6 goes with the seminar.\nPPA Chapter 2 (Fundamentals of prediction), the sections “Modeling knowledge” and “Prediction via optimization”, pp. 13–21.\n\nOptional, deeper: ESL section 3.2, pp. 44–57.\nLecture and seminar: released here at the start of the week. Bring a dataset of your own if you have one: a numeric outcome and a few predictors, one row per unit.\nProblem set 1 is released this week on Moodle and is due in week 5."
+  },
+  {
+    "objectID": "index.html#week-3-classification-and-causality-part-1",
+    "href": "index.html#week-3-classification-and-causality-part-1",
+    "title": "Weekly content",
+    "section": "Week 3: classification, and causality (part 1)",
+    "text": "Week 3: classification, and causality (part 1)\nReading\n\nISLR Chapter 4 (Classification), sections 4.1–4.3, pp. 130–141. Section 4.4 (LDA, QDA, naive Bayes) is not part of this course; skim 4.5, pp. 158–164, for the comparison with \\(k\\)-nearest neighbours.\nPPA Chapter 2, “Types of errors and successes” and “The Neyman–Pearson lemma”, pp. 21–26, and “Decisions that discriminate”, pp. 26–31.\nPPA Chapter 9 (Causality), “The limitations of observation”, pp. 179–181. Optional now and needed in week 8: “Confounding”, pp. 189–192.\n\nLecture and seminar: released here at the start of the week. Data: the Palmer penguins; the (fictional) attrition data as an alternative."
+  },
+  {
+    "objectID": "index.html#week-4-optimisation-or-how-models-actually-get-fitted",
+    "href": "index.html#week-4-optimisation-or-how-models-actually-get-fitted",
+    "title": "Weekly content",
+    "section": "Week 4: optimisation, or how models actually get fitted",
+    "text": "Week 4: optimisation, or how models actually get fitted\nReading\n\nPPA Chapter 5 (Optimization), pp. 70–97: gradient descent, the quadratic case, stochastic gradient descent and its analysis, regularisation. The two convergence bounds stated in the lecture are proved here.\nISLR Chapter 6, section 6.1, pp. 227–237 (subset selection). Section 6.2, pp. 237–252 (ridge and the lasso), is week 7’s; reading week is a good time for it.\n\nLecture and seminar: released here at the start of the week. You will write gradient descent yourself, once, and use it twice. Data: gapminder and the penguins, then simulated data."
+  },
+  {
+    "objectID": "index.html#week-5-validation-or-honest-evaluation",
+    "href": "index.html#week-5-validation-or-honest-evaluation",
+    "title": "Weekly content",
+    "section": "Week 5: validation, or honest evaluation",
+    "text": "Week 5: validation, or honest evaluation\nReading\n\nISLR Chapter 5, section 5.1, pp. 197–209 (the validation set, leave-one-out and \\(K\\)-fold cross-validation, and the bias–variance trade-off in choosing \\(K\\)). Section 5.2, the bootstrap, is not part of this course.\nPPA Chapter 6, pp. 100–106 (the generalisation gap; what happens empirically with over-parameterised models), and Chapter 8, pp. 146–148 (the holdout method and Kaggle’s secret holdout).\n\nLecture and seminar: released here at the start of the week. Cross-validation written out, with and without a leak; a competition run cleanly; a held-out score under three kinds of shift. Data: the (fictional) attrition outcome, the penguins, simulated data.\nProblem set 1 is due this week."
+  },
+  {
+    "objectID": "index.html#week-6-reading-week",
+    "href": "index.html#week-6-reading-week",
+    "title": "Weekly content",
+    "section": "Week 6: reading week",
+    "text": "Week 6: reading week\nNo lecture or seminar. Read ISLR section 6.2, pp. 237–252 (ridge regression and the lasso), for week 7."
+  },
+  {
+    "objectID": "index.html#week-7-many-predictors-regularisation-and-reusing-the-test-set",
+    "href": "index.html#week-7-many-predictors-regularisation-and-reusing-the-test-set",
+    "title": "Weekly content",
+    "section": "Week 7: many predictors, regularisation, and reusing the test set",
+    "text": "Week 7: many predictors, regularisation, and reusing the test set\nReading\n\nISLR Chapter 6, section 6.2, pp. 237–252 (ridge regression and the lasso, choosing the tuning parameter), and section 6.4, from p. 261 (what changes when \\(p &gt; n\\)). The lab in section 6.5 goes with the seminar. Section 6.3 (principal components and partial least squares), which sits between them, is not part of this course.\nPPA Chapter 8, pp. 158–167 (adaptivity: what happens when the same held-out set is used many times, and the CIFAR-10 and ImageNet replications).\n\nDeeper, optional: ESL section 3.4, pp. 61–79 (ridge in the SVD basis; the lasso); CASI Chapter 7 (James–Stein) and Chapter 16 (the lasso).\nLecture and seminar: released here at the start of the week. Bias and variance of ridge and the lasso against \\(\\lambda\\), by simulation; tuning with glmnet on the Hitters data with a test set reserved first; the evaluation set reused, and what it does to a score. Data: simulated, and ISLR’s Hitters (baseball salaries, 1987)."
+  },
+  {
+    "objectID": "index.html#week-8-additive-models-and-what-a-curve-holds-fixed",
+    "href": "index.html#week-8-additive-models-and-what-a-curve-holds-fixed",
+    "title": "Weekly content",
+    "section": "Week 8: additive models, and what a curve holds fixed",
+    "text": "Week 8: additive models, and what a curve holds fixed\nOne curve per predictor: how an additive model is fitted (each component to what the others leave), why it escapes the curse of dimensionality, and when it is wrong. Then a curve on any fitted model: partial dependence and ICE, computed by hand, and the question they answer. Causal block 2: direct against total dependence on a simulation where the two curves disagree, and when a model’s response is also an effect.\nReading\n\nISLR Chapter 7, section 7.7, pp. 306–311 (generalized additive models). The lab in section 7.8.3 goes with the seminar.\nESL Chapter 9, the opening pages of section 9.1, pp. 295–298 (additive models and the backfitting algorithm, Algorithm 9.1).\nIML, the chapters “Individual conditional expectation (ICE)” and “Partial dependence plot (PDP)”: the definitions and the pictures, for recognition.\n\nDeeper, optional: Hastie and Tibshirani, Generalized Additive Models (1990), Chapter 4; Zhao and Hastie, “Causal interpretations of black-box models”, Journal of Business and Economic Statistics 2021.\nLecture and seminar: released here at the start of the week. Backfitting in ten lines against mgcv on the movies data, a random split against a split in time; partial dependence and ICE by hand on a simulation whose truth is known, against the total-effect curve. Data: IMDb films via ggplot2movies, and a supplied simulation. Problem set 2 is released this week."
+  },
+  {
+    "objectID": "index.html#week-9-trees-and-ensembles",
+    "href": "index.html#week-9-trees-and-ensembles",
+    "title": "Weekly content",
+    "section": "Week 9: trees and ensembles",
+    "text": "Week 9: trees and ensembles\nA machine that asks the data one question at a time: how a split is found, why a tree is local averaging with the neighbourhoods chosen by the data, and how big to grow one. Then two ways to use many trees: bagging and random forests, with the variance of an average of correlated predictions derived at the board and the out-of-bag error as a built-in estimate of held-out error; boosting as gradient descent one small tree at a time, with its three knobs. Permutation importance in the loss-difference convention, and no free lunch retrieved on four entrants.\nReading\n\nISLR Chapter 8, sections 8.1 and 8.2, pp. 327–353 (trees; bagging, random forests and boosting). The lab in section 8.3 goes with the seminar.\nIML, the chapter “Permutation feature importance”: the definition and the pictures, for recognition.\nESL Chapter 15, section 15.4, pp. 597–602 (why random forests work), and Chapter 10, sections 10.9–10.10, pp. 353–361 (boosting trees as gradient descent), for the two board derivations.\n\nDeeper, optional: CausalML Chapter 8, “Predictive inference via modern nonlinear regression”, pp. 200–208; Breiman, “Random forests”, Machine Learning 2001; Friedman, “Greedy function approximation: a gradient boosting machine”, Annals of Statistics 2001.\nLecture and seminar: released here at the start of the week. Split search implemented with running sums, then a recursive tree; training against test error along the pruning path; bagging by hand with an out-of-bag error, random forests by mtry, boosting by hand against xgboost; permutation importance by hand, on three inputs and then five. Data: the penguins and gapminder (note). Problem set 2 is due next week."
+  },
+  {
+    "objectID": "index.html#week-10-explaining-intervening-shifting",
+    "href": "index.html#week-10-explaining-intervening-shifting",
+    "title": "Weekly content",
+    "section": "Week 10: explaining, intervening, shifting",
+    "text": "Week 10: explaining, intervening, shifting\nWhat an explanation computes: SHAP shown and explained in three sentences; one theorem saying what every partial dependence, ICE and SHAP number is (the model’s response with some inputs set and the rest left where one unit had them), and when that is also an effect; four methods, four questions, one takeaway. Causal block 3: one effect estimated with machine learning in the nuisances, residual on residual with cross-fitting, and what that does not do. Then the data move: covariate shift, reweighting and its condition, and the shift no reweighting fixes.\nReading\n\nIML, the chapters “Shapley values”, “SHAP” and “Leave one feature out (LOFO) importance”: the plots and the vocabulary, for recognition.\nPPA Chapter 10, pp. 204–217 (causal inference in practice: adjustment, double machine learning in a page, quasi-experiments) and Chapter 13, pp. 268–271 (the epilogue: when patterns stop guiding action).\nZhao and Hastie, “Causal interpretations of black-box models”, Journal of Business and Economic Statistics 2021 (the back-door statement in the theorem).\n\nDeeper, optional: Chernozhukov et al., “Double/debiased machine learning for treatment and structural parameters”, Econometrics Journal 2018, sections 1–2; Shimodaira, “Improving predictive inference under covariate shift by weighting the log-likelihood function”, Journal of Statistical Planning and Inference 2000.\nLecture and seminar: released here at the start of the week. SHAP by hand on a three-unit table, then by software on the penguins forest with the identity checked; permutation importance against leave-one-covariate-out on one fit; one effect estimated by residual on residual with cross-fitting, two wrong versions and a hidden confounder; a shift diagnosed on gapminder 1952 against 2007. Data: penguins, gapminder, and supplied simulations. Problem set 2 is due this week."
+  },
+  {
+    "objectID": "index.html#week-11-what-did-winning-establish",
+    "href": "index.html#week-11-what-did-winning-establish",
+    "title": "Weekly content",
+    "section": "Week 11: what did winning establish?",
+    "text": "Week 11: what did winning establish?\nThe competition re-read with everything since: outcome reasoning against model reasoning, the four MARA(s) questions a deployment has to answer and for whom, and the seven recurring flaws of systems that predict something about a person and decide about them. The week-1 task re-run with every entrant the term taught you. One unfamiliar case diagnosed live. The theorems and results in one view. If time allows, the last method: a neural network as composition, fitted by hand.\nReading\nDelivered in lecture, for reference rather than preparation:\n\nRodu and Baiocchi, “When black box algorithms are (not) appropriate”, Observational Studies 2023 (arXiv 2001.07648): the common task framework, outcome and model reasoning, MARA(s).\nWang, Kapoor, Barocas and Narayanan, “Against predictive optimization”, ACM Journal on Responsible Computing 2024, and the rubric at predictive-optimization.cs.princeton.edu: the project’s justification section uses it.\n\nOptional: ISLR Chapter 10, sections 10.1–10.2, pp. 404–411 (single- and multilayer neural networks), for the optional segment; ISLR Chapter 12, section 12.1, from p. 497, for the reader who wants to see what unsupervised learning is.\nLecture and seminar: released here at the start of the week, together with the theorems in one view (statements only, with the week each was proved or derived; bring it to the seminar and try to reproduce each statement from memory first, checking second). One unfamiliar case on paper; a simulated lender in R on which a partial dependence curve, an intervention claim and a SHAP value are checked against a known truth; your own project against MARA(s) and the rubric; problem set 2 retrieved. Data: a supplied simulation, and your project data."
+  },
+  {
+    "objectID": "about.html",
+    "href": "about.html",
+    "title": "About this course",
+    "section": "",
+    "text": "Course guide listing: includes information about requirements and assessments. Where this website and the guide disagree, the guide wins.\nLecturer: Joshua Loftus. Seminars are run by the class teachers and by me."
+  },
+  {
+    "objectID": "about.html#assessment",
+    "href": "about.html#assessment",
+    "title": "About this course",
+    "section": "Assessment",
+    "text": "Assessment\nThe assessment is as described in the course guide; details of each component will be given on Moodle during the term.\n\nFormative. Two problem sets (out in weeks 2 and 8) and short problems in the seminars. These don’t count toward marks. Compare your work with the solutions when they’re released, and if you have questions after that, submit your work on Moodle with specific feedback requests."
+  },
+  {
+    "objectID": "about.html#references",
+    "href": "about.html#references",
+    "title": "About this course",
+    "section": "References",
+    "text": "References\nThese are all available free online at the links below.\n\nISLR: An Introduction to Statistical Learning with Applications in R\nOur main text for most of the term. Readings are given by chapter and page from the second edition.\n\n\nPPA: Patterns, Predictions, and Actions\nWhere the idea of machine learning as a prediction competition comes from, and our reference for a few topics that computer scientists cover and statisticians’ textbooks don’t.\n\n\nCausalML: Applied Causal Inference Powered by ML and AI\nA reference for the causal thread of the course (weeks 3, 8 and 10); assigned as optional deeper reading, and the natural next stop after week 10.\n\n\nR4DS: R for Data Science\nThere are many good sources about R that you can find online, but this one has the advantage of offering one coherent point of view.\n\n\nGoing deeper\nESL (Elements of Statistical Learning) is the more advanced version of ISLR, by some of the same authors; most of the theorems in this course are in it somewhere. CASI (Computer Age Statistical Inference) has a different emphasis and some history. IML (Interpretable Machine Learning) is our reference for partial dependence, feature importance and Shapley values; we refer to it by chapter title because its chapter numbers keep changing.\n\n\nEthical guidelines\nBrief documents published by professional societies on the ethical practice of statistics or data science. They are all worth reading and comparing: Royal Statistical Society, American Statistical Association, Association for Computing Machinery."
+  },
+  {
+    "objectID": "about.html#installing-r-and-rstudio",
+    "href": "about.html#installing-r-and-rstudio",
+    "title": "About this course",
+    "section": "Installing R and RStudio",
+    "text": "Installing R and RStudio\nFirst install R and then RStudio (RStudio includes Quarto, which renders the seminar notebooks). Open RStudio and run\ninstall.packages(c(\"tidyverse\", \"gapminder\", \"broom\", \"palmerpenguins\", \"modeldata\",\n                   \"yardstick\", \"ggdag\", \"dagitty\", \"patchwork\", \"glmnet\", \"ISLR2\",\n                   \"mgcv\", \"ggplot2movies\", \"randomForest\", \"pdp\", \"rpart\", \"partykit\",\n                   \"xgboost\", \"kernelshap\", \"shapviz\", \"fivethirtyeight\",\n                   \"AppliedPredictiveModeling\"))\nThis is every package the seminar notebooks load, for the whole term (MASS, also used, ships with R). Week 1 needs only the first three. The seminar notebooks are Quarto (.qmd) files: open them in RStudio and either press Render or run the chunks one at a time.\nThe course guide requires students with no experience of R to complete the Digital Skills Lab’s pre-sessional R course; if that is you and you have not done it, do it in the first week, because the seminars assume it from week 1 (writing a function and a for loop) and build on it (numerical linear algebra, recursion, several package interfaces). The Lab lists the current term’s courses on Moodle and runs daily online drop-in sessions: Digital Skills Lab. The first seminar starts with a chunk that loads the packages, so you will know at once whether your installation works.\nNote: on a Mac or Linux computer you may prefer to install R and RStudio with a package manager. Personally, on a Mac I use Homebrew."
+  },
+  {
+    "objectID": "about.html#a-request",
+    "href": "about.html#a-request",
+    "title": "About this course",
+    "section": "A request",
+    "text": "A request\nAs a courtesy, please don’t use any “AI” tools in your communications with me or the teaching staff. This also applies to all aspects of this course. We are here to train our own minds, not to replace them. I’ll say more about why during the term; I’m an interested party, and you’re welcome to argue with me about it."
+  },
+  {
+    "objectID": "weeks/01-introduction-foundations/notebooks/notebook1_incomplete.html",
+    "href": "weeks/01-introduction-foundations/notebooks/notebook1_incomplete.html",
+    "title": "Week 1 seminar: a competition, by hand",
+    "section": "",
+    "text": "Note\n\n\n\nThis is the student version of the notebook: the blanks are .... A code chunk that contains a blank starts with #| eval: false, so the file renders as it stands; delete that line once you have filled the blank. Working through the chunks one at a time in RStudio (Ctrl/Cmd+Enter) is unaffected.\nlibrary(tidyverse)  # install.packages(\"tidyverse\") if needed\nlibrary(gapminder)  # install.packages(\"gapminder\") if needed\ntheme_set(theme_minimal())"
+  },
+  {
+    "objectID": "weeks/01-introduction-foundations/notebooks/notebook1_incomplete.html#before-you-start",
+    "href": "weeks/01-introduction-foundations/notebooks/notebook1_incomplete.html#before-you-start",
+    "title": "Week 1 seminar: a competition, by hand",
+    "section": "Before you start",
+    "text": "Before you start\n\nWithout looking anything up: for the gapminder data, write down the four parts of a prediction competition (the unit, the inputs and outcome, the score, how the held-out set is chosen). Then, for each input: would you have it at the moment you need the prediction, for a country whose life expectancy you don’t know? “All of them” is an acceptable answer if you can say why."
+  },
+  {
+    "objectID": "weeks/01-introduction-foundations/notebooks/notebook1_incomplete.html#problems",
+    "href": "weeks/01-introduction-foundations/notebooks/notebook1_incomplete.html#problems",
+    "title": "Week 1 seminar: a competition, by hand",
+    "section": "Problems",
+    "text": "Problems\n\n1. A held-out set of \\(m = 50\\) units gives squared-error losses with mean \\(12.0\\) and standard deviation \\(20.0\\). Report the test error and its standard error. A second entrant scores \\(10.5\\) on the same 50 units. Is the difference between the two entrants established? What extra information would settle it?\n2. Inputs are uniform on the cube \\([0,1]^{d}\\). An axis-aligned cube of edge \\(e\\) inside it holds what fraction of the population? Write down the edge \\(e_d(r)\\) a cube needs to hold a fraction \\(r\\), as a function of \\(d\\), and say what happens to it as \\(d\\) grows with \\(r\\) fixed. Now fix the sample size \\(n\\) and use \\(k = n/100\\) neighbours: what does this say about how local a nearest-neighbour average is in high dimensions?\n3. A model is fitted to 142 countries in 2002 and tested on the same 142 countries in 1997, with low error. Say what this does and does not show, name the assumption it violates, and design a test that answers “can we predict a country we have not seen?”\n4. (If time.) A 1-nearest-neighbour predictor has training error exactly zero. Explain why from the definition of the predictor. In Theorem A, which term is zero when \\(x_0\\) is a training point and \\(k = 1\\), and which term is not?"
+  },
+  {
+    "objectID": "weeks/01-introduction-foundations/notebooks/notebook1_incomplete.html#coding",
+    "href": "weeks/01-introduction-foundations/notebooks/notebook1_incomplete.html#coding",
+    "title": "Week 1 seminar: a competition, by hand",
+    "section": "Coding",
+    "text": "Coding\n\n\n1. The competition\n\nTake the countries observed in 2007. Split them at random into 100 countries you may use for fitting and 42 whose life expectancy is hidden from you. (You have it, of course. Don’t look at it until the end of each part; that is the rule of the competition.)\n\ngm &lt;- gapminder |&gt;\n  filter(year == 2007) |&gt;\n  mutate(lgdp = log10(gdpPercap))\ntest_id &lt;- sample(nrow(gm), 42)\ntrain &lt;- gm[-test_id, ]\ntest &lt;- gm[test_id, ]\n\nYour split is different from your neighbour’s. Keep that in mind all the way through.\nPlot the training data: lgdp on the horizontal axis, lifeExp on the vertical axis.\n\n# ggplot(train, aes(____, ____)) + geom_point()\n...\n\nThe baseline. The simplest entrant predicts the same number for every country: the training mean of lifeExp. Compute its mean squared error on the test set.\n\nbaseline &lt;- mean(train$lifeExp)\n# mse_baseline &lt;- mean((____ - ____)^2)\n...\n\nA second entrant. Fit a straight line and compute its test MSE: the fit is model_lm &lt;- lm(lifeExp ~ lgdp, data = train); you write the predictions with predict(model_lm, newdata = ____) and the MSE line.\n\nmodel_lm &lt;- lm(lifeExp ~ lgdp, data = train)\n# mse_lm &lt;- mean((____ - predict(model_lm, newdata = ____))^2)\n...\n\nQuestion 1. How much better than the baseline is the line? Is “better” here a statement about these 42 countries or about all countries?\n\n\n2. Nearest neighbours, by hand\n\nYou may use abs, order, mean and a for loop, but not a library that does nearest neighbours for you. The point is to see the mechanism: a prediction is an average of the outcomes of the nearest training points.\nStep 1. Write a function that takes one new input x0, the training inputs x and outcomes y, and a number of neighbours k, and returns the average outcome of the k training points nearest to x0. The distances are computed for you; you write the two lines that pick the neighbours and average their outcomes.\n\nknn_predict &lt;- function(x0, x, y, k) {\n  distances &lt;- abs(x - x0)\n  ...\n}\n\n\n\nHint (open after your first attempt)\n\norder(distances) gives the positions of the distances from smallest to largest, so its first k entries are the positions of the k nearest points.\n\nCheck it on one country. For x0 = 4 (GDP per capita of 10,000 dollars) and k = 5, which five training countries are used, and what is the prediction?\n\n...\n\nCheckpoint (run it; if it stops, fix step 1 before going on):\n\nstopifnot(length(knn_predict(4, train$lgdp, train$lifeExp, k = 5)) == 1,\n          knn_predict(4, train$lgdp, train$lifeExp, k = 1) %in% train$lifeExp)\n\nStep 2. Predict for all 42 test countries with k = 5: the loop is set up for you; fill in the one line that makes the prediction for test country j, then compute the test MSE.\n\npred &lt;- numeric(nrow(test))\n# for (j in seq_len(nrow(test))) {\n#   pred[j] &lt;- ____\n# }\n# mse_knn5 &lt;- mean((____ - ____)^2)\n...\n\nCheckpoint:\n\nstopifnot(length(pred) == nrow(test), all(is.finite(pred)), mse_knn5 &gt; 0)\n\nStep 3. Wrap step 2 in a function knn_mse(k, newdata) that returns the MSE of the k-nearest-neighbour predictor on any data frame with columns lgdp and lifeExp; the skeleton is given, you write the prediction line and the MSE line. Then compute the training MSE and the test MSE for k = 1, 2, 3, 5, 10, 25, 50.\nQuestion 2. Before you run it: what do you expect the training MSE at k = 1 to be, and why? Write your prediction down first.\n\nknn_mse &lt;- function(k, newdata) {\n  pred &lt;- numeric(nrow(newdata))\n  for (j in seq_len(nrow(newdata))) {\n    # pred[j] &lt;- ____\n    ...\n  }\n  # mean((____ - ____)^2)\n  ...\n}\nks &lt;- c(1, 2, 3, 5, 10, 25, 50)\nresults &lt;- tibble(\n  k = ks,\n  train_mse = sapply(ks, knn_mse, newdata = train),\n  test_mse = sapply(ks, knn_mse, newdata = test)\n)\nresults\n\n\nresults |&gt;\n  pivot_longer(-k, names_to = \"set\", values_to = \"MSE\") |&gt;\n  ggplot(aes(k, MSE, colour = set)) +\n  geom_line() +\n  geom_point() +\n  scale_x_log10()\n\nCheckpoint:\n\nstopifnot(nrow(results) == 7, results$train_mse[1] == 0 || any(duplicated(train$lgdp)))\n\nQuestion 3. Which k would you submit, and what did you use to decide? You are about to report the same held-out score you chose on: is there a problem with that?\n\n\n3. The score is a random variable\n\nYour test MSE is an average of 42 losses. Two different things make it random: which 42 countries were held out, and which 100 were used for fitting. Repeating the competition below re-splits the same 142 countries each time, so what it shows is the variability under repeated splits of this dataset, not a fresh sample from a larger world.\nStep 1. From the split you already have, compute the 42 individual squared errors of the k = 5 predictor, their mean (the test MSE again) and the standard error of that mean, \\(\\text{sd(losses)}/\\sqrt{42}\\). (This standard error treats the 42 losses as independent draws; that is an assumption about the countries, not a fact about them.)\n\n# losses &lt;- ____\n# c(mean = mean(losses), se = ____)\n...\n\nStep 2. Repeat the whole competition 50 times: a new random split each time, the same k = 5 predictor fitted on the new training set and scored on the new test set. The loop is written for you; fill in the two lines that do the work.\n\none_competition &lt;- function(k = 5) {\n  test_id &lt;- sample(nrow(gm), 42)\n  train_i &lt;- gm[-test_id, ]\n  test_i &lt;- gm[test_id, ]\n  pred_i &lt;- numeric(nrow(test_i))\n  for (j in seq_len(nrow(test_i))) {\n    ...\n  }\n  ...\n}\nmany_mse &lt;- replicate(50, one_competition(k = 5))\nggplot(data.frame(mse = many_mse), aes(mse)) +\n  geom_histogram(bins = 15)\nc(mean = mean(many_mse), sd = sd(many_mse))\n\nQuestion 4. Compare the standard deviation of the 50 scores with the standard error from step 1. Are they the same kind of number? Which of the two could a competition organiser compute?"
+  },
+  {
+    "objectID": "weeks/01-introduction-foundations/notebooks/notebook1_incomplete.html#before-you-leave",
+    "href": "weeks/01-introduction-foundations/notebooks/notebook1_incomplete.html#before-you-leave",
+    "title": "Week 1 seminar: a competition, by hand",
+    "section": "Before you leave",
+    "text": "Before you leave\n\nCompare your table from part 2 with your neighbour’s. Did the same k win? Write one sentence on what that means for a leaderboard, and one on what the organiser should report next to each score."
+  },
+  {
+    "objectID": "weeks/01-introduction-foundations/notebooks/notebook1_incomplete.html#alternative-datasets",
+    "href": "weeks/01-introduction-foundations/notebooks/notebook1_incomplete.html#alternative-datasets",
+    "title": "Week 1 seminar: a competition, by hand",
+    "section": "Alternative datasets",
+    "text": "Alternative datasets\nThe same code runs on any data frame with a numeric input and a numeric outcome. Rename the columns to lgdp and lifeExp, or edit the code, and redo parts 1 to 3. See the data notes (candy, concrete) for provenance.\n\n# The column names lgdp and lifeExp are reused on purpose, so that parts 1 to 3 run unchanged.\n# Candy rankings (fivethirtyeight): predict the win percentage from the sugar percentile.\n# Several candies share a sugar percentile, so the k = 1 training error is not zero here.\nlibrary(fivethirtyeight)\nalt &lt;- candy_rankings |&gt;\n  transmute(lgdp = sugarpercent, lifeExp = winpercent)    # 85 candies, hold out 25\n\n# Concrete compressive strength (AppliedPredictiveModeling): predict strength from cement content.\nlibrary(AppliedPredictiveModeling)\ndata(concrete)\nalt &lt;- concrete |&gt;\n  transmute(lgdp = Cement, lifeExp = CompressiveStrength)  # 1030 mixtures, hold out 300"
+  }
+]

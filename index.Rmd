@@ -1,8 +1,0 @@
----
-title: "Weekly content"
-site: distill::distill_website
-description: |
-  Introducing a core set of commonly used machine learning tools and practicing them in the R statistical programming language to understand their mathematical foundations, statistical limitations, and proper interpretation.
-listing: weeks
-citation: true
----

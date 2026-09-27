@@ -1,0 +1,141 @@
+---
+title: "<Topic, as a question or a claim>"
+subtitle: "<Week N: the topic as a sentence, e.g. prediction competitions, and a first method>"
+author: "Joshua Loftus"
+institute: "LSE"
+format:
+  revealjs:
+    theme: [default, ../../../theme/st310.scss]
+    slide-number: c/t
+    width: 1280
+    height: 720
+    margin: 0.06
+    code-line-numbers: false
+    fig-width: 7
+    fig-height: 4.2
+    fig-dpi: 150
+    progress: true
+    history: false
+    footer: "ST310 Machine Learning"
+    html-math-method: mathjax
+    # Speaker notes are stripped from the public render (see _build_env/strip_notes.lua).
+    filters:
+      - ../../../_build_env/strip_notes.lua
+execute:
+  echo: false
+  warning: false
+  message: false
+  freeze: auto
+---
+
+```{r}
+#| label: setup
+#| include: false
+library(tidyverse)
+theme_set(theme_minimal(base_size = 18))
+```
+
+<!--
+TEMPLATE NOTES (delete in a real deck)
+
+The deck tells a story. Someone wanted something, tried something, and found
+out something; the method is what they found. Use people (who discovered it,
+why they cared), history, or a recent application that made news. Suspense
+before revelation: ask the room to commit (write down a prediction, a number,
+a choice) and only then show the answer.
+
+Text on slides is a reminder for the lecturer, not the script. If a slide has
+more than ~40 words, cut. Prefer a figure that carries the point; decoration is
+fine sometimes, but most figures should do the storytelling. Figures are
+generated in R in the deck so they render anywhere; portraits and photos are
+linked from Wikimedia Commons.
+
+Pauses go at the joints of an argument, not on a clock, and each one asks for
+something with a right answer or a commitment in it (PEDAGOGY.md, punctuated
+lectures). Retrieval of earlier weeks is spread through the lecture where the
+old idea is used, not bunched at the end.
+
+Timing lives in the speaker notes of the first slide (total 85 inside the
+90-minute booking; segments with their tier, core / compress / optional; the
+standing five-minute set; the cut order naming where each cut's teaching
+function lands; three or four pace waypoints), never on a slide. The notes are
+stripped from the public render; they are still not the place for anything a
+student must not see, because the instructor render keeps them. No "learning
+outcomes" or "what is examinable" slides. No week numbers in slide bodies or
+the footer (name the mechanism, not the calendar). No citations of our own
+material.
+
+Every [board] item: one slide with a recall *question* (asked at the point of
+need; a box that would print the answer the board script is written to elicit
+becomes the question, a box that only fixes notation stays, labelled as
+notation) and the statement to leave, then backup derivation slides with
+class="backup" and visibility="uncounted". Figures drawn from simulated data
+say so on the slide or in the caption.
+
+Slide attributes used by the theme:
+  {.inverse}                          section divider (dark)
+  {.backup visibility="uncounted"}    backup derivation slide
+  [board]{.board}                     badge marking the move to the board
+  ::: {.recall}                       notation box (a genuine key, not a pre-empted answer)
+  ::: {.leave}                        the statement to leave on the board
+  ::: {.ask}                          a question the room answers (commit first)
+  ::: {.notes}                        speaker notes
+-->
+
+## {.inverse}
+
+::: {.notes}
+Timing: total 90. <segment> n; <segment> n; ... Cut order if short: <first cut>, then <second>; the board item does not move.
+:::
+
+### <Title>
+
+<one line>
+
+## <The hook: a person, a problem, a moment>
+
+<image or figure>
+
+::: {.notes}
+<what to say; why they cared>
+:::
+
+## <The task, concretely>
+
+::: {.ask}
+<Write down ...>
+:::
+
+## <Segment>
+
+<figure>
+
+## Theorem X [board]{.board}
+
+<statement>
+
+::: {.ask}
+<the recall question: the move the board is about to need, asked, not printed>
+:::
+
+::: {.leave}
+<the one line to leave on the board>
+:::
+
+::: {.notes}
+Board script: instructor project, week N, board_<name>. Backups follow (uncounted).
+:::
+
+## Theorem X, line by line {.backup visibility="uncounted"}
+
+<derivation>
+
+## <Seed: a puzzle with the answer withheld>
+
+## Until next time
+
+<exit task: one question, two minutes, written down>
+
+## Reading
+
+- ISLR ch. n, pp. a–b.

@@ -1,0 +1,276 @@
+---
+title: "Week 1 seminar"
+author: "Joshua Loftus"
+format:
+  html:
+    toc: true
+    embed-resources: false
+execute:
+  echo: true
+  warning: false
+  message: false
+  error: false
+---
+
+::: {.callout-note}
+This is the student version of the notebook: the blanks are `...`. A code chunk that contains a blank starts with `#| eval: false`, so the file renders as it stands; delete that line once you have filled the blank. Working through the chunks one at a time in RStudio (Ctrl/Cmd+Enter) is unaffected. Answers are revealed in the seminar.
+:::
+
+```{r}
+#| label: setup
+library(tidyverse) # should've already install.packages("tidyverse")
+library(gapminder) # might need to install.packages("gapminder")
+library(broom)     # might need to install.packages("broom")
+theme_set(theme_minimal())
+```
+
+## Before you start
+
+<!-- 5 min -->
+
+Without looking anything up: for the `gapminder` data, write down the four parts of a prediction competition (the unit, the inputs and outcome, the score, how the held-out set is chosen). Then, for each input: would you have it at the moment you need the prediction, for a country whose life expectancy you don't know? "All of them" is an acceptable answer if you can say why.
+
+## Problems
+
+<!-- 25 min. Pen and paper. Compare with a neighbor before asking. -->
+
+These four problems rebuild the pieces of the lecture's bias--variance decomposition. They use nothing beyond first-year probability.
+
+**Problem 1.** Let $Z$ be a random variable with mean $\mu$ and variance $\sigma^2$.
+
+(a) Show that $\mathbb E[Z^2] = \sigma^2 + \mu^2$.
+
+(b) In the lecture's model $Y_0 = f(x_0) + \varepsilon_0$, the noise has mean $0$ and variance $\sigma^2$. What is $\mathbb E[\varepsilon_0^2]$?
+
+(c) Now let $Z = f(x_0) - \hat f(x_0)$, where $f(x_0)$ is a fixed number and $\hat f(x_0)$ is a random predictor with mean $m$ and variance $v$. Write $\mathbb E[Z^2]$ in terms of $f(x_0)$, $m$ and $v$. Which piece is a bias, and which a variance?
+
+**Problem 2.** Let $Y_1, \ldots, Y_k$ be independent random variables, each with variance $\sigma^2$, and let $\bar Y = \frac1k \sum_{l=1}^k Y_l$.
+
+(a) What is $\mathrm{Var}(\bar Y)$? Say where independence is used.
+
+(b) Suppose instead that $Y_1 = Y_2 = \cdots = Y_k$ (the same random variable repeated). What is $\mathrm{Var}(\bar Y)$ now? What does this say about averaging things that are not really different?
+
+**Problem 3.** In the lecture's setting, the new outcome's noise $\varepsilon_0$ has mean $0$ and is independent of the training data. Let $g$ be any function of the training data (for example, $g = f(x_0) - \hat f_k(x_0)$).
+
+(a) Show that $\mathbb E[\varepsilon_0\, g] = 0$.
+
+(b) Give an example where $\mathbb E[\varepsilon_0] = 0$ but $\mathbb E[\varepsilon_0\, g] \neq 0$. (Think about what happens if the "new" point is one of the training points.)
+
+**Problem 4.** Five training points, one input each:
+
+| $x$ | 1 | 2 | 4 | 7 | 8 |
+|---|---|---|---|---|---|
+| $y$ | 3 | 5 | 4 | 10 | 9 |
+
+(a) Compute the $k$-nearest-neighbor prediction at $x_0 = 3.5$ for $k = 1$, $k = 3$ and $k = 5$.
+
+(b) What is the $k = 1$ prediction at $x_0 = 4$? At $x_0 = 7$? What is the training error of the $1$-NN predictor on these five points?
+
+(c) What is the $k = 5$ predictor, as a function of $x_0$?
+
+## Coding
+
+<!-- 50 min: part 1 12, part 2 25, part 3 8, part 4 5. Skeleton lines in comments are scaffolds: the statistical operation is what you write. -->
+
+### 1. The competition
+
+<!-- 12 min -->
+
+After running `library(gapminder)` you can access the dataset. Try typing `View(gapminder)` in the Console.
+
+Take the countries observed in 2007. Split them at random into 100 countries you may use for fitting and 42 whose life expectancy is hidden from you. (You have it, of course. Don't look at it until the end of each part; that is the rule of the competition.)
+
+```{r}
+gm <- gapminder |>
+  filter(year == 2007) |>
+  mutate(lgdp = log10(gdpPercap))
+test_id <- sample(nrow(gm), 42)
+train <- gm[-test_id, ]
+test <- gm[test_id, ]
+```
+
+Your split is different from your neighbor's. Keep that in mind all the way through.
+
+#### Create a scatterplot of the training data
+
+`lgdp` on the horizontal axis, `lifeExp` on the vertical axis (hint: `geom_point`).
+
+```{r}
+#| eval: false
+# gm_scatterplot <- ggplot(train, aes(x = ____, y = ____)) + geom_point()
+# gm_scatterplot
+...
+```
+
+#### The baseline competitor
+
+The simplest competitor predicts the same number for every country: the training mean of `lifeExp`. Compute its mean squared error on the test set.
+
+```{r}
+#| eval: false
+baseline <- mean(train$lifeExp)
+# mse_baseline <- mean((____ - ____)^2)
+...
+```
+
+#### A second competitor: a straight line
+
+Fit `model_lm <- lm(lifeExp ~ lgdp, data = train)`. Get its predictions on the test countries with `predict(model_lm, newdata = ____)`, then compute the test MSE.
+
+```{r}
+#| eval: false
+model_lm <- lm(lifeExp ~ lgdp, data = train)
+# mse_lm <- mean((____ - predict(model_lm, newdata = ____))^2)
+...
+```
+
+**Question 1.** How much better than the baseline is the line? Is "better" here a statement about these 42 countries or about all countries?
+
+### 2. Nearest neighbors, by hand
+
+<!-- 25 min -->
+
+You may use `abs`, `order`, `mean` and a `for` loop, but not a library that does nearest neighbors for you. The point is to see the mechanism: a prediction is an average of the outcomes of the nearest training points (problem 4, in code).
+
+**Step 1.** Write a function that takes one new input `x0`, the training inputs `x` and outcomes `y`, and a number of neighbors `k`, and returns the average outcome of the `k` training points nearest to `x0`. The distances are computed for you; you write the two lines that pick the neighbors and average their outcomes.
+
+```{r}
+#| eval: false
+knn_predict <- function(x0, x, y, k) {
+  distances <- abs(x - x0)
+  ...
+}
+```
+
+<details><summary>Hint (open after your first attempt)</summary>
+
+`order(distances)` gives the positions of the distances from smallest to largest, so its first `k` entries are the positions of the `k` nearest points.
+
+</details>
+
+Check it on problem 4's data first: `knn_predict(3.5, c(1, 2, 4, 7, 8), c(3, 5, 4, 10, 9), k = 3)` should give the number you computed by hand.
+
+```{r}
+#| eval: !expr exists("knn_predict")
+knn_predict(3.5, c(1, 2, 4, 7, 8), c(3, 5, 4, 10, 9), k = 3)
+```
+
+Now on one country. For `x0 = 4` (GDP per capita of 10,000 dollars) and `k = 5`, which five training countries are used, and what is the prediction?
+
+```{r}
+#| eval: false
+# nearest5 <- order(abs(train$lgdp - 4))[1:5]
+# train[nearest5, c("country", "gdpPercap", "lifeExp")]
+# knn_predict(4, ____, ____, k = 5)
+...
+```
+
+Checkpoint (run it; if it stops, fix step 1 before going on):
+
+```{r}
+#| eval: !expr exists("knn_predict")
+stopifnot(length(knn_predict(4, train$lgdp, train$lifeExp, k = 5)) == 1,
+          knn_predict(4, train$lgdp, train$lifeExp, k = 1) %in% train$lifeExp)
+```
+
+**Step 2.** Predict for all 42 test countries with `k = 5`: the loop is set up for you; fill in the one line that makes the prediction for test country `j`, then compute the test MSE.
+
+```{r}
+#| eval: false
+pred <- numeric(nrow(test))
+for (j in seq_len(nrow(test))) {
+  # pred[j] <- ____
+  ...
+}
+# mse_knn5 <- mean((____ - ____)^2)
+...
+```
+
+Checkpoint:
+
+```{r}
+#| eval: !expr exists("mse_knn5")
+stopifnot(length(pred) == nrow(test), all(is.finite(pred)), mse_knn5 > 0)
+```
+
+**Step 3.** Wrap step 2 in a function `knn_mse(k, newdata)` that returns the MSE of the `k`-nearest-neighbor predictor on any data frame with columns `lgdp` and `lifeExp`; the skeleton is given, you write the prediction line and the MSE line. Then compute the **training** MSE and the **test** MSE for `k = 1, 2, 3, 5, 10, 25, 50`.
+
+**Question 2.** Before you run it: what do you expect the training MSE at `k = 1` to be, and why? Write your prediction down first.
+
+```{r}
+#| eval: false
+knn_mse <- function(k, newdata) {
+  pred <- numeric(nrow(newdata))
+  for (j in seq_len(nrow(newdata))) {
+    # pred[j] <- ____
+    ...
+  }
+  # mean((____ - ____)^2)
+  ...
+}
+ks <- c(1, 2, 3, 5, 10, 25, 50)
+results <- tibble(
+  k = ks,
+  train_mse = sapply(ks, knn_mse, newdata = train),
+  test_mse = sapply(ks, knn_mse, newdata = test)
+)
+results
+```
+
+```{r}
+#| eval: !expr exists("results")
+results |>
+  pivot_longer(-k, names_to = "set", values_to = "MSE") |>
+  ggplot(aes(k, MSE, colour = set)) +
+  geom_line() +
+  geom_point() +
+  scale_x_log10() +
+  scale_colour_viridis_d(end = 0.7)
+```
+
+Checkpoint:
+
+```{r}
+#| eval: !expr exists("results")
+stopifnot(nrow(results) == 7, results$train_mse[1] == 0 || any(duplicated(train$lgdp)))
+```
+
+**Question 3.** Which `k` would you submit, and what did you use to decide? You are about to report the same held-out score you chose on: is there a problem with that?
+
+### 3. The score is a random variable
+
+<!-- 8 min -->
+
+Your test MSE is an average of 42 losses. From the split you already have, compute the 42 individual squared errors of the `k = 5` predictor, their mean (the test MSE again) and the standard error of that mean, $\text{sd(losses)}/\sqrt{42}$. (This standard error treats the 42 losses as independent draws; that is an assumption about the countries, not a fact about them.)
+
+```{r}
+#| eval: false
+# losses <- ____
+# c(mean = mean(losses), se = ____)
+...
+```
+
+**Question 4.** Compare your test MSE and its standard error with your neighbor's. Are the two test MSEs within a standard error of each other? What made them different?
+
+### 4. Predicting on new data
+
+<!-- 5 min -->
+
+Models are supposed to capture structure in the data that corresponds to structure in the real world, and if the real world isn't misbehaving, that structure should be somewhat stable. Suppose the relationship changed dramatically from one time period to another: then a model fit on one period would be less useful, because it might fit poorly on data from another.
+
+Create the 1997 data, then get predictions for every 1997 country from the straight line (fitted on 2007 training countries) with the `newdata` argument, and compute the MSE.
+
+```{r}
+#| eval: false
+gm1997 <- gapminder |> filter(year == 1997) |> mutate(lgdp = log10(gdpPercap))
+# mse_lm_1997 <- mean((gm1997$lifeExp - predict(model_lm, newdata = ____))^2)
+...
+```
+
+**Question 5.** Is it surprising how well the model does on 1997? The 1997 rows are the *same 142 countries*, ten years earlier. Has the model predicted anything new? What question does this test answer, and what question did the held-out split in part 1 answer?
+
+## Before you leave
+
+<!-- 5 min -->
+
+Compare your table from part 2 with your neighbor's. Did the same `k` win? Write one sentence on what that means for a leaderboard, and one on what the organizer should report next to each score.

@@ -6,9 +6,9 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="author" content="Joshua Loftus">
+<meta name="author" content="ST310">
 
-<title>Week 1 seminar – machine learning 4 data science</title>
+<title>Week 1 seminar: a competition, by hand – machine learning 4 data science</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -207,6 +207,7 @@ window.Quarto = {
   <li><a href="#problems" id="toc-problems" class="nav-link" data-scroll-target="#problems">Problems</a></li>
   <li><a href="#coding" id="toc-coding" class="nav-link" data-scroll-target="#coding">Coding</a></li>
   <li><a href="#before-you-leave" id="toc-before-you-leave" class="nav-link" data-scroll-target="#before-you-leave">Before you leave</a></li>
+  <li><a href="#alternative-datasets" id="toc-alternative-datasets" class="nav-link" data-scroll-target="#alternative-datasets">Alternative datasets</a></li>
   </ul>
 </nav>
     </div>
@@ -215,7 +216,7 @@ window.Quarto = {
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Week 1 seminar</h1>
+<h1 class="title">Week 1 seminar: a competition, by hand</h1>
 </div>
 
 
@@ -225,7 +226,7 @@ window.Quarto = {
     <div>
     <div class="quarto-title-meta-heading">Author</div>
     <div class="quarto-title-meta-contents">
-             <p>Joshua Loftus </p>
+             <p>ST310 </p>
           </div>
   </div>
     
@@ -248,76 +249,33 @@ Note
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>This is the student version of the notebook: the blanks are <code>...</code>. A code chunk that contains a blank starts with <code>#| eval: false</code>, so the file renders as it stands; delete that line once you have filled the blank. Working through the chunks one at a time in RStudio (Ctrl/Cmd+Enter) is unaffected. Answers are revealed in the seminar.</p>
+<p>This is the student version of the notebook: the blanks are <code>...</code>. A code chunk that contains a blank starts with <code>#| eval: false</code>, so the file renders as it stands; delete that line once you have filled the blank. Working through the chunks one at a time in RStudio (Ctrl/Cmd+Enter) is unaffected.</p>
 </div>
 </div>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse) <span class="co"># should've already install.packages("tidyverse")</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(gapminder) <span class="co"># might need to install.packages("gapminder")</span></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(broom)     <span class="co"># might need to install.packages("broom")</span></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">theme_set</span>(<span class="fu">theme_minimal</span>())</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)  <span class="co"># install.packages("tidyverse") if needed</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(gapminder)  <span class="co"># install.packages("gapminder") if needed</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">theme_set</span>(<span class="fu">theme_minimal</span>())</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<section id="before-you-start" class="level2">
-<h2 class="anchored" data-anchor-id="before-you-start">Before you start</h2>
+<section id="before-you-start" class="level2 retrieval">
+<h2 class="retrieval anchored" data-anchor-id="before-you-start">Before you start</h2>
 <!-- 5 min -->
 <p>Without looking anything up: for the <code>gapminder</code> data, write down the four parts of a prediction competition (the unit, the inputs and outcome, the score, how the held-out set is chosen). Then, for each input: would you have it at the moment you need the prediction, for a country whose life expectancy you don’t know? “All of them” is an acceptable answer if you can say why.</p>
 </section>
 <section id="problems" class="level2">
 <h2 class="anchored" data-anchor-id="problems">Problems</h2>
-<!-- 25 min. Pen and paper. Compare with a neighbor before asking. -->
-<p>These four problems rebuild the pieces of the lecture’s bias–variance decomposition. They use nothing beyond first-year probability.</p>
-<p><strong>Problem 1.</strong> Let <span class="math inline">\(Z\)</span> be a random variable with mean <span class="math inline">\(\mu\)</span> and variance <span class="math inline">\(\sigma^2\)</span>.</p>
-<ol type="a">
-<li><p>Show that <span class="math inline">\(\mathbb E[Z^2] = \sigma^2 + \mu^2\)</span>.</p></li>
-<li><p>In the lecture’s model <span class="math inline">\(Y_0 = f(x_0) + \varepsilon_0\)</span>, the noise has mean <span class="math inline">\(0\)</span> and variance <span class="math inline">\(\sigma^2\)</span>. What is <span class="math inline">\(\mathbb E[\varepsilon_0^2]\)</span>?</p></li>
-<li><p>Now let <span class="math inline">\(Z = f(x_0) - \hat f(x_0)\)</span>, where <span class="math inline">\(f(x_0)\)</span> is a fixed number and <span class="math inline">\(\hat f(x_0)\)</span> is a random predictor with mean <span class="math inline">\(m\)</span> and variance <span class="math inline">\(v\)</span>. Write <span class="math inline">\(\mathbb E[Z^2]\)</span> in terms of <span class="math inline">\(f(x_0)\)</span>, <span class="math inline">\(m\)</span> and <span class="math inline">\(v\)</span>. Which piece is a bias, and which a variance?</p></li>
-</ol>
-<p><strong>Problem 2.</strong> Let <span class="math inline">\(Y_1, \ldots, Y_k\)</span> be independent random variables, each with variance <span class="math inline">\(\sigma^2\)</span>, and let <span class="math inline">\(\bar Y = \frac1k \sum_{l=1}^k Y_l\)</span>.</p>
-<ol type="a">
-<li><p>What is <span class="math inline">\(\mathrm{Var}(\bar Y)\)</span>? Say where independence is used.</p></li>
-<li><p>Suppose instead that <span class="math inline">\(Y_1 = Y_2 = \cdots = Y_k\)</span> (the same random variable repeated). What is <span class="math inline">\(\mathrm{Var}(\bar Y)\)</span> now? What does this say about averaging things that are not really different?</p></li>
-</ol>
-<p><strong>Problem 3.</strong> In the lecture’s setting, the new outcome’s noise <span class="math inline">\(\varepsilon_0\)</span> has mean <span class="math inline">\(0\)</span> and is independent of the training data. Let <span class="math inline">\(g\)</span> be any function of the training data (for example, <span class="math inline">\(g = f(x_0) - \hat f_k(x_0)\)</span>).</p>
-<ol type="a">
-<li><p>Show that <span class="math inline">\(\mathbb E[\varepsilon_0\, g] = 0\)</span>.</p></li>
-<li><p>Give an example where <span class="math inline">\(\mathbb E[\varepsilon_0] = 0\)</span> but <span class="math inline">\(\mathbb E[\varepsilon_0\, g] \neq 0\)</span>. (Think about what happens if the “new” point is one of the training points.)</p></li>
-</ol>
-<p><strong>Problem 4.</strong> Five training points, one input each:</p>
-<table class="caption-top table">
-<thead>
-<tr class="header">
-<th><span class="math inline">\(x\)</span></th>
-<th>1</th>
-<th>2</th>
-<th>4</th>
-<th>7</th>
-<th>8</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><span class="math inline">\(y\)</span></td>
-<td>3</td>
-<td>5</td>
-<td>4</td>
-<td>10</td>
-<td>9</td>
-</tr>
-</tbody>
-</table>
-<ol type="a">
-<li><p>Compute the <span class="math inline">\(k\)</span>-nearest-neighbor prediction at <span class="math inline">\(x_0 = 3.5\)</span> for <span class="math inline">\(k = 1\)</span>, <span class="math inline">\(k = 3\)</span> and <span class="math inline">\(k = 5\)</span>.</p></li>
-<li><p>What is the <span class="math inline">\(k = 1\)</span> prediction at <span class="math inline">\(x_0 = 4\)</span>? At <span class="math inline">\(x_0 = 7\)</span>? What is the training error of the <span class="math inline">\(1\)</span>-NN predictor on these five points?</p></li>
-<li><p>What is the <span class="math inline">\(k = 5\)</span> predictor, as a function of <span class="math inline">\(x_0\)</span>?</p></li>
-</ol>
+<!-- 25 min. Pen and paper. Compare with a neighbour before asking. -->
+<p><strong>1.</strong> A held-out set of <span class="math inline">\(m = 50\)</span> units gives squared-error losses with mean <span class="math inline">\(12.0\)</span> and standard deviation <span class="math inline">\(20.0\)</span>. Report the test error and its standard error. A second entrant scores <span class="math inline">\(10.5\)</span> on the same 50 units. Is the difference between the two entrants established? What extra information would settle it?</p>
+<p><strong>2.</strong> Inputs are uniform on the cube <span class="math inline">\([0,1]^{d}\)</span>. An axis-aligned cube of edge <span class="math inline">\(e\)</span> inside it holds what fraction of the population? Write down the edge <span class="math inline">\(e_d(r)\)</span> a cube needs to hold a fraction <span class="math inline">\(r\)</span>, as a function of <span class="math inline">\(d\)</span>, and say what happens to it as <span class="math inline">\(d\)</span> grows with <span class="math inline">\(r\)</span> fixed. Now fix the sample size <span class="math inline">\(n\)</span> and use <span class="math inline">\(k = n/100\)</span> neighbours: what does this say about how local a nearest-neighbour average is in high dimensions?</p>
+<p><strong>3.</strong> A model is fitted to 142 countries in 2002 and tested on the <em>same 142 countries in 1997</em>, with low error. Say what this does and does not show, name the assumption it violates, and design a test that answers “can we predict a country we have not seen?”</p>
+<p><strong>4.</strong> (If time.) A 1-nearest-neighbour predictor has training error exactly zero. Explain why from the definition of the predictor. In Theorem A, which term is zero when <span class="math inline">\(x_0\)</span> is a training point and <span class="math inline">\(k = 1\)</span>, and which term is not?</p>
 </section>
 <section id="coding" class="level2">
 <h2 class="anchored" data-anchor-id="coding">Coding</h2>
-<!-- 50 min: part 1 12, part 2 25, part 3 8, part 4 5. Skeleton lines in comments are scaffolds: the statistical operation is what you write. -->
+<!-- 49 min: part 1 11, part 2 24, part 3 14. Skeleton lines in comments are scaffolds: the statistical operation is what you write. -->
 <section id="the-competition" class="level3">
 <h3 class="anchored" data-anchor-id="the-competition">1. The competition</h3>
-<!-- 12 min -->
-<p>After running <code>library(gapminder)</code> you can access the dataset. Try typing <code>View(gapminder)</code> in the Console.</p>
+<!-- 11 min -->
 <p>Take the countries observed in 2007. Split them at random into 100 countries you may use for fitting and 42 whose life expectancy is hidden from you. (You have it, of course. Don’t look at it until the end of each part; that is the rule of the competition.)</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>gm <span class="ot">&lt;-</span> gapminder <span class="sc">|&gt;</span></span>
@@ -327,28 +285,19 @@ Note
 <span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>train <span class="ot">&lt;-</span> gm[<span class="sc">-</span>test_id, ]</span>
 <span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>test <span class="ot">&lt;-</span> gm[test_id, ]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<p>Your split is different from your neighbor’s. Keep that in mind all the way through.</p>
-<section id="create-a-scatterplot-of-the-training-data" class="level4">
-<h4 class="anchored" data-anchor-id="create-a-scatterplot-of-the-training-data">Create a scatterplot of the training data</h4>
-<p><code>lgdp</code> on the horizontal axis, <code>lifeExp</code> on the vertical axis (hint: <code>geom_point</code>).</p>
+<p>Your split is different from your neighbour’s. Keep that in mind all the way through.</p>
+<p>Plot the training data: <code>lgdp</code> on the horizontal axis, <code>lifeExp</code> on the vertical axis.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># gm_scatterplot &lt;- ggplot(train, aes(x = ____, y = ____)) + geom_point()</span></span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="co"># gm_scatterplot</span></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ggplot(train, aes(____, ____)) + geom_point()</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-</section>
-<section id="the-baseline-competitor" class="level4">
-<h4 class="anchored" data-anchor-id="the-baseline-competitor">The baseline competitor</h4>
-<p>The simplest competitor predicts the same number for every country: the training mean of <code>lifeExp</code>. Compute its mean squared error on the test set.</p>
+<p><strong>The baseline.</strong> The simplest entrant predicts the same number for every country: the training mean of <code>lifeExp</code>. Compute its mean squared error on the test set.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>baseline <span class="ot">&lt;-</span> <span class="fu">mean</span>(train<span class="sc">$</span>lifeExp)</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="co"># mse_baseline &lt;- mean((____ - ____)^2)</span></span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-</section>
-<section id="a-second-competitor-a-straight-line" class="level4">
-<h4 class="anchored" data-anchor-id="a-second-competitor-a-straight-line">A second competitor: a straight line</h4>
-<p>Fit <code>model_lm &lt;- lm(lifeExp ~ lgdp, data = train)</code>. Get its predictions on the test countries with <code>predict(model_lm, newdata = ____)</code>, then compute the test MSE.</p>
+<p><strong>A second entrant.</strong> Fit a straight line and compute its test MSE: the fit is <code>model_lm &lt;- lm(lifeExp ~ lgdp, data = train)</code>; you write the predictions with <code>predict(model_lm, newdata = ____)</code> and the MSE line.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>model_lm <span class="ot">&lt;-</span> <span class="fu">lm</span>(lifeExp <span class="sc">~</span> lgdp, <span class="at">data =</span> train)</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="co"># mse_lm &lt;- mean((____ - predict(model_lm, newdata = ____))^2)</span></span>
@@ -356,12 +305,11 @@ Note
 </div>
 <p><strong>Question 1.</strong> How much better than the baseline is the line? Is “better” here a statement about these 42 countries or about all countries?</p>
 </section>
-</section>
-<section id="nearest-neighbors-by-hand" class="level3">
-<h3 class="anchored" data-anchor-id="nearest-neighbors-by-hand">2. Nearest neighbors, by hand</h3>
-<!-- 25 min -->
-<p>You may use <code>abs</code>, <code>order</code>, <code>mean</code> and a <code>for</code> loop, but not a library that does nearest neighbors for you. The point is to see the mechanism: a prediction is an average of the outcomes of the nearest training points (problem 4, in code).</p>
-<p><strong>Step 1.</strong> Write a function that takes one new input <code>x0</code>, the training inputs <code>x</code> and outcomes <code>y</code>, and a number of neighbors <code>k</code>, and returns the average outcome of the <code>k</code> training points nearest to <code>x0</code>. The distances are computed for you; you write the two lines that pick the neighbors and average their outcomes.</p>
+<section id="nearest-neighbours-by-hand" class="level3">
+<h3 class="anchored" data-anchor-id="nearest-neighbours-by-hand">2. Nearest neighbours, by hand</h3>
+<!-- 24 min -->
+<p>You may use <code>abs</code>, <code>order</code>, <code>mean</code> and a <code>for</code> loop, but not a library that does nearest neighbours for you. The point is to see the mechanism: a prediction is an average of the outcomes of the nearest training points.</p>
+<p><strong>Step 1.</strong> Write a function that takes one new input <code>x0</code>, the training inputs <code>x</code> and outcomes <code>y</code>, and a number of neighbours <code>k</code>, and returns the average outcome of the <code>k</code> training points nearest to <code>x0</code>. The distances are computed for you; you write the two lines that pick the neighbours and average their outcomes.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>knn_predict <span class="ot">&lt;-</span> <span class="cf">function</span>(x0, x, y, k) {</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  distances <span class="ot">&lt;-</span> <span class="fu">abs</span>(x <span class="sc">-</span> x0)</span>
@@ -374,99 +322,114 @@ Hint (open after your first attempt)
 </summary>
 <p><code>order(distances)</code> gives the positions of the distances from smallest to largest, so its first <code>k</code> entries are the positions of the <code>k</code> nearest points.</p>
 </details>
-<p>Check it on problem 4’s data first: <code>knn_predict(3.5, c(1, 2, 4, 7, 8), c(3, 5, 4, 10, 9), k = 3)</code> should give the number you computed by hand.</p>
+<p>Check it on one country. For <code>x0 = 4</code> (GDP per capita of 10,000 dollars) and <code>k = 5</code>, which five training countries are used, and what is the prediction?</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">knn_predict</span>(<span class="fl">3.5</span>, <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">4</span>, <span class="dv">7</span>, <span class="dv">8</span>), <span class="fu">c</span>(<span class="dv">3</span>, <span class="dv">5</span>, <span class="dv">4</span>, <span class="dv">10</span>, <span class="dv">9</span>), <span class="at">k =</span> <span class="dv">3</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
-<p>Now on one country. For <code>x0 = 4</code> (GDP per capita of 10,000 dollars) and <code>k = 5</code>, which five training countries are used, and what is the prediction?</p>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># nearest5 &lt;- order(abs(train$lgdp - 4))[1:5]</span></span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="co"># train[nearest5, c("country", "gdpPercap", "lifeExp")]</span></span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="co"># knn_predict(4, ____, ____, k = 5)</span></span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>Checkpoint (run it; if it stops, fix step 1 before going on):</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">length</span>(<span class="fu">knn_predict</span>(<span class="dv">4</span>, train<span class="sc">$</span>lgdp, train<span class="sc">$</span>lifeExp, <span class="at">k =</span> <span class="dv">5</span>)) <span class="sc">==</span> <span class="dv">1</span>,</span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>          <span class="fu">knn_predict</span>(<span class="dv">4</span>, train<span class="sc">$</span>lgdp, train<span class="sc">$</span>lifeExp, <span class="at">k =</span> <span class="dv">1</span>) <span class="sc">%in%</span> train<span class="sc">$</span>lifeExp)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">length</span>(<span class="fu">knn_predict</span>(<span class="dv">4</span>, train<span class="sc">$</span>lgdp, train<span class="sc">$</span>lifeExp, <span class="at">k =</span> <span class="dv">5</span>)) <span class="sc">==</span> <span class="dv">1</span>,</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>          <span class="fu">knn_predict</span>(<span class="dv">4</span>, train<span class="sc">$</span>lgdp, train<span class="sc">$</span>lifeExp, <span class="at">k =</span> <span class="dv">1</span>) <span class="sc">%in%</span> train<span class="sc">$</span>lifeExp)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p><strong>Step 2.</strong> Predict for all 42 test countries with <code>k = 5</code>: the loop is set up for you; fill in the one line that makes the prediction for test country <code>j</code>, then compute the test MSE.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>pred <span class="ot">&lt;-</span> <span class="fu">numeric</span>(<span class="fu">nrow</span>(test))</span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (j <span class="cf">in</span> <span class="fu">seq_len</span>(<span class="fu">nrow</span>(test))) {</span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  <span class="co"># pred[j] &lt;- ____</span></span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>  ...</span>
-<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a><span class="co"># mse_knn5 &lt;- mean((____ - ____)^2)</span></span>
-<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>pred <span class="ot">&lt;-</span> <span class="fu">numeric</span>(<span class="fu">nrow</span>(test))</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="co"># for (j in seq_len(nrow(test))) {</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="co">#   pred[j] &lt;- ____</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="co"># }</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="co"># mse_knn5 &lt;- mean((____ - ____)^2)</span></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>Checkpoint:</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">length</span>(pred) <span class="sc">==</span> <span class="fu">nrow</span>(test), <span class="fu">all</span>(<span class="fu">is.finite</span>(pred)), mse_knn5 <span class="sc">&gt;</span> <span class="dv">0</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">length</span>(pred) <span class="sc">==</span> <span class="fu">nrow</span>(test), <span class="fu">all</span>(<span class="fu">is.finite</span>(pred)), mse_knn5 <span class="sc">&gt;</span> <span class="dv">0</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<p><strong>Step 3.</strong> Wrap step 2 in a function <code>knn_mse(k, newdata)</code> that returns the MSE of the <code>k</code>-nearest-neighbor predictor on any data frame with columns <code>lgdp</code> and <code>lifeExp</code>; the skeleton is given, you write the prediction line and the MSE line. Then compute the <strong>training</strong> MSE and the <strong>test</strong> MSE for <code>k = 1, 2, 3, 5, 10, 25, 50</code>.</p>
+<p><strong>Step 3.</strong> Wrap step 2 in a function <code>knn_mse(k, newdata)</code> that returns the MSE of the <code>k</code>-nearest-neighbour predictor on any data frame with columns <code>lgdp</code> and <code>lifeExp</code>; the skeleton is given, you write the prediction line and the MSE line. Then compute the <strong>training</strong> MSE and the <strong>test</strong> MSE for <code>k = 1, 2, 3, 5, 10, 25, 50</code>.</p>
 <p><strong>Question 2.</strong> Before you run it: what do you expect the training MSE at <code>k = 1</code> to be, and why? Write your prediction down first.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>knn_mse <span class="ot">&lt;-</span> <span class="cf">function</span>(k, newdata) {</span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  pred <span class="ot">&lt;-</span> <span class="fu">numeric</span>(<span class="fu">nrow</span>(newdata))</span>
-<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (j <span class="cf">in</span> <span class="fu">seq_len</span>(<span class="fu">nrow</span>(newdata))) {</span>
-<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>    <span class="co"># pred[j] &lt;- ____</span></span>
-<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>    ...</span>
-<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>  }</span>
-<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>  <span class="co"># mean((____ - ____)^2)</span></span>
-<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>  ...</span>
-<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>ks <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">5</span>, <span class="dv">10</span>, <span class="dv">25</span>, <span class="dv">50</span>)</span>
-<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>results <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
-<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">k =</span> ks,</span>
-<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">train_mse =</span> <span class="fu">sapply</span>(ks, knn_mse, <span class="at">newdata =</span> train),</span>
-<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">test_mse =</span> <span class="fu">sapply</span>(ks, knn_mse, <span class="at">newdata =</span> test)</span>
-<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb12-16"><a href="#cb12-16" aria-hidden="true" tabindex="-1"></a>results</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>knn_mse <span class="ot">&lt;-</span> <span class="cf">function</span>(k, newdata) {</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  pred <span class="ot">&lt;-</span> <span class="fu">numeric</span>(<span class="fu">nrow</span>(newdata))</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (j <span class="cf">in</span> <span class="fu">seq_len</span>(<span class="fu">nrow</span>(newdata))) {</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>    <span class="co"># pred[j] &lt;- ____</span></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>    ...</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>  <span class="co"># mean((____ - ____)^2)</span></span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>  ...</span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>ks <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">5</span>, <span class="dv">10</span>, <span class="dv">25</span>, <span class="dv">50</span>)</span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>results <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">k =</span> ks,</span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">train_mse =</span> <span class="fu">sapply</span>(ks, knn_mse, <span class="at">newdata =</span> train),</span>
+<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">test_mse =</span> <span class="fu">sapply</span>(ks, knn_mse, <span class="at">newdata =</span> test)</span>
+<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a>results</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>results <span class="sc">|&gt;</span></span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="sc">-</span>k, <span class="at">names_to =</span> <span class="st">"set"</span>, <span class="at">values_to =</span> <span class="st">"MSE"</span>) <span class="sc">|&gt;</span></span>
-<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(k, MSE, <span class="at">colour =</span> set)) <span class="sc">+</span></span>
-<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>() <span class="sc">+</span></span>
-<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
-<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_log10</span>() <span class="sc">+</span></span>
-<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_colour_viridis_d</span>(<span class="at">end =</span> <span class="fl">0.7</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>results <span class="sc">|&gt;</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="sc">-</span>k, <span class="at">names_to =</span> <span class="st">"set"</span>, <span class="at">values_to =</span> <span class="st">"MSE"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(k, MSE, <span class="at">colour =</span> set)) <span class="sc">+</span></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>() <span class="sc">+</span></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_log10</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>Checkpoint:</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">nrow</span>(results) <span class="sc">==</span> <span class="dv">7</span>, results<span class="sc">$</span>train_mse[<span class="dv">1</span>] <span class="sc">==</span> <span class="dv">0</span> <span class="sc">||</span> <span class="fu">any</span>(<span class="fu">duplicated</span>(train<span class="sc">$</span>lgdp)))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">nrow</span>(results) <span class="sc">==</span> <span class="dv">7</span>, results<span class="sc">$</span>train_mse[<span class="dv">1</span>] <span class="sc">==</span> <span class="dv">0</span> <span class="sc">||</span> <span class="fu">any</span>(<span class="fu">duplicated</span>(train<span class="sc">$</span>lgdp)))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p><strong>Question 3.</strong> Which <code>k</code> would you submit, and what did you use to decide? You are about to report the same held-out score you chose on: is there a problem with that?</p>
 </section>
 <section id="the-score-is-a-random-variable" class="level3">
 <h3 class="anchored" data-anchor-id="the-score-is-a-random-variable">3. The score is a random variable</h3>
-<!-- 8 min -->
-<p>Your test MSE is an average of 42 losses. From the split you already have, compute the 42 individual squared errors of the <code>k = 5</code> predictor, their mean (the test MSE again) and the standard error of that mean, <span class="math inline">\(\text{sd(losses)}/\sqrt{42}\)</span>. (This standard error treats the 42 losses as independent draws; that is an assumption about the countries, not a fact about them.)</p>
+<!-- 14 min -->
+<p>Your test MSE is an average of 42 losses. Two different things make it random: which 42 countries were held out, and which 100 were used for fitting. Repeating the competition below re-splits the same 142 countries each time, so what it shows is the variability under repeated splits of this dataset, not a fresh sample from a larger world.</p>
+<p><strong>Step 1.</strong> From the split you already have, compute the 42 individual squared errors of the <code>k = 5</code> predictor, their mean (the test MSE again) and the standard error of that mean, <span class="math inline">\(\text{sd(losses)}/\sqrt{42}\)</span>. (This standard error treats the 42 losses as independent draws; that is an assumption about the countries, not a fact about them.)</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># losses &lt;- ____</span></span>
-<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="co"># c(mean = mean(losses), se = ____)</span></span>
-<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># losses &lt;- ____</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="co"># c(mean = mean(losses), se = ____)</span></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<p><strong>Question 4.</strong> Compare your test MSE and its standard error with your neighbor’s. Are the two test MSEs within a standard error of each other? What made them different?</p>
-</section>
-<section id="predicting-on-new-data" class="level3">
-<h3 class="anchored" data-anchor-id="predicting-on-new-data">4. Predicting on new data</h3>
-<!-- 5 min -->
-<p>Models are supposed to capture structure in the data that corresponds to structure in the real world, and if the real world isn’t misbehaving, that structure should be somewhat stable. Suppose the relationship changed dramatically from one time period to another: then a model fit on one period would be less useful, because it might fit poorly on data from another.</p>
-<p>Create the 1997 data, then get predictions for every 1997 country from the straight line (fitted on 2007 training countries) with the <code>newdata</code> argument, and compute the MSE.</p>
+<p><strong>Step 2.</strong> Repeat the whole competition 50 times: a new random split each time, the same <code>k = 5</code> predictor fitted on the new training set and scored on the new test set. The loop is written for you; fill in the two lines that do the work.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>gm1997 <span class="ot">&lt;-</span> gapminder <span class="sc">|&gt;</span> <span class="fu">filter</span>(year <span class="sc">==</span> <span class="dv">1997</span>) <span class="sc">|&gt;</span> <span class="fu">mutate</span>(<span class="at">lgdp =</span> <span class="fu">log10</span>(gdpPercap))</span>
-<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="co"># mse_lm_1997 &lt;- mean((gm1997$lifeExp - predict(model_lm, newdata = ____))^2)</span></span>
-<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>one_competition <span class="ot">&lt;-</span> <span class="cf">function</span>(<span class="at">k =</span> <span class="dv">5</span>) {</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>  test_id <span class="ot">&lt;-</span> <span class="fu">sample</span>(<span class="fu">nrow</span>(gm), <span class="dv">42</span>)</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>  train_i <span class="ot">&lt;-</span> gm[<span class="sc">-</span>test_id, ]</span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>  test_i <span class="ot">&lt;-</span> gm[test_id, ]</span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>  pred_i <span class="ot">&lt;-</span> <span class="fu">numeric</span>(<span class="fu">nrow</span>(test_i))</span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (j <span class="cf">in</span> <span class="fu">seq_len</span>(<span class="fu">nrow</span>(test_i))) {</span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>    ...</span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>  ...</span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a>many_mse <span class="ot">&lt;-</span> <span class="fu">replicate</span>(<span class="dv">50</span>, <span class="fu">one_competition</span>(<span class="at">k =</span> <span class="dv">5</span>))</span>
+<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="fu">data.frame</span>(<span class="at">mse =</span> many_mse), <span class="fu">aes</span>(mse)) <span class="sc">+</span></span>
+<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">bins =</span> <span class="dv">15</span>)</span>
+<span id="cb15-14"><a href="#cb15-14" aria-hidden="true" tabindex="-1"></a><span class="fu">c</span>(<span class="at">mean =</span> <span class="fu">mean</span>(many_mse), <span class="at">sd =</span> <span class="fu">sd</span>(many_mse))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<p><strong>Question 5.</strong> Is it surprising how well the model does on 1997? The 1997 rows are the <em>same 142 countries</em>, ten years earlier. Has the model predicted anything new? What question does this test answer, and what question did the held-out split in part 1 answer?</p>
+<p><strong>Question 4.</strong> Compare the standard deviation of the 50 scores with the standard error from step 1. Are they the same kind of number? Which of the two could a competition organiser compute?</p>
 </section>
 </section>
-<section id="before-you-leave" class="level2">
-<h2 class="anchored" data-anchor-id="before-you-leave">Before you leave</h2>
+<section id="before-you-leave" class="level2 retrieval">
+<h2 class="retrieval anchored" data-anchor-id="before-you-leave">Before you leave</h2>
 <!-- 5 min -->
-<p>Compare your table from part 2 with your neighbor’s. Did the same <code>k</code> win? Write one sentence on what that means for a leaderboard, and one on what the organizer should report next to each score.</p>
+<p>Compare your table from part 2 with your neighbour’s. Did the same <code>k</code> win? Write one sentence on what that means for a leaderboard, and one on what the organiser should report next to each score.</p>
+</section>
+<section id="alternative-datasets" class="level2">
+<h2 class="anchored" data-anchor-id="alternative-datasets">Alternative datasets</h2>
+<p>The same code runs on any data frame with a numeric input and a numeric outcome. Rename the columns to <code>lgdp</code> and <code>lifeExp</code>, or edit the code, and redo parts 1 to 3. See the data notes (<a href="https://ml4ds.com/data/candy.html">candy</a>, <a href="https://ml4ds.com/data/concrete.html">concrete</a>) for provenance.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># The column names lgdp and lifeExp are reused on purpose, so that parts 1 to 3 run unchanged.</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Candy rankings (fivethirtyeight): predict the win percentage from the sugar percentile.</span></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Several candies share a sugar percentile, so the k = 1 training error is not zero here.</span></span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(fivethirtyeight)</span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>alt <span class="ot">&lt;-</span> candy_rankings <span class="sc">|&gt;</span></span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">transmute</span>(<span class="at">lgdp =</span> sugarpercent, <span class="at">lifeExp =</span> winpercent)    <span class="co"># 85 candies, hold out 25</span></span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Concrete compressive strength (AppliedPredictiveModeling): predict strength from cement content.</span></span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(AppliedPredictiveModeling)</span>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(concrete)</span>
+<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a>alt <span class="ot">&lt;-</span> concrete <span class="sc">|&gt;</span></span>
+<span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">transmute</span>(<span class="at">lgdp =</span> Cement, <span class="at">lifeExp =</span> CompressiveStrength)  <span class="co"># 1030 mixtures, hold out 300</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
 
 
 </section>

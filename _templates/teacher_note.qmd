@@ -1,0 +1,44 @@
+---
+title: "Teacher note: week N seminar"
+subtitle: "For class teachers. Not for students."
+format:
+  html:
+    toc: true
+  pdf:
+    pdf-engine: xelatex
+    papersize: a4
+    geometry: margin=2cm
+---
+
+<!--
+TEMPLATE. Short: teachers should be able to prepare from it in twenty minutes.
+Must contain: the plan with minutes (80 of content inside the 90-minute
+booking); cut instructions that name the task, not a bare step number; the
+intervention thresholds in one line;
+expected answers to the opener and the problems (with common errors and the
+minimal hint to give); answers to the coding questions as ranges, since
+students' splits differ, tagged [unaffirmed] with a one-line gloss until
+someone has reproduced them outside the build sandbox; what changes with the alternative datasets; where
+students get stuck.
+-->
+
+## Plan
+
+| Segment | Minutes | Students do | Teacher does |
+|---|---|---|---|
+| Opener | 5 | | |
+| Problems | 21 | | |
+| Coding | 49 | | |
+| Exit | 5 | | |
+
+Thresholds: R idiosyncrasies get a short leash; general debugging a longer one; statistical confusion the longest.
+
+## Opener: expected answers
+
+## Problems: answers, common errors, minimal hints
+
+## Coding: what students should see
+
+## Alternative datasets
+
+## Where students get stuck

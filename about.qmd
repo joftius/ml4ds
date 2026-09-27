@@ -1,0 +1,66 @@
+---
+title: "About this course"
+description: |
+  Some additional details about the course
+toc: true
+---
+
+[Course guide listing](https://www.lse.ac.uk/resources/calendar2026-2027/courseGuides/ST/2026_ST310.htm): includes information about requirements and assessments. Where this website and the guide disagree, the guide wins.
+
+Lecturer: [Joshua Loftus](https://joshualoftus.com/). Seminars are run by the class teachers and by me.
+
+## Assessment
+
+The assessment is as described in the [course guide](https://www.lse.ac.uk/resources/calendar2026-2027/courseGuides/ST/2026_ST310.htm); details of each component will be given on Moodle during the term.
+
+- **Formative.** Two problem sets (out in weeks 2 and 8) and short problems in the seminars. These don't count toward marks. Compare your work with the solutions when they're released, and if you have questions after that, submit your work on Moodle with specific feedback requests.
+
+## References
+
+These are all available free online at the links below.
+
+#### [ISLR](https://www.statlearning.com/): An Introduction to Statistical Learning with Applications in R
+
+Our main text for most of the term. Readings are given by chapter and page from the second edition.
+
+#### [PPA](https://mlstory.org/): Patterns, Predictions, and Actions
+
+Where the idea of machine learning as a prediction competition comes from, and our reference for a few topics that computer scientists cover and statisticians' textbooks don't.
+
+#### [CausalML](https://causalml-book.org/): Applied Causal Inference Powered by ML and AI
+
+A reference for the causal thread of the course (weeks 3, 8 and 10); assigned as optional deeper reading, and the natural next stop after week 10.
+
+#### [R4DS](https://r4ds.hadley.nz/): R for Data Science
+
+There are many good sources about R that you can find online, but this one has the advantage of offering one coherent point of view.
+
+#### Going deeper
+
+[ESL](https://hastie.su.domains/ElemStatLearn/) (Elements of Statistical Learning) is the more advanced version of ISLR, by some of the same authors; most of the theorems in this course are in it somewhere. [CASI](https://hastie.su.domains/CASI/) (Computer Age Statistical Inference) has a different emphasis and some history. [IML](https://christophm.github.io/interpretable-ml-book/) (Interpretable Machine Learning) is our reference for partial dependence, feature importance and Shapley values; we refer to it by chapter title because its chapter numbers keep changing.
+
+#### Ethical guidelines
+
+Brief documents published by professional societies on the ethical practice of statistics or data science. They are all worth reading and comparing: [Royal Statistical Society](https://rss.org.uk/RSS/media/News-and-publications/Publications/Reports%20and%20guides/A-Guide-for-Ethical-Data-Science-Final-Oct-2019.pdf), [American Statistical Association](https://www.amstat.org/your-career/ethical-guidelines-for-statistical-practice), [Association for Computing Machinery](https://www.acm.org/code-of-ethics).
+
+## Installing R and RStudio
+
+First [install R](https://cran.r-project.org/) and then [RStudio](https://posit.co/download/rstudio-desktop/) (RStudio includes Quarto, which renders the seminar notebooks). Open RStudio and run
+
+```r
+install.packages(c("tidyverse", "gapminder", "broom", "palmerpenguins", "modeldata",
+                   "yardstick", "ggdag", "dagitty", "patchwork", "glmnet", "ISLR2",
+                   "mgcv", "ggplot2movies", "randomForest", "pdp", "rpart", "partykit",
+                   "xgboost", "kernelshap", "shapviz", "fivethirtyeight",
+                   "AppliedPredictiveModeling"))
+```
+
+This is every package the seminar notebooks load, for the whole term (`MASS`, also used, ships with R). Week 1 needs only the first three. The seminar notebooks are Quarto (`.qmd`) files: open them in RStudio and either press *Render* or run the chunks one at a time.
+
+The course guide requires students with no experience of R to complete the Digital Skills Lab's pre-sessional R course; if that is you and you have not done it, do it in the first week, because the seminars assume it from week 1 (writing a function and a `for` loop) and build on it (numerical linear algebra, recursion, several package interfaces). The Lab lists the current term's courses on Moodle and runs daily online drop-in sessions: [Digital Skills Lab](https://info.lse.ac.uk/current-students/digital-skills-lab/r). The first seminar starts with a chunk that loads the packages, so you will know at once whether your installation works.
+
+**Note**: on a Mac or Linux computer you may prefer to install R and RStudio with a package manager. Personally, on a Mac I use [Homebrew](https://brew.sh/).
+
+## A request
+
+As a courtesy, please don't use any "AI" tools in your communications with me or the teaching staff. This also applies to all aspects of this course. We are here to train our own minds, not to replace them. I'll say more about why during the term; I'm an interested party, and you're welcome to argue with me about it.

@@ -1,0 +1,94 @@
+project:
+  type: website
+  output-dir: docs
+  # Explicit render list. Only files matched here are rendered; legacy .Rmd
+  # sources, the instructor project, the complete notebooks and the templates
+  # stay out of the public tree. See README.md ("Render rules").
+  # STAGED RELEASE (from 25 September 2026). Only the weeks that have been
+  # through the review corrections are rendered; add a week's folder and the
+  # data notes it uses when it is released. Everything not listed stays out of
+  # the public tree, including the later weeks' student notebooks.
+  render:
+    - "index.qmd"
+    - "about.qmd"
+    - "weeks/01-introduction-foundations/**/*.qmd"
+    - "data/gapminder.md"
+    - "data/candy.md"
+    - "data/concrete.md"
+    - "!weeks/**/*_complete.qmd"
+    - "!instructor/**"
+    - "!_templates/**"
+    - "!_build_env/**"
+    - "!**/*.Rmd"
+    - "!README*.md"
+  # Student-downloadable sources: the incomplete notebooks are copied next to
+  # their rendered HTML so that ".html -> .qmd" in the address bar still works.
+  # Listed per released week, for the same reason as the render list.
+  resources:
+    - "files/**"
+    - "weeks/01-introduction-foundations/notebooks/notebook1.qmd"
+    - "!instructor/**"
+    - "!_templates/**"
+    - "!_build_env/**"
+    - "!**/*_complete.qmd"
+    - "!**/*.Rmd"
+  preview:
+    port: 4321
+    browser: false
+
+website:
+  title: "machine learning 4 data science"
+  description: "ST310 at LSE: a core set of machine learning methods, practised in R, and what a prediction competition does and does not establish."
+  site-url: https://ml4ds.com
+  search: false
+  navbar:
+    lowercase: true
+    logo: files/sticker.png
+    logo-alt: "ml4ds"
+    logo-href: https://ml4ds.com
+    right:
+      - text: "references"
+        menu:
+          - text: "ISLR"
+            href: https://www.statlearning.com/
+          - text: "PPA (Patterns, Predictions, and Actions)"
+            href: https://mlstory.org/
+          - text: "CausalML"
+            href: https://causalml-book.org/
+          - text: "R4DS"
+            href: https://r4ds.hadley.nz/
+          - text: "ESL"
+            href: https://hastie.su.domains/ElemStatLearn/
+          - text: "CASI"
+            href: https://hastie.su.domains/CASI/
+          - text: "IML"
+            href: https://christophm.github.io/interpretable-ml-book/
+      - text: "content"
+        href: index.qmd
+      - text: "about"
+        href: about.qmd
+  page-footer:
+    left: "ST310 Machine Learning, LSE. Original course content CC BY 4.0 except where otherwise credited; datasets and images carry their own licences."
+
+format:
+  html:
+    theme: cosmo
+    css: styles.css
+    toc: true
+    toc-depth: 2
+    code-copy: true
+    code-overflow: wrap
+    fig-width: 7
+    fig-height: 4.5
+    fig-dpi: 150
+    cookie-consent:
+      type: express
+      style: simple
+      palette: light
+
+execute:
+  freeze: auto
+  warning: false
+  message: false
+
+editor: source
