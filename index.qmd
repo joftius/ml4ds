@@ -6,7 +6,7 @@ toc: true
 toc-depth: 2
 ---
 
-Readings and lectures are complementary so do both, and bring a laptop with R and RStudio to the seminar (see [about](about.html) for setup). The seminar notebook for each week is linked below; the `.qmd` link is the source file to open in RStudio, the other link is the same notebook rendered so you can read it in a browser.
+Readings and lectures are complementary so do both, and bring a laptop with R and RStudio to the seminar (see [about](about.html) for setup). The seminar notebook for each week is linked below; the `.qmd` link downloads the source file to open in RStudio, the other link is the same notebook rendered so you can read it in a browser.
 
 ## Week 1: prediction competitions and nearest neighbors
 
@@ -22,7 +22,7 @@ If you finish these quickly you may want to start Chapter 3, because it's a long
 
 **Lecture:** [slides](weeks/01-introduction-foundations/slides/01-1-introduction.html)
 
-**Seminar:** [notebook](weeks/01-introduction-foundations/notebooks/notebook1.html) ([.qmd](weeks/01-introduction-foundations/notebooks/notebook1.qmd))
+**Seminar:** [notebook](weeks/01-introduction-foundations/notebooks/notebook1.html) ([.qmd](https://ml4ds.com/weeks/01-introduction-foundations/notebooks/notebook1.qmd){download="notebook1.qmd"})
 
 ## Week 2: linear regression
 

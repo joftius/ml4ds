@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # ST310 site: import a delivery folder from Dropbox, render, check, deploy.
-# Lives at _build_env/build.sh inside the st310-build repo (outside Dropbox).
+# Lives at _build_env/build.sh inside the ml4ds repo clone, ~/work/teaching/ml4ds (outside Dropbox and iCloud).
 #
 #   _build_env/build.sh import <delivery-folder>      copy sources in (rsync; skips root-level *.md such as CHANGES.md)
 #   _build_env/build.sh student                       regenerate every weeks/*/notebooks/notebookN.qmd from instructor/.../notebookN_complete.qmd

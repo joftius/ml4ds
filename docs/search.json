@@ -389,7 +389,7 @@
     "href": "index.html",
     "title": "ST310 course page",
     "section": "",
-    "text": "Readings and lectures are complementary so do both, and bring a laptop with R and RStudio to the seminar (see about for setup). The seminar notebook for each week is linked below; the .qmd link is the source file to open in RStudio, the other link is the same notebook rendered so you can read it in a browser."
+    "text": "Readings and lectures are complementary so do both, and bring a laptop with R and RStudio to the seminar (see about for setup). The seminar notebook for each week is linked below; the .qmd link downloads the source file to open in RStudio, the other link is the same notebook rendered so you can read it in a browser."
   },
   {
     "objectID": "index.html#week-1-prediction-competitions-and-nearest-neighbors",
