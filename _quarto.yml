@@ -1,32 +1,31 @@
 project:
   type: website
   output-dir: docs
-  # Explicit render list. Only files matched here are rendered; legacy .Rmd
-  # sources, the instructor project, the complete notebooks and the templates
-  # stay out of the public tree. See README.md ("Render rules").
-  # STAGED RELEASE (from 25 September 2026). Only the weeks that have been
-  # through the review corrections are rendered; add a week's folder and the
-  # data notes it uses when it is released. Everything not listed stays out of
-  # the public tree, including the later weeks' student notebooks.
+  # Render list. From 28 September 2026 the rule is: whatever week folders are
+  # in this build tree are live. A week is imported into the tree (with
+  # _build_env/build.sh import) only when it is released, so the per-week
+  # entries of the staged-release list are replaced by globs. The instructor
+  # project, the complete notebooks, the templates and the build helpers stay
+  # out of the public tree regardless.
   render:
     - "index.qmd"
     - "about.qmd"
-    - "weeks/01-introduction-foundations/**/*.qmd"
-    - "data/gapminder.md"
-    - "data/candy.md"
-    - "data/concrete.md"
+    - "weeks/**/*.qmd"
+    - "data/*.md"
     - "!weeks/**/*_complete.qmd"
     - "!instructor/**"
     - "!_templates/**"
     - "!_build_env/**"
     - "!**/*.Rmd"
     - "!README*.md"
-  # Student-downloadable sources: the incomplete notebooks are copied next to
-  # their rendered HTML so that ".html -> .qmd" in the address bar still works.
-  # Listed per released week, for the same reason as the render list.
+  # Student-downloadable sources: the student notebooks (notebookN.qmd, generated
+  # from instructor/.../notebookN_complete.qmd by _build_env/make_incomplete.py)
+  # are copied next to their rendered HTML so that ".html -> .qmd" in the
+  # address bar still works. Complete notebooks are not under weeks/, and are
+  # excluded again here in case one is ever put there by mistake.
   resources:
     - "files/**"
-    - "weeks/01-introduction-foundations/notebooks/notebook1.qmd"
+    - "weeks/*/notebooks/*.qmd"
     - "!instructor/**"
     - "!_templates/**"
     - "!_build_env/**"
@@ -38,7 +37,7 @@ project:
 
 website:
   title: "machine learning 4 data science"
-  description: "ST310 at LSE: a core set of machine learning methods, practised in R, and what a prediction competition does and does not establish."
+  description: "ST310 at LSE: a core set of machine learning methods, practiced in R, and what a prediction competition does and does not establish."
   site-url: https://ml4ds.com
   search: false
   navbar:

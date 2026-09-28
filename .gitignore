@@ -1,7 +1,12 @@
+# Never on GitHub: complete notebooks, teacher notes, board scripts, their renders.
 instructor/
+
+# Build state. docs/ (including docs/**/*_files/) is committed: it is the site.
 _freeze/
-.DS_Store
 .quarto/
+/.Rproj.user/
+/*.Rproj
+.DS_Store
 
 /.quarto/
 **/*.quarto_ipynb

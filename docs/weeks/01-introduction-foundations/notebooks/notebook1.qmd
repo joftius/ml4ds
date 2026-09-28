@@ -274,3 +274,4 @@ gm1997 <- gapminder |> filter(year == 1997) |> mutate(lgdp = log10(gdpPercap))
 <!-- 5 min -->
 
 Compare your table from part 2 with your neighbor's. Did the same `k` win? Write one sentence on what that means for a leaderboard, and one on what the organizer should report next to each score.
+
