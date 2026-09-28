@@ -40,9 +40,9 @@ These four problems rebuild the pieces of the lecture's bias--variance decomposi
 
 (a) Show that $\mathbb E[Z^2] = \sigma^2 + \mu^2$.
 
-(b) In the lecture's model $Y_0 = f(x_0) + \varepsilon_0$, the noise has mean $0$ and variance $\sigma^2$. What is $\mathbb E[\varepsilon_0^2]$?
+(b) In the lecture's model $Y_0 = f^\star(x_0) + \varepsilon_0$, the noise has mean $0$ and variance $\sigma^2$. What is $\mathbb E[\varepsilon_0^2]$?
 
-(c) Now let $Z = f(x_0) - \hat f(x_0)$, where $f(x_0)$ is a fixed number and $\hat f(x_0)$ is a random predictor with mean $m$ and variance $v$. Write $\mathbb E[Z^2]$ in terms of $f(x_0)$, $m$ and $v$. Which piece is a bias, and which a variance?
+(c) Now let $Z = f^\star(x_0) - \hat f(x_0)$, where $f^\star(x_0)$ is a fixed number and $\hat f(x_0)$ is a random predictor with mean $m$ and variance $v$. Write $\mathbb E[Z^2]$ in terms of $f^\star(x_0)$, $m$ and $v$. Which piece is a bias, and which a variance?
 
 **Problem 2.** Let $Y_1, \ldots, Y_k$ be independent random variables, each with variance $\sigma^2$, and let $\bar Y = \frac1k \sum_{l=1}^k Y_l$.
 
@@ -50,7 +50,7 @@ These four problems rebuild the pieces of the lecture's bias--variance decomposi
 
 (b) Suppose instead that $Y_1 = Y_2 = \cdots = Y_k$ (the same random variable repeated). What is $\mathrm{Var}(\bar Y)$ now? What does this say about averaging things that are not really different?
 
-**Problem 3.** In the lecture's setting, the new outcome's noise $\varepsilon_0$ has mean $0$ and is independent of the training data. Let $g$ be any function of the training data (for example, $g = f(x_0) - \hat f_k(x_0)$).
+**Problem 3.** In the lecture's setting, the new outcome's noise $\varepsilon_0$ has mean $0$ and is independent of the training data. Let $g$ be any function of the training data (for example, $g = f^\star(x_0) - \hat f_k(x_0)$).
 
 (a) Show that $\mathbb E[\varepsilon_0\, g] = 0$.
 

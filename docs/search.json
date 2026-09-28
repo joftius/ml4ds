@@ -137,7 +137,7 @@
     "href": "weeks/01-introduction-foundations/slides/01-1-introduction.html#uncertainty-opens-the-door-for-probability",
     "title": "Machine learning",
     "section": "Uncertainty opens the door for probability",
-    "text": "Uncertainty opens the door for probability\n\nAssume a probability distribution (adequately) models the data/errors\n\nDefine a good function as one that minimizes\n\\[\n\\mathbb E[\\varepsilon^2] = \\mathbb E\\{[Y - f(X)]^2\\}\n\\]\n\n\nAssume the data/error is sampled independently\n\nMotivates the plug-in principle: compute an estimate \\(\\hat f\\) of the good function \\(f\\) by solving the corresponding problem on the dataset, i.e.\n\\[\n\\text{minimize} \\sum_{i=1}^n \\left[y_i - \\hat f(x_i)\\right]^2\n\\]"
+    "text": "Uncertainty opens the door for probability\n\nAssume a probability distribution (adequately) models the data/errors\n\nDefine the best function \\(f^\\star\\) as the minimizer, over all \\(f\\), of\n\\[\n\\mathbb E[\\varepsilon^2] = \\mathbb E\\{[Y - f(X)]^2\\}\n\\]\n\n\nAssume the data/error is sampled independently\n\nMotivates the plug-in principle: compute an estimate \\(\\hat f\\) of the best function \\(f^\\star\\) by solving the corresponding problem on the dataset, i.e.\n\\[\n\\text{minimize} \\sum_{i=1}^n \\left[y_i - \\hat f(x_i)\\right]^2\n\\]"
   },
   {
     "objectID": "weeks/01-introduction-foundations/slides/01-1-introduction.html#very-useful-assumptions",
@@ -249,49 +249,49 @@
     "href": "weeks/01-introduction-foundations/slides/01-1-introduction.html#what-makes-a-nearest-neighbor-prediction-wrong-board",
     "title": "Machine learning",
     "section": "What makes a nearest-neighbor prediction wrong? board",
-    "text": "What makes a nearest-neighbor prediction wrong? board\n\\(y_i = f(x_i) + \\varepsilon_i\\), inputs fixed, noise independent, mean \\(0\\), variance \\(\\sigma^2\\); new \\(Y_0 = f(x_0) + \\varepsilon_0\\).\nWe want \\(\\mathbb E\\big[(Y_0 - \\hat f_k(x_0))^2\\big]\\), the expected squared error of the \\(k\\)-nearest-neighbor prediction at \\(x_0\\).\n\nTwo facts from ST102 do all the work at the board. Which two? Write them down before we start."
+    "text": "What makes a nearest-neighbor prediction wrong? board\n\\(y_i = f^\\star(x_i) + \\varepsilon_i\\), inputs fixed, noise independent, mean \\(0\\), variance \\(\\sigma^2\\); new \\(Y_0 = f^\\star(x_0) + \\varepsilon_0\\).\nWe want \\(\\mathbb E\\big[(Y_0 - \\hat f_k(x_0))^2\\big]\\), the expected squared error of the \\(k\\)-nearest-neighbor prediction at \\(x_0\\).\n\nTwo facts from ST102 do all the work at the board. Which two? Write them down before we start."
   },
   {
     "objectID": "weeks/01-introduction-foundations/slides/01-1-introduction.html#biasvariance-decomposition-board",
     "href": "weeks/01-introduction-foundations/slides/01-1-introduction.html#biasvariance-decomposition-board",
     "title": "Machine learning",
     "section": "Bias–variance decomposition board",
-    "text": "Bias–variance decomposition board\n\\(y_i = f(x_i) + \\varepsilon_i\\), inputs fixed, noise independent, mean \\(0\\), variance \\(\\sigma^2\\); new \\(Y_0 = f(x_0) + \\varepsilon_0\\).\nBias–variance decomposition. \\[\n\\mathbb E\\big[(Y_0 - \\hat f_k(x_0))^2\\big]\n= \\underbrace{\\sigma^2}_{\\text{noise}}\n+ \\underbrace{\\Big[f(x_0) - \\tfrac{1}{k}\\textstyle\\sum_{l=1}^k f(x_{(l)})\\Big]^2}_{\\text{bias}^2}\n+ \\underbrace{\\frac{\\sigma^2}{k}}_{\\text{variance}}\n\\]\n\nnoise + bias² + variance. Variance falls in \\(k\\), always. Bias typically grows too, but it need not be monotonic (a constant \\(f\\) keeps it at zero for every \\(k\\))."
+    "text": "Bias–variance decomposition board\n\\(y_i = f^\\star(x_i) + \\varepsilon_i\\), inputs fixed, noise independent, mean \\(0\\), variance \\(\\sigma^2\\); new \\(Y_0 = f^\\star(x_0) + \\varepsilon_0\\).\nBias–variance decomposition. \\[\n\\mathbb E\\big[(Y_0 - \\hat f_k(x_0))^2\\big]\n= \\underbrace{\\sigma^2}_{\\text{noise}}\n+ \\underbrace{\\Big[f^\\star(x_0) - \\tfrac{1}{k}\\textstyle\\sum_{l=1}^k f^\\star(x_{(l)})\\Big]^2}_{\\text{bias}^2}\n+ \\underbrace{\\frac{\\sigma^2}{k}}_{\\text{variance}}\n\\]\n\nnoise + bias² + variance. Variance falls in \\(k\\), always. Bias typically grows too, but it need not be monotonic (a constant \\(f^\\star\\) keeps it at zero for every \\(k\\))."
   },
   {
     "objectID": "weeks/01-introduction-foundations/slides/01-1-introduction.html#biasvariance-decomposition-line-1",
     "href": "weeks/01-introduction-foundations/slides/01-1-introduction.html#biasvariance-decomposition-line-1",
     "title": "Machine learning",
     "section": "Bias–variance decomposition, line 1",
-    "text": "Bias–variance decomposition, line 1\n\\[\nY_0 - \\hat f_k(x_0) = \\varepsilon_0 + \\big[f(x_0) - \\hat f_k(x_0)\\big]\n\\]\nSquare, take expectations: \\[\n\\mathbb E\\big[(Y_0 - \\hat f_k(x_0))^2\\big] = \\mathbb E[\\varepsilon_0^2] + 2\\,\\mathbb E\\big[\\varepsilon_0 \\,(f(x_0) - \\hat f_k(x_0))\\big] + \\mathbb E\\big[(f(x_0) - \\hat f_k(x_0))^2\\big]\n\\]"
+    "text": "Bias–variance decomposition, line 1\n\\[\nY_0 - \\hat f_k(x_0) = \\varepsilon_0 + \\big[f^\\star(x_0) - \\hat f_k(x_0)\\big]\n\\]\nSquare, take expectations: \\[\n\\mathbb E\\big[(Y_0 - \\hat f_k(x_0))^2\\big] = \\mathbb E[\\varepsilon_0^2] + 2\\,\\mathbb E\\big[\\varepsilon_0 \\,(f^\\star(x_0) - \\hat f_k(x_0))\\big] + \\mathbb E\\big[(f^\\star(x_0) - \\hat f_k(x_0))^2\\big]\n\\]"
   },
   {
     "objectID": "weeks/01-introduction-foundations/slides/01-1-introduction.html#biasvariance-decomposition-line-2",
     "href": "weeks/01-introduction-foundations/slides/01-1-introduction.html#biasvariance-decomposition-line-2",
     "title": "Machine learning",
     "section": "Bias–variance decomposition, line 2",
-    "text": "Bias–variance decomposition, line 2\n\\(\\varepsilon_0\\) is independent of everything in \\(\\hat f_k(x_0)\\) and has mean \\(0\\): \\[\n\\mathbb E\\big[\\varepsilon_0 \\,(f(x_0) - \\hat f_k(x_0))\\big] = \\mathbb E[\\varepsilon_0]\\; \\mathbb E\\big[f(x_0) - \\hat f_k(x_0)\\big] = 0\n\\]\nLeft with \\[\n\\sigma^2 + \\mathbb E\\big[(f(x_0) - \\hat f_k(x_0))^2\\big]\n\\]"
+    "text": "Bias–variance decomposition, line 2\n\\(\\varepsilon_0\\) is independent of everything in \\(\\hat f_k(x_0)\\) and has mean \\(0\\): \\[\n\\mathbb E\\big[\\varepsilon_0 \\,(f^\\star(x_0) - \\hat f_k(x_0))\\big] = \\mathbb E[\\varepsilon_0]\\; \\mathbb E\\big[f^\\star(x_0) - \\hat f_k(x_0)\\big] = 0\n\\]\nLeft with \\[\n\\sigma^2 + \\mathbb E\\big[(f^\\star(x_0) - \\hat f_k(x_0))^2\\big]\n\\]"
   },
   {
     "objectID": "weeks/01-introduction-foundations/slides/01-1-introduction.html#biasvariance-decomposition-line-3",
     "href": "weeks/01-introduction-foundations/slides/01-1-introduction.html#biasvariance-decomposition-line-3",
     "title": "Machine learning",
     "section": "Bias–variance decomposition, line 3",
-    "text": "Bias–variance decomposition, line 3\nAdd and subtract \\(\\mathbb E \\hat f_k(x_0)\\) inside the square: \\[\n\\mathbb E\\big[(f(x_0) - \\hat f_k(x_0))^2\\big] = \\big[f(x_0) - \\mathbb E\\hat f_k(x_0)\\big]^2 + \\mathrm{Var}\\big(\\hat f_k(x_0)\\big)\n\\]\n(The cross term is \\(2[f(x_0) - \\mathbb E\\hat f_k(x_0)]\\,\\mathbb E[\\mathbb E\\hat f_k(x_0) - \\hat f_k(x_0)] = 0\\).)"
+    "text": "Bias–variance decomposition, line 3\nAdd and subtract \\(\\mathbb E \\hat f_k(x_0)\\) inside the square: \\[\n\\mathbb E\\big[(f^\\star(x_0) - \\hat f_k(x_0))^2\\big] = \\big[f^\\star(x_0) - \\mathbb E\\hat f_k(x_0)\\big]^2 + \\mathrm{Var}\\big(\\hat f_k(x_0)\\big)\n\\]\n(The cross term is \\(2[f^\\star(x_0) - \\mathbb E\\hat f_k(x_0)]\\,\\mathbb E[\\mathbb E\\hat f_k(x_0) - \\hat f_k(x_0)] = 0\\).)"
   },
   {
     "objectID": "weeks/01-introduction-foundations/slides/01-1-introduction.html#biasvariance-decomposition-lines-4-and-5",
     "href": "weeks/01-introduction-foundations/slides/01-1-introduction.html#biasvariance-decomposition-lines-4-and-5",
     "title": "Machine learning",
     "section": "Bias–variance decomposition, lines 4 and 5",
-    "text": "Bias–variance decomposition, lines 4 and 5\nThe neighborhood is fixed, so \\[\n\\mathbb E\\hat f_k(x_0) = \\frac{1}{k}\\sum_{l=1}^k f(x_{(l)}),\n\\qquad\n\\mathrm{Var}\\big(\\hat f_k(x_0)\\big) = \\frac{1}{k^2}\\sum_{l=1}^k \\sigma^2 = \\frac{\\sigma^2}{k}\n\\]\nSubstitute: \\[\n\\mathbb E\\big[(Y_0 - \\hat f_k(x_0))^2\\big] = \\sigma^2 + \\Big[f(x_0) - \\tfrac{1}{k}\\textstyle\\sum_{l=1}^k f(x_{(l)})\\Big]^2 + \\frac{\\sigma^2}{k} \\qquad \\blacksquare\n\\]\n(ESL §7.3, equation 7.10. cc’s Theorem A.)"
+    "text": "Bias–variance decomposition, lines 4 and 5\nThe neighborhood is fixed, so \\[\n\\mathbb E\\hat f_k(x_0) = \\frac{1}{k}\\sum_{l=1}^k f^\\star(x_{(l)}),\n\\qquad\n\\mathrm{Var}\\big(\\hat f_k(x_0)\\big) = \\frac{1}{k^2}\\sum_{l=1}^k \\sigma^2 = \\frac{\\sigma^2}{k}\n\\]\nSubstitute: \\[\n\\mathbb E\\big[(Y_0 - \\hat f_k(x_0))^2\\big] = \\sigma^2 + \\Big[f^\\star(x_0) - \\tfrac{1}{k}\\textstyle\\sum_{l=1}^k f^\\star(x_{(l)})\\Big]^2 + \\frac{\\sigma^2}{k} \\qquad \\blacksquare\n\\]\n(ESL §7.3, equation 7.10.)"
   },
   {
     "objectID": "weeks/01-introduction-foundations/slides/01-1-introduction.html#where-the-bias-comes-from",
     "href": "weeks/01-introduction-foundations/slides/01-1-introduction.html#where-the-bias-comes-from",
     "title": "Machine learning",
     "section": "Where the bias comes from",
-    "text": "Where the bias comes from\n\nPink: the neighbors used at the dashed line. Dark curve: a stand-in for \\(f\\). With 30 neighbors the average of \\(f\\) over the pink points is not \\(f\\) at the line."
+    "text": "Where the bias comes from\n\nPink: the neighbors used at the dashed line. Dark curve: a stand-in for \\(f^\\star\\). With 30 neighbors the average of \\(f^\\star\\) over the pink points is not \\(f^\\star\\) at the line."
   },
   {
     "objectID": "weeks/01-introduction-foundations/slides/01-1-introduction.html#the-curse-of-dimensionality",
@@ -312,7 +312,7 @@
     "href": "weeks/01-introduction-foundations/slides/01-1-introduction.html#far-away-in-many-directions",
     "title": "Machine learning",
     "section": "Far away, in many directions",
-    "text": "Far away, in many directions\n\n\n\n\\(d\\)\nedge to hold 1%\nto hold 10%\n\n\n\n\n1\n0.01\n0.10\n\n\n2\n0.10\n0.32\n\n\n10\n0.63\n0.79\n\n\n100\n0.95\n0.98\n\n\n\nIn ten dimensions, a cube holding 1% of the population spans 63% of each axis. That is not local.\nA nearest-neighbor set is a ball around the query, not a cube, and near the boundary the calculation changes, but the lesson carries: the nearest 1% of the data is far away. So the decomposition’s bias term is where dimension bites: the neighbors are far away, and \\(f\\) has room to drift."
+    "text": "Far away, in many directions\n\n\n\n\\(d\\)\nedge to hold 1%\nto hold 10%\n\n\n\n\n1\n0.01\n0.10\n\n\n2\n0.10\n0.32\n\n\n10\n0.63\n0.79\n\n\n100\n0.95\n0.98\n\n\n\nIn ten dimensions, a cube holding 1% of the population spans 63% of each axis. That is not local.\nA nearest-neighbor set is a ball around the query, not a cube, and near the boundary the calculation changes, but the lesson carries: the nearest 1% of the data is far away. So the decomposition’s bias term is where dimension bites: the neighbors are far away, and \\(f^\\star\\) has room to drift."
   },
   {
     "objectID": "weeks/01-introduction-foundations/slides/01-1-introduction.html#distances-concentrate",
@@ -368,7 +368,7 @@
     "href": "weeks/01-introduction-foundations/notebooks/notebook1.html#problems",
     "title": "Week 1 seminar",
     "section": "Problems",
-    "text": "Problems\n\nThese four problems rebuild the pieces of the lecture’s bias–variance decomposition. They use nothing beyond first-year probability.\nProblem 1. Let \\(Z\\) be a random variable with mean \\(\\mu\\) and variance \\(\\sigma^2\\).\n\nShow that \\(\\mathbb E[Z^2] = \\sigma^2 + \\mu^2\\).\nIn the lecture’s model \\(Y_0 = f(x_0) + \\varepsilon_0\\), the noise has mean \\(0\\) and variance \\(\\sigma^2\\). What is \\(\\mathbb E[\\varepsilon_0^2]\\)?\nNow let \\(Z = f(x_0) - \\hat f(x_0)\\), where \\(f(x_0)\\) is a fixed number and \\(\\hat f(x_0)\\) is a random predictor with mean \\(m\\) and variance \\(v\\). Write \\(\\mathbb E[Z^2]\\) in terms of \\(f(x_0)\\), \\(m\\) and \\(v\\). Which piece is a bias, and which a variance?\n\nProblem 2. Let \\(Y_1, \\ldots, Y_k\\) be independent random variables, each with variance \\(\\sigma^2\\), and let \\(\\bar Y = \\frac1k \\sum_{l=1}^k Y_l\\).\n\nWhat is \\(\\mathrm{Var}(\\bar Y)\\)? Say where independence is used.\nSuppose instead that \\(Y_1 = Y_2 = \\cdots = Y_k\\) (the same random variable repeated). What is \\(\\mathrm{Var}(\\bar Y)\\) now? What does this say about averaging things that are not really different?\n\nProblem 3. In the lecture’s setting, the new outcome’s noise \\(\\varepsilon_0\\) has mean \\(0\\) and is independent of the training data. Let \\(g\\) be any function of the training data (for example, \\(g = f(x_0) - \\hat f_k(x_0)\\)).\n\nShow that \\(\\mathbb E[\\varepsilon_0\\, g] = 0\\).\nGive an example where \\(\\mathbb E[\\varepsilon_0] = 0\\) but \\(\\mathbb E[\\varepsilon_0\\, g] \\neq 0\\). (Think about what happens if the “new” point is one of the training points.)\n\nProblem 4. Five training points, one input each:\n\n\n\n\\(x\\)\n1\n2\n4\n7\n8\n\n\n\n\n\\(y\\)\n3\n5\n4\n10\n9\n\n\n\n\nCompute the \\(k\\)-nearest-neighbor prediction at \\(x_0 = 3.5\\) for \\(k = 1\\), \\(k = 3\\) and \\(k = 5\\).\nWhat is the \\(k = 1\\) prediction at \\(x_0 = 4\\)? At \\(x_0 = 7\\)? What is the training error of the \\(1\\)-NN predictor on these five points?\nWhat is the \\(k = 5\\) predictor, as a function of \\(x_0\\)?"
+    "text": "Problems\n\nThese four problems rebuild the pieces of the lecture’s bias–variance decomposition. They use nothing beyond first-year probability.\nProblem 1. Let \\(Z\\) be a random variable with mean \\(\\mu\\) and variance \\(\\sigma^2\\).\n\nShow that \\(\\mathbb E[Z^2] = \\sigma^2 + \\mu^2\\).\nIn the lecture’s model \\(Y_0 = f^\\star(x_0) + \\varepsilon_0\\), the noise has mean \\(0\\) and variance \\(\\sigma^2\\). What is \\(\\mathbb E[\\varepsilon_0^2]\\)?\nNow let \\(Z = f^\\star(x_0) - \\hat f(x_0)\\), where \\(f^\\star(x_0)\\) is a fixed number and \\(\\hat f(x_0)\\) is a random predictor with mean \\(m\\) and variance \\(v\\). Write \\(\\mathbb E[Z^2]\\) in terms of \\(f^\\star(x_0)\\), \\(m\\) and \\(v\\). Which piece is a bias, and which a variance?\n\nProblem 2. Let \\(Y_1, \\ldots, Y_k\\) be independent random variables, each with variance \\(\\sigma^2\\), and let \\(\\bar Y = \\frac1k \\sum_{l=1}^k Y_l\\).\n\nWhat is \\(\\mathrm{Var}(\\bar Y)\\)? Say where independence is used.\nSuppose instead that \\(Y_1 = Y_2 = \\cdots = Y_k\\) (the same random variable repeated). What is \\(\\mathrm{Var}(\\bar Y)\\) now? What does this say about averaging things that are not really different?\n\nProblem 3. In the lecture’s setting, the new outcome’s noise \\(\\varepsilon_0\\) has mean \\(0\\) and is independent of the training data. Let \\(g\\) be any function of the training data (for example, \\(g = f^\\star(x_0) - \\hat f_k(x_0)\\)).\n\nShow that \\(\\mathbb E[\\varepsilon_0\\, g] = 0\\).\nGive an example where \\(\\mathbb E[\\varepsilon_0] = 0\\) but \\(\\mathbb E[\\varepsilon_0\\, g] \\neq 0\\). (Think about what happens if the “new” point is one of the training points.)\n\nProblem 4. Five training points, one input each:\n\n\n\n\\(x\\)\n1\n2\n4\n7\n8\n\n\n\n\n\\(y\\)\n3\n5\n4\n10\n9\n\n\n\n\nCompute the \\(k\\)-nearest-neighbor prediction at \\(x_0 = 3.5\\) for \\(k = 1\\), \\(k = 3\\) and \\(k = 5\\).\nWhat is the \\(k = 1\\) prediction at \\(x_0 = 4\\)? At \\(x_0 = 7\\)? What is the training error of the \\(1\\)-NN predictor on these five points?\nWhat is the \\(k = 5\\) predictor, as a function of \\(x_0\\)?"
   },
   {
     "objectID": "weeks/01-introduction-foundations/notebooks/notebook1.html#coding",

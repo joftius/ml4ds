@@ -1,0 +1,12 @@
+## Week 5: validation and honest evaluation
+
+Why training error flatters a model (the optimism theorem), the standard error of a held-out score, and cross-validation written out. Then the ways an honest-looking evaluation goes wrong: a leak between training and evaluation data, two leaderboards that disagree, and a score computed on data the model will never meet again (in-distribution against out-of-distribution).
+
+**Reading**
+
+- ISLR Chapter 5, section 5.1, pp. 197–209 (the validation set, leave-one-out and $K$-fold cross-validation, and the bias–variance trade-off in choosing $K$). Section 5.2, the bootstrap, is not part of this course.
+- PPA Chapter 6, pp. 100–106 (the generalization gap; what happens empirically with over-parameterized models), and Chapter 8, pp. 146–148 (the holdout method and Kaggle's secret holdout).
+
+**Lecture and seminar:** released here at the start of the week. Cross-validation written out, with and without a leak; a competition run cleanly; a held-out score under three kinds of shift. Data: the (fictional) attrition outcome, the penguins, simulated data.
+
+Problem set 1 is due this week.

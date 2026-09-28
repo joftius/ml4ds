@@ -1,0 +1,13 @@
+## Week 9: trees and ensembles
+
+A machine that asks the data one question at a time: how a split is found, why a tree is local averaging with the neighborhoods chosen by the data, and how big to grow one. Then two ways to use many trees: bagging and random forests, with the variance of an average of correlated predictions derived at the board and the out-of-bag error as a built-in estimate of held-out error; boosting as gradient descent one small tree at a time, with its three knobs. Permutation importance in the loss-difference convention, and no free lunch retrieved on four entrants.
+
+**Reading**
+
+- ISLR Chapter 8, sections 8.1 and 8.2, pp. 327–353 (trees; bagging, random forests and boosting). The lab in section 8.3 goes with the seminar.
+- IML, the chapter "Permutation feature importance": the definition and the pictures, for recognition.
+- ESL Chapter 15, section 15.4, pp. 597–602 (why random forests work), and Chapter 10, sections 10.9–10.10, pp. 353–361 (boosting trees as gradient descent), for the two board derivations.
+
+Deeper, optional: CausalML Chapter 8, "Predictive inference via modern nonlinear regression", pp. 200–208; Breiman, "Random forests", *Machine Learning* 2001; Friedman, "Greedy function approximation: a gradient boosting machine", *Annals of Statistics* 2001.
+
+**Lecture and seminar:** released here at the start of the week. Split search implemented with running sums, then a recursive tree; training against test error along the pruning path; bagging by hand with an out-of-bag error, random forests by `mtry`, boosting by hand against `xgboost`; permutation importance by hand, on three inputs and then five. Data: the penguins and gapminder ([note](data/gapminder.html)). Problem set 2 is due next week.

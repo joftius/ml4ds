@@ -1,0 +1,15 @@
+## Week 1: prediction competitions and nearest neighbors
+
+What machine learning is and where it came from: two lineages, one field, and the prediction competition (the common task framework) as its working definition, with the Netflix prize as the cautionary tale. A first prediction task, the rule that a prediction may use only what is available at prediction time, a held-out set as the score, and $k$-nearest neighbors as the first method. The bias–variance decomposition derived for $k$-NN at the board, and why nearest neighbors stop working in many dimensions.
+
+**Reading**
+
+- ISLR Chapter 1 (Introduction), pp. 1–14. A quick read; don't skip the section on notation and simple matrix algebra.
+- ISLR Chapter 2 (Statistical Learning), sections 2.1 and 2.2, pp. 15–42. If R is new to you, also do the lab in section 2.3, pp. 42–52.
+- PPA Chapter 1 (Introduction), pp. 1–10.
+
+If you finish these quickly you may want to start Chapter 3, because it's a long one.
+
+**Lecture:** [slides](weeks/01-introduction-foundations/slides/01-1-introduction.html)
+
+**Seminar:** [notebook](weeks/01-introduction-foundations/notebooks/notebook1.html) ([.qmd](https://ml4ds.com/weeks/01-introduction-foundations/notebooks/notebook1.qmd){download="notebook1.qmd"})

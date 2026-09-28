@@ -1,0 +1,14 @@
+## Week 11: what does winning mean?
+
+The competition re-read with everything since: outcome reasoning against model reasoning, the four MARA(s) questions a deployment has to answer and for whom, and the seven recurring flaws of systems that predict something about a person and decide about them. The week-1 task re-run with every entrant the term taught you. One unfamiliar case diagnosed live. The theorems and results in one view. If time allows, the last method: a neural network as composition, fitted by hand.
+
+**Reading**
+
+Delivered in lecture, for reference rather than preparation:
+
+- Rodu and Baiocchi, "When black box algorithms are (not) appropriate", *Observational Studies* 2023 (arXiv 2001.07648): the common task framework, outcome and model reasoning, MARA(s).
+- Wang, Kapoor, Barocas and Narayanan, "Against predictive optimization", *ACM Journal on Responsible Computing* 2024, and the rubric at [predictive-optimization.cs.princeton.edu](https://predictive-optimization.cs.princeton.edu/): the project's justification section uses it.
+
+Optional: ISLR Chapter 10, sections 10.1–10.2, pp. 404–411 (single- and multilayer neural networks), for the optional segment; ISLR Chapter 12, section 12.1, from p. 497, for the reader who wants to see what unsupervised learning is.
+
+**Lecture and seminar:** released here at the start of the week, together with the theorems in one view (statements only, with the week each was proved or derived; bring it to the seminar and try to reproduce each statement from memory first, checking second). One unfamiliar case on paper; a simulated lender in R on which a partial dependence curve, an intervention claim and a SHAP value are checked against a known truth; your own project against MARA(s) and the rubric; problem set 2 retrieved. Data: a supplied simulation, and your project data.

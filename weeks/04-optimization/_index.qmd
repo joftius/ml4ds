@@ -1,0 +1,10 @@
+## Week 4: optimization and model fitting
+
+How a model actually gets fitted: gradient descent, the quadratic case, step sizes and what goes wrong with them, then stochastic gradient descent and why its steps are unbiased. Empirical risk minimization as the common form of every method so far, the bias–variance decomposition in that form, and early stopping as a first kind of regularization.
+
+**Reading**
+
+- PPA Chapter 5 (Optimization), pp. 70–97: gradient descent, the quadratic case, stochastic gradient descent and its analysis, regularization. The two convergence bounds stated in the lecture are proved here.
+- ISLR Chapter 6, section 6.1, pp. 227–237 (subset selection). Section 6.2, pp. 237–252 (ridge and the lasso), is week 7's; reading week is a good time for it.
+
+**Lecture and seminar:** released here at the start of the week. You will write gradient descent yourself, once, and use it twice. Data: gapminder and the penguins, then simulated data.

@@ -571,7 +571,7 @@ X = (X_1, X_2, \ldots, X_p) \in \mathbb R^p
 <ul>
 <li>Assume a probability distribution (adequately) models the data/errors</li>
 </ul>
-<p>Define a good function as one that minimizes</p>
+<p>Define the best function <span class="math inline">\(f^\star\)</span> as the minimizer, over all <span class="math inline">\(f\)</span>, of</p>
 <p><span class="math display">\[
 \mathbb E[\varepsilon^2] = \mathbb E\{[Y - f(X)]^2\}
 \]</span></p>
@@ -579,7 +579,7 @@ X = (X_1, X_2, \ldots, X_p) \in \mathbb R^p
 <ul>
 <li>Assume the data/error is sampled independently</li>
 </ul>
-<p>Motivates the <strong>plug-in principle</strong>: compute an estimate <span class="math inline">\(\hat f\)</span> of the good function <span class="math inline">\(f\)</span> by solving the corresponding problem on the dataset, i.e.</p>
+<p>Motivates the <strong>plug-in principle</strong>: compute an estimate <span class="math inline">\(\hat f\)</span> of the best function <span class="math inline">\(f^\star\)</span> by solving the corresponding problem on the dataset, i.e.</p>
 <p><span class="math display">\[
 \text{minimize} \sum_{i=1}^n \left[y_i - \hat f(x_i)\right]^2
 \]</span></p>
@@ -751,7 +751,7 @@ X = (X_1, X_2, \ldots, X_p) \in \mathbb R^p
 </section>
 <section id="what-makes-a-nearest-neighbor-prediction-wrong-board" class="slide level2">
 <h2>What makes a nearest-neighbor prediction wrong? <span class="board">board</span></h2>
-<p><span class="math inline">\(y_i = f(x_i) + \varepsilon_i\)</span>, inputs fixed, noise independent, mean <span class="math inline">\(0\)</span>, variance <span class="math inline">\(\sigma^2\)</span>; new <span class="math inline">\(Y_0 = f(x_0) + \varepsilon_0\)</span>.</p>
+<p><span class="math inline">\(y_i = f^\star(x_i) + \varepsilon_i\)</span>, inputs fixed, noise independent, mean <span class="math inline">\(0\)</span>, variance <span class="math inline">\(\sigma^2\)</span>; new <span class="math inline">\(Y_0 = f^\star(x_0) + \varepsilon_0\)</span>.</p>
 <p>We want <span class="math inline">\(\mathbb E\big[(Y_0 - \hat f_k(x_0))^2\big]\)</span>, the expected squared error of the <span class="math inline">\(k\)</span>-nearest-neighbor prediction at <span class="math inline">\(x_0\)</span>.</p>
 <div class="ask">
 <p>Two facts from ST102 do all the work at the board. Which two? Write them down before we start.</p>
@@ -759,58 +759,58 @@ X = (X_1, X_2, \ldots, X_p) \in \mathbb R^p
 </section>
 <section id="biasvariance-decomposition-board" class="slide level2">
 <h2>Bias–variance decomposition <span class="board">board</span></h2>
-<p><span class="math inline">\(y_i = f(x_i) + \varepsilon_i\)</span>, inputs fixed, noise independent, mean <span class="math inline">\(0\)</span>, variance <span class="math inline">\(\sigma^2\)</span>; new <span class="math inline">\(Y_0 = f(x_0) + \varepsilon_0\)</span>.</p>
+<p><span class="math inline">\(y_i = f^\star(x_i) + \varepsilon_i\)</span>, inputs fixed, noise independent, mean <span class="math inline">\(0\)</span>, variance <span class="math inline">\(\sigma^2\)</span>; new <span class="math inline">\(Y_0 = f^\star(x_0) + \varepsilon_0\)</span>.</p>
 <p><strong>Bias–variance decomposition.</strong> <span class="math display">\[
 \mathbb E\big[(Y_0 - \hat f_k(x_0))^2\big]
 = \underbrace{\sigma^2}_{\text{noise}}
-+ \underbrace{\Big[f(x_0) - \tfrac{1}{k}\textstyle\sum_{l=1}^k f(x_{(l)})\Big]^2}_{\text{bias}^2}
++ \underbrace{\Big[f^\star(x_0) - \tfrac{1}{k}\textstyle\sum_{l=1}^k f^\star(x_{(l)})\Big]^2}_{\text{bias}^2}
 + \underbrace{\frac{\sigma^2}{k}}_{\text{variance}}
 \]</span></p>
 <div class="leave">
-<p>noise + bias² + variance. Variance falls in <span class="math inline">\(k\)</span>, always. Bias typically grows too, but it need not be monotonic (a constant <span class="math inline">\(f\)</span> keeps it at zero for every <span class="math inline">\(k\)</span>).</p>
+<p>noise + bias² + variance. Variance falls in <span class="math inline">\(k\)</span>, always. Bias typically grows too, but it need not be monotonic (a constant <span class="math inline">\(f^\star\)</span> keeps it at zero for every <span class="math inline">\(k\)</span>).</p>
 </div>
 </section>
 <section id="biasvariance-decomposition-line-1" class="slide level2 backup" data-visibility="uncounted">
 <h2>Bias–variance decomposition, line 1</h2>
 <p><span class="math display">\[
-Y_0 - \hat f_k(x_0) = \varepsilon_0 + \big[f(x_0) - \hat f_k(x_0)\big]
+Y_0 - \hat f_k(x_0) = \varepsilon_0 + \big[f^\star(x_0) - \hat f_k(x_0)\big]
 \]</span></p>
 <p>Square, take expectations: <span class="math display">\[
-\mathbb E\big[(Y_0 - \hat f_k(x_0))^2\big] = \mathbb E[\varepsilon_0^2] + 2\,\mathbb E\big[\varepsilon_0 \,(f(x_0) - \hat f_k(x_0))\big] + \mathbb E\big[(f(x_0) - \hat f_k(x_0))^2\big]
+\mathbb E\big[(Y_0 - \hat f_k(x_0))^2\big] = \mathbb E[\varepsilon_0^2] + 2\,\mathbb E\big[\varepsilon_0 \,(f^\star(x_0) - \hat f_k(x_0))\big] + \mathbb E\big[(f^\star(x_0) - \hat f_k(x_0))^2\big]
 \]</span></p>
 </section>
 <section id="biasvariance-decomposition-line-2" class="slide level2 backup" data-visibility="uncounted">
 <h2>Bias–variance decomposition, line 2</h2>
 <p><span class="math inline">\(\varepsilon_0\)</span> is independent of everything in <span class="math inline">\(\hat f_k(x_0)\)</span> and has mean <span class="math inline">\(0\)</span>: <span class="math display">\[
-\mathbb E\big[\varepsilon_0 \,(f(x_0) - \hat f_k(x_0))\big] = \mathbb E[\varepsilon_0]\; \mathbb E\big[f(x_0) - \hat f_k(x_0)\big] = 0
+\mathbb E\big[\varepsilon_0 \,(f^\star(x_0) - \hat f_k(x_0))\big] = \mathbb E[\varepsilon_0]\; \mathbb E\big[f^\star(x_0) - \hat f_k(x_0)\big] = 0
 \]</span></p>
 <p>Left with <span class="math display">\[
-\sigma^2 + \mathbb E\big[(f(x_0) - \hat f_k(x_0))^2\big]
+\sigma^2 + \mathbb E\big[(f^\star(x_0) - \hat f_k(x_0))^2\big]
 \]</span></p>
 </section>
 <section id="biasvariance-decomposition-line-3" class="slide level2 backup" data-visibility="uncounted">
 <h2>Bias–variance decomposition, line 3</h2>
 <p>Add and subtract <span class="math inline">\(\mathbb E \hat f_k(x_0)\)</span> inside the square: <span class="math display">\[
-\mathbb E\big[(f(x_0) - \hat f_k(x_0))^2\big] = \big[f(x_0) - \mathbb E\hat f_k(x_0)\big]^2 + \mathrm{Var}\big(\hat f_k(x_0)\big)
+\mathbb E\big[(f^\star(x_0) - \hat f_k(x_0))^2\big] = \big[f^\star(x_0) - \mathbb E\hat f_k(x_0)\big]^2 + \mathrm{Var}\big(\hat f_k(x_0)\big)
 \]</span></p>
-<p>(The cross term is <span class="math inline">\(2[f(x_0) - \mathbb E\hat f_k(x_0)]\,\mathbb E[\mathbb E\hat f_k(x_0) - \hat f_k(x_0)] = 0\)</span>.)</p>
+<p>(The cross term is <span class="math inline">\(2[f^\star(x_0) - \mathbb E\hat f_k(x_0)]\,\mathbb E[\mathbb E\hat f_k(x_0) - \hat f_k(x_0)] = 0\)</span>.)</p>
 </section>
 <section id="biasvariance-decomposition-lines-4-and-5" class="slide level2 backup" data-visibility="uncounted">
 <h2>Bias–variance decomposition, lines 4 and 5</h2>
 <p>The neighborhood is fixed, so <span class="math display">\[
-\mathbb E\hat f_k(x_0) = \frac{1}{k}\sum_{l=1}^k f(x_{(l)}),
+\mathbb E\hat f_k(x_0) = \frac{1}{k}\sum_{l=1}^k f^\star(x_{(l)}),
 \qquad
 \mathrm{Var}\big(\hat f_k(x_0)\big) = \frac{1}{k^2}\sum_{l=1}^k \sigma^2 = \frac{\sigma^2}{k}
 \]</span></p>
 <p>Substitute: <span class="math display">\[
-\mathbb E\big[(Y_0 - \hat f_k(x_0))^2\big] = \sigma^2 + \Big[f(x_0) - \tfrac{1}{k}\textstyle\sum_{l=1}^k f(x_{(l)})\Big]^2 + \frac{\sigma^2}{k} \qquad \blacksquare
+\mathbb E\big[(Y_0 - \hat f_k(x_0))^2\big] = \sigma^2 + \Big[f^\star(x_0) - \tfrac{1}{k}\textstyle\sum_{l=1}^k f^\star(x_{(l)})\Big]^2 + \frac{\sigma^2}{k} \qquad \blacksquare
 \]</span></p>
-<p>(ESL §7.3, equation 7.10. cc’s Theorem A.)</p>
+<p>(ESL §7.3, equation 7.10.)</p>
 </section>
 <section id="where-the-bias-comes-from" class="slide level2">
 <h2>Where the bias comes from</h2>
 
-<img data-src="01-1-introduction_files/figure-revealjs/unnamed-chunk-11-1.png" width="1500" class="r-stretch"><p>Pink: the neighbors used at the dashed line. Dark curve: a stand-in for <span class="math inline">\(f\)</span>. With 30 neighbors the average of <span class="math inline">\(f\)</span> over the pink points is not <span class="math inline">\(f\)</span> at the line.</p>
+<img data-src="01-1-introduction_files/figure-revealjs/unnamed-chunk-11-1.png" width="1500" class="r-stretch"><p>Pink: the neighbors used at the dashed line. Dark curve: a stand-in for <span class="math inline">\(f^\star\)</span>. With 30 neighbors the average of <span class="math inline">\(f^\star\)</span> over the pink points is not <span class="math inline">\(f^\star\)</span> at the line.</p>
 </section>
 <section id="the-curse-of-dimensionality" class="slide level2">
 <h2>The curse of dimensionality</h2>
@@ -858,7 +858,7 @@ Y_0 - \hat f_k(x_0) = \varepsilon_0 + \big[f(x_0) - \hat f_k(x_0)\big]
 </tbody>
 </table>
 <p>In ten dimensions, a cube holding 1% of the population spans 63% of each axis. That is not local.</p>
-<p>A nearest-neighbor set is a ball around the query, not a cube, and near the boundary the calculation changes, but the lesson carries: the nearest 1% of the data is far away. So the decomposition’s bias term is where dimension bites: the neighbors are far away, and <span class="math inline">\(f\)</span> has room to drift.</p>
+<p>A nearest-neighbor set is a ball around the query, not a cube, and near the boundary the calculation changes, but the lesson carries: the nearest 1% of the data is far away. So the decomposition’s bias term is where dimension bites: the neighbors are far away, and <span class="math inline">\(f^\star\)</span> has room to drift.</p>
 </section>
 <section id="distances-concentrate" class="slide level2">
 <h2>Distances concentrate</h2>

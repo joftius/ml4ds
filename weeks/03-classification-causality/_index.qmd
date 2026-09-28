@@ -1,0 +1,11 @@
+## Week 3: classification, and causality (part 1)
+
+Classification: logistic regression, a threshold and the two kinds of error on either side of it, and the metrics that follow. Causal block 1: prediction against intervention, a world in which the causation runs the other way from the correlation, and why a model that predicts well can still give the wrong answer to a what-if question.
+
+**Reading**
+
+- ISLR Chapter 4 (Classification), sections 4.1–4.3, pp. 130–141. Section 4.4 (LDA, QDA, naive Bayes) is not part of this course; skim 4.5, pp. 158–164, for the comparison with $k$-nearest neighbors.
+- PPA Chapter 2, "Types of errors and successes" and "The Neyman–Pearson lemma", pp. 21–26, and "Decisions that discriminate", pp. 26–31.
+- PPA Chapter 9 (Causality), "The limitations of observation", pp. 179–181. Optional now and needed in week 8: "Confounding", pp. 189–192.
+
+**Lecture and seminar:** released here at the start of the week. Data: the Palmer penguins; the (fictional) attrition data as an alternative.

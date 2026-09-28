@@ -1,0 +1,13 @@
+## Week 8: additive models and interpretation
+
+One curve per predictor: how an additive model is fitted (each component to what the others leave), why it escapes the curse of dimensionality, and when it is wrong. Then a curve on any fitted model: partial dependence and ICE, computed by hand, and the question they answer. Causal block 2: direct against total dependence on a simulation where the two curves disagree, and when a model's response is also an effect.
+
+**Reading**
+
+- ISLR Chapter 7, section 7.7, pp. 306–311 (generalized additive models). The lab in section 7.8.3 goes with the seminar.
+- ESL Chapter 9, the opening pages of section 9.1, pp. 295–298 (additive models and the backfitting algorithm, Algorithm 9.1).
+- IML, the chapters "Individual conditional expectation (ICE)" and "Partial dependence plot (PDP)": the definitions and the pictures, for recognition.
+
+Deeper, optional: Hastie and Tibshirani, *Generalized Additive Models* (1990), Chapter 4; Zhao and Hastie, "Causal interpretations of black-box models", *Journal of Business and Economic Statistics* 2021.
+
+**Lecture and seminar:** released here at the start of the week. Backfitting in ten lines against `mgcv` on the movies data, a random split against a split in time; partial dependence and ICE by hand on a simulation whose truth is known, against the total-effect curve. Data: IMDb films via `ggplot2movies`, and a supplied simulation. Problem set 2 is released this week.

@@ -1,0 +1,13 @@
+## Week 10: explaining, intervening, shifting
+
+What an explanation computes: SHAP shown and explained in three sentences; one theorem saying what every partial dependence, ICE and SHAP number is (the model's response with some inputs set and the rest left where one unit had them), and when that is also an effect; four methods, four questions, one takeaway. Causal block 3: one effect estimated with machine learning in the nuisances, residual on residual with cross-fitting, and what that does not do. Then the data move: covariate shift, reweighting and its condition, and the shift no reweighting fixes.
+
+**Reading**
+
+- IML, the chapters "Shapley values", "SHAP" and "Leave one feature out (LOFO) importance": the plots and the vocabulary, for recognition.
+- PPA Chapter 10, pp. 204–217 (causal inference in practice: adjustment, double machine learning in a page, quasi-experiments) and Chapter 13, pp. 268–271 (the epilogue: when patterns stop guiding action).
+- Zhao and Hastie, "Causal interpretations of black-box models", *Journal of Business and Economic Statistics* 2021 (the back-door statement in the theorem).
+
+Deeper, optional: Chernozhukov et al., "Double/debiased machine learning for treatment and structural parameters", *Econometrics Journal* 2018, sections 1–2; Shimodaira, "Improving predictive inference under covariate shift by weighting the log-likelihood function", *Journal of Statistical Planning and Inference* 2000.
+
+**Lecture and seminar:** released here at the start of the week. SHAP by hand on a three-unit table, then by software on the penguins forest with the identity checked; permutation importance against leave-one-covariate-out on one fit; one effect estimated by residual on residual with cross-fitting, two wrong versions and a hidden confounder; a shift diagnosed on gapminder 1952 against 2007. Data: penguins, gapminder, and supplied simulations. Problem set 2 is due this week.

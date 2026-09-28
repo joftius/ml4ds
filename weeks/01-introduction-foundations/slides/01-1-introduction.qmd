@@ -79,7 +79,7 @@ Cut order if short: (1) the self-intro to one line; (2) Fix and Hodges to one se
 
 Pace: 0:20 what-is-ML done, notation on the board. 0:45 the leaderboard shown, the smooth-cousin question asked, the board starts. 1:00 noise + bias² + variance boxed and labeled. 1:20 the closing questions.
 
-Board script: instructor project, week 1, board_theorem_A (25 September version).
+Board script: instructor project, week 1, board_bias_variance.
 :::
 
 ## About the course
@@ -435,7 +435,7 @@ For any function $f$ we can always write $\varepsilon \equiv y - f(x)$. Look for
 
 - Assume a probability distribution (adequately) models the data/errors
 
-Define a good function as one that minimizes
+Define the best function $f^\star$ as the minimizer, over all $f$, of
 
 $$
 \mathbb E[\varepsilon^2] = \mathbb E\{[Y - f(X)]^2\}
@@ -445,7 +445,7 @@ $$
 
 - Assume the data/error is sampled independently
 
-Motivates the **plug-in principle**: compute an estimate $\hat f$ of the good function $f$ by solving the corresponding problem on the dataset, i.e.
+Motivates the **plug-in principle**: compute an estimate $\hat f$ of the best function $f^\star$ by solving the corresponding problem on the dataset, i.e.
 
 $$
 \text{minimize} \sum_{i=1}^n \left[y_i - \hat f(x_i)\right]^2
@@ -763,7 +763,7 @@ One minute: state it, ask the question, leave it open. The answer (the condition
 
 ## What makes a nearest-neighbor prediction wrong? [board]{.board}
 
-$y_i = f(x_i) + \varepsilon_i$, inputs fixed, noise independent, mean $0$, variance $\sigma^2$; new $Y_0 = f(x_0) + \varepsilon_0$.
+$y_i = f^\star(x_i) + \varepsilon_i$, inputs fixed, noise independent, mean $0$, variance $\sigma^2$; new $Y_0 = f^\star(x_0) + \varepsilon_0$.
 
 We want $\mathbb E\big[(Y_0 - \hat f_k(x_0))^2\big]$, the expected squared error of the $k$-nearest-neighbor prediction at $x_0$.
 
@@ -772,23 +772,23 @@ Two facts from ST102 do all the work at the board. Which two? Write them down be
 :::
 
 ::: {.notes}
-Board script: instructor project, week 1, board_theorem_A. Why anyone cared: we just watched k trade one thing for another on the error curve; the decomposition names the two things. Collect the two answers, then go to the board; the next slide is what stays on the screen while you write.
+Board script: instructor project, week 1, board_bias_variance. Why anyone cared: we just watched k trade one thing for another on the error curve; the decomposition names the two things. Collect the two answers, then go to the board; the next slide is what stays on the screen while you write.
 :::
 
 ## Bias--variance decomposition [board]{.board}
 
-$y_i = f(x_i) + \varepsilon_i$, inputs fixed, noise independent, mean $0$, variance $\sigma^2$; new $Y_0 = f(x_0) + \varepsilon_0$.
+$y_i = f^\star(x_i) + \varepsilon_i$, inputs fixed, noise independent, mean $0$, variance $\sigma^2$; new $Y_0 = f^\star(x_0) + \varepsilon_0$.
 
 **Bias--variance decomposition.**
 $$
 \mathbb E\big[(Y_0 - \hat f_k(x_0))^2\big]
 = \underbrace{\sigma^2}_{\text{noise}}
-+ \underbrace{\Big[f(x_0) - \tfrac{1}{k}\textstyle\sum_{l=1}^k f(x_{(l)})\Big]^2}_{\text{bias}^2}
++ \underbrace{\Big[f^\star(x_0) - \tfrac{1}{k}\textstyle\sum_{l=1}^k f^\star(x_{(l)})\Big]^2}_{\text{bias}^2}
 + \underbrace{\frac{\sigma^2}{k}}_{\text{variance}}
 $$
 
 ::: {.leave}
-noise + bias² + variance. Variance falls in $k$, always. Bias typically grows too, but it need not be monotonic (a constant $f$ keeps it at zero for every $k$).
+noise + bias² + variance. Variance falls in $k$, always. Bias typically grows too, but it need not be monotonic (a constant $f^\star$ keeps it at zero for every $k$).
 :::
 
 ::: {.notes}
@@ -798,50 +798,50 @@ Backups follow, uncounted. This is the bias–variance trade-off, one of the mos
 ## Bias--variance decomposition, line 1 {.backup visibility="uncounted"}
 
 $$
-Y_0 - \hat f_k(x_0) = \varepsilon_0 + \big[f(x_0) - \hat f_k(x_0)\big]
+Y_0 - \hat f_k(x_0) = \varepsilon_0 + \big[f^\star(x_0) - \hat f_k(x_0)\big]
 $$
 
 Square, take expectations:
 $$
-\mathbb E\big[(Y_0 - \hat f_k(x_0))^2\big] = \mathbb E[\varepsilon_0^2] + 2\,\mathbb E\big[\varepsilon_0 \,(f(x_0) - \hat f_k(x_0))\big] + \mathbb E\big[(f(x_0) - \hat f_k(x_0))^2\big]
+\mathbb E\big[(Y_0 - \hat f_k(x_0))^2\big] = \mathbb E[\varepsilon_0^2] + 2\,\mathbb E\big[\varepsilon_0 \,(f^\star(x_0) - \hat f_k(x_0))\big] + \mathbb E\big[(f^\star(x_0) - \hat f_k(x_0))^2\big]
 $$
 
 ## Bias--variance decomposition, line 2 {.backup visibility="uncounted"}
 
 $\varepsilon_0$ is independent of everything in $\hat f_k(x_0)$ and has mean $0$:
 $$
-\mathbb E\big[\varepsilon_0 \,(f(x_0) - \hat f_k(x_0))\big] = \mathbb E[\varepsilon_0]\; \mathbb E\big[f(x_0) - \hat f_k(x_0)\big] = 0
+\mathbb E\big[\varepsilon_0 \,(f^\star(x_0) - \hat f_k(x_0))\big] = \mathbb E[\varepsilon_0]\; \mathbb E\big[f^\star(x_0) - \hat f_k(x_0)\big] = 0
 $$
 
 Left with
 $$
-\sigma^2 + \mathbb E\big[(f(x_0) - \hat f_k(x_0))^2\big]
+\sigma^2 + \mathbb E\big[(f^\star(x_0) - \hat f_k(x_0))^2\big]
 $$
 
 ## Bias--variance decomposition, line 3 {.backup visibility="uncounted"}
 
 Add and subtract $\mathbb E \hat f_k(x_0)$ inside the square:
 $$
-\mathbb E\big[(f(x_0) - \hat f_k(x_0))^2\big] = \big[f(x_0) - \mathbb E\hat f_k(x_0)\big]^2 + \mathrm{Var}\big(\hat f_k(x_0)\big)
+\mathbb E\big[(f^\star(x_0) - \hat f_k(x_0))^2\big] = \big[f^\star(x_0) - \mathbb E\hat f_k(x_0)\big]^2 + \mathrm{Var}\big(\hat f_k(x_0)\big)
 $$
 
-(The cross term is $2[f(x_0) - \mathbb E\hat f_k(x_0)]\,\mathbb E[\mathbb E\hat f_k(x_0) - \hat f_k(x_0)] = 0$.)
+(The cross term is $2[f^\star(x_0) - \mathbb E\hat f_k(x_0)]\,\mathbb E[\mathbb E\hat f_k(x_0) - \hat f_k(x_0)] = 0$.)
 
 ## Bias--variance decomposition, lines 4 and 5 {.backup visibility="uncounted"}
 
 The neighborhood is fixed, so
 $$
-\mathbb E\hat f_k(x_0) = \frac{1}{k}\sum_{l=1}^k f(x_{(l)}),
+\mathbb E\hat f_k(x_0) = \frac{1}{k}\sum_{l=1}^k f^\star(x_{(l)}),
 \qquad
 \mathrm{Var}\big(\hat f_k(x_0)\big) = \frac{1}{k^2}\sum_{l=1}^k \sigma^2 = \frac{\sigma^2}{k}
 $$
 
 Substitute:
 $$
-\mathbb E\big[(Y_0 - \hat f_k(x_0))^2\big] = \sigma^2 + \Big[f(x_0) - \tfrac{1}{k}\textstyle\sum_{l=1}^k f(x_{(l)})\Big]^2 + \frac{\sigma^2}{k} \qquad \blacksquare
+\mathbb E\big[(Y_0 - \hat f_k(x_0))^2\big] = \sigma^2 + \Big[f^\star(x_0) - \tfrac{1}{k}\textstyle\sum_{l=1}^k f^\star(x_{(l)})\Big]^2 + \frac{\sigma^2}{k} \qquad \blacksquare
 $$
 
-(ESL §7.3, equation 7.10. cc's Theorem A.)
+(ESL §7.3, equation 7.10.)
 
 ## Where the bias comes from
 
@@ -865,10 +865,10 @@ ggplot(train, aes(lgdp, lifeExp)) +
   labs(x = "log10 GDP per capita", y = "life expectancy")
 ```
 
-Pink: the neighbors used at the dashed line. Dark curve: a stand-in for $f$. With 30 neighbors the average of $f$ over the pink points is not $f$ at the line.
+Pink: the neighbors used at the dashed line. Dark curve: a stand-in for $f^\star$. With 30 neighbors the average of $f^\star$ over the pink points is not $f^\star$ at the line.
 
 ::: {.notes}
-Noise: nobody beats it on average. Variance: averaging helps, always. Bias: how far f drifts across the neighborhood, which is set by how smooth f is and by how far the neighbors are; for this smooth f it grows with k, though the takeaway box says why it need not in general. The dark curve is a loess smooth drawn from all 142 countries as a stand-in for f; it is never scored, so nothing leaks, and it is not a competitor. In one dimension the neighbors are close. What about ten?
+Noise: nobody beats it on average. Variance: averaging helps, always. Bias: how far f* drifts across the neighborhood, which is set by how smooth f* is and by how far the neighbors are; for this smooth f* it grows with k, though the takeaway box says why it need not in general. The dark curve is a loess smooth drawn from all 142 countries as a stand-in for f*; it is never scored, so nothing leaks, and it is not a competitor. In one dimension the neighbors are close. What about ten?
 :::
 
 ## The curse of dimensionality
@@ -909,7 +909,7 @@ The phrase "curse of dimensionality" is Bellman's (1957), from dynamic programmi
 
 In ten dimensions, a cube holding 1% of the population spans 63% of each axis. That is not local.
 
-A nearest-neighbor set is a ball around the query, not a cube, and near the boundary the calculation changes, but the lesson carries: the nearest 1% of the data is far away. So the decomposition's bias term is where dimension bites: the neighbors are far away, and $f$ has room to drift.
+A nearest-neighbor set is a ball around the query, not a cube, and near the boundary the calculation changes, but the lesson carries: the nearest 1% of the data is far away. So the decomposition's bias term is where dimension bites: the neighbors are far away, and $f^\star$ has room to drift.
 
 ::: {.notes}
 ESL §2.5. Ask who got 0.63 before showing it. The number is an expected population fraction for an axis-aligned cube inside the support; a cube centered on a point near the boundary sticks out of the unit cube, and a k-NN neighborhood is an empirical ball, so do not present 0.63 as a property of the k nearest points. The seminar asks for the formula as a function of d.
