@@ -48,7 +48,7 @@ Brief documents published by professional societies on the ethical practice of s
 First [install R](https://cran.r-project.org/) and then [RStudio](https://posit.co/download/rstudio-desktop/) (RStudio includes Quarto, which renders the seminar notebooks). Open RStudio and run
 
 ```r
-install.packages(c("tidyverse", "gapminder", "broom", "palmerpenguins", "modeldata",
+install.packages(c("tidyverse", "gapminder", "broom", "palmerpenguins", "GGally", "modeldata",
                    "yardstick", "ggdag", "dagitty", "patchwork", "glmnet", "ISLR2",
                    "mgcv", "ggplot2movies", "randomForest", "pdp", "rpart", "partykit",
                    "xgboost", "kernelshap", "shapviz", "fivethirtyeight",

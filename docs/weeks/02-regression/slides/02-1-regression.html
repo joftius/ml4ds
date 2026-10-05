@@ -1,0 +1,1104 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<script src="../../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../../site_libs/quarto-html/tabby.min.js"></script>
+<script src="../../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<link href="../../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../../site_libs/quarto-html/light-border.css" rel="stylesheet">
+<link href="../../../site_libs/quarto-html/quarto-syntax-highlighting-15634bcf2e68342d4ad2dfa704d543f6.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
+  <meta name="generator" content="quarto-1.9.38">
+
+  <meta name="author" content="Joshua Loftus">
+  <title>machine learning 4 data science – Machine learning</title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+  <link rel="stylesheet" href="../../../site_libs/revealjs/dist/reset.css">
+  <link rel="stylesheet" href="../../../site_libs/revealjs/dist/reveal.css">
+  <style>
+    /* Default styles provided by pandoc.
+    ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+    */
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+      vertical-align: middle;
+    }
+  </style>
+  <link rel="stylesheet" href="../../../site_libs/revealjs/dist/theme/quarto-478524e355e540b1d4b465a91c417385.css">
+  <link href="../../../site_libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
+  <link href="../../../site_libs/revealjs/plugin/reveal-menu/menu.css" rel="stylesheet">
+  <link href="../../../site_libs/revealjs/plugin/reveal-menu/quarto-menu.css" rel="stylesheet">
+  <link href="../../../site_libs/revealjs/plugin/quarto-support/footer.css" rel="stylesheet">
+  <style type="text/css">
+    .reveal div.sourceCode {
+      margin: 0;
+      overflow: auto;
+    }
+    .reveal div.hanging-indent {
+      margin-left: 1em;
+      text-indent: -1em;
+    }
+    .reveal .slide:not(.center) {
+      height: 100%;
+    }
+    .reveal .slide.scrollable {
+      overflow-y: auto;
+    }
+    .reveal .footnotes {
+      height: 100%;
+      overflow-y: auto;
+    }
+    .reveal .slide .absolute {
+      position: absolute;
+      display: block;
+    }
+    .reveal .footnotes ol {
+      counter-reset: ol;
+      list-style-type: none; 
+      margin-left: 0;
+    }
+    .reveal .footnotes ol li:before {
+      counter-increment: ol;
+      content: counter(ol) ". "; 
+    }
+    .reveal .footnotes ol li > p:first-child {
+      display: inline-block;
+    }
+    .reveal .slide ul,
+    .reveal .slide ol {
+      margin-bottom: 0.5em;
+    }
+    .reveal .slide ul li,
+    .reveal .slide ol li {
+      margin-top: 0.4em;
+      margin-bottom: 0.2em;
+    }
+    .reveal .slide ul[role="tablist"] li {
+      margin-bottom: 0;
+    }
+    .reveal .slide ul li > *:first-child,
+    .reveal .slide ol li > *:first-child {
+      margin-block-start: 0;
+    }
+    .reveal .slide ul li > *:last-child,
+    .reveal .slide ol li > *:last-child {
+      margin-block-end: 0;
+    }
+    .reveal .slide .columns:nth-child(3) {
+      margin-block-start: 0.8em;
+    }
+    .reveal blockquote {
+      box-shadow: none;
+    }
+    .reveal .tippy-content>* {
+      margin-top: 0.2em;
+      margin-bottom: 0.7em;
+    }
+    .reveal .tippy-content>*:last-child {
+      margin-bottom: 0.2em;
+    }
+    .reveal .slide > img.stretch.quarto-figure-center,
+    .reveal .slide > img.r-stretch.quarto-figure-center {
+      display: block;
+      margin-left: auto;
+      margin-right: auto; 
+    }
+    .reveal .slide > img.stretch.quarto-figure-left,
+    .reveal .slide > img.r-stretch.quarto-figure-left  {
+      display: block;
+      margin-left: 0;
+      margin-right: auto; 
+    }
+    .reveal .slide > img.stretch.quarto-figure-right,
+    .reveal .slide > img.r-stretch.quarto-figure-right  {
+      display: block;
+      margin-left: auto;
+      margin-right: 0; 
+    }
+  </style>
+</head>
+<body class="quarto-light">
+  <div class="reveal">
+    <div class="slides">
+
+<section id="title-slide" data-background-image="img/ceres.jpg" data-background-opacity="0.35" data-background-size="cover" class="quarto-title-block center">
+  <h1 class="title">Machine learning</h1>
+  <p class="subtitle">Week 2: linear regression</p>
+
+<div class="quarto-title-authors">
+<div class="quarto-title-author">
+<div class="quarto-title-author-name">
+Joshua Loftus 
+</div>
+        <p class="quarto-title-affiliation">
+            LSE
+          </p>
+    </div>
+</div>
+
+</section>
+<section id="section" class="slide level2 inverse">
+<h2></h2>
+<h3 id="week-2-linear-regression">Week 2: linear regression</h3>
+<p>Part 1: least squares and optimal models</p>
+<p>Part 2: multiple regression and orthogonality</p>
+</section>
+<section id="history-its-the-year-1801" class="slide level2 inverse">
+<h2>History: it’s the year 1801</h2>
+<h3 id="there-is-no-google-maps">There is no Google Maps</h3>
+<p>How do you travel? With the original GPS: <strong>astronomy</strong></p>
+<p>. . .</p>
+<ul>
+<li>Relatively mature science</li>
+<li>Millennia of observations and evolving theories</li>
+<li>About 2 centuries of observations <em>with telescopes</em></li>
+<li>Similar time since Kepler’s laws (elliptical orbit formulas)</li>
+<li>20 years after discovery of Uranus</li>
+<li>But still, 45 years before discovery of Neptune</li>
+</ul>
+</section>
+<section id="history-discovering-planets-and-things" class="slide level2 inverse center" data-background-image="img/ceres.jpg" data-background-size="cover" data-background-opacity="0.45" data-background-color="#440154">
+<h2>History: discovering planets and things</h2>
+<h3 id="imagine-being-the-first-to-observe-a-previously-unknown-celestial-object-in-our-solar-system">Imagine being the first to observe a previously unknown celestial object in our solar system</h3>
+<p>. . .</p>
+<p>…</p>
+<div class="fragment">
+<h3>
+and then <a href="https://en.wikipedia.org/wiki/Ceres_%28dwarf_planet%29#Discovery">losing it</a>
+</h3>
+</div>
+</section>
+<section id="section-1" class="slide level2 inverse">
+<h2></h2>
+<p>mfw</p>
+<p><img data-src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e9/Costanzo_Angelini%2C_L%27astronomo_Piazzi_1825_ca.jpg/500px-Costanzo_Angelini%2C_L%27astronomo_Piazzi_1825_ca.jpg" height="520"></p>
+</section>
+<section id="history-a-pre-machine-learning-prediction-contest" class="slide level2 inverse">
+<h2>History: a (pre-machine learning?) prediction contest</h2>
+<div class="columns">
+<div class="column" style="width:40%;">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="https://plus.maths.org/issue27/features/sautoy/young_Gauss_1803.jpg" height="380"></p>
+<figcaption>Young Gauss</figcaption>
+</figure>
+</div>
+<p><a href="https://plus.maths.org/content/prime-number-lottery">Yung Gauss</a></p>
+</div><div class="column" style="width:60%;">
+<ul>
+<li><p>Piazzi published his <span class="math inline">\(n = 24\)</span> observations in February</p></li>
+<li><p>An international community of scientists and mathematicians scrambled to find Ceres</p></li>
+<li><p>Almost a year later, it was rediscovered using the predictions of (24 year old) C. F. Gauß</p></li>
+</ul>
+</div></div>
+</section>
+<section id="history-gauss-became-an-instant-celebrity" class="slide level2 inverse">
+<h2>History: Gauss became an instant celebrity</h2>
+<h3 id="why-was-this-impressive">Why was this impressive?</h3>
+<ul>
+<li>Ceres is small (smaller than our moon)</li>
+<li>Observed path only ~3 degrees of motion across the sky</li>
+<li>Almost a year passed, so its position was far from the initial observations</li>
+<li>Searching for a small dim object in a sky full of brighter stars</li>
+</ul>
+<p>How did Gauss do it? Kepler’s laws determine an orbit uniquely from 3 points. What to do with 24?</p>
+</section>
+<section id="section-2" class="slide level2 inverse">
+<h2></h2>
+<p><a href="https://www.maa.org/programs/maa-awards/writing-awards/the-discovery-of-ceres-how-gauss-became-famous">Gauss</a>:</p>
+<blockquote>
+<p>When the number of unknown quantities is equal to the number of the observed quantities depending on them, the former may be so determined as exactly to satisfy the latter. But when the number of the former is less than that of the latter, an absolutely exact agreement cannot be determined, in so far as the observations do not enjoy absolute accuracy. In this <em>case care must be taken to establish the best possible agreement, or to diminish as far as practicable the differences</em>.</p>
+</blockquote>
+<h3 id="i.e.-minimize-errors">i.e.&nbsp;minimize errors</h3>
+<p>but why <em>squared</em> errors?</p>
+</section>
+<section id="constraints" class="slide level2 inverse">
+<h2>Constraints</h2>
+<ol type="1">
+<li>Errors sum to zero</li>
+<li>Minimize something else, but what?</li>
+</ol>
+<ul>
+<li><p>Around the same time, R. J. Boscovich and P-S. Laplace minimized sum of absolute errors: <span class="math inline">\(\text{minimize} \sum_i | r_i |\)</span></p></li>
+<li><p>Laplace also suggested minimizing the maximum error: <span class="math inline">\(\text{minimize} \max_i | r_i |\)</span></p></li>
+<li><p>Gauss said we can use any even power, e.g.&nbsp;<span class="math inline">\(\sum r_i^8\)</span></p></li>
+</ul>
+</section>
+<section id="gausss-answer" class="slide level2 inverse">
+<h2>Gauss’s answer</h2>
+<blockquote>
+<p>of all these principles ours [least squares] is the <strong>most simple</strong>; by the others we shall be led into the most complicated calculations</p>
+</blockquote>
+<p>If <em>Gauss</em> didn’t want to do those calculations, that’s really saying something…</p>
+<p>On the other hand, he said he used least squares <em>thousands</em> of times in his years of work (without electricity!)</p>
+<p>For more about the origin of least squares see <a href="https://academic.oup.com/biomet/article/59/2/239/325474">this article</a>.</p>
+</section>
+<section id="lessons-for-ml-from-the-re-discovery-of-ceres" class="slide level2 inverse">
+<h2>Lessons for ML from the re-discovery of Ceres</h2>
+<ul>
+<li><strong>Severity (or novelty)</strong>: lots of mathematicians used methods to fit the initial observations, what distinguished Gauss was predicting a <em>new</em> data point</li>
+</ul>
+<div class="fragment">
+<ul>
+<li>The <em>right amount</em> of <strong>complexity</strong>: some predictions assumed a circular orbit instead of elliptical, this simplified calculations but missed Ceres</li>
+</ul>
+</div>
+<div class="fragment">
+<ul>
+<li><strong>Theory <em>and</em> observation</strong>: without the heliocentric model of the solar system this search would have been a lost cause. That model itself evolved from previous iterations of theories and observations</li>
+</ul>
+</div>
+</section>
+<section id="by-contrast-regression-done-badly" class="slide level2 inverse">
+<h2>By contrast, regression done badly</h2>
+<p>Convenience of calculation enables a lot of bad science</p>
+<ul>
+<li><p>A. Quetelet in 1835, “social physics,” correlates basically any social data together, tries to predict “crime,” poverty, alcohol consumption, etc</p></li>
+<li><p>F. Galton (1822-1911) founds the field of eugenics…</p></li>
+<li><p>Modern science: <a href="https://journals.sagepub.com/doi/10.1177/2515245917747646">replication</a> <a href="https://en.wikipedia.org/wiki/Replication_crisis">crisis</a></p></li>
+</ul>
+<p>Much of modern ML is similarly fitting curves to model relationships in any available data <em>because we can</em> – not because there is any scientific or theoretical reason to do so</p>
+</section>
+<section id="section-3" class="slide level2 inverse center">
+<h2></h2>
+<h3 id="regression-began-with-an-exemplary-application-the-re-discovery-of-ceres">Regression began with an exemplary application, the re-discovery of Ceres</h3>
+<h3 id="scientifically-questionable-applications-have-exploded-since-then">Scientifically questionable applications have exploded since then</h3>
+<h3 id="computers-speed-up-the-process-which-perhaps-decreases-quality">Computers speed up the process, which perhaps decreases quality</h3>
+<h3 id="the-era-of-surveillance-capitalism-means-scientifically-and-ethically-questionable-data-is-multiplying-faster-than-ever">The era of “<a href="https://theconversation.com/the-price-of-connection-surveillance-capitalism-64124">surveillance capitalism</a>” means scientifically (and ethically) questionable data is multiplying faster than ever</h3>
+</section>
+<section id="why-squared-errors-another-answer-nice-geometry" class="slide level2">
+<h2>Why squared errors? Another answer: nice geometry</h2>
+<p>At a minimum of</p>
+<p><span class="math display">\[
+\ell (\hat \alpha, \hat \beta) = \sum_i (y_i - \hat \alpha - \hat \beta x_i)^2
+\]</span></p>
+<p>we have <span class="math inline">\(0 = \dfrac{\partial \ell}{\partial \alpha} = -2 \sum_i r_i\)</span>, i.e.&nbsp;the first constraint is satisfied,</p>
+<p>and <span class="math inline">\(0 = \dfrac{\partial \ell}{\partial \beta} = -2 \sum_i x_i r_i\)</span>, i.e.&nbsp;<strong>orthogonality</strong>.</p>
+</section>
+<section id="orthogonality-uncorrelatedness-bias" class="slide level2">
+<h2>Orthogonality, uncorrelatedness, bias</h2>
+<ul>
+<li>Since <span class="math inline">\(\bar r = 0\)</span> and <span class="math inline">\(\sum x_i r_i = 0\)</span>, we also have</li>
+</ul>
+<p><span class="math display">\[
+\text{cor}(x, r) = 0
+\]</span></p>
+<ul>
+<li><p>Correlation measures <em>linear dependence</em></p></li>
+<li><p>If we minimized a different loss function and the resulting residuals were correlated with <span class="math inline">\(x\)</span>, this would mean there is some remaining (linear) signal, in the squared-error sense</p></li>
+<li><p>A (linear) pattern in residuals, i.e.&nbsp;bias</p></li>
+</ul>
+</section>
+<section id="randomness" class="slide level2">
+<h2>Randomness</h2>
+<ul>
+<li>Minimizing squared error <em>on observed data</em></li>
+</ul>
+<p><span class="math display">\[
+\text{minimize } \frac{1}{n} \sum_{i=1}^n (y_i - \alpha - \beta x_i)^2
+\]</span></p>
+<ul>
+<li>Plug-in principle: assuming a probability model, i.e.&nbsp;some joint distribution <span class="math inline">\(p_{X,Y}(x,y)\)</span></li>
+</ul>
+<p><span class="math display">\[
+\text{minimize } \mathbb E[(Y - \alpha - \beta X)^2]
+\]</span></p>
+</section>
+<section id="probabilistic-ml" class="slide level2 inverse">
+<h2>Probabilistic ML</h2>
+<ul>
+<li>Some machine learning methods do not explicitly use probability distributions</li>
+<li>Those that do use probability are sometimes (loosely) called “generative”, because they
+<ol type="1">
+<li>Model the “data generation process” (DGP)</li>
+<li>Can be used to generate (synthetic) “data” (sampling with a random number generator)</li>
+</ol></li>
+</ul>
+<p>This course is mainly focused on methods that do use probability, and we will always try to do so explicitly/transparently (not hiding our assumptions)</p>
+</section>
+<section id="conditional-distributions" class="slide level2">
+<h2>Conditional distributions</h2>
+<p>Within probabilistic machine learning, supervised learning is broadly about modeling the <em>conditional distribution of the outcome given the features</em></p>
+<p><span class="math display">\[p_{Y|X}(y|x) =  p_{X,Y}(x,y) / p_{X}(x)\]</span></p>
+<p>Some methods try to learn this entire distribution, others focus on some summary/functional, e.g.</p>
+<div class="columns">
+<div class="column" style="width:48%;">
+<div style="border: 2px solid #440154; border-radius: 10px; padding: 0.2em 0.8em 0.4em 0.8em;">
+<p>conditional expectation</p>
+<p><span class="math display">\[
+\mathbb E_{Y|X}[Y|X]
+\]</span></p>
+</div>
+</div><div class="column" style="width:4%;">
+
+</div><div class="column" style="width:48%;">
+<div style="border: 2px solid #b73779; border-radius: 10px; padding: 0.2em 0.8em 0.4em 0.8em;">
+<p>or conditional quantile</p>
+<p><span class="math display">\[
+Q_{Y|X}(\tau)
+\]</span> (for the <span class="math inline">\(\tau\)</span>th quantile)</p>
+</div>
+</div></div>
+</section>
+<section id="conditional-distributions-1" class="slide level2">
+<h2>Conditional distributions</h2>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure>
+<p><img data-src="02-1-regression_files/figure-revealjs/conditional-densities-1.png" width="1500"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Curves: <span class="math inline">\(p_{Y|X}(y|x)\)</span> at two values of <span class="math inline">\(x\)</span>. Dark curve: <span class="math inline">\(\mathbb E[Y \mid X = x]\)</span>. Simulated data</p>
+</section>
+<section id="a-variety-of-objectives" class="slide level2">
+<h2>A variety of objectives</h2>
+<p>It can be shown (the theorem in a moment; the proof is yours, before the seminar) that</p>
+<ul>
+<li>The conditional expectation function (CEF)</li>
+</ul>
+<p><span class="math display">\[f^\star(x) = \mathbb E_{Y|X}[Y|X = x]\]</span> minimizes the expected squared loss</p>
+<p><span class="math display">\[f^\star = \arg \min_g \mathbb E_{X,Y} \{ [ Y - g(X) ]^2 \}\]</span></p>
+<div class="fragment">
+<ul>
+<li>Similarly, <strong>quantile regression</strong>: a conditional median <span class="math inline">\(Q_{Y|X}(0.5)\)</span> is a minimizer of <span class="math inline">\(\mathbb E_{X,Y} [ |Y - g(X)| ]\)</span> over <span class="math inline">\(g\)</span> (for other quantiles, “tilt” the absolute value loss function)</li>
+</ul>
+</div>
+</section>
+<section id="risk-expected-loss" class="slide level2">
+<h2>Risk = expected loss</h2>
+<p>Other examples also fit into this broad framework</p>
+<p>For a given <strong>loss function</strong> <span class="math inline">\(\ell(y, \hat y)\)</span> (last week: squared error), find the optimal “regression” function <span class="math inline">\(f^\star\)</span> that minimizes the <strong>risk</strong>, i.e.</p>
+<p><span class="math display">\[
+R(f) = \mathbb E_{X,Y}\big[\ell(Y, f(X))\big], \qquad f^\star = \arg \min_f R(f)
+\]</span></p>
+<div class="fragment">
+<p><em>Statistical</em> machine learning:</p>
+<div style="display: flex; align-items: center; justify-content: center; gap: 2.5em;">
+<div>
+<p><span class="math display">\[
+\mathbb E \longleftrightarrow \frac{1}{n} \sum
+\]</span></p>
+</div>
+<div style="border: 2px solid #440154; border-radius: 10px; padding: 0.3em 0.9em; font-size: 0.85em;">
+<p>Empirical Risk Minimization (ERM)</p>
+</div>
+</div>
+<p>Algorithms can leverage LLN, CLT, subsampling, etc…</p>
+</div>
+</section>
+<section id="three-errors-three-names" class="slide level2">
+<h2>Three errors, three names</h2>
+<p><strong>Population risk</strong> of a predictor <span class="math inline">\(f\)</span>, an expectation over new data, the thing we want small: <span class="math display">\[R(f) = \mathbb E\,\ell(Y, f(X))\]</span></p>
+<p><strong>Training error</strong> (empirical risk), the same average over the data we fit on: <span class="math display">\[\hat R_n(f) = \tfrac{1}{n}\textstyle\sum_{i=1}^n \ell(y_i, f(x_i))\]</span></p>
+<p><strong>Test error</strong>, last week’s leaderboard, over held-out data: <span class="math display">\[\widehat{\text{Err}} = \tfrac{1}{m}\textstyle\sum_{j=1}^m \ell(y_j^{\text{test}}, \hat f(x_j^{\text{test}}))\]</span></p>
+</section>
+<section id="optimal-model-theorem" class="slide level2">
+<h2>Optimal model theorem</h2>
+<p>Squared loss, any function of <span class="math inline">\(X\)</span> allowed, not only lines:</p>
+<p><span class="math inline">\(\mathbb E Y^2 &lt; \infty\)</span> and <span class="math inline">\(f^\star(x) = \mathbb E[Y \mid X = x]\)</span>. For every <span class="math inline">\(f\)</span> with <span class="math inline">\(\mathbb E f(X)^2 &lt; \infty\)</span>, <span class="math display">\[
+R(f) = R(f^\star) + \mathbb E\big[(f^\star(X) - f(X))^2\big]
+\]</span></p>
+<div class="leave">
+<p>Squared loss: the target is the conditional mean. Week 1’s <span class="math inline">\(f^\star\)</span> is <span class="math inline">\(\mathbb E[Y \mid X]\)</span>, and the excess risk of any <span class="math inline">\(f\)</span>, any method, is one number.</p>
+</div>
+<p><strong>Proof</strong>: exercise 1 in the notebook, before the seminar. Corollaries: absolute loss, the conditional median (stated, not proved); zero–one loss, next week.</p>
+</section>
+<section id="our-focus" class="slide level2">
+<h2>Our focus</h2>
+<ul>
+<li>For now, squared error. Other cases similar! (Bias-variance)</li>
+<li>Later: categorical outcome loss functions (classification)</li>
+</ul>
+<h3 id="additional-modeling-assumptions">Additional modeling assumptions</h3>
+<p>Linear regression is based on an <em>assumption</em> that the conditional expectation function (CEF) is (<em>or can be adequately approximated as</em>) linear</p>
+<p><span class="math display">\[
+f^\star(x) := \mathbb E_{Y|X}(Y|X) = \beta_0 + \beta_1 X_1 + \cdots + \beta_p X_p
+\]</span></p>
+<p>(<strong>Question</strong>: why no <span class="math inline">\(\varepsilon\)</span> errors in this equation?)</p>
+</section>
+<section id="statistical-wisdom" class="slide level2 inverse">
+<h2>Statistical wisdom</h2>
+<p>Sometimes this assumption works marvelously</p>
+<p>Other times it breaks spectacularly</p>
+<p>Often, it’s somewhere in the gray area</p>
+<div class="fragment">
+<h3 id="all-models-are-wrong-but-some-are-useful">“All models are wrong, but some are useful”</h3>
+<p>Always, always, <em>always</em> remember <a href="https://en.wikipedia.org/wiki/All_models_are_wrong">George Box</a>:</p>
+<blockquote>
+<p>Since all models are wrong <em>the scientist must be alert to what is <strong>importantly wrong</strong></em>. It is inappropriate to be concerned about mice when there are tigers abroad.</p>
+</blockquote>
+</div>
+</section>
+<section id="strengths-of-machine-learning" class="slide level2 inverse">
+<h2>Strengths of machine learning</h2>
+<ul>
+<li><p>Relaxing the linearity assumption and using flexible, non-linear models</p></li>
+<li><p>Specialized methods for high-dimensional linear regression, where there are many predictor variables, possibly even <span class="math inline">\(p &gt; n\)</span></p></li>
+<li><p>Beating other approaches at pure prediction accuracy, trading off simplicity/interpretability for better predictions</p></li>
+</ul>
+<p>Recently, people have started caring more about interpretability again – an emphasis in this course</p>
+</section>
+<section id="multiple-regression" class="slide level2 inverse">
+<h2>Multiple regression</h2>
+<h4 id="this-week">This week</h4>
+<p>What is it? Simply a method for using more variables to predict the outcome?</p>
+<p>Some math(s) notation</p>
+<h4 id="next-week">Next week</h4>
+<p>Interpreting the model and its coefficients</p>
+<p>Association vs causality</p>
+</section>
+<section id="multiple-regression-1" class="slide level2 inverse">
+<h2>Multiple regression</h2>
+<p><img data-src="img/candy.png" height="560"></p>
+</section>
+<section id="when-p-1" class="slide level2">
+<h2>When <span class="math inline">\(p &gt; 1\)</span></h2>
+<div class="columns">
+<div class="column" style="width:55%;">
+<ul>
+<li><p>Instead of a regression line, we fit a regression (hyper)plane</p></li>
+<li><p>Among all possible such planes, find the one minimizing sum of squared errors (represented by vertical lines in ISLR Fig 3.4)</p></li>
+<li><p>How to find the coefficients? Calculus?</p></li>
+</ul>
+</div><div class="column" style="width:45%;">
+<p><img data-src="img/islr3.4.png" height="440"></p>
+</div></div>
+</section>
+<section id="notation" class="slide level2">
+<h2>Notation</h2>
+<p>Writing the same thing in various ways</p>
+<ul>
+<li>For observation <span class="math inline">\(i\)</span>:</li>
+</ul>
+<p><span class="math display">\[y_i = \beta_0 + \beta_1 x_{i1} + \beta_2 x_{i2} + \cdots + \beta_p x_{ip} + \varepsilon_i\]</span></p>
+<p>or using the <a href="https://en.wikipedia.org/wiki/Dot_product">inner product</a> (of column vectors)</p>
+<p><span class="math display">\[y_i = x_i^\top \beta + \varepsilon_i\]</span></p>
+<ul>
+<li>Random variable version: <span class="math inline">\(Y = X^\top \beta + \varepsilon\)</span></li>
+</ul>
+</section>
+<section id="notation-continued" class="slide level2">
+<h2>Notation, continued</h2>
+<ul>
+<li>For all <span class="math inline">\(n\)</span> observations</li>
+</ul>
+<p><span class="math display">\[
+\begin{pmatrix}
+y_1 \\
+y_2 \\
+\vdots \\
+y_n
+\end{pmatrix}
+=
+\begin{pmatrix}
+1 &amp; x_{11} &amp; x_{12} &amp; \cdots &amp; x_{1p}\\
+1 &amp; x_{21} &amp; x_{22} &amp; \cdots &amp; x_{2p}\\
+\vdots &amp; \vdots &amp; \vdots &amp; \ddots &amp; \vdots \\
+1 &amp; x_{n1} &amp; x_{n2} &amp; \cdots &amp; x_{np}\\
+\end{pmatrix}
+\begin{pmatrix}
+\beta_0 \\
+\beta_1 \\
+\vdots \\
+\beta_p
+\end{pmatrix}
++
+\begin{pmatrix}
+\varepsilon_1 \\
+\varepsilon_2 \\
+\vdots \\
+\varepsilon_n
+\end{pmatrix}
+\]</span></p>
+<p>or <span class="math inline">\(\mathbf{y} = \mathbf{X} \beta + \mathbf{\varepsilon}\)</span>. Note: column of 1’s for intercept term. Sometimes omitted by assuming <span class="math inline">\(\mathbf y\)</span> and every column of <span class="math inline">\(\mathbf X\)</span> are already “centered”</p>
+</section>
+<section id="notational-conventions" class="slide level2">
+<h2>Notational conventions</h2>
+<p>We’ll use common conventions in this course</p>
+<ul>
+<li>Bold for vectors, bold and upper case for matrices</li>
+<li>Otherwise upper case denotes random variable</li>
+<li>Error terms <span class="math inline">\(\varepsilon = y - \mathbf x^\top \beta\)</span> never truly observed</li>
+<li>Residuals <span class="math inline">\(r = y - \mathbf x^\top \hat \beta\)</span> used as a proxy for errors</li>
+<li>Greek letters like <span class="math inline">\(\beta, \theta, \sigma, \Sigma\)</span> usually <em>unknown parameters</em></li>
+<li>Greek letters with hats like <span class="math inline">\(\hat \beta\)</span> are estimates computed from data</li>
+<li>Roman letters that usually denote functions with hats, like <span class="math inline">\(\hat f\)</span> are also estimates</li>
+<li>Other Roman letters with hats like <span class="math inline">\(\hat y\)</span> are predictions</li>
+</ul>
+</section>
+<section id="least-squares-solutions-in-matrix-notation" class="slide level2">
+<h2>Least-squares solutions in matrix notation</h2>
+<p>With matrix-vector notation we can always write very simply:</p>
+<p><span class="math display">\[
+\hat {\mathbf \beta} = (\mathbf X^\top\mathbf X)^{-1}\mathbf X^\top \mathbf y = \mathbf X^\dagger \mathbf y
+\]</span></p>
+<p><strong>Remember this!</strong> It encodes many important facts…</p>
+<div class="fragment">
+<p>This assumes <span class="math inline">\(\mathbf X^\top\mathbf X\)</span> to be invertible, i.e.&nbsp;the <em>columns</em> of <span class="math inline">\(\mathbf X\)</span> have full rank (columns = variables)</p>
+<ul>
+<li>That’s often true if <span class="math inline">\(n &gt; p\)</span>, unless some problem like one variable is a copy of another</li>
+</ul>
+</div>
+<div class="fragment">
+<ul>
+<li>Impossible if <span class="math inline">\(p \ge n\)</span> (more columns than rows, the intercept counted). “High-dimensional” regression requires special methods, covered soon in this course!</li>
+</ul>
+</div>
+</section>
+<section id="linear-algebra-and-geometric-intuition" class="slide level2">
+<h2>Linear algebra and geometric intuition</h2>
+<p>Predictions from the linear model:</p>
+<p><span class="math display">\[\hat{\mathbf y} = \mathbf {X} \hat{\mathbf \beta} = \mathbf X (\mathbf X^\top\mathbf X)^{-1}\mathbf X^\top \mathbf y = \mathbf H \mathbf y\]</span> if we define</p>
+<p><span class="math display">\[\mathbf H = \mathbf X (\mathbf X^\top\mathbf X)^{-1}\mathbf X^\top = \mathbf X \mathbf X^\dagger\]</span></p>
+<p>(the pseudoinverse <span class="math inline">\(\mathbf X^\dagger\)</span> of the previous slide: <span class="math inline">\(\hat{\mathbf y} = \mathbf X \hat{\boldsymbol\beta} = \mathbf X \mathbf X^\dagger \mathbf y\)</span>)</p>
+</section>
+<section id="linear-algebra-and-geometric-intuition-continued" class="slide level2">
+<h2>Linear algebra and geometric intuition, continued</h2>
+<p>COOL FACTS about <span class="math inline">\(\mathbf H\)</span>:</p>
+<ul>
+<li><span class="math inline">\(\mathbf H\)</span> is a projection: <span class="math inline">\(\mathbf H^2 = \mathbf H\)</span></li>
+<li>For any <span class="math inline">\(n\)</span>-vector <span class="math inline">\(\mathbf v\)</span>, the <span class="math inline">\(n\)</span>-vector <span class="math inline">\(\mathbf {Hv}\)</span> is the orthogonal projection of <span class="math inline">\(\mathbf v\)</span> onto the column space of <span class="math inline">\(\mathbf X\)</span></li>
+<li>Of all linear combinations of columns of <span class="math inline">\(\mathbf X\)</span>, <span class="math inline">\(\mathbf {Hv}\)</span> is the one closest (in Euclidean distance) to <span class="math inline">\(\mathbf v\)</span>.</li>
+</ul>
+</section>
+<section id="exercise-do-the-calculus" class="slide level2 inverse">
+<h2>Exercise: do the calculus</h2>
+<p>We have the loss function</p>
+<p><span class="math display">\[L(\mathbf X, \mathbf y, \mathbf \beta) = (\mathbf y - \mathbf X \beta)^\top(\mathbf y - \mathbf X \beta)\]</span></p>
+<p>(just a different way of writing sum of squared errors)</p>
+<ul>
+<li>Consider each coordinate separately and take univariate partial derivatives</li>
+<li>Use vector calculus and compute the gradient</li>
+<li>(Or even use matrix calculus identities)</li>
+</ul>
+<div class="fragment">
+<p>Reach the same conclusion: at a stationary point of <span class="math inline">\(L\)</span>,</p>
+<p><span class="math display">\[\mathbf X^\top \mathbf X \hat \beta = \mathbf X^\top \mathbf y\]</span></p>
+</div>
+</section>
+<section id="history-frisch-and-waugh-1933" class="slide level2 inverse">
+<h2>History: Frisch and Waugh, 1933</h2>
+<p>Ragnar Frisch and Frederick Waugh, <em>Econometrica</em>, volume 1</p>
+<p>Economists were “detrending” time series by hand before regressing one on another. Frisch and Waugh asked: is that the same as putting time in as a regressor?</p>
+<p>Exactly the same, they proved. Lovell (1963) generalized it to any set of columns</p>
+<div class="leave">
+<p>Why care: it relates multiple regression coefficients to an intuitive univariate regression</p>
+</div>
+</section>
+<section id="partialling-out-theorem-frischwaughlovell" class="slide level2">
+<h2>Partialling-out theorem (Frisch–Waugh–Lovell)</h2>
+<p><span class="math inline">\(\mathbf X = [\mathbf X_1 \;\; \mathbf x_2]\)</span>, full column rank, the intercept column inside <span class="math inline">\(\mathbf X_1\)</span>. <span class="math inline">\(\mathbf M_1 = \mathbf I - \mathbf X_1(\mathbf X_1^\top\mathbf X_1)^{-1}\mathbf X_1^\top\)</span> projects onto the orthogonal complement of <span class="math inline">\(\mathrm{col}(\mathbf X_1)\)</span>, so <span class="math inline">\(\tilde{\mathbf x}_2 = \mathbf M_1 \mathbf x_2\)</span> is the residual of <span class="math inline">\(\mathbf x_2\)</span> after regressing it on <span class="math inline">\(\mathbf X_1\)</span>. The coefficient on <span class="math inline">\(\mathbf x_2\)</span> in the regression of <span class="math inline">\(\mathbf y\)</span> on <span class="math inline">\(\mathbf X\)</span> is <span class="math display">\[
+\hat\beta_2 = \frac{\tilde{\mathbf x}_2^\top \mathbf y}{\tilde{\mathbf x}_2^\top \tilde{\mathbf x}_2}
+\]</span> (and the same number comes from regressing <span class="math inline">\(\mathbf M_1 \mathbf y\)</span> on <span class="math inline">\(\tilde{\mathbf x}_2\)</span>: residual on residual).</p>
+<div class="leave">
+<p>The coefficient on <span class="math inline">\(x_2\)</span> is the slope of <span class="math inline">\(y\)</span> on <em>what is left of <span class="math inline">\(x_2\)</span> after <span class="math inline">\(\mathbf X_1\)</span> has explained what it can</em>. Fitting to residuals: additive models, boosting and causal ML share the mechanism, not a guarantee.</p>
+</div>
+</section>
+<section id="visualizing-orthogonal-subspaces" class="slide level2">
+<h2>Visualizing orthogonal subspaces</h2>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure>
+<p><img data-src="02-1-regression_files/figure-revealjs/fwl-picture-1.png" width="1500"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Project everything onto the orthogonal complement of <span class="math inline">\(\mathrm{col}(\mathbf X_1)\)</span>, the grey plane. There, regress <span class="math inline">\(\tilde{\mathbf y}\)</span> on <span class="math inline">\(\tilde{\mathbf x}_2\)</span> through the origin: the slope is <span class="math inline">\(\hat\beta_2\)</span> and <span class="math inline">\(\mathbf r\)</span> is the full regression’s residual</p>
+</section>
+<section id="partialling-out-theorem-lines-12" class="slide level2">
+<h2>Partialling-out theorem, lines 1–2</h2>
+<p>The full regression, with the normal equations read column by column: the residual is orthogonal to every column <span class="math display">\[
+\mathbf y = \mathbf X_1 \hat{\boldsymbol\beta}_1 + \mathbf x_2 \hat\beta_2 + \mathbf r, \qquad \mathbf X_1^\top \mathbf r = \mathbf 0,\ \ \mathbf x_2^\top \mathbf r = 0
+\]</span></p>
+<div class="fragment">
+<p>Multiply through by <span class="math inline">\(\mathbf M_1\)</span>: <span class="math display">\[
+\mathbf M_1 \mathbf y = \mathbf M_1 \mathbf X_1 \hat{\boldsymbol\beta}_1 + \mathbf M_1 \mathbf x_2 \hat\beta_2 + \mathbf M_1 \mathbf r
+\]</span></p>
+</div>
+<div class="fragment">
+<p><span class="math inline">\(\mathbf M_1 \mathbf X_1 = \mathbf 0\)</span> and <span class="math inline">\(\mathbf M_1 \mathbf r = \mathbf r\)</span> (because <span class="math inline">\(\mathbf r \perp \mathrm{col}(\mathbf X_1)\)</span>), so <span class="math display">\[
+\mathbf M_1 \mathbf y = \tilde{\mathbf x}_2 \,\hat\beta_2 + \mathbf r
+\]</span></p>
+</div>
+</section>
+<section id="partialling-out-theorem-lines-34" class="slide level2">
+<h2>Partialling-out theorem, lines 3–4</h2>
+<p><span class="math inline">\(\mathbf M_1 \mathbf y = \tilde{\mathbf x}_2 \,\hat\beta_2 + \mathbf r\)</span> is a vector equation with one unknown number, <span class="math inline">\(\hat\beta_2\)</span></p>
+<div class="fragment">
+<p>Multiply by <span class="math inline">\(\tilde{\mathbf x}_2^\top = \mathbf x_2^\top \mathbf M_1\)</span>: <span class="math display">\[
+\tilde{\mathbf x}_2^\top \mathbf M_1 \mathbf y = \tilde{\mathbf x}_2^\top \tilde{\mathbf x}_2\, \hat\beta_2 + \tilde{\mathbf x}_2^\top \mathbf r
+\]</span></p>
+</div>
+<div class="fragment">
+<p>The last term: <span class="math inline">\(\tilde{\mathbf x}_2^\top \mathbf r = \mathbf x_2^\top \mathbf M_1 \mathbf r = \mathbf x_2^\top \mathbf r = 0\)</span></p>
+</div>
+</section>
+<section id="partialling-out-theorem-lines-56" class="slide level2">
+<h2>Partialling-out theorem, lines 5–6</h2>
+<p>Left side: <span class="math inline">\(\tilde{\mathbf x}_2^\top \mathbf M_1 \mathbf y = \mathbf x_2^\top \mathbf M_1 \mathbf M_1 \mathbf y\)</span></p>
+<div class="fragment">
+<p><span class="math inline">\(= \mathbf x_2^\top \mathbf M_1 \mathbf y = \tilde{\mathbf x}_2^\top \mathbf y\)</span>, using <span class="math inline">\(\mathbf M_1^\top = \mathbf M_1 = \mathbf M_1^2\)</span></p>
+</div>
+<div class="fragment">
+<p>Full column rank makes <span class="math inline">\(\tilde{\mathbf x}_2^\top \tilde{\mathbf x}_2 &gt; 0\)</span>, so <span class="math display">\[
+\hat\beta_2 = \frac{\tilde{\mathbf x}_2^\top \mathbf y}{\tilde{\mathbf x}_2^\top \tilde{\mathbf x}_2} = \frac{\tilde{\mathbf x}_2^\top \tilde{\mathbf y}}{\tilde{\mathbf x}_2^\top \tilde{\mathbf x}_2}, \qquad \tilde{\mathbf y} = \mathbf M_1 \mathbf y \qquad \blacksquare
+\]</span></p>
+<p>(ESL §3.2.3.)</p>
+</div>
+</section>
+<section id="before-the-seminar" class="slide level2">
+<h2>Before the seminar</h2>
+<ul>
+<li><p>This week: exercises 1 and 2 at the top of the notebook. The proof of the optimal model theorem, and omitted-variable bias: what the normal equations say when a relevant column is left out</p></li>
+<li><p>Every week: the notebook opens with a “Before the seminar” section. Do it before you arrive; the seminar’s problems start from it</p></li>
+</ul>
+</section>
+<section id="concluding-points" class="slide level2 inverse">
+<h2>Concluding points</h2>
+<p>One of the most commonly used methods, even with more complex ML often compare to regression as a “baseline”</p>
+<p>Perhaps the most complex method that is still considered relatively interpretable. But interpretation is actually trickier than most understand! (<strong>more on this next week!</strong>)</p>
+<div class="fragment">
+<h4 id="very-often-used-in-ways-that-dont-make-sense-by-people-who-dont-know-what-theyre-doing-to-reach-conclusions-that-dont-work-in-the-real-world"><em>Very</em> often used in ways that don’t make sense by people who don’t know what they’re doing to reach conclusions that don’t work in the real world!</h4>
+<p>. . .</p>
+<h4 id="done-well-amazing-almost-magically-effective-worth-many-more-years-of-study-can-easily-provide-a-lifetime-of-valuable-usage-to-a-wise-practitioner">Done well: amazing, <em>almost</em> magically effective, worth many more years of study, can easily provide a lifetime of valuable usage to a wise practitioner</h4>
+
+
+</div>
+</section>
+    </div>
+  <div class="quarto-auto-generated-content" style="display: none;">
+<div class="footer footer-default">
+<p>ST310 Machine Learning</p>
+</div>
+</div></div>
+
+  <script>window.backupDefine = window.define; window.define = undefined;</script>
+  <script src="../../../site_libs/revealjs/dist/reveal.js"></script>
+  <!-- reveal.js plugins -->
+  <script src="../../../site_libs/revealjs/plugin/quarto-line-highlight/line-highlight.js"></script>
+  <script src="../../../site_libs/revealjs/plugin/pdf-export/pdfexport.js"></script>
+  <script src="../../../site_libs/revealjs/plugin/reveal-menu/menu.js"></script>
+  <script src="../../../site_libs/revealjs/plugin/reveal-menu/quarto-menu.js"></script>
+  <script src="../../../site_libs/revealjs/plugin/quarto-support/support.js"></script>
+  
+
+  <script src="../../../site_libs/revealjs/plugin/notes/notes.js"></script>
+  <script src="../../../site_libs/revealjs/plugin/search/search.js"></script>
+  <script src="../../../site_libs/revealjs/plugin/zoom/zoom.js"></script>
+  <script src="../../../site_libs/revealjs/plugin/math/math.js"></script>
+  <script>window.define = window.backupDefine; window.backupDefine = undefined;</script>
+
+  <script>
+
+      // Full list of configuration options available at:
+      // https://revealjs.com/config/
+      Reveal.initialize({
+'controlsAuto': true,
+'previewLinksAuto': false,
+'pdfSeparateFragments': false,
+'autoAnimateEasing': "ease",
+'autoAnimateDuration': 1,
+'autoAnimateUnmatched': true,
+'jumpToSlide': true,
+'menu': {"side":"left","useTextContentForMissingTitles":true,"markers":false,"loadIcons":false,"custom":[{"title":"Tools","icon":"<i class=\"fas fa-gear\"></i>","content":"<ul class=\"slide-menu-items\">\n<li class=\"slide-tool-item active\" data-item=\"0\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.fullscreen(event)\"><kbd>f</kbd> Fullscreen</a></li>\n<li class=\"slide-tool-item\" data-item=\"1\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.speakerMode(event)\"><kbd>s</kbd> Speaker View</a></li>\n<li class=\"slide-tool-item\" data-item=\"2\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.overview(event)\"><kbd>o</kbd> Slide Overview</a></li>\n<li class=\"slide-tool-item\" data-item=\"3\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.togglePdfExport(event)\"><kbd>e</kbd> PDF Export Mode</a></li>\n<li class=\"slide-tool-item\" data-item=\"4\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.toggleScrollView(event)\"><kbd>r</kbd> Scroll View Mode</a></li>\n<li class=\"slide-tool-item\" data-item=\"5\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.keyboardHelp(event)\"><kbd>?</kbd> Keyboard Help</a></li>\n</ul>"}],"openButton":true},
+'smaller': false,
+ 
+        // Display controls in the bottom right corner
+        controls: false,
+
+        // Help the user learn the controls by providing hints, for example by
+        // bouncing the down arrow when they first encounter a vertical slide
+        controlsTutorial: false,
+
+        // Determines where controls appear, "edges" or "bottom-right"
+        controlsLayout: 'edges',
+
+        // Visibility rule for backwards navigation arrows; "faded", "hidden"
+        // or "visible"
+        controlsBackArrows: 'faded',
+
+        // Display a presentation progress bar
+        progress: true,
+
+        // Display the page number of the current slide
+        slideNumber: 'c/t',
+
+        // 'all', 'print', or 'speaker'
+        showSlideNumber: 'all',
+
+        // Add the current slide number to the URL hash so that reloading the
+        // page/copying the URL will return you to the same slide
+        hash: true,
+
+        // Start with 1 for the hash rather than 0
+        hashOneBasedIndex: false,
+
+        // Flags if we should monitor the hash and change slides accordingly
+        respondToHashChanges: true,
+
+        // Push each slide change to the browser history
+        history: false,
+
+        // Enable keyboard shortcuts for navigation
+        keyboard: true,
+
+        // Enable the slide overview mode
+        overview: true,
+
+        // Disables the default reveal.js slide layout (scaling and centering)
+        // so that you can use custom CSS layout
+        disableLayout: false,
+
+        // Vertical centering of slides
+        center: false,
+
+        // Enables touch navigation on devices with touch input
+        touch: true,
+
+        // Loop the presentation
+        loop: false,
+
+        // Change the presentation direction to be RTL
+        rtl: false,
+
+        // see https://revealjs.com/vertical-slides/#navigation-mode
+        navigationMode: 'linear',
+
+        // Randomizes the order of slides each time the presentation loads
+        shuffle: false,
+
+        // Turns fragments on and off globally
+        fragments: true,
+
+        // Flags whether to include the current fragment in the URL,
+        // so that reloading brings you to the same fragment position
+        fragmentInURL: false,
+
+        // Flags if the presentation is running in an embedded mode,
+        // i.e. contained within a limited portion of the screen
+        embedded: false,
+
+        // Flags if we should show a help overlay when the questionmark
+        // key is pressed
+        help: true,
+
+        // Flags if it should be possible to pause the presentation (blackout)
+        pause: true,
+
+        // Flags if speaker notes should be visible to all viewers
+        showNotes: false,
+
+        // Global override for autoplaying embedded media (null/true/false)
+        autoPlayMedia: null,
+
+        // Global override for preloading lazy-loaded iframes (null/true/false)
+        preloadIframes: null,
+
+        // Number of milliseconds between automatically proceeding to the
+        // next slide, disabled when set to 0, this value can be overwritten
+        // by using a data-autoslide attribute on your slides
+        autoSlide: 0,
+
+        // Stop auto-sliding after user input
+        autoSlideStoppable: true,
+
+        // Use this method for navigation when auto-sliding
+        autoSlideMethod: null,
+
+        // Specify the average time in seconds that you think you will spend
+        // presenting each slide. This is used to show a pacing timer in the
+        // speaker view
+        defaultTiming: null,
+
+        // Enable slide navigation via mouse wheel
+        mouseWheel: false,
+
+        // The display mode that will be used to show slides
+        display: 'block',
+
+        // Hide cursor if inactive
+        hideInactiveCursor: true,
+
+        // Time before the cursor is hidden (in ms)
+        hideCursorTime: 5000,
+
+        // Opens links in an iframe preview overlay
+        previewLinks: false,
+
+        // Transition style (none/fade/slide/convex/concave/zoom)
+        transition: 'none',
+
+        // Transition speed (default/fast/slow)
+        transitionSpeed: 'default',
+
+        // Transition style for full page slide backgrounds
+        // (none/fade/slide/convex/concave/zoom)
+        backgroundTransition: 'none',
+
+        // Number of slides away from the current that are visible
+        viewDistance: 3,
+
+        // Number of slides away from the current that are visible on mobile
+        // devices. It is advisable to set this to a lower number than
+        // viewDistance in order to save resources.
+        mobileViewDistance: 2,
+
+        // The "normal" size of the presentation, aspect ratio will be preserved
+        // when the presentation is scaled to fit different resolutions. Can be
+        // specified using percentage units.
+        width: 1280,
+
+        height: 720,
+
+        // Factor of the display size that should remain empty around the content
+        margin: 6.0e-2,
+
+        math: {
+          mathjax: 'https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js',
+          config: 'TeX-AMS_HTML-full',
+          tex2jax: {
+            inlineMath: [['\\(','\\)']],
+            displayMath: [['\\[','\\]']],
+            balanceBraces: true,
+            processEscapes: false,
+            processRefs: true,
+            processEnvironments: true,
+            preview: 'TeX',
+            skipTags: ['script','noscript','style','textarea','pre','code'],
+            ignoreClass: 'tex2jax_ignore',
+            processClass: 'tex2jax_process'
+          },
+        },
+
+        // reveal.js plugins
+        plugins: [QuartoLineHighlight, PdfExport, RevealMenu, QuartoSupport,
+
+          RevealMath,
+          RevealNotes,
+          RevealSearch,
+          RevealZoom
+        ]
+      });
+    </script>
+    
+    <script>
+      // htmlwidgets need to know to resize themselves when slides are shown/hidden.
+      // Fire the "slideenter" event (handled by htmlwidgets.js) when the current
+      // slide changes (different for each slide format).
+      (function () {
+        // dispatch for htmlwidgets
+        function fireSlideEnter() {
+          const event = window.document.createEvent("Event");
+          event.initEvent("slideenter", true, true);
+          window.document.dispatchEvent(event);
+        }
+
+        function fireSlideChanged(previousSlide, currentSlide) {
+          fireSlideEnter();
+
+          // dispatch for shiny
+          if (window.jQuery) {
+            if (previousSlide) {
+              window.jQuery(previousSlide).trigger("hidden");
+            }
+            if (currentSlide) {
+              window.jQuery(currentSlide).trigger("shown");
+            }
+          }
+        }
+
+        // hookup for slidy
+        if (window.w3c_slidy) {
+          window.w3c_slidy.add_observer(function (slide_num) {
+            // slide_num starts at position 1
+            fireSlideChanged(null, w3c_slidy.slides[slide_num - 1]);
+          });
+        }
+
+      })();
+    </script>
+
+    <script id="quarto-html-after-body" type="application/javascript">
+      window.document.addEventListener("DOMContentLoaded", function (event) {
+        const tabsets =  window.document.querySelectorAll(".panel-tabset-tabby")
+        tabsets.forEach(function(tabset) {
+          const tabby = new Tabby('#' + tabset.id);
+        });
+        const isCodeAnnotation = (el) => {
+          for (const clz of el.classList) {
+            if (clz.startsWith('code-annotation-')) {                     
+              return true;
+            }
+          }
+          return false;
+        }
+        const onCopySuccess = function(e) {
+          // button target
+          const button = e.trigger;
+          // don't keep focus
+          button.blur();
+          // flash "checked"
+          button.classList.add('code-copy-button-checked');
+          var currentTitle = button.getAttribute("title");
+          button.setAttribute("title", "Copied!");
+          let tooltip;
+          if (window.bootstrap) {
+            button.setAttribute("data-bs-toggle", "tooltip");
+            button.setAttribute("data-bs-placement", "left");
+            button.setAttribute("data-bs-title", "Copied!");
+            tooltip = new bootstrap.Tooltip(button, 
+              { trigger: "manual", 
+                customClass: "code-copy-button-tooltip",
+                offset: [0, -8]});
+            tooltip.show();    
+          }
+          setTimeout(function() {
+            if (tooltip) {
+              tooltip.hide();
+              button.removeAttribute("data-bs-title");
+              button.removeAttribute("data-bs-toggle");
+              button.removeAttribute("data-bs-placement");
+            }
+            button.setAttribute("title", currentTitle);
+            button.classList.remove('code-copy-button-checked');
+          }, 1000);
+          // clear code selection
+          e.clearSelection();
+        }
+        const getTextToCopy = function(trigger) {
+          const outerScaffold = trigger.parentElement.cloneNode(true);
+          const codeEl = outerScaffold.querySelector('code');
+          for (const childEl of codeEl.children) {
+            if (isCodeAnnotation(childEl)) {
+              childEl.remove();
+            }
+          }
+          return codeEl.innerText;
+        }
+        const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+          text: getTextToCopy
+        });
+        clipboard.on('success', onCopySuccess);
+        if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+          const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+            text: getTextToCopy,
+            container: window.document.getElementById('quarto-embedded-source-code-modal')
+          });
+          clipboardModal.on('success', onCopySuccess);
+        }
+          var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+          var mailtoRegex = new RegExp(/^mailto:/);
+            var filterRegex = new RegExp("https:\/\/ml4ds\.com");
+          var isInternal = (href) => {
+              return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+          }
+          // Inspect non-navigation links and adorn them if external
+         var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+          for (var i=0; i<links.length; i++) {
+            const link = links[i];
+            if (!isInternal(link.href)) {
+              // undo the damage that might have been done by quarto-nav.js in the case of
+              // links that we want to consider external
+              if (link.dataset.originalHref !== undefined) {
+                link.href = link.dataset.originalHref;
+              }
+            }
+          }
+        function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+          const config = {
+            allowHTML: true,
+            maxWidth: 500,
+            delay: 100,
+            arrow: false,
+            appendTo: function(el) {
+                return el.closest('section.slide') || el.parentElement;
+            },
+            interactive: true,
+            interactiveBorder: 10,
+            theme: 'light-border',
+            placement: 'bottom-start',
+          };
+          if (contentFn) {
+            config.content = contentFn;
+          }
+          if (onTriggerFn) {
+            config.onTrigger = onTriggerFn;
+          }
+          if (onUntriggerFn) {
+            config.onUntrigger = onUntriggerFn;
+          }
+            config['offset'] = [0,0];
+            config['maxWidth'] = 700;
+          window.tippy(el, config); 
+        }
+        const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+        for (var i=0; i<noterefs.length; i++) {
+          const ref = noterefs[i];
+          tippyHover(ref, function() {
+            // use id or data attribute instead here
+            let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+            try { href = new URL(href).hash; } catch {}
+            const id = href.replace(/^#\/?/, "");
+            const note = window.document.getElementById(id);
+            if (note) {
+              return note.innerHTML;
+            } else {
+              return "";
+            }
+          });
+        }
+        const findCites = (el) => {
+          const parentEl = el.parentElement;
+          if (parentEl) {
+            const cites = parentEl.dataset.cites;
+            if (cites) {
+              return {
+                el,
+                cites: cites.split(' ')
+              };
+            } else {
+              return findCites(el.parentElement)
+            }
+          } else {
+            return undefined;
+          }
+        };
+        var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+        for (var i=0; i<bibliorefs.length; i++) {
+          const ref = bibliorefs[i];
+          const citeInfo = findCites(ref);
+          if (citeInfo) {
+            tippyHover(citeInfo.el, function() {
+              var popup = window.document.createElement('div');
+              citeInfo.cites.forEach(function(cite) {
+                var citeDiv = window.document.createElement('div');
+                citeDiv.classList.add('hanging-indent');
+                citeDiv.classList.add('csl-entry');
+                var biblioDiv = window.document.getElementById('ref-' + cite);
+                if (biblioDiv) {
+                  citeDiv.innerHTML = biblioDiv.innerHTML;
+                }
+                popup.appendChild(citeDiv);
+              });
+              return popup.innerHTML;
+            });
+          }
+        }
+      });
+      </script>
+    
+
+</body></html>
