@@ -30,7 +30,7 @@ theme_set(theme_minimal())
 
 <!-- At home, before the seminar. -->
 
-The lecture stated two results and left their proofs to you. Do both on paper before the seminar; the seminar's problems are variations on them. You may use, without proof, two facts about conditional expectation from ST102: the tower property, $\mathbb E[Z] = \mathbb E\big[\mathbb E[Z \mid X]\big]$, and taking out what is known, $\mathbb E[g(X)\, Z \mid X] = g(X)\, \mathbb E[Z \mid X]$ for any function $g$ of $X$ (given $X$, a function of $X$ is a constant).
+The lecture stated two results and left their proofs to you (exercises 1 and 2), and proved a third, which you redo with the slides closed (exercise 3). Do all three on paper before the seminar; the seminar's problems are variations on the first two. You may use, without proof, two facts about conditional expectation from ST102: the tower property, $\mathbb E[Z] = \mathbb E\big[\mathbb E[Z \mid X]\big]$, and taking out what is known, $\mathbb E[g(X)\, Z \mid X] = g(X)\, \mathbb E[Z \mid X]$ for any function $g$ of $X$ (given $X$, a function of $X$ is a constant).
 
 ::: {.callout-warning title="Hints"}
 Each exercise has hints, collapsed below it. Do not open a hint unless you have been stuck for at least a few minutes, and open them in order. The solutions are revealed in the seminar.
@@ -66,6 +66,28 @@ Substitute the model for $\mathbf y$ inside $\mathbf x_1^\top\mathbf y$ and spli
 
 ::: {.callout-note collapse="true" title="Hint 2"}
 Two of the three terms are numbers once the inputs are fixed. Only the noise term is random: what is its expectation given the inputs?
+:::
+
+**Exercise 3 (partialling-out theorem).** The lecture proved this one. Close the slides and prove it again. $\mathbf X = [\mathbf X_1 \;\; \mathbf x_2]$ has full column rank, with the intercept column inside $\mathbf X_1$; $\mathbf M_1 = \mathbf I - \mathbf X_1(\mathbf X_1^\top\mathbf X_1)^{-1}\mathbf X_1^\top$ and $\tilde{\mathbf x}_2 = \mathbf M_1\mathbf x_2$. You may use that $\mathbf M_1$ is symmetric, that $\mathbf M_1^2 = \mathbf M_1$ and that $\mathbf M_1\mathbf X_1 = \mathbf 0$ (optional problem 4 proves all three). Show that the coefficient on $\mathbf x_2$ in the least-squares regression of $\mathbf y$ on $\mathbf X$ is
+$$
+\hat\beta_2 = \frac{\tilde{\mathbf x}_2^\top \mathbf y}{\tilde{\mathbf x}_2^\top \tilde{\mathbf x}_2},
+$$
+and that regressing $\tilde{\mathbf y} = \mathbf M_1\mathbf y$ on $\tilde{\mathbf x}_2$ gives the same number. Where is full column rank used?
+
+::: {.callout-note collapse="true" title="Hint 1"}
+Start from the full regression and its normal equations: $\mathbf y = \mathbf X_1\hat{\boldsymbol\beta}_1 + \mathbf x_2\hat\beta_2 + \mathbf r$, with $\mathbf X_1^\top\mathbf r = \mathbf 0$ and $\mathbf x_2^\top\mathbf r = 0$. Which matrix removes the $\mathbf X_1$ term?
+:::
+
+::: {.callout-note collapse="true" title="Hint 2"}
+Multiply through by $\mathbf M_1$ and say what happens to each of the three terms on the right. For the last one, write $\mathbf M_1\mathbf r = \mathbf r - \mathbf X_1(\mathbf X_1^\top\mathbf X_1)^{-1}\mathbf X_1^\top\mathbf r$.
+:::
+
+::: {.callout-note collapse="true" title="Hint 3"}
+You now have $\mathbf M_1\mathbf y = \tilde{\mathbf x}_2\,\hat\beta_2 + \mathbf r$: a vector equation with one unknown number. Multiply by a row vector that turns it into a scalar equation in which the coefficient of $\hat\beta_2$ is positive.
+:::
+
+::: {.callout-note collapse="true" title="Hint 4"}
+After multiplying by $\tilde{\mathbf x}_2^\top = \mathbf x_2^\top\mathbf M_1$, two things remain: the term $\tilde{\mathbf x}_2^\top\mathbf r$, and an extra $\mathbf M_1$ on the left side. Each goes away by one of the properties of $\mathbf M_1$ you were given.
 :::
 
 ## Problems

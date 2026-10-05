@@ -261,7 +261,7 @@ Note
 <section id="before-the-seminar" class="level2">
 <h2 class="anchored" data-anchor-id="before-the-seminar">Before the seminar</h2>
 <!-- At home, before the seminar. -->
-<p>The lecture stated two results and left their proofs to you. Do both on paper before the seminar; the seminar’s problems are variations on them. You may use, without proof, two facts about conditional expectation from ST102: the tower property, <span class="math inline">\(\mathbb E[Z] = \mathbb E\big[\mathbb E[Z \mid X]\big]\)</span>, and taking out what is known, <span class="math inline">\(\mathbb E[g(X)\, Z \mid X] = g(X)\, \mathbb E[Z \mid X]\)</span> for any function <span class="math inline">\(g\)</span> of <span class="math inline">\(X\)</span> (given <span class="math inline">\(X\)</span>, a function of <span class="math inline">\(X\)</span> is a constant).</p>
+<p>The lecture stated two results and left their proofs to you (exercises 1 and 2), and proved a third, which you redo with the slides closed (exercise 3). Do all three on paper before the seminar; the seminar’s problems are variations on the first two. You may use, without proof, two facts about conditional expectation from ST102: the tower property, <span class="math inline">\(\mathbb E[Z] = \mathbb E\big[\mathbb E[Z \mid X]\big]\)</span>, and taking out what is known, <span class="math inline">\(\mathbb E[g(X)\, Z \mid X] = g(X)\, \mathbb E[Z \mid X]\)</span> for any function <span class="math inline">\(g\)</span> of <span class="math inline">\(X\)</span> (given <span class="math inline">\(X\)</span>, a function of <span class="math inline">\(X\)</span> is a constant).</p>
 <div class="callout callout-style-default callout-warning callout-titled" title="Hints">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -361,6 +361,73 @@ R(f) = R(f^\star) + \mathbb E\big[(f^\star(X) - f(X))^2\big].
 </div>
 </div>
 </div>
+<p><strong>Exercise 3 (partialling-out theorem).</strong> The lecture proved this one. Close the slides and prove it again. <span class="math inline">\(\mathbf X = [\mathbf X_1 \;\; \mathbf x_2]\)</span> has full column rank, with the intercept column inside <span class="math inline">\(\mathbf X_1\)</span>; <span class="math inline">\(\mathbf M_1 = \mathbf I - \mathbf X_1(\mathbf X_1^\top\mathbf X_1)^{-1}\mathbf X_1^\top\)</span> and <span class="math inline">\(\tilde{\mathbf x}_2 = \mathbf M_1\mathbf x_2\)</span>. You may use that <span class="math inline">\(\mathbf M_1\)</span> is symmetric, that <span class="math inline">\(\mathbf M_1^2 = \mathbf M_1\)</span> and that <span class="math inline">\(\mathbf M_1\mathbf X_1 = \mathbf 0\)</span> (optional problem 4 proves all three). Show that the coefficient on <span class="math inline">\(\mathbf x_2\)</span> in the least-squares regression of <span class="math inline">\(\mathbf y\)</span> on <span class="math inline">\(\mathbf X\)</span> is <span class="math display">\[
+\hat\beta_2 = \frac{\tilde{\mathbf x}_2^\top \mathbf y}{\tilde{\mathbf x}_2^\top \tilde{\mathbf x}_2},
+\]</span> and that regressing <span class="math inline">\(\tilde{\mathbf y} = \mathbf M_1\mathbf y\)</span> on <span class="math inline">\(\tilde{\mathbf x}_2\)</span> gives the same number. Where is full column rank used?</p>
+<div class="callout callout-style-default callout-note callout-titled" title="Hint 1">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-8-contents" aria-controls="callout-8" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Hint 1
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-8" class="callout-8-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Start from the full regression and its normal equations: <span class="math inline">\(\mathbf y = \mathbf X_1\hat{\boldsymbol\beta}_1 + \mathbf x_2\hat\beta_2 + \mathbf r\)</span>, with <span class="math inline">\(\mathbf X_1^\top\mathbf r = \mathbf 0\)</span> and <span class="math inline">\(\mathbf x_2^\top\mathbf r = 0\)</span>. Which matrix removes the <span class="math inline">\(\mathbf X_1\)</span> term?</p>
+</div>
+</div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled" title="Hint 2">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-9-contents" aria-controls="callout-9" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Hint 2
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-9" class="callout-9-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Multiply through by <span class="math inline">\(\mathbf M_1\)</span> and say what happens to each of the three terms on the right. For the last one, write <span class="math inline">\(\mathbf M_1\mathbf r = \mathbf r - \mathbf X_1(\mathbf X_1^\top\mathbf X_1)^{-1}\mathbf X_1^\top\mathbf r\)</span>.</p>
+</div>
+</div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled" title="Hint 3">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-10-contents" aria-controls="callout-10" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Hint 3
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-10" class="callout-10-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>You now have <span class="math inline">\(\mathbf M_1\mathbf y = \tilde{\mathbf x}_2\,\hat\beta_2 + \mathbf r\)</span>: a vector equation with one unknown number. Multiply by a row vector that turns it into a scalar equation in which the coefficient of <span class="math inline">\(\hat\beta_2\)</span> is positive.</p>
+</div>
+</div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled" title="Hint 4">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-11-contents" aria-controls="callout-11" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Hint 4
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-11" class="callout-11-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>After multiplying by <span class="math inline">\(\tilde{\mathbf x}_2^\top = \mathbf x_2^\top\mathbf M_1\)</span>, two things remain: the term <span class="math inline">\(\tilde{\mathbf x}_2^\top\mathbf r\)</span>, and an extra <span class="math inline">\(\mathbf M_1\)</span> on the left side. Each goes away by one of the properties of <span class="math inline">\(\mathbf M_1\)</span> you were given.</p>
+</div>
+</div>
+</div>
 </section>
 <section id="problems" class="level2">
 <h2 class="anchored" data-anchor-id="problems">Problems</h2>
@@ -387,90 +454,6 @@ R(f) = R(f^\star) + \mathbb E\big[(f^\star(X) - f(X))^2\big].
 <li><p>In the partialling-out theorem take <span class="math inline">\(\mathbf X_1 = \mathbf 1\)</span>, the column of ones, and <span class="math inline">\(\mathbf x_2 = \mathbf x\)</span>. What is <span class="math inline">\(\mathbf M_1 \mathbf x\)</span>? Conclude that the slope of <span class="math inline">\(\mathbf y\)</span> on <span class="math inline">\(\mathbf x\)</span> in a regression <em>with</em> an intercept is the slope through the origin of the centered <span class="math inline">\(\mathbf y\)</span> on the centered <span class="math inline">\(\mathbf x\)</span>, and check that this is (b).</p></li>
 </ol>
 <div class="callout callout-style-default callout-note callout-titled" title="Hint 1">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-8-contents" aria-controls="callout-8" aria-expanded="false" aria-label="Toggle callout">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Note</span>Hint 1
-</div>
-<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
-</div>
-<div id="callout-8" class="callout-8-contents callout-collapse collapse">
-<div class="callout-body-container callout-body">
-<ol type="a">
-<li>Differentiate one term of the sum first. (b) Use the first equation to eliminate <span class="math inline">\(\hat\alpha\)</span> from the second.</li>
-</ol>
-</div>
-</div>
-</div>
-<div class="callout callout-style-default callout-note callout-titled" title="Hint 2">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-9-contents" aria-controls="callout-9" aria-expanded="false" aria-label="Toggle callout">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Note</span>Hint 2
-</div>
-<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
-</div>
-<div id="callout-9" class="callout-9-contents callout-collapse collapse">
-<div class="callout-body-container callout-body">
-<ol start="3" type="a">
-<li><span class="math inline">\(\mathbf H_1 = \mathbf 1(\mathbf 1^\top\mathbf 1)^{-1}\mathbf 1^\top\)</span>: what is <span class="math inline">\(\mathbf 1^\top\mathbf 1\)</span>, and what does <span class="math inline">\(\mathbf H_1\)</span> do to a vector?</li>
-</ol>
-</div>
-</div>
-</div>
-<p><strong>Problem 4 (the hat matrix).</strong> <span class="math inline">\(\mathbf X\)</span> is <span class="math inline">\(n \times q\)</span> with full column rank (<span class="math inline">\(q = p + 1\)</span> columns, the intercept counted), <span class="math inline">\(\mathbf H = \mathbf X(\mathbf X^\top\mathbf X)^{-1}\mathbf X^\top\)</span> and <span class="math inline">\(\mathbf M = \mathbf I - \mathbf H\)</span>.</p>
-<ol type="a">
-<li><p>Show <span class="math inline">\(\mathbf H^2 = \mathbf H\)</span> and <span class="math inline">\(\mathbf H^\top = \mathbf H\)</span>, and compute <span class="math inline">\(\mathrm{tr}(\mathbf H)\)</span>.</p></li>
-<li><p>Show <span class="math inline">\(\mathbf M^2 = \mathbf M\)</span>, <span class="math inline">\(\mathbf M^\top = \mathbf M\)</span> and <span class="math inline">\(\mathbf M \mathbf X = \mathbf 0\)</span>. In one sentence each: what is <span class="math inline">\(\mathbf H\mathbf y\)</span>, and what is <span class="math inline">\(\mathbf M\mathbf y\)</span>?</p></li>
-<li><p>Use (b) to show that the residual vector <span class="math inline">\(\mathbf r = \mathbf M\mathbf y\)</span> satisfies <span class="math inline">\(\mathbf X^\top \mathbf r = \mathbf 0\)</span> (the normal equations again, from the geometry instead of the calculus). Where did full column rank get used?</p></li>
-</ol>
-<div class="callout callout-style-default callout-note callout-titled" title="Hint 1">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-10-contents" aria-controls="callout-10" aria-expanded="false" aria-label="Toggle callout">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Note</span>Hint 1
-</div>
-<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
-</div>
-<div id="callout-10" class="callout-10-contents callout-collapse collapse">
-<div class="callout-body-container callout-body">
-<ol type="a">
-<li>For the trace, <span class="math inline">\(\mathrm{tr}(\mathbf A\mathbf B) = \mathrm{tr}(\mathbf B\mathbf A)\)</span> with <span class="math inline">\(\mathbf A = \mathbf X\)</span>.</li>
-</ol>
-</div>
-</div>
-</div>
-<div class="callout callout-style-default callout-note callout-titled" title="Hint 2">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-11-contents" aria-controls="callout-11" aria-expanded="false" aria-label="Toggle callout">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Note</span>Hint 2
-</div>
-<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
-</div>
-<div id="callout-11" class="callout-11-contents callout-collapse collapse">
-<div class="callout-body-container callout-body">
-<ol start="3" type="a">
-<li>Write <span class="math inline">\(\mathbf X^\top\mathbf r = \mathbf X^\top\mathbf M\mathbf y\)</span> and use <span class="math inline">\(\mathbf M^\top = \mathbf M\)</span> to move <span class="math inline">\(\mathbf M\)</span> onto <span class="math inline">\(\mathbf X\)</span>.</li>
-</ol>
-</div>
-</div>
-</div>
-<p><strong>Problem 5 (a zero slope with a predictable outcome).</strong> Let <span class="math inline">\(X\)</span> take the values <span class="math inline">\(-1, 0, 1\)</span> with probability <span class="math inline">\(1/3\)</span> each, let <span class="math inline">\(\varepsilon\)</span> be independent of <span class="math inline">\(X\)</span> and take the values <span class="math inline">\(-1, 1\)</span> with probability <span class="math inline">\(1/2\)</span> each, and let <span class="math inline">\(Y = X^2 + \varepsilon\)</span>.</p>
-<ol type="a">
-<li><p>Find <span class="math inline">\(f^\star(x)\)</span> under squared loss, and its risk <span class="math inline">\(R(f^\star)\)</span>.</p></li>
-<li><p>Find the best linear predictor <span class="math inline">\(a + bX\)</span>, the minimizer of <span class="math inline">\(\mathbb E[(Y - a - bX)^2]\)</span>, and its risk. Compute <span class="math inline">\(\mathrm{Cov}(X, Y)\)</span>.</p></li>
-<li><p>What does the example say about using correlation to decide whether <span class="math inline">\(X\)</span> predicts <span class="math inline">\(Y\)</span>? Which result from the lecture gives the excess risk of the best line, and what is it here?</p></li>
-</ol>
-<div class="callout callout-style-default callout-note callout-titled" title="Hint 1">
 <div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-12-contents" aria-controls="callout-12" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
@@ -483,7 +466,7 @@ R(f) = R(f^\star) + \mathbb E\big[(f^\star(X) - f(X))^2\big].
 <div id="callout-12" class="callout-12-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <ol type="a">
-<li><span class="math inline">\(\mathbb E[Y \mid X = x]\)</span> is <span class="math inline">\(x^2\)</span> plus the mean of the noise.</li>
+<li>Differentiate one term of the sum first. (b) Use the first equation to eliminate <span class="math inline">\(\hat\alpha\)</span> from the second.</li>
 </ol>
 </div>
 </div>
@@ -500,17 +483,17 @@ R(f) = R(f^\star) + \mathbb E\big[(f^\star(X) - f(X))^2\big].
 </div>
 <div id="callout-13" class="callout-13-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<ol start="2" type="a">
-<li>The best line’s slope is <span class="math inline">\(\mathrm{Cov}(X, Y)/\mathrm{Var}(X)\)</span>; compute <span class="math inline">\(\mathbb E X^3\)</span>. Its risk is then the variance of something.</li>
+<ol start="3" type="a">
+<li><span class="math inline">\(\mathbf H_1 = \mathbf 1(\mathbf 1^\top\mathbf 1)^{-1}\mathbf 1^\top\)</span>: what is <span class="math inline">\(\mathbf 1^\top\mathbf 1\)</span>, and what does <span class="math inline">\(\mathbf H_1\)</span> do to a vector?</li>
 </ol>
 </div>
 </div>
 </div>
-<p><strong>Problem 6 (why collinearity makes a coefficient uncertain).</strong> Fixed design: <span class="math inline">\(\mathbf y = \mathbf X_1\boldsymbol\beta_1 + \mathbf x_2\beta_2 + \boldsymbol\varepsilon\)</span> with <span class="math inline">\(\mathbb E\,\boldsymbol\varepsilon = \mathbf 0\)</span> and <span class="math inline">\(\mathrm{Cov}(\boldsymbol\varepsilon) = \sigma^2\mathbf I\)</span>, full column rank, and <span class="math inline">\(\tilde{\mathbf x}_2 = \mathbf M_1\mathbf x_2\)</span> as in the lecture.</p>
+<p><strong>Problem 4 (the hat matrix).</strong> <span class="math inline">\(\mathbf X\)</span> is <span class="math inline">\(n \times q\)</span> with full column rank (<span class="math inline">\(q = p + 1\)</span> columns, the intercept counted), <span class="math inline">\(\mathbf H = \mathbf X(\mathbf X^\top\mathbf X)^{-1}\mathbf X^\top\)</span> and <span class="math inline">\(\mathbf M = \mathbf I - \mathbf H\)</span>.</p>
 <ol type="a">
-<li><p>Use the partialling-out theorem to show that <span class="math inline">\(\hat\beta_2 = \beta_2 + \tilde{\mathbf x}_2^\top\boldsymbol\varepsilon / \tilde{\mathbf x}_2^\top\tilde{\mathbf x}_2\)</span>. Which two facts about <span class="math inline">\(\mathbf M_1\)</span> do you need?</p></li>
-<li><p>Find <span class="math inline">\(\mathbb E\,\hat\beta_2\)</span> and <span class="math inline">\(\mathrm{Var}(\hat\beta_2)\)</span>.</p></li>
-<li><p>What happens as <span class="math inline">\(\mathbf x_2\)</span> becomes almost a linear combination of the columns of <span class="math inline">\(\mathbf X_1\)</span>? Compare two designs with <span class="math inline">\(\tilde{\mathbf x}_2^\top\tilde{\mathbf x}_2 = 100\)</span> and <span class="math inline">\(\tilde{\mathbf x}_2^\top\tilde{\mathbf x}_2 = 4\)</span>, with the same <span class="math inline">\(\sigma^2\)</span>.</p></li>
+<li><p>Show <span class="math inline">\(\mathbf H^2 = \mathbf H\)</span> and <span class="math inline">\(\mathbf H^\top = \mathbf H\)</span>, and compute <span class="math inline">\(\mathrm{tr}(\mathbf H)\)</span>.</p></li>
+<li><p>Show <span class="math inline">\(\mathbf M^2 = \mathbf M\)</span>, <span class="math inline">\(\mathbf M^\top = \mathbf M\)</span> and <span class="math inline">\(\mathbf M \mathbf X = \mathbf 0\)</span>. In one sentence each: what is <span class="math inline">\(\mathbf H\mathbf y\)</span>, and what is <span class="math inline">\(\mathbf M\mathbf y\)</span>?</p></li>
+<li><p>Use (b) to show that the residual vector <span class="math inline">\(\mathbf r = \mathbf M\mathbf y\)</span> satisfies <span class="math inline">\(\mathbf X^\top \mathbf r = \mathbf 0\)</span> (the normal equations again, from the geometry instead of the calculus). Where did full column rank get used?</p></li>
 </ol>
 <div class="callout callout-style-default callout-note callout-titled" title="Hint 1">
 <div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-14-contents" aria-controls="callout-14" aria-expanded="false" aria-label="Toggle callout">
@@ -525,7 +508,7 @@ R(f) = R(f^\star) + \mathbb E\big[(f^\star(X) - f(X))^2\big].
 <div id="callout-14" class="callout-14-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <ol type="a">
-<li>The theorem gives <span class="math inline">\(\hat\beta_2 = \tilde{\mathbf x}_2^\top\mathbf y/\tilde{\mathbf x}_2^\top\tilde{\mathbf x}_2\)</span>; substitute the model for <span class="math inline">\(\mathbf y\)</span>.</li>
+<li>For the trace, <span class="math inline">\(\mathrm{tr}(\mathbf A\mathbf B) = \mathrm{tr}(\mathbf B\mathbf A)\)</span> with <span class="math inline">\(\mathbf A = \mathbf X\)</span>.</li>
 </ol>
 </div>
 </div>
@@ -541,6 +524,90 @@ R(f) = R(f^\star) + \mathbb E\big[(f^\star(X) - f(X))^2\big].
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
 <div id="callout-15" class="callout-15-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<ol start="3" type="a">
+<li>Write <span class="math inline">\(\mathbf X^\top\mathbf r = \mathbf X^\top\mathbf M\mathbf y\)</span> and use <span class="math inline">\(\mathbf M^\top = \mathbf M\)</span> to move <span class="math inline">\(\mathbf M\)</span> onto <span class="math inline">\(\mathbf X\)</span>.</li>
+</ol>
+</div>
+</div>
+</div>
+<p><strong>Problem 5 (a zero slope with a predictable outcome).</strong> Let <span class="math inline">\(X\)</span> take the values <span class="math inline">\(-1, 0, 1\)</span> with probability <span class="math inline">\(1/3\)</span> each, let <span class="math inline">\(\varepsilon\)</span> be independent of <span class="math inline">\(X\)</span> and take the values <span class="math inline">\(-1, 1\)</span> with probability <span class="math inline">\(1/2\)</span> each, and let <span class="math inline">\(Y = X^2 + \varepsilon\)</span>.</p>
+<ol type="a">
+<li><p>Find <span class="math inline">\(f^\star(x)\)</span> under squared loss, and its risk <span class="math inline">\(R(f^\star)\)</span>.</p></li>
+<li><p>Find the best linear predictor <span class="math inline">\(a + bX\)</span>, the minimizer of <span class="math inline">\(\mathbb E[(Y - a - bX)^2]\)</span>, and its risk. Compute <span class="math inline">\(\mathrm{Cov}(X, Y)\)</span>.</p></li>
+<li><p>What does the example say about using correlation to decide whether <span class="math inline">\(X\)</span> predicts <span class="math inline">\(Y\)</span>? Which result from the lecture gives the excess risk of the best line, and what is it here?</p></li>
+</ol>
+<div class="callout callout-style-default callout-note callout-titled" title="Hint 1">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-16-contents" aria-controls="callout-16" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Hint 1
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-16" class="callout-16-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<ol type="a">
+<li><span class="math inline">\(\mathbb E[Y \mid X = x]\)</span> is <span class="math inline">\(x^2\)</span> plus the mean of the noise.</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled" title="Hint 2">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-17-contents" aria-controls="callout-17" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Hint 2
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-17" class="callout-17-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<ol start="2" type="a">
+<li>The best line’s slope is <span class="math inline">\(\mathrm{Cov}(X, Y)/\mathrm{Var}(X)\)</span>; compute <span class="math inline">\(\mathbb E X^3\)</span>. Its risk is then the variance of something.</li>
+</ol>
+</div>
+</div>
+</div>
+<p><strong>Problem 6 (why collinearity makes a coefficient uncertain).</strong> Fixed design: <span class="math inline">\(\mathbf y = \mathbf X_1\boldsymbol\beta_1 + \mathbf x_2\beta_2 + \boldsymbol\varepsilon\)</span> with <span class="math inline">\(\mathbb E\,\boldsymbol\varepsilon = \mathbf 0\)</span> and <span class="math inline">\(\mathrm{Cov}(\boldsymbol\varepsilon) = \sigma^2\mathbf I\)</span>, full column rank, and <span class="math inline">\(\tilde{\mathbf x}_2 = \mathbf M_1\mathbf x_2\)</span> as in the lecture.</p>
+<ol type="a">
+<li><p>Use the partialling-out theorem to show that <span class="math inline">\(\hat\beta_2 = \beta_2 + \tilde{\mathbf x}_2^\top\boldsymbol\varepsilon / \tilde{\mathbf x}_2^\top\tilde{\mathbf x}_2\)</span>. Which two facts about <span class="math inline">\(\mathbf M_1\)</span> do you need?</p></li>
+<li><p>Find <span class="math inline">\(\mathbb E\,\hat\beta_2\)</span> and <span class="math inline">\(\mathrm{Var}(\hat\beta_2)\)</span>.</p></li>
+<li><p>What happens as <span class="math inline">\(\mathbf x_2\)</span> becomes almost a linear combination of the columns of <span class="math inline">\(\mathbf X_1\)</span>? Compare two designs with <span class="math inline">\(\tilde{\mathbf x}_2^\top\tilde{\mathbf x}_2 = 100\)</span> and <span class="math inline">\(\tilde{\mathbf x}_2^\top\tilde{\mathbf x}_2 = 4\)</span>, with the same <span class="math inline">\(\sigma^2\)</span>.</p></li>
+</ol>
+<div class="callout callout-style-default callout-note callout-titled" title="Hint 1">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-18-contents" aria-controls="callout-18" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Hint 1
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-18" class="callout-18-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<ol type="a">
+<li>The theorem gives <span class="math inline">\(\hat\beta_2 = \tilde{\mathbf x}_2^\top\mathbf y/\tilde{\mathbf x}_2^\top\tilde{\mathbf x}_2\)</span>; substitute the model for <span class="math inline">\(\mathbf y\)</span>.</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled" title="Hint 2">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-19-contents" aria-controls="callout-19" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Hint 2
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-19" class="callout-19-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <ol type="a">
 <li>You need <span class="math inline">\(\tilde{\mathbf x}_2^\top\mathbf X_1 = \mathbf 0\)</span> and <span class="math inline">\(\tilde{\mathbf x}_2^\top\mathbf x_2 = \tilde{\mathbf x}_2^\top\tilde{\mathbf x}_2\)</span>: which property of <span class="math inline">\(\mathbf M_1\)</span> gives each? (b) For the variance of a ratio with a fixed denominator, square the denominator.</li>

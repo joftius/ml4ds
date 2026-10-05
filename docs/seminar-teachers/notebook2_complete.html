@@ -165,7 +165,8 @@ _build_env/make_incomplete.py; hints without it (the pre-seminar exercises and t
 optional problems) stay in the student file, behind a warning not to open them
 early. Do not edit the student file by hand, and do not release this file.
 
-How this seminar runs (3 October): students do exercises 1 and 2 at home. In the
+How this seminar runs (3 October): students do exercises 1 to 3 at home (3 redoes
+the lecture's proof and is not gone through in the room). In the
 room: problems 1 and 2 (about 20 minutes, hints then answers), then the coding
 (about 35). Everything headed "Optional, can be done at home" is outside the
 seminar. If the room runs slow, protect problem 2 and coding part 3. -->
@@ -180,7 +181,7 @@ seminar. If the room runs slow, protect problem 2 and coding part 3. -->
 <section id="before-the-seminar" class="level2">
 <h2 class="anchored" data-anchor-id="before-the-seminar">Before the seminar</h2>
 <!-- At home, before the seminar. -->
-<p>The lecture stated two results and left their proofs to you. Do both on paper before the seminar; the seminar’s problems are variations on them. You may use, without proof, two facts about conditional expectation from ST102: the tower property, <span class="math inline">\(\mathbb E[Z] = \mathbb E\big[\mathbb E[Z \mid X]\big]\)</span>, and taking out what is known, <span class="math inline">\(\mathbb E[g(X)\, Z \mid X] = g(X)\, \mathbb E[Z \mid X]\)</span> for any function <span class="math inline">\(g\)</span> of <span class="math inline">\(X\)</span> (given <span class="math inline">\(X\)</span>, a function of <span class="math inline">\(X\)</span> is a constant).</p>
+<p>The lecture stated two results and left their proofs to you (exercises 1 and 2), and proved a third, which you redo with the slides closed (exercise 3). Do all three on paper before the seminar; the seminar’s problems are variations on the first two. You may use, without proof, two facts about conditional expectation from ST102: the tower property, <span class="math inline">\(\mathbb E[Z] = \mathbb E\big[\mathbb E[Z \mid X]\big]\)</span>, and taking out what is known, <span class="math inline">\(\mathbb E[g(X)\, Z \mid X] = g(X)\, \mathbb E[Z \mid X]\)</span> for any function <span class="math inline">\(g\)</span> of <span class="math inline">\(X\)</span> (given <span class="math inline">\(X\)</span>, a function of <span class="math inline">\(X\)</span> is a constant).</p>
 <div class="callout callout-style-default callout-warning callout-titled" title="Hints">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -322,17 +323,10 @@ R(f) = R(f^\star) + \mathbb E\big[(f^\star(X) - f(X))^2\big] + 2\,\mathbb E\big[
 </div>
 </div>
 </div>
-</section>
-<section id="problems" class="level2">
-<h2 class="anchored" data-anchor-id="problems">Problems</h2>
-<!-- About 20 min: problems 1 and 2, pen and paper. Hints are revealed in order after a few minutes, the solution last. -->
-<p><strong>Problem 1 (the constant predictor).</strong> The setting of exercise 1.</p>
-<ol type="a">
-<li><p>Take <span class="math inline">\(f\)</span> to be a constant <span class="math inline">\(c\)</span>. Which <span class="math inline">\(c\)</span> minimizes <span class="math inline">\(R(c)\)</span>, and what is <span class="math inline">\(R(c)\)</span> at the minimum? Express the answer in terms of <span class="math inline">\(R(f^\star)\)</span> and <span class="math inline">\(\mathrm{Var}\big(f^\star(X)\big)\)</span>.</p></li>
-<li><p>Deduce that <span class="math inline">\(\mathrm{Var}(Y) = R(f^\star) + \mathrm{Var}\big(f^\star(X)\big)\)</span>, and write both terms on the right as conditional moments of <span class="math inline">\(Y\)</span> given <span class="math inline">\(X\)</span>. Which identity from ST102 is this?</p></li>
-<li><p>Week 1 scored methods by squared error on held-out data. Imagine two oracle entries: one predicts <span class="math inline">\(\mathbb E Y\)</span> for everyone, the other is <span class="math inline">\(f^\star\)</span>. What is the gap between their risks? On an actual leaderboard the constant entry uses the training mean <span class="math inline">\(\bar y\)</span> and the best entry is some fitted <span class="math inline">\(\hat f\)</span>; give two reasons the observed gap need not equal that quantity. Can any method’s held-out squared error be below <span class="math inline">\(R(f^\star)\)</span> on average?</p></li>
-</ol>
-<div class="answer callout callout-style-default callout-note callout-titled" title="Hint 1">
+<p><strong>Exercise 3 (partialling-out theorem).</strong> The lecture proved this one. Close the slides and prove it again. <span class="math inline">\(\mathbf X = [\mathbf X_1 \;\; \mathbf x_2]\)</span> has full column rank, with the intercept column inside <span class="math inline">\(\mathbf X_1\)</span>; <span class="math inline">\(\mathbf M_1 = \mathbf I - \mathbf X_1(\mathbf X_1^\top\mathbf X_1)^{-1}\mathbf X_1^\top\)</span> and <span class="math inline">\(\tilde{\mathbf x}_2 = \mathbf M_1\mathbf x_2\)</span>. You may use that <span class="math inline">\(\mathbf M_1\)</span> is symmetric, that <span class="math inline">\(\mathbf M_1^2 = \mathbf M_1\)</span> and that <span class="math inline">\(\mathbf M_1\mathbf X_1 = \mathbf 0\)</span> (optional problem 4 proves all three). Show that the coefficient on <span class="math inline">\(\mathbf x_2\)</span> in the least-squares regression of <span class="math inline">\(\mathbf y\)</span> on <span class="math inline">\(\mathbf X\)</span> is <span class="math display">\[
+\hat\beta_2 = \frac{\tilde{\mathbf x}_2^\top \mathbf y}{\tilde{\mathbf x}_2^\top \tilde{\mathbf x}_2},
+\]</span> and that regressing <span class="math inline">\(\tilde{\mathbf y} = \mathbf M_1\mathbf y\)</span> on <span class="math inline">\(\tilde{\mathbf x}_2\)</span> gives the same number. Where is full column rank used?</p>
+<div class="callout callout-style-default callout-note callout-titled" title="Hint 1">
 <div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-9-contents" aria-controls="callout-9" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
@@ -344,13 +338,11 @@ R(f) = R(f^\star) + \mathbb E\big[(f^\star(X) - f(X))^2\big] + 2\,\mathbb E\big[
 </div>
 <div id="callout-9" class="callout-9-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<ol type="a">
-<li>Apply the theorem with <span class="math inline">\(f = c\)</span>, then add and subtract <span class="math inline">\(\mathbb E f^\star(X)\)</span> inside the remaining square: exercise 1’s move again, with nothing left to condition on.</li>
-</ol>
+<p>Start from the full regression and its normal equations: <span class="math inline">\(\mathbf y = \mathbf X_1\hat{\boldsymbol\beta}_1 + \mathbf x_2\hat\beta_2 + \mathbf r\)</span>, with <span class="math inline">\(\mathbf X_1^\top\mathbf r = \mathbf 0\)</span> and <span class="math inline">\(\mathbf x_2^\top\mathbf r = 0\)</span>. Which matrix removes the <span class="math inline">\(\mathbf X_1\)</span> term?</p>
 </div>
 </div>
 </div>
-<div class="answer callout callout-style-default callout-note callout-titled" title="Hint 2">
+<div class="callout callout-style-default callout-note callout-titled" title="Hint 2">
 <div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-10-contents" aria-controls="callout-10" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
@@ -362,6 +354,104 @@ R(f) = R(f^\star) + \mathbb E\big[(f^\star(X) - f(X))^2\big] + 2\,\mathbb E\big[
 </div>
 <div id="callout-10" class="callout-10-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
+<p>Multiply through by <span class="math inline">\(\mathbf M_1\)</span> and say what happens to each of the three terms on the right. For the last one, write <span class="math inline">\(\mathbf M_1\mathbf r = \mathbf r - \mathbf X_1(\mathbf X_1^\top\mathbf X_1)^{-1}\mathbf X_1^\top\mathbf r\)</span>.</p>
+</div>
+</div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled" title="Hint 3">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-11-contents" aria-controls="callout-11" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Hint 3
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-11" class="callout-11-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>You now have <span class="math inline">\(\mathbf M_1\mathbf y = \tilde{\mathbf x}_2\,\hat\beta_2 + \mathbf r\)</span>: a vector equation with one unknown number. Multiply by a row vector that turns it into a scalar equation in which the coefficient of <span class="math inline">\(\hat\beta_2\)</span> is positive.</p>
+</div>
+</div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled" title="Hint 4">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-12-contents" aria-controls="callout-12" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Hint 4
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-12" class="callout-12-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>After multiplying by <span class="math inline">\(\tilde{\mathbf x}_2^\top = \mathbf x_2^\top\mathbf M_1\)</span>, two things remain: the term <span class="math inline">\(\tilde{\mathbf x}_2^\top\mathbf r\)</span>, and an extra <span class="math inline">\(\mathbf M_1\)</span> on the left side. Each goes away by one of the properties of <span class="math inline">\(\mathbf M_1\)</span> you were given.</p>
+</div>
+</div>
+</div>
+<div class="answer callout callout-style-default callout-tip callout-titled" title="Reveal solution">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-13-contents" aria-controls="callout-13" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Reveal solution
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-13" class="callout-13-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>The lecture’s six lines. Hint 1 is the start. Hint 2: <span class="math inline">\(\mathbf M_1\mathbf y = \mathbf M_1\mathbf X_1\hat{\boldsymbol\beta}_1 + \mathbf M_1\mathbf x_2\hat\beta_2 + \mathbf M_1\mathbf r\)</span>, where <span class="math inline">\(\mathbf M_1\mathbf X_1 = \mathbf 0\)</span>, <span class="math inline">\(\mathbf M_1\mathbf x_2 = \tilde{\mathbf x}_2\)</span> by definition, and <span class="math inline">\(\mathbf M_1\mathbf r = \mathbf r\)</span> because <span class="math inline">\(\mathbf X_1^\top\mathbf r = \mathbf 0\)</span> (the residual is already in the orthogonal complement of <span class="math inline">\(\mathrm{col}(\mathbf X_1)\)</span>). So <span class="math display">\[
+\mathbf M_1\mathbf y = \tilde{\mathbf x}_2\,\hat\beta_2 + \mathbf r.
+\]</span> Hint 3: multiply by <span class="math inline">\(\tilde{\mathbf x}_2^\top\)</span>: <span class="math display">\[
+\tilde{\mathbf x}_2^\top\mathbf M_1\mathbf y = \tilde{\mathbf x}_2^\top\tilde{\mathbf x}_2\,\hat\beta_2 + \tilde{\mathbf x}_2^\top\mathbf r.
+\]</span> Hint 4, in two steps. <strong>Symmetry moves <span class="math inline">\(\mathbf M_1\)</span> across an inner product</strong>: <span class="math inline">\(\tilde{\mathbf x}_2^\top\mathbf r = \mathbf x_2^\top\mathbf M_1\mathbf r = \mathbf x_2^\top\mathbf r = 0\)</span>, the last normal equation. <strong>Idempotence removes the extra <span class="math inline">\(\mathbf M_1\)</span></strong>: <span class="math inline">\(\tilde{\mathbf x}_2^\top\mathbf M_1\mathbf y = \mathbf x_2^\top\mathbf M_1\mathbf M_1\mathbf y = \mathbf x_2^\top\mathbf M_1\mathbf y = \tilde{\mathbf x}_2^\top\mathbf y\)</span>. Hence <span class="math inline">\(\tilde{\mathbf x}_2^\top\mathbf y = \tilde{\mathbf x}_2^\top\tilde{\mathbf x}_2\,\hat\beta_2\)</span>. Full column rank is used twice: it makes <span class="math inline">\(\mathbf X_1^\top\mathbf X_1\)</span> invertible, so that <span class="math inline">\(\mathbf M_1\)</span> is defined, and it makes <span class="math inline">\(\tilde{\mathbf x}_2 \ne \mathbf 0\)</span> (otherwise <span class="math inline">\(\mathbf x_2 = \mathbf X_1(\mathbf X_1^\top\mathbf X_1)^{-1}\mathbf X_1^\top\mathbf x_2\)</span> would be a combination of the columns of <span class="math inline">\(\mathbf X_1\)</span>), so <span class="math inline">\(\tilde{\mathbf x}_2^\top\tilde{\mathbf x}_2 &gt; 0\)</span> and we may divide. <span class="math inline">\(\blacksquare\)</span></p>
+<p>Residual on residual: the slope through the origin of <span class="math inline">\(\tilde{\mathbf y}\)</span> on <span class="math inline">\(\tilde{\mathbf x}_2\)</span> is <span class="math inline">\(\tilde{\mathbf x}_2^\top\tilde{\mathbf y}/\tilde{\mathbf x}_2^\top\tilde{\mathbf x}_2\)</span>, and <span class="math inline">\(\tilde{\mathbf x}_2^\top\tilde{\mathbf y} = \tilde{\mathbf x}_2^\top\mathbf M_1\mathbf y = \tilde{\mathbf x}_2^\top\mathbf y\)</span> by the idempotence step again. (No intercept is needed in that regression: the intercept column is inside <span class="math inline">\(\mathbf X_1\)</span>, so both residuals already sum to zero.)</p>
+<p>Common errors: “<span class="math inline">\(\mathbf M_1\mathbf x_2 = \mathbf 0\)</span>” (true only for the columns of <span class="math inline">\(\mathbf X_1\)</span>); asserting <span class="math inline">\(\mathbf M_1\mathbf r = \mathbf r\)</span> without saying which normal equations give it; using <span class="math inline">\(\mathbf M_1\mathbf y = \mathbf y\)</span>; dividing by <span class="math inline">\(\tilde{\mathbf x}_2^\top\tilde{\mathbf x}_2\)</span> without saying why it is not zero; writing a ratio of vectors.</p>
+</div>
+</div>
+</div>
+</section>
+<section id="problems" class="level2">
+<h2 class="anchored" data-anchor-id="problems">Problems</h2>
+<!-- About 20 min: problems 1 and 2, pen and paper. Hints are revealed in order after a few minutes, the solution last. -->
+<p><strong>Problem 1 (the constant predictor).</strong> The setting of exercise 1.</p>
+<ol type="a">
+<li><p>Take <span class="math inline">\(f\)</span> to be a constant <span class="math inline">\(c\)</span>. Which <span class="math inline">\(c\)</span> minimizes <span class="math inline">\(R(c)\)</span>, and what is <span class="math inline">\(R(c)\)</span> at the minimum? Express the answer in terms of <span class="math inline">\(R(f^\star)\)</span> and <span class="math inline">\(\mathrm{Var}\big(f^\star(X)\big)\)</span>.</p></li>
+<li><p>Deduce that <span class="math inline">\(\mathrm{Var}(Y) = R(f^\star) + \mathrm{Var}\big(f^\star(X)\big)\)</span>, and write both terms on the right as conditional moments of <span class="math inline">\(Y\)</span> given <span class="math inline">\(X\)</span>. Which identity from ST102 is this?</p></li>
+<li><p>Week 1 scored methods by squared error on held-out data. Imagine two oracle entries: one predicts <span class="math inline">\(\mathbb E Y\)</span> for everyone, the other is <span class="math inline">\(f^\star\)</span>. What is the gap between their risks? On an actual leaderboard the constant entry uses the training mean <span class="math inline">\(\bar y\)</span> and the best entry is some fitted <span class="math inline">\(\hat f\)</span>; give two reasons the observed gap need not equal that quantity. Can any method’s held-out squared error be below <span class="math inline">\(R(f^\star)\)</span> on average?</p></li>
+</ol>
+<div class="answer callout callout-style-default callout-note callout-titled" title="Hint 1">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-14-contents" aria-controls="callout-14" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Hint 1
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-14" class="callout-14-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<ol type="a">
+<li>Apply the theorem with <span class="math inline">\(f = c\)</span>, then add and subtract <span class="math inline">\(\mathbb E f^\star(X)\)</span> inside the remaining square: exercise 1’s move again, with nothing left to condition on.</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="answer callout callout-style-default callout-note callout-titled" title="Hint 2">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-15-contents" aria-controls="callout-15" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Hint 2
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-15" class="callout-15-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
 <ol start="2" type="a">
 <li><span class="math inline">\(R(\mathbb E Y)\)</span> is a variance you know. (c) Apply the theorem to a fitted <span class="math inline">\(\hat f\)</span> conditionally on the training data.</li>
 </ol>
@@ -369,7 +459,7 @@ R(f) = R(f^\star) + \mathbb E\big[(f^\star(X) - f(X))^2\big] + 2\,\mathbb E\big[
 </div>
 </div>
 <div class="answer callout callout-style-default callout-tip callout-titled" title="Reveal answer">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-11-contents" aria-controls="callout-11" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-16-contents" aria-controls="callout-16" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -378,7 +468,7 @@ R(f) = R(f^\star) + \mathbb E\big[(f^\star(X) - f(X))^2\big] + 2\,\mathbb E\big[
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-11" class="callout-11-contents callout-collapse collapse">
+<div id="callout-16" class="callout-16-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <ol type="a">
 <li><p>By the theorem, <span class="math inline">\(R(c) = R(f^\star) + \mathbb E[(f^\star(X) - c)^2]\)</span>, and <span class="math inline">\(\mathbb E[(f^\star(X) - c)^2] = \mathrm{Var}(f^\star(X)) + (\mathbb E f^\star(X) - c)^2\)</span> (hint 1: the cross term is zero because <span class="math inline">\(f^\star(X) - \mathbb E f^\star(X)\)</span> has mean zero). So the minimizer is <span class="math inline">\(c^\star = \mathbb E f^\star(X) = \mathbb E Y\)</span>, by the tower property, and <span class="math inline">\(R(c^\star) = R(f^\star) + \mathrm{Var}(f^\star(X))\)</span>.</p></li>
@@ -396,7 +486,7 @@ R(f) = R(f^\star) + \mathbb E\big[(f^\star(X) - f(X))^2\big] + 2\,\mathbb E\big[
 <li><p>Suppose <span class="math inline">\(\mathbf x_1^\top\mathbf x_2 = 0\)</span>. What happens to the coefficient on <span class="math inline">\(\mathbf x_1\)</span> when <span class="math inline">\(\mathbf x_2\)</span> is dropped? Reconcile your answer with the partialling-out theorem: what is the residual of <span class="math inline">\(\mathbf x_1\)</span> after regressing it on <span class="math inline">\(\mathbf x_2\)</span>?</p></li>
 </ol>
 <div class="answer callout callout-style-default callout-note callout-titled" title="Hint 1">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-12-contents" aria-controls="callout-12" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-17-contents" aria-controls="callout-17" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -405,7 +495,7 @@ R(f) = R(f^\star) + \mathbb E\big[(f^\star(X) - f(X))^2\big] + 2\,\mathbb E\big[
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-12" class="callout-12-contents callout-collapse collapse">
+<div id="callout-17" class="callout-17-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <ol type="a">
 <li>Multiply the fitted equation <span class="math inline">\(\mathbf y = \hat\beta_1\mathbf x_1 + \hat\beta_2\mathbf x_2 + \mathbf r\)</span> by <span class="math inline">\(\mathbf x_1^\top\)</span>, as in exercise 2, and look at the last term.</li>
@@ -414,7 +504,7 @@ R(f) = R(f^\star) + \mathbb E\big[(f^\star(X) - f(X))^2\big] + 2\,\mathbb E\big[
 </div>
 </div>
 <div class="answer callout callout-style-default callout-note callout-titled" title="Hint 2">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-13-contents" aria-controls="callout-13" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-18-contents" aria-controls="callout-18" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -423,7 +513,7 @@ R(f) = R(f^\star) + \mathbb E\big[(f^\star(X) - f(X))^2\big] + 2\,\mathbb E\big[
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-13" class="callout-13-contents callout-collapse collapse">
+<div id="callout-18" class="callout-18-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <ol type="a">
 <li>Which fact about a least-squares residual makes that last term vanish exactly? It is the sample version of the fact that killed the cross term in exercise 1. (c) In the theorem, partial <span class="math inline">\(\mathbf x_2\)</span> out of <span class="math inline">\(\mathbf x_1\)</span>: what is left of <span class="math inline">\(\mathbf x_1\)</span> when the two are orthogonal?</li>
@@ -432,7 +522,7 @@ R(f) = R(f^\star) + \mathbb E\big[(f^\star(X) - f(X))^2\big] + 2\,\mathbb E\big[
 </div>
 </div>
 <div class="answer callout callout-style-default callout-tip callout-titled" title="Reveal answer">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-14-contents" aria-controls="callout-14" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-19-contents" aria-controls="callout-19" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -441,7 +531,7 @@ R(f) = R(f^\star) + \mathbb E\big[(f^\star(X) - f(X))^2\big] + 2\,\mathbb E\big[
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-14" class="callout-14-contents callout-collapse collapse">
+<div id="callout-19" class="callout-19-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <ol type="a">
 <li><p>Multiplying by <span class="math inline">\(\mathbf x_1^\top\)</span> and dividing by <span class="math inline">\(\mathbf x_1^\top\mathbf x_1\)</span>: <span class="math inline">\(\hat\beta_{\text{short}} = \hat\beta_1 + \hat\beta_2\hat\delta + \mathbf x_1^\top\mathbf r/\mathbf x_1^\top\mathbf x_1\)</span>, and <span class="math inline">\(\mathbf x_1^\top\mathbf r = 0\)</span> by the normal equations. The fact: <strong>a least-squares residual is orthogonal to every column it was fitted on</strong>, the sample twin of exercise 1’s population fact (the residual <span class="math inline">\(Y - f^\star(X)\)</span> is orthogonal to every function of <span class="math inline">\(X\)</span>). The same algebra as exercise 2 with the fitted coefficients in place of the truth and the residual in place of the noise, except that the last term is exactly zero rather than zero on average: the noise is not orthogonal to <span class="math inline">\(\mathbf x_1\)</span> in the sample, only mean zero given the inputs, which is why exercise 2 needs an expectation and this problem does not. Coding part 3 checks the identity on real data to every printed digit.</p></li>
@@ -462,7 +552,7 @@ R(f) = R(f^\star) + \mathbb E\big[(f^\star(X) - f(X))^2\big] + 2\,\mathbb E\big[
 <li><p>In the partialling-out theorem take <span class="math inline">\(\mathbf X_1 = \mathbf 1\)</span>, the column of ones, and <span class="math inline">\(\mathbf x_2 = \mathbf x\)</span>. What is <span class="math inline">\(\mathbf M_1 \mathbf x\)</span>? Conclude that the slope of <span class="math inline">\(\mathbf y\)</span> on <span class="math inline">\(\mathbf x\)</span> in a regression <em>with</em> an intercept is the slope through the origin of the centered <span class="math inline">\(\mathbf y\)</span> on the centered <span class="math inline">\(\mathbf x\)</span>, and check that this is (b).</p></li>
 </ol>
 <div class="callout callout-style-default callout-note callout-titled" title="Hint 1">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-15-contents" aria-controls="callout-15" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-20-contents" aria-controls="callout-20" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -471,7 +561,7 @@ R(f) = R(f^\star) + \mathbb E\big[(f^\star(X) - f(X))^2\big] + 2\,\mathbb E\big[
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-15" class="callout-15-contents callout-collapse collapse">
+<div id="callout-20" class="callout-20-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <ol type="a">
 <li>Differentiate one term of the sum first. (b) Use the first equation to eliminate <span class="math inline">\(\hat\alpha\)</span> from the second.</li>
@@ -480,7 +570,7 @@ R(f) = R(f^\star) + \mathbb E\big[(f^\star(X) - f(X))^2\big] + 2\,\mathbb E\big[
 </div>
 </div>
 <div class="callout callout-style-default callout-note callout-titled" title="Hint 2">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-16-contents" aria-controls="callout-16" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-21-contents" aria-controls="callout-21" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -489,7 +579,7 @@ R(f) = R(f^\star) + \mathbb E\big[(f^\star(X) - f(X))^2\big] + 2\,\mathbb E\big[
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-16" class="callout-16-contents callout-collapse collapse">
+<div id="callout-21" class="callout-21-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <ol start="3" type="a">
 <li><span class="math inline">\(\mathbf H_1 = \mathbf 1(\mathbf 1^\top\mathbf 1)^{-1}\mathbf 1^\top\)</span>: what is <span class="math inline">\(\mathbf 1^\top\mathbf 1\)</span>, and what does <span class="math inline">\(\mathbf H_1\)</span> do to a vector?</li>
@@ -498,7 +588,7 @@ R(f) = R(f^\star) + \mathbb E\big[(f^\star(X) - f(X))^2\big] + 2\,\mathbb E\big[
 </div>
 </div>
 <div class="answer callout callout-style-default callout-tip callout-titled" title="Reveal answer">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-17-contents" aria-controls="callout-17" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-22-contents" aria-controls="callout-22" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -507,7 +597,7 @@ R(f) = R(f^\star) + \mathbb E\big[(f^\star(X) - f(X))^2\big] + 2\,\mathbb E\big[
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-17" class="callout-17-contents callout-collapse collapse">
+<div id="callout-22" class="callout-22-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <ol type="a">
 <li><p><span class="math inline">\(\partial \hat R_n/\partial\alpha = -\frac2n\sum_i (y_i - \alpha - \beta x_i)\)</span> and <span class="math inline">\(\partial \hat R_n/\partial\beta = -\frac2n\sum_i x_i (y_i - \alpha - \beta x_i)\)</span>. Setting both to zero at <span class="math inline">\((\hat\alpha, \hat\beta)\)</span> gives <span class="math inline">\(\sum_i r_i = 0\)</span> and <span class="math inline">\(\sum_i x_i r_i = 0\)</span>: the two rows of <span class="math inline">\(\mathbf X^\top\mathbf r = \mathbf 0\)</span>, one per column of <span class="math inline">\(\mathbf X\)</span>. Since <span class="math inline">\(\bar r = 0\)</span> and <span class="math inline">\(\sum x_i r_i = 0\)</span>, the sample correlation of <span class="math inline">\(x\)</span> and <span class="math inline">\(r\)</span> is zero: no <em>linear</em> signal is left in the residuals, which is all least squares promises.</p></li>
@@ -525,7 +615,7 @@ R(f) = R(f^\star) + \mathbb E\big[(f^\star(X) - f(X))^2\big] + 2\,\mathbb E\big[
 <li><p>Use (b) to show that the residual vector <span class="math inline">\(\mathbf r = \mathbf M\mathbf y\)</span> satisfies <span class="math inline">\(\mathbf X^\top \mathbf r = \mathbf 0\)</span> (the normal equations again, from the geometry instead of the calculus). Where did full column rank get used?</p></li>
 </ol>
 <div class="callout callout-style-default callout-note callout-titled" title="Hint 1">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-18-contents" aria-controls="callout-18" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-23-contents" aria-controls="callout-23" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -534,7 +624,7 @@ R(f) = R(f^\star) + \mathbb E\big[(f^\star(X) - f(X))^2\big] + 2\,\mathbb E\big[
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-18" class="callout-18-contents callout-collapse collapse">
+<div id="callout-23" class="callout-23-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <ol type="a">
 <li>For the trace, <span class="math inline">\(\mathrm{tr}(\mathbf A\mathbf B) = \mathrm{tr}(\mathbf B\mathbf A)\)</span> with <span class="math inline">\(\mathbf A = \mathbf X\)</span>.</li>
@@ -543,7 +633,7 @@ R(f) = R(f^\star) + \mathbb E\big[(f^\star(X) - f(X))^2\big] + 2\,\mathbb E\big[
 </div>
 </div>
 <div class="callout callout-style-default callout-note callout-titled" title="Hint 2">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-19-contents" aria-controls="callout-19" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-24-contents" aria-controls="callout-24" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -552,7 +642,7 @@ R(f) = R(f^\star) + \mathbb E\big[(f^\star(X) - f(X))^2\big] + 2\,\mathbb E\big[
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-19" class="callout-19-contents callout-collapse collapse">
+<div id="callout-24" class="callout-24-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <ol start="3" type="a">
 <li>Write <span class="math inline">\(\mathbf X^\top\mathbf r = \mathbf X^\top\mathbf M\mathbf y\)</span> and use <span class="math inline">\(\mathbf M^\top = \mathbf M\)</span> to move <span class="math inline">\(\mathbf M\)</span> onto <span class="math inline">\(\mathbf X\)</span>.</li>
@@ -561,7 +651,7 @@ R(f) = R(f^\star) + \mathbb E\big[(f^\star(X) - f(X))^2\big] + 2\,\mathbb E\big[
 </div>
 </div>
 <div class="answer callout callout-style-default callout-tip callout-titled" title="Reveal answer">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-20-contents" aria-controls="callout-20" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-25-contents" aria-controls="callout-25" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -570,7 +660,7 @@ R(f) = R(f^\star) + \mathbb E\big[(f^\star(X) - f(X))^2\big] + 2\,\mathbb E\big[
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-20" class="callout-20-contents callout-collapse collapse">
+<div id="callout-25" class="callout-25-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <ol type="a">
 <li><p><span class="math inline">\(\mathbf H^2 = \mathbf X(\mathbf X^\top\mathbf X)^{-1}\mathbf X^\top\mathbf X(\mathbf X^\top\mathbf X)^{-1}\mathbf X^\top = \mathbf H\)</span>, the middle <span class="math inline">\((\mathbf X^\top\mathbf X)^{-1}\mathbf X^\top\mathbf X\)</span> cancelling; <span class="math inline">\(\mathbf H^\top = \mathbf H\)</span> because <span class="math inline">\((\mathbf X^\top\mathbf X)^{-1}\)</span> is symmetric; <span class="math inline">\(\mathrm{tr}(\mathbf H) = \mathrm{tr}\big((\mathbf X^\top\mathbf X)^{-1}\mathbf X^\top\mathbf X\big) = \mathrm{tr}(\mathbf I_q) = q\)</span> by the cyclic property <span class="math inline">\(\mathrm{tr}(\mathbf A\mathbf B) = \mathrm{tr}(\mathbf B\mathbf A)\)</span>. So the hat matrix has trace <span class="math inline">\(p + 1\)</span> with the intercept counted: the number of coefficients. (The validation week turns this trace into degrees of freedom.)</p></li>
@@ -588,7 +678,7 @@ R(f) = R(f^\star) + \mathbb E\big[(f^\star(X) - f(X))^2\big] + 2\,\mathbb E\big[
 <li><p>What does the example say about using correlation to decide whether <span class="math inline">\(X\)</span> predicts <span class="math inline">\(Y\)</span>? Which result from the lecture gives the excess risk of the best line, and what is it here?</p></li>
 </ol>
 <div class="callout callout-style-default callout-note callout-titled" title="Hint 1">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-21-contents" aria-controls="callout-21" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-26-contents" aria-controls="callout-26" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -597,7 +687,7 @@ R(f) = R(f^\star) + \mathbb E\big[(f^\star(X) - f(X))^2\big] + 2\,\mathbb E\big[
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-21" class="callout-21-contents callout-collapse collapse">
+<div id="callout-26" class="callout-26-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <ol type="a">
 <li><span class="math inline">\(\mathbb E[Y \mid X = x]\)</span> is <span class="math inline">\(x^2\)</span> plus the mean of the noise.</li>
@@ -606,7 +696,7 @@ R(f) = R(f^\star) + \mathbb E\big[(f^\star(X) - f(X))^2\big] + 2\,\mathbb E\big[
 </div>
 </div>
 <div class="callout callout-style-default callout-note callout-titled" title="Hint 2">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-22-contents" aria-controls="callout-22" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-27-contents" aria-controls="callout-27" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -615,7 +705,7 @@ R(f) = R(f^\star) + \mathbb E\big[(f^\star(X) - f(X))^2\big] + 2\,\mathbb E\big[
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-22" class="callout-22-contents callout-collapse collapse">
+<div id="callout-27" class="callout-27-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <ol start="2" type="a">
 <li>The best line’s slope is <span class="math inline">\(\mathrm{Cov}(X, Y)/\mathrm{Var}(X)\)</span>; compute <span class="math inline">\(\mathbb E X^3\)</span>. Its risk is then the variance of something.</li>
@@ -624,7 +714,7 @@ R(f) = R(f^\star) + \mathbb E\big[(f^\star(X) - f(X))^2\big] + 2\,\mathbb E\big[
 </div>
 </div>
 <div class="answer callout callout-style-default callout-tip callout-titled" title="Reveal answer">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-23-contents" aria-controls="callout-23" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-28-contents" aria-controls="callout-28" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -633,7 +723,7 @@ R(f) = R(f^\star) + \mathbb E\big[(f^\star(X) - f(X))^2\big] + 2\,\mathbb E\big[
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-23" class="callout-23-contents callout-collapse collapse">
+<div id="callout-28" class="callout-28-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <ol type="a">
 <li><p><span class="math inline">\(f^\star(x) = \mathbb E[Y \mid X = x] = x^2\)</span>, because <span class="math inline">\(\varepsilon\)</span> is independent of <span class="math inline">\(X\)</span> with mean zero; <span class="math inline">\(R(f^\star) = \mathbb E\,\varepsilon^2 = 1\)</span>.</p></li>
@@ -651,7 +741,7 @@ R(f) = R(f^\star) + \mathbb E\big[(f^\star(X) - f(X))^2\big] + 2\,\mathbb E\big[
 <li><p>What happens as <span class="math inline">\(\mathbf x_2\)</span> becomes almost a linear combination of the columns of <span class="math inline">\(\mathbf X_1\)</span>? Compare two designs with <span class="math inline">\(\tilde{\mathbf x}_2^\top\tilde{\mathbf x}_2 = 100\)</span> and <span class="math inline">\(\tilde{\mathbf x}_2^\top\tilde{\mathbf x}_2 = 4\)</span>, with the same <span class="math inline">\(\sigma^2\)</span>.</p></li>
 </ol>
 <div class="callout callout-style-default callout-note callout-titled" title="Hint 1">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-24-contents" aria-controls="callout-24" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-29-contents" aria-controls="callout-29" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -660,7 +750,7 @@ R(f) = R(f^\star) + \mathbb E\big[(f^\star(X) - f(X))^2\big] + 2\,\mathbb E\big[
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-24" class="callout-24-contents callout-collapse collapse">
+<div id="callout-29" class="callout-29-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <ol type="a">
 <li>The theorem gives <span class="math inline">\(\hat\beta_2 = \tilde{\mathbf x}_2^\top\mathbf y/\tilde{\mathbf x}_2^\top\tilde{\mathbf x}_2\)</span>; substitute the model for <span class="math inline">\(\mathbf y\)</span>.</li>
@@ -669,7 +759,7 @@ R(f) = R(f^\star) + \mathbb E\big[(f^\star(X) - f(X))^2\big] + 2\,\mathbb E\big[
 </div>
 </div>
 <div class="callout callout-style-default callout-note callout-titled" title="Hint 2">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-25-contents" aria-controls="callout-25" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-30-contents" aria-controls="callout-30" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -678,7 +768,7 @@ R(f) = R(f^\star) + \mathbb E\big[(f^\star(X) - f(X))^2\big] + 2\,\mathbb E\big[
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-25" class="callout-25-contents callout-collapse collapse">
+<div id="callout-30" class="callout-30-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <ol type="a">
 <li>You need <span class="math inline">\(\tilde{\mathbf x}_2^\top\mathbf X_1 = \mathbf 0\)</span> and <span class="math inline">\(\tilde{\mathbf x}_2^\top\mathbf x_2 = \tilde{\mathbf x}_2^\top\tilde{\mathbf x}_2\)</span>: which property of <span class="math inline">\(\mathbf M_1\)</span> gives each? (b) For the variance of a ratio with a fixed denominator, square the denominator.</li>
@@ -687,7 +777,7 @@ R(f) = R(f^\star) + \mathbb E\big[(f^\star(X) - f(X))^2\big] + 2\,\mathbb E\big[
 </div>
 </div>
 <div class="answer callout callout-style-default callout-tip callout-titled" title="Reveal answer">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-26-contents" aria-controls="callout-26" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-31-contents" aria-controls="callout-31" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -696,7 +786,7 @@ R(f) = R(f^\star) + \mathbb E\big[(f^\star(X) - f(X))^2\big] + 2\,\mathbb E\big[
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-26" class="callout-26-contents callout-collapse collapse">
+<div id="callout-31" class="callout-31-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <ol type="a">
 <li><p>By the theorem, <span class="math inline">\(\hat\beta_2 = \tilde{\mathbf x}_2^\top\mathbf y / \tilde{\mathbf x}_2^\top\tilde{\mathbf x}_2\)</span>. Substitute the model for <span class="math inline">\(\mathbf y\)</span>: <span class="math inline">\(\tilde{\mathbf x}_2^\top\mathbf X_1 = \mathbf x_2^\top\mathbf M_1\mathbf X_1 = \mathbf 0\)</span> (<span class="math inline">\(\mathbf M_1\)</span> is symmetric and <span class="math inline">\(\mathbf M_1\mathbf X_1 = \mathbf 0\)</span>), and <span class="math inline">\(\tilde{\mathbf x}_2^\top\mathbf x_2 = \mathbf x_2^\top\mathbf M_1\mathbf x_2 = \mathbf x_2^\top\mathbf M_1\mathbf M_1\mathbf x_2 = \tilde{\mathbf x}_2^\top\tilde{\mathbf x}_2\)</span> (<span class="math inline">\(\mathbf M_1\)</span> is idempotent). So <span class="math inline">\(\hat\beta_2 = \beta_2 + \tilde{\mathbf x}_2^\top\boldsymbol\varepsilon / \tilde{\mathbf x}_2^\top\tilde{\mathbf x}_2\)</span>: the fitted coefficient is the true one plus the noise projected onto <span class="math inline">\(\tilde{\mathbf x}_2\)</span>.</p></li>
@@ -811,7 +901,7 @@ R(f) = R(f^\star) + \mathbb E\big[(f^\star(X) - f(X))^2\big] + 2\,\mathbb E\big[
 <span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <div class="answer callout callout-style-default callout-tip callout-titled" title="Reveal solution">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-27-contents" aria-controls="callout-27" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-32-contents" aria-controls="callout-32" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -820,7 +910,7 @@ R(f) = R(f^\star) + \mathbb E\big[(f^\star(X) - f(X))^2\big] + 2\,\mathbb E\big[
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-27" class="callout-27-contents callout-collapse collapse">
+<div id="callout-32" class="callout-32-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>beta_hat <span class="ot">&lt;-</span> <span class="fu">solve</span>(<span class="fu">t</span>(X) <span class="sc">%*%</span> X) <span class="sc">%*%</span> <span class="fu">t</span>(X) <span class="sc">%*%</span> y</span>
@@ -851,7 +941,7 @@ lpop         1.868279  1.868279</code></pre>
 <span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <div class="answer callout callout-style-default callout-tip callout-titled" title="Reveal solution">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-28-contents" aria-controls="callout-28" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-33-contents" aria-controls="callout-33" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -860,7 +950,7 @@ lpop         1.868279  1.868279</code></pre>
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-28" class="callout-28-contents callout-collapse collapse">
+<div id="callout-33" class="callout-33-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>H <span class="ot">&lt;-</span> X <span class="sc">%*%</span> <span class="fu">solve</span>(<span class="fu">t</span>(X) <span class="sc">%*%</span> X) <span class="sc">%*%</span> <span class="fu">t</span>(X)</span>
@@ -879,7 +969,7 @@ lpop         1.868279  1.868279</code></pre>
 </div>
 <p><strong>Question 1.</strong> The trace came out as a small integer. Which one, and why?</p>
 <div class="answer callout callout-style-default callout-tip callout-titled" title="Reveal answer">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-29-contents" aria-controls="callout-29" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-34-contents" aria-controls="callout-34" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -888,7 +978,7 @@ lpop         1.868279  1.868279</code></pre>
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-29" class="callout-29-contents callout-collapse collapse">
+<div id="callout-34" class="callout-34-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p><span class="math inline">\(3 = q\)</span>, the number of columns of <span class="math inline">\(\mathbf X\)</span> (intercept, <code>lgdp</code>, <code>lpop</code>): <span class="math inline">\(\mathrm{tr}(\mathbf H) = \mathrm{tr}\big((\mathbf X^\top\mathbf X)^{-1}\mathbf X^\top\mathbf X\big) = \mathrm{tr}(\mathbf I_q)\)</span> by the cyclic property of the trace. It is the number of coefficients, not <span class="math inline">\(n\)</span> (optional problem 4(a)). Building <code>H</code> with <code>MASS::ginv(X)</code> instead of the explicit inverse gives the same matrix.</p>
 </div>
@@ -937,7 +1027,7 @@ F-statistic: 176.2 on 1 and 331 DF,  p-value: &lt; 2.2e-16</code></pre>
 <span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <div class="answer callout callout-style-default callout-tip callout-titled" title="Reveal solution">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-30-contents" aria-controls="callout-30" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-35-contents" aria-controls="callout-35" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -946,7 +1036,7 @@ F-statistic: 176.2 on 1 and 331 DF,  p-value: &lt; 2.2e-16</code></pre>
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-30" class="callout-30-contents callout-collapse collapse">
+<div id="callout-35" class="callout-35-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="fu">coef</span>(model_simple)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -1007,7 +1097,7 @@ bill_length_mm   73.93115  99.65237</code></pre>
 </div>
 <p><strong>Question 2.</strong> How do we interpret diagnostic plots?</p>
 <div class="answer callout callout-style-default callout-tip callout-titled" title="Reveal answer">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-31-contents" aria-controls="callout-31" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-36-contents" aria-controls="callout-36" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -1016,7 +1106,7 @@ bill_length_mm   73.93115  99.65237</code></pre>
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-31" class="callout-31-contents callout-collapse collapse">
+<div id="callout-36" class="callout-36-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>Generally looking for patterns in residuals, normality of their distribution (diagonal line in QQ plot), constant variance (homoscedasticity), and influential points (high-leverage outliers). Two cautions from the lecture: a correctly specified conditional mean gives <span class="math inline">\(\mathbb E[\text{residual} \mid X] \approx 0\)</span>, but says nothing about the spread, so a fan shape is a separate matter (constant variance is its own assumption); and a pattern in a finite noisy sample is evidence that the class of functions may be missing something, not a proof that it is.</p>
 </div>
@@ -1028,7 +1118,7 @@ bill_length_mm   73.93115  99.65237</code></pre>
 <span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a>...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <div class="answer callout callout-style-default callout-tip callout-titled" title="Reveal solution">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-32-contents" aria-controls="callout-32" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-37-contents" aria-controls="callout-37" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -1037,7 +1127,7 @@ bill_length_mm   73.93115  99.65237</code></pre>
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-32" class="callout-32-contents callout-collapse collapse">
+<div id="callout-37" class="callout-37-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a>my_data <span class="sc">|&gt;</span></span>
@@ -1066,7 +1156,7 @@ bill_length_mm   73.93115  99.65237</code></pre>
 <span id="cb46-7"><a href="#cb46-7" aria-hidden="true" tabindex="-1"></a>...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <div class="answer callout callout-style-default callout-tip callout-titled" title="Reveal solution">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-33-contents" aria-controls="callout-33" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-38-contents" aria-controls="callout-38" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -1075,7 +1165,7 @@ bill_length_mm   73.93115  99.65237</code></pre>
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-33" class="callout-33-contents callout-collapse collapse">
+<div id="callout-38" class="callout-38-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb47"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a>model_multiple <span class="ot">&lt;-</span> <span class="fu">lm</span>(</span>
@@ -1216,7 +1306,7 @@ bill_length_mm   73.93115  99.65237</code></pre>
 <span id="cb50-2"><a href="#cb50-2" aria-hidden="true" tabindex="-1"></a>...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <div class="answer callout callout-style-default callout-tip callout-titled" title="Reveal solution">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-34-contents" aria-controls="callout-34" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-39-contents" aria-controls="callout-39" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -1225,7 +1315,7 @@ bill_length_mm   73.93115  99.65237</code></pre>
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-34" class="callout-34-contents callout-collapse collapse">
+<div id="callout-39" class="callout-39-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb51"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggnostic</span>(model_multiple)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -1248,7 +1338,7 @@ bill_length_mm   73.93115  99.65237</code></pre>
 <span id="cb52-4"><a href="#cb52-4" aria-hidden="true" tabindex="-1"></a>...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <div class="answer callout callout-style-default callout-tip callout-titled" title="Reveal solution">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-35-contents" aria-controls="callout-35" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-40-contents" aria-controls="callout-40" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -1257,7 +1347,7 @@ bill_length_mm   73.93115  99.65237</code></pre>
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-35" class="callout-35-contents callout-collapse collapse">
+<div id="callout-40" class="callout-40-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb53"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a>my_data <span class="sc">|&gt;</span></span>
@@ -1281,7 +1371,7 @@ bill_length_mm   73.93115  99.65237</code></pre>
 <span id="cb54-3"><a href="#cb54-3" aria-hidden="true" tabindex="-1"></a>...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <div class="answer callout callout-style-default callout-tip callout-titled" title="Reveal solution">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-36-contents" aria-controls="callout-36" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-41-contents" aria-controls="callout-41" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -1290,7 +1380,7 @@ bill_length_mm   73.93115  99.65237</code></pre>
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-36" class="callout-36-contents callout-collapse collapse">
+<div id="callout-41" class="callout-41-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb55"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb55-1"><a href="#cb55-1" aria-hidden="true" tabindex="-1"></a>model_transformed <span class="ot">&lt;-</span> <span class="fu">lm</span>(</span>
@@ -1308,7 +1398,7 @@ bill_length_mm   73.93115  99.65237</code></pre>
 </div>
 <p><strong>Question 3.</strong> The pair plots from e.g.&nbsp;<code>ggnostic</code> or <code>ggpairs</code> show many 2-dimensional projections of the data, but there is no guarantee that these projections together help us understand higher dimensional relationships. What does this mean for diagnostic plots when our regression model is high dimensional (e.g.&nbsp;<span class="math inline">\(p &gt; 3\)</span> predictors)?</p>
 <div class="answer callout callout-style-default callout-tip callout-titled" title="Reveal answer">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-37-contents" aria-controls="callout-37" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-42-contents" aria-controls="callout-42" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -1317,7 +1407,7 @@ bill_length_mm   73.93115  99.65237</code></pre>
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-37" class="callout-37-contents callout-collapse collapse">
+<div id="callout-42" class="callout-42-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>It is possible there is some higher dimensional pattern in the residuals that the pairs plot does not reveal to us: the model would have failed to capture some (non-linear) signal and our diagnostic method would fail to reveal that flaw. Part 4’s required example is the opposite case, a pattern in one input that its residual plot does show; the first challenge at the end of part 4 (an interaction) builds the case that one-input plots miss.</p>
 </div>
@@ -1405,7 +1495,7 @@ bill_length_mm   73.93115  99.65237</code></pre>
 <span id="cb58-4"><a href="#cb58-4" aria-hidden="true" tabindex="-1"></a>...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <div class="answer callout callout-style-default callout-tip callout-titled" title="Reveal solution">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-38-contents" aria-controls="callout-38" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-43-contents" aria-controls="callout-43" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -1414,7 +1504,7 @@ bill_length_mm   73.93115  99.65237</code></pre>
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-38" class="callout-38-contents callout-collapse collapse">
+<div id="callout-43" class="callout-43-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb59"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb59-1"><a href="#cb59-1" aria-hidden="true" tabindex="-1"></a>lgdp_tilde <span class="ot">&lt;-</span> <span class="fu">resid</span>(<span class="fu">lm</span>(lgdp <span class="sc">~</span> lpop <span class="sc">+</span> continent, <span class="at">data =</span> gm))</span>
@@ -1434,7 +1524,7 @@ bill_length_mm   73.93115  99.65237</code></pre>
 </div>
 <p><strong>Question 4.</strong> In one sentence, what is the coefficient on <code>lgdp</code> in <code>long</code> the slope of? Your neighbor regressed the <em>residual</em> of <code>lifeExp</code> (on <code>lpop</code> and <code>continent</code>) on <code>lgdp_tilde</code> and got the same number. Why is that not a coincidence?</p>
 <div class="answer callout callout-style-default callout-tip callout-titled" title="Reveal answer">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-39-contents" aria-controls="callout-39" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-44-contents" aria-controls="callout-44" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -1443,7 +1533,7 @@ bill_length_mm   73.93115  99.65237</code></pre>
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-39" class="callout-39-contents callout-collapse collapse">
+<div id="callout-44" class="callout-44-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>The slope of <code>lifeExp</code> on the part of <code>lgdp</code> not linearly explained by <code>lpop</code>, the continent indicators and the intercept. Residual on residual gives the same slope because <span class="math inline">\(\tilde{\mathbf x}_2^\top \mathbf M_1 \mathbf y = \tilde{\mathbf x}_2^\top \mathbf y\)</span>: <span class="math inline">\(\mathbf M_1\)</span> is symmetric and idempotent, so it can be moved onto <span class="math inline">\(\tilde{\mathbf x}_2\)</span>, where it changes nothing (lines 5 to 6 of the lecture’s proof). If the numbers disagree, the residual came from the wrong regression (<code>lifeExp</code> instead of <code>lgdp</code> on the left), the two fits used different rows, or a column was left out of the auxiliary regression. Dropping the explicit intercept with <code>- 1</code> does not change the answer here: R then codes every continent with its own indicator, and together they span the constant column.</p>
 </div>
@@ -1458,7 +1548,7 @@ bill_length_mm   73.93115  99.65237</code></pre>
 <span id="cb62-5"><a href="#cb62-5" aria-hidden="true" tabindex="-1"></a>...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <div class="answer callout callout-style-default callout-tip callout-titled" title="Reveal solution">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-40-contents" aria-controls="callout-40" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-45-contents" aria-controls="callout-45" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -1467,7 +1557,7 @@ bill_length_mm   73.93115  99.65237</code></pre>
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-40" class="callout-40-contents callout-collapse collapse">
+<div id="callout-45" class="callout-45-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb63"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb63-1"><a href="#cb63-1" aria-hidden="true" tabindex="-1"></a>short <span class="ot">&lt;-</span> <span class="fu">lm</span>(lifeExp <span class="sc">~</span> lgdp <span class="sc">+</span> continent, <span class="at">data =</span> gm)</span>
@@ -1484,7 +1574,7 @@ bill_length_mm   73.93115  99.65237</code></pre>
 </div>
 <p><strong>Question 5.</strong> Did leaving out <code>lpop</code> move the coefficient on <code>lgdp</code> by much, and in which direction? Exercise 2 names two things the size of the move depends on; which of them is small here? Is the short coefficient “wrong”?</p>
 <div class="answer callout callout-style-default callout-tip callout-titled" title="Reveal answer">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-41-contents" aria-controls="callout-41" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-46-contents" aria-controls="callout-46" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -1493,7 +1583,7 @@ bill_length_mm   73.93115  99.65237</code></pre>
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-41" class="callout-41-contents callout-collapse collapse">
+<div id="callout-46" class="callout-46-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>On these data the move is tiny, about <span class="math inline">\(0.025\)</span> years per unit of <span class="math inline">\(\log_{10}\)</span> GDP, and downward: 10.69 in the long regression, 10.66 in the short one. The long coefficient on <code>lpop</code> is itself near zero (<span class="math inline">\(0.09\)</span>), so <span class="math inline">\(\hat\beta_{\text{lpop}} \times \hat\delta = 0.09 \times (-0.27)\)</span> is small even though the auxiliary slope <span class="math inline">\(\hat\delta = -0.27\)</span> is not. The size is the product of the two: how much the omitted variable matters <em>and</em> how correlated it is with what was kept, given the other columns. “Wrong” is the wrong word: the short and long coefficients are slopes on different residuals and answer different questions; which one you want depends on what you are holding fixed on purpose, and next week is about deciding that. (Problem 2(a) was stated for two predictors; with the continent indicators in both regressions the same algebra goes through, because the normal equations make the long residual orthogonal to every kept column, so the identity holds exactly as checked here.)</p>
 </div>
@@ -1543,7 +1633,7 @@ bill_length_mm   73.93115  99.65237</code></pre>
 <span id="cb68-4"><a href="#cb68-4" aria-hidden="true" tabindex="-1"></a>...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <div class="answer callout callout-style-default callout-tip callout-titled" title="Reveal solution">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-42-contents" aria-controls="callout-42" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-47-contents" aria-controls="callout-47" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -1552,7 +1642,7 @@ bill_length_mm   73.93115  99.65237</code></pre>
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-42" class="callout-42-contents callout-collapse collapse">
+<div id="callout-47" class="callout-47-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb69"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb69-1"><a href="#cb69-1" aria-hidden="true" tabindex="-1"></a>my_model <span class="ot">&lt;-</span> <span class="fu">lm</span>(y <span class="sc">~</span> ., <span class="at">data =</span> sim_data)</span>
@@ -1582,39 +1672,39 @@ bill_length_mm   73.93115  99.65237</code></pre>
 <tbody>
 <tr class="odd">
 <td style="text-align: left;">(Intercept)</td>
-<td style="text-align: right;">0.76</td>
-<td style="text-align: right;">0.14</td>
-<td style="text-align: right;">5.40</td>
+<td style="text-align: right;">0.89</td>
+<td style="text-align: right;">0.13</td>
+<td style="text-align: right;">6.62</td>
 <td style="text-align: right;">0.00</td>
-<td style="text-align: right;">0.48</td>
-<td style="text-align: right;">1.03</td>
+<td style="text-align: right;">0.63</td>
+<td style="text-align: right;">1.16</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">x1</td>
-<td style="text-align: right;">0.99</td>
+<td style="text-align: right;">0.97</td>
 <td style="text-align: right;">0.02</td>
-<td style="text-align: right;">53.98</td>
+<td style="text-align: right;">50.05</td>
 <td style="text-align: right;">0.00</td>
-<td style="text-align: right;">0.96</td>
-<td style="text-align: right;">1.03</td>
+<td style="text-align: right;">0.93</td>
+<td style="text-align: right;">1.01</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">x2</td>
-<td style="text-align: right;">-0.04</td>
-<td style="text-align: right;">0.09</td>
-<td style="text-align: right;">-0.43</td>
-<td style="text-align: right;">0.67</td>
-<td style="text-align: right;">-0.22</td>
-<td style="text-align: right;">0.14</td>
+<td style="text-align: right;">-0.08</td>
+<td style="text-align: right;">0.10</td>
+<td style="text-align: right;">-0.85</td>
+<td style="text-align: right;">0.40</td>
+<td style="text-align: right;">-0.27</td>
+<td style="text-align: right;">0.11</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">x3</td>
-<td style="text-align: right;">0.05</td>
+<td style="text-align: right;">-0.02</td>
 <td style="text-align: right;">0.11</td>
-<td style="text-align: right;">0.51</td>
-<td style="text-align: right;">0.61</td>
-<td style="text-align: right;">-0.16</td>
-<td style="text-align: right;">0.27</td>
+<td style="text-align: right;">-0.20</td>
+<td style="text-align: right;">0.84</td>
+<td style="text-align: right;">-0.24</td>
+<td style="text-align: right;">0.20</td>
 </tr>
 </tbody>
 </table>
@@ -1646,7 +1736,7 @@ bill_length_mm   73.93115  99.65237</code></pre>
 </div>
 </div>
 <div class="answer callout callout-style-default callout-tip callout-titled" title="Reveal answer">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-43-contents" aria-controls="callout-43" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-48-contents" aria-controls="callout-48" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -1655,7 +1745,7 @@ bill_length_mm   73.93115  99.65237</code></pre>
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-43" class="callout-43-contents callout-collapse collapse">
+<div id="callout-48" class="callout-48-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>Least squares fits the best <em>linear</em> approximation. For <span class="math inline">\(X \sim U(0, 2)\)</span>, <span class="math inline">\(\mathrm{Cov}(X, X^2)/\mathrm{Var}(X) = (2 - 1 \cdot 4/3)/(1/3) = 2\)</span>, so the population slope of <span class="math inline">\(2X - X^2\)</span> on <span class="math inline">\(X\)</span> is <span class="math inline">\(2 - 2 = 0\)</span>; the predictors are independent, so this is also the multiple-regression coefficient, and the fitted coefficient is near zero with a tight interval (at <span class="math inline">\(n = 400\)</span> the estimate is usually within <span class="math inline">\(\pm 0.15\)</span> of zero and the interval about <span class="math inline">\(\pm 0.2\)</span> wide; at <span class="math inline">\(n = 100\)</span> the same picture, noisier). The derivative <span class="math inline">\(2 - 2x_2\)</span> is <span class="math inline">\(+2\)</span> at one end and <span class="math inline">\(-2\)</span> at the other; the linear fit averages it away. <code>x3</code> is simply irrelevant. The residuals against <code>x2</code> show an inverted U: the class of planes does not contain <span class="math inline">\(f\)</span>, and a one-predictor residual plot does show it here, because the missing piece is a function of one input. A coefficient near zero with a tight interval is evidence of no <em>linear</em> signal, not of no effect.</p>
 </div>
@@ -1668,7 +1758,7 @@ bill_length_mm   73.93115  99.65237</code></pre>
 <p><strong>Challenge</strong>: can you find some potential dangers of using regression models, where the model is wrong in some important way and our diagnostic methods fail to show us the problem? (A missing piece that depends on two inputs at once is a good place to start.)</p>
 <p><strong>Challenge</strong>: what are some strengths or robustness properties of regression models that we should appreciate and trust in the long run? i.e.&nbsp;are there ways the model can be wrong but our conclusions from it will still (usually?) be good enough to use anyway?</p>
 <div class="answer callout callout-style-default callout-tip callout-titled" title="Reveal answer">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-44-contents" aria-controls="callout-44" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-49-contents" aria-controls="callout-49" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -1677,7 +1767,7 @@ bill_length_mm   73.93115  99.65237</code></pre>
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-44" class="callout-44-contents callout-collapse collapse">
+<div id="callout-49" class="callout-49-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>Danger: put an interaction or a product like <span class="math inline">\(x_1 x_2\)</span> into <code>f</code>; the coefficients on <code>x1</code> and <code>x2</code> are then slopes of a plane through a curved surface, and the one-predictor residual plots can look clean while the model is badly wrong along a diagonal. Strengths: when the truth is close to linear over the range of the data and <span class="math inline">\(n\)</span> is large relative to <span class="math inline">\(p\)</span>, the fitted plane is close to the best plane and its predictions inside that range are hard to beat; and even when the truth is curved there is a best plane, the one with the smallest risk among planes (the optimal model theorem with the minimization restricted to planes), and least squares estimates it. Sample least squares minimizes training error. Estimating the coefficients from finite data can leave its population risk above that of the best plane, by an amount the validation week measures.</p>
 </div>

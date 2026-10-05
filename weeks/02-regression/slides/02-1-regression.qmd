@@ -62,7 +62,7 @@ Cut order: (1) regression done badly + summary, (2) strengths, (3) probabilistic
 
 Pace: 0:13 orthogonality, 0:31 three errors, 0:48 conventions, 0:55 hat matrix, 1:03 picture, 1:16 proof done.
 
-In the notebook: OMT proof (ex. 1), OVB (ex. 2).
+In the notebook: OMT proof (ex. 1), OVB (ex. 2), this proof redone (ex. 3).
 :::
 
 ### Week 2: linear regression
@@ -820,7 +820,7 @@ $$
 Say it twice: exercises are what the seminar varies; teachers give one hint. Standing expectation.
 :::
 
-- This week: exercises 1 and 2 at the top of the notebook. The proof of the optimal model theorem, and omitted-variable bias: what the normal equations say when a relevant column is left out
+- This week: exercises 1 to 3 at the top of the notebook. The proof of the optimal model theorem; omitted-variable bias: what the normal equations say when a relevant column is left out; and today's partialling-out proof again, with the slides closed
 
 - Every week: the notebook opens with a "Before the seminar" section. Do it before you arrive; the seminar's problems start from it
 
