@@ -71,14 +71,16 @@ site() {
   echo "ml4ds.com" > docs/CNAME
   mkdir -p docs/decks-notes
   find instructor/_rendered -name "*-instructor.html" -exec cp {} docs/decks-notes/ \;
+  mkdir -p docs/seminar-teachers
+  find instructor/_rendered -name "*_complete.html" -exec cp {} docs/seminar-teachers/ \;
 }
 
 check() {
   local fail=0 n s
-  n=$(find docs -name '*_complete*' | wc -l | tr -d ' ')
+  n=$(find docs -name '*_complete*' -not -path 'docs/seminar-teachers/*' | wc -l | tr -d ' ')
   [ "$n" -eq 0 ] || { echo "FAIL: _complete files under docs/"; fail=1; }
   [ ! -e docs/instructor ] || { echo "FAIL: docs/instructor/ exists"; fail=1; }
-  if grep -rlq 'Reveal answer\|Reveal solution' docs; then echo "FAIL: answer boxes in docs/"; fail=1; fi
+  if grep -rlq --exclude-dir=seminar-teachers 'Reveal answer\|Reveal solution' docs; then echo "FAIL: answer boxes in docs/"; fail=1; fi
   if grep -rlq --exclude-dir=decks-notes 'class="notes"' docs --include='*.html'; then echo "FAIL: speaker notes in docs/"; fail=1; fi
   [ "$(cat docs/CNAME 2>/dev/null)" = "ml4ds.com" ] || { echo "FAIL: docs/CNAME"; fail=1; }
   grep -q '^instructor/$' .gitignore || { echo "FAIL: instructor/ not in .gitignore"; fail=1; }
