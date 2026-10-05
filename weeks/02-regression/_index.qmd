@@ -11,6 +11,6 @@ Optional, deeper: ESL section 2.4 (the optimal model theorem) and section 3.2, p
 
 **Lecture:** [slides](weeks/02-regression/slides/02-1-regression.html)
 
-**Seminar:** [notebook](weeks/02-regression/notebooks/notebook2.html) ([.qmd](https://ml4ds.com/weeks/02-regression/notebooks/notebook2.qmd){download="notebook2.qmd"}). Before the seminar, do exercises 1 and 2 at the top of the notebook (the two proofs the lecture left to you, about 30 minutes); the seminar's problems start from them. Bring a dataset of your own if you have one: a numeric outcome and a few predictors, one row per unit.
+**Seminar:** [notebook](weeks/02-regression/notebooks/notebook2.html) ([.qmd](https://ml4ds.com/weeks/02-regression/notebooks/notebook2.qmd){download="notebook2.qmd"}). Before the seminar, do exercises 1 to 3 at the top of the notebook (the two proofs the lecture left to you, and the partialling-out proof again with the slides closed); the seminar's problems start from them. Bring a dataset of your own if you have one: a numeric outcome and a few predictors, one row per unit.
 
 Problem set 1 is released this week on Moodle and is due in week 5.
