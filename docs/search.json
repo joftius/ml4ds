@@ -4,84 +4,84 @@
     "href": "weeks/02-regression/slides/02-1-regression.html#section",
     "title": "Machine learning",
     "section": "",
-    "text": "Week 2: linear regression\nPart 1: least squares and optimal models\nPart 2: multiple regression and orthogonality"
+    "text": "Plan 79 of 90 at factor 1.35 (a floor; 88 at 1.5). Dark = rush or skip; each dark slide’s note says skip or gives the compressed phrase.\nCut order: (1) regression done badly + summary, (2) strengths, (3) probabilistic ML, (4) do the calculus; then Ceres to four slides (1801, Piazzi, contest, Gauss’s answer).\nPace: 0:13 orthogonality, 0:31 three errors, 0:48 conventions, 0:55 hat matrix, 1:03 picture, 1:16 proof done.\nIn the notebook: OMT proof (ex. 1), OVB (ex. 2), this proof redone (ex. 3).\n\nWeek 2: linear regression\nPart 1: least squares and optimal models\nPart 2: multiple regression and orthogonality"
   },
   {
     "objectID": "weeks/02-regression/slides/02-1-regression.html#history-its-the-year-1801",
     "href": "weeks/02-regression/slides/02-1-regression.html#history-its-the-year-1801",
     "title": "Machine learning",
     "section": "History: it’s the year 1801",
-    "text": "History: it’s the year 1801\nThere is no Google Maps\nHow do you travel? With the original GPS: astronomy\n. . .\n\nRelatively mature science\nMillennia of observations and evolving theories\nAbout 2 centuries of observations with telescopes\nSimilar time since Kepler’s laws (elliptical orbit formulas)\n20 years after discovery of Uranus\nBut still, 45 years before discovery of Neptune"
+    "text": "History: it’s the year 1801\n\nCompress: astronomy was the GPS; a mature science.\n\nThere is no Google Maps\nHow do you travel? With the original GPS: astronomy\n. . .\n\nRelatively mature science\nMillennia of observations and evolving theories\nAbout 2 centuries of observations with telescopes\nSimilar time since Kepler’s laws (elliptical orbit formulas)\n20 years after discovery of Uranus\nBut still, 45 years before discovery of Neptune"
   },
   {
     "objectID": "weeks/02-regression/slides/02-1-regression.html#history-discovering-planets-and-things",
     "href": "weeks/02-regression/slides/02-1-regression.html#history-discovering-planets-and-things",
     "title": "Machine learning",
     "section": "History: discovering planets and things",
-    "text": "History: discovering planets and things\nImagine being the first to observe a previously unknown celestial object in our solar system\n. . .\n…\n\n\nand then losing it"
+    "text": "History: discovering planets and things\n\nPiazzi: three weeks of observations, fell ill, then the sun.\n\nImagine being the first to observe a previously unknown celestial object in our solar system\n. . .\n…\n\n\nand then losing it"
   },
   {
     "objectID": "weeks/02-regression/slides/02-1-regression.html#section-1",
     "href": "weeks/02-regression/slides/02-1-regression.html#section-1",
     "title": "Machine learning",
     "section": "",
-    "text": "mfw"
+    "text": "Skip if behind.\n\nmfw"
   },
   {
     "objectID": "weeks/02-regression/slides/02-1-regression.html#history-a-pre-machine-learning-prediction-contest",
     "href": "weeks/02-regression/slides/02-1-regression.html#history-a-pre-machine-learning-prediction-contest",
     "title": "Machine learning",
     "section": "History: a (pre-machine learning?) prediction contest",
-    "text": "History: a (pre-machine learning?) prediction contest\n\n\n\n\n\nYoung Gauss\n\n\nYung Gauss\n\n\nPiazzi published his \\(n = 24\\) observations in February\nAn international community of scientists and mathematicians scrambled to find Ceres\nAlmost a year later, it was rediscovered using the predictions of (24 year old) C. F. Gauß"
+    "text": "History: a (pre-machine learning?) prediction contest\n\nCompress: 24 observations, a year’s scramble, Gauss at 24.\n\n\n\n\n\n\nYoung Gauss\n\n\nYung Gauss\n\n\nPiazzi published his \\(n = 24\\) observations in February\nAn international community of scientists and mathematicians scrambled to find Ceres\nAlmost a year later, it was rediscovered using the predictions of (24 year old) C. F. Gauß"
   },
   {
     "objectID": "weeks/02-regression/slides/02-1-regression.html#history-gauss-became-an-instant-celebrity",
     "href": "weeks/02-regression/slides/02-1-regression.html#history-gauss-became-an-instant-celebrity",
     "title": "Machine learning",
     "section": "History: Gauss became an instant celebrity",
-    "text": "History: Gauss became an instant celebrity\nWhy was this impressive?\n\nCeres is small (smaller than our moon)\nObserved path only ~3 degrees of motion across the sky\nAlmost a year passed, so its position was far from the initial observations\nSearching for a small dim object in a sky full of brighter stars\n\nHow did Gauss do it? Kepler’s laws determine an orbit uniquely from 3 points. What to do with 24?"
+    "text": "History: Gauss became an instant celebrity\n\nCompress: small, three degrees of arc, a year later.\n\nWhy was this impressive?\n\nCeres is small (smaller than our moon)\nObserved path only ~3 degrees of motion across the sky\nAlmost a year passed, so its position was far from the initial observations\nSearching for a small dim object in a sky full of brighter stars\n\nHow did Gauss do it? Kepler’s laws determine an orbit uniquely from 3 points. What to do with 24?"
   },
   {
     "objectID": "weeks/02-regression/slides/02-1-regression.html#section-2",
     "href": "weeks/02-regression/slides/02-1-regression.html#section-2",
     "title": "Machine learning",
     "section": "",
-    "text": "Gauss:\n\nWhen the number of unknown quantities is equal to the number of the observed quantities depending on them, the former may be so determined as exactly to satisfy the latter. But when the number of the former is less than that of the latter, an absolutely exact agreement cannot be determined, in so far as the observations do not enjoy absolute accuracy. In this case care must be taken to establish the best possible agreement, or to diminish as far as practicable the differences.\n\ni.e. minimize errors\nbut why squared errors?"
+    "text": "Compress: minimize the errors; but why squared?\n\nGauss:\n\nWhen the number of unknown quantities is equal to the number of the observed quantities depending on them, the former may be so determined as exactly to satisfy the latter. But when the number of the former is less than that of the latter, an absolutely exact agreement cannot be determined, in so far as the observations do not enjoy absolute accuracy. In this case care must be taken to establish the best possible agreement, or to diminish as far as practicable the differences.\n\ni.e. minimize errors\nbut why squared errors?"
   },
   {
     "objectID": "weeks/02-regression/slides/02-1-regression.html#constraints",
     "href": "weeks/02-regression/slides/02-1-regression.html#constraints",
     "title": "Machine learning",
     "section": "Constraints",
-    "text": "Constraints\n\nErrors sum to zero\nMinimize something else, but what?\n\n\nAround the same time, R. J. Boscovich and P-S. Laplace minimized sum of absolute errors: \\(\\text{minimize} \\sum_i | r_i |\\)\nLaplace also suggested minimizing the maximum error: \\(\\text{minimize} \\max_i | r_i |\\)\nGauss said we can use any even power, e.g. \\(\\sum r_i^8\\)"
+    "text": "Constraints\n\nCompress: absolute, maximum, any even power.\n\n\nErrors sum to zero\nMinimize something else, but what?\n\n\nAround the same time, R. J. Boscovich and P-S. Laplace minimized sum of absolute errors: \\(\\text{minimize} \\sum_i | r_i |\\)\nLaplace also suggested minimizing the maximum error: \\(\\text{minimize} \\max_i | r_i |\\)\nGauss said we can use any even power, e.g. \\(\\sum r_i^8\\)"
   },
   {
     "objectID": "weeks/02-regression/slides/02-1-regression.html#gausss-answer",
     "href": "weeks/02-regression/slides/02-1-regression.html#gausss-answer",
     "title": "Machine learning",
     "section": "Gauss’s answer",
-    "text": "Gauss’s answer\n\nof all these principles ours [least squares] is the most simple; by the others we shall be led into the most complicated calculations\n\nIf Gauss didn’t want to do those calculations, that’s really saying something…\nOn the other hand, he said he used least squares thousands of times in his years of work (without electricity!)\nFor more about the origin of least squares see this article."
+    "text": "Gauss’s answer\n\nCompress: the simplest calculations. The better reason (loss chooses the target) in 15 min.\n\n\nof all these principles ours [least squares] is the most simple; by the others we shall be led into the most complicated calculations\n\nIf Gauss didn’t want to do those calculations, that’s really saying something…\nOn the other hand, he said he used least squares thousands of times in his years of work (without electricity!)\nFor more about the origin of least squares see this article."
   },
   {
     "objectID": "weeks/02-regression/slides/02-1-regression.html#lessons-for-ml-from-the-re-discovery-of-ceres",
     "href": "weeks/02-regression/slides/02-1-regression.html#lessons-for-ml-from-the-re-discovery-of-ceres",
     "title": "Machine learning",
     "section": "Lessons for ML from the re-discovery of Ceres",
-    "text": "Lessons for ML from the re-discovery of Ceres\n\nSeverity (or novelty): lots of mathematicians used methods to fit the initial observations, what distinguished Gauss was predicting a new data point\n\n\n\nThe right amount of complexity: some predictions assumed a circular orbit instead of elliptical, this simplified calculations but missed Ceres\n\n\n\n\nTheory and observation: without the heliocentric model of the solar system this search would have been a lost cause. That model itself evolved from previous iterations of theories and observations"
+    "text": "Lessons for ML from the re-discovery of Ceres\n\nCompress: severity, the right complexity, theory and observation.\n\n\nSeverity (or novelty): lots of mathematicians used methods to fit the initial observations, what distinguished Gauss was predicting a new data point\n\n\n\nThe right amount of complexity: some predictions assumed a circular orbit instead of elliptical, this simplified calculations but missed Ceres\n\n\n\n\nTheory and observation: without the heliocentric model of the solar system this search would have been a lost cause. That model itself evolved from previous iterations of theories and observations"
   },
   {
     "objectID": "weeks/02-regression/slides/02-1-regression.html#by-contrast-regression-done-badly",
     "href": "weeks/02-regression/slides/02-1-regression.html#by-contrast-regression-done-badly",
     "title": "Machine learning",
     "section": "By contrast, regression done badly",
-    "text": "By contrast, regression done badly\nConvenience of calculation enables a lot of bad science\n\nA. Quetelet in 1835, “social physics,” correlates basically any social data together, tries to predict “crime,” poverty, alcohol consumption, etc\nF. Galton (1822-1911) founds the field of eugenics…\nModern science: replication crisis\n\nMuch of modern ML is similarly fitting curves to model relationships in any available data because we can – not because there is any scientific or theoretical reason to do so"
+    "text": "By contrast, regression done badly\n\nSkip if behind. Else: Quetelet, Galton, the replication crisis.\n\nConvenience of calculation enables a lot of bad science\n\nA. Quetelet in 1835, “social physics,” correlates basically any social data together, tries to predict “crime,” poverty, alcohol consumption, etc\nF. Galton (1822-1911) founds the field of eugenics…\nModern science: replication crisis\n\nMuch of modern ML is similarly fitting curves to model relationships in any available data because we can – not because there is any scientific or theoretical reason to do so"
   },
   {
     "objectID": "weeks/02-regression/slides/02-1-regression.html#section-3",
     "href": "weeks/02-regression/slides/02-1-regression.html#section-3",
     "title": "Machine learning",
     "section": "",
-    "text": "Regression began with an exemplary application, the re-discovery of Ceres\nScientifically questionable applications have exploded since then\nComputers speed up the process, which perhaps decreases quality\nThe era of “surveillance capitalism” means scientifically (and ethically) questionable data is multiplying faster than ever"
+    "text": "Skip if behind.\n\nRegression began with an exemplary application, the re-discovery of Ceres\nScientifically questionable applications have exploded since then\nComputers speed up the process, which perhaps decreases quality\nThe era of “surveillance capitalism” means scientifically (and ethically) questionable data is multiplying faster than ever"
   },
   {
     "objectID": "weeks/02-regression/slides/02-1-regression.html#why-squared-errors-another-answer-nice-geometry",
@@ -109,7 +109,7 @@
     "href": "weeks/02-regression/slides/02-1-regression.html#probabilistic-ml",
     "title": "Machine learning",
     "section": "Probabilistic ML",
-    "text": "Probabilistic ML\n\nSome machine learning methods do not explicitly use probability distributions\nThose that do use probability are sometimes (loosely) called “generative”, because they\n\nModel the “data generation process” (DGP)\nCan be used to generate (synthetic) “data” (sampling with a random number generator)\n\n\nThis course is mainly focused on methods that do use probability, and we will always try to do so explicitly/transparently (not hiding our assumptions)"
+    "text": "Probabilistic ML\n\nSkip if behind. One line: we use probability models and say so.\n\n\nSome machine learning methods do not explicitly use probability distributions\nThose that do use probability are sometimes (loosely) called “generative”, because they\n\nModel the “data generation process” (DGP)\nCan be used to generate (synthetic) “data” (sampling with a random number generator)\n\n\nThis course is mainly focused on methods that do use probability, and we will always try to do so explicitly/transparently (not hiding our assumptions)"
   },
   {
     "objectID": "weeks/02-regression/slides/02-1-regression.html#conditional-distributions",
@@ -123,7 +123,7 @@
     "href": "weeks/02-regression/slides/02-1-regression.html#conditional-distributions-1",
     "title": "Machine learning",
     "section": "Conditional distributions",
-    "text": "Conditional distributions\n\n\n\n\n\n\n\n\n\nCurves: \\(p_{Y|X}(y|x)\\) at two values of \\(x\\). Dark curve: \\(\\mathbb E[Y \\mid X = x]\\). Simulated data"
+    "text": "Conditional distributions\n\nPoint at: the mean is a curve, not a line; the spread changes with x. Spread returns in the seminar’s residual plots.\n\n\n\n\n\n\n\n\n\n\nCurves: \\(p_{Y|X}(y|x)\\) at two values of \\(x\\). Dark curve: \\(\\mathbb E[Y \\mid X = x]\\). Simulated data"
   },
   {
     "objectID": "weeks/02-regression/slides/02-1-regression.html#a-variety-of-objectives",
@@ -144,14 +144,14 @@
     "href": "weeks/02-regression/slides/02-1-regression.html#three-errors-three-names",
     "title": "Machine learning",
     "section": "Three errors, three names",
-    "text": "Three errors, three names\nPopulation risk of a predictor \\(f\\), an expectation over new data, the thing we want small: \\[R(f) = \\mathbb E\\,\\ell(Y, f(X))\\]\nTraining error (empirical risk), the same average over the data we fit on: \\[\\hat R_n(f) = \\tfrac{1}{n}\\textstyle\\sum_{i=1}^n \\ell(y_i, f(x_i))\\]\nTest error, last week’s leaderboard, over held-out data: \\[\\widehat{\\text{Err}} = \\tfrac{1}{m}\\textstyle\\sum_{j=1}^m \\ell(y_j^{\\text{test}}, \\hat f(x_j^{\\text{test}}))\\]"
+    "text": "Three errors, three names\n\nOne minute: the three names. Plug-in = minimize R-hat. Optimism is week 5, not here.\n\nPopulation risk of a predictor \\(f\\), an expectation over new data, the thing we want small: \\[R(f) = \\mathbb E\\,\\ell(Y, f(X))\\]\nTraining error (empirical risk), the same average over the data we fit on: \\[\\hat R_n(f) = \\tfrac{1}{n}\\textstyle\\sum_{i=1}^n \\ell(y_i, f(x_i))\\]\nTest error, last week’s leaderboard, over held-out data: \\[\\widehat{\\text{Err}} = \\tfrac{1}{m}\\textstyle\\sum_{j=1}^m \\ell(y_j^{\\text{test}}, \\hat f(x_j^{\\text{test}}))\\]"
   },
   {
     "objectID": "weeks/02-regression/slides/02-1-regression.html#optimal-model-theorem",
     "href": "weeks/02-regression/slides/02-1-regression.html#optimal-model-theorem",
     "title": "Machine learning",
     "section": "Optimal model theorem",
-    "text": "Optimal model theorem\nSquared loss, any function of \\(X\\) allowed, not only lines:\n\\(\\mathbb E Y^2 &lt; \\infty\\) and \\(f^\\star(x) = \\mathbb E[Y \\mid X = x]\\). For every \\(f\\) with \\(\\mathbb E f(X)^2 &lt; \\infty\\), \\[\nR(f) = R(f^\\star) + \\mathbb E\\big[(f^\\star(X) - f(X))^2\\big]\n\\]\n\nSquared loss: the target is the conditional mean. Week 1’s \\(f^\\star\\) is \\(\\mathbb E[Y \\mid X]\\), and the excess risk of any \\(f\\), any method, is one number.\n\nProof: exercise 1 in the notebook, before the seminar. Corollaries: absolute loss, the conditional median (stated, not proved); zero–one loss, next week."
+    "text": "Optimal model theorem\n\n4 min. Statement, leave box, exercise. Do not give the method. Loss chooses the target: median for absolute loss (stated), 0-1 next week.\n\nSquared loss, any function of \\(X\\) allowed, not only lines:\n\\(\\mathbb E Y^2 &lt; \\infty\\) and \\(f^\\star(x) = \\mathbb E[Y \\mid X = x]\\). For every \\(f\\) with \\(\\mathbb E f(X)^2 &lt; \\infty\\), \\[\nR(f) = R(f^\\star) + \\mathbb E\\big[(f^\\star(X) - f(X))^2\\big]\n\\]\n\nSquared loss: the target is the conditional mean. Week 1’s \\(f^\\star\\) is \\(\\mathbb E[Y \\mid X]\\), and the excess risk of any \\(f\\), any method, is one number.\n\nProof: exercise 1 in the notebook, before the seminar. Corollaries: absolute loss, the conditional median (stated, not proved); zero–one loss, next week."
   },
   {
     "objectID": "weeks/02-regression/slides/02-1-regression.html#our-focus",
@@ -165,14 +165,14 @@
     "href": "weeks/02-regression/slides/02-1-regression.html#statistical-wisdom",
     "title": "Machine learning",
     "section": "Statistical wisdom",
-    "text": "Statistical wisdom\nSometimes this assumption works marvelously\nOther times it breaks spectacularly\nOften, it’s somewhere in the gray area\n\n“All models are wrong, but some are useful”\nAlways, always, always remember George Box:\n\nSince all models are wrong the scientist must be alert to what is importantly wrong. It is inappropriate to be concerned about mice when there are tigers abroad."
+    "text": "Statistical wisdom\n\nCompress: Box, “importantly wrong”.\n\nSometimes this assumption works marvelously\nOther times it breaks spectacularly\nOften, it’s somewhere in the gray area\n\n“All models are wrong, but some are useful”\nAlways, always, always remember George Box:\n\nSince all models are wrong the scientist must be alert to what is importantly wrong. It is inappropriate to be concerned about mice when there are tigers abroad."
   },
   {
     "objectID": "weeks/02-regression/slides/02-1-regression.html#strengths-of-machine-learning",
     "href": "weeks/02-regression/slides/02-1-regression.html#strengths-of-machine-learning",
     "title": "Machine learning",
     "section": "Strengths of machine learning",
-    "text": "Strengths of machine learning\n\nRelaxing the linearity assumption and using flexible, non-linear models\nSpecialized methods for high-dimensional linear regression, where there are many predictor variables, possibly even \\(p &gt; n\\)\nBeating other approaches at pure prediction accuracy, trading off simplicity/interpretability for better predictions\n\nRecently, people have started caring more about interpretability again – an emphasis in this course"
+    "text": "Strengths of machine learning\n\nSkip if behind.\n\n\nRelaxing the linearity assumption and using flexible, non-linear models\nSpecialized methods for high-dimensional linear regression, where there are many predictor variables, possibly even \\(p &gt; n\\)\nBeating other approaches at pure prediction accuracy, trading off simplicity/interpretability for better predictions\n\nRecently, people have started caring more about interpretability again – an emphasis in this course"
   },
   {
     "objectID": "weeks/02-regression/slides/02-1-regression.html#multiple-regression",
@@ -235,84 +235,84 @@
     "href": "weeks/02-regression/slides/02-1-regression.html#linear-algebra-and-geometric-intuition-continued",
     "title": "Machine learning",
     "section": "Linear algebra and geometric intuition, continued",
-    "text": "Linear algebra and geometric intuition, continued\nCOOL FACTS about \\(\\mathbf H\\):\n\n\\(\\mathbf H\\) is a projection: \\(\\mathbf H^2 = \\mathbf H\\)\nFor any \\(n\\)-vector \\(\\mathbf v\\), the \\(n\\)-vector \\(\\mathbf {Hv}\\) is the orthogonal projection of \\(\\mathbf v\\) onto the column space of \\(\\mathbf X\\)\nOf all linear combinations of columns of \\(\\mathbf X\\), \\(\\mathbf {Hv}\\) is the one closest (in Euclidean distance) to \\(\\mathbf v\\)."
+    "text": "Linear algebra and geometric intuition, continued\n\nTwo more facts for the proof: H symmetric; I minus H projects onto the complement, so r is orthogonal to every column. Proofs: optional problem 4.\n\nCOOL FACTS about \\(\\mathbf H\\):\n\n\\(\\mathbf H\\) is a projection: \\(\\mathbf H^2 = \\mathbf H\\)\nFor any \\(n\\)-vector \\(\\mathbf v\\), the \\(n\\)-vector \\(\\mathbf {Hv}\\) is the orthogonal projection of \\(\\mathbf v\\) onto the column space of \\(\\mathbf X\\)\nOf all linear combinations of columns of \\(\\mathbf X\\), \\(\\mathbf {Hv}\\) is the one closest (in Euclidean distance) to \\(\\mathbf v\\)."
   },
   {
     "objectID": "weeks/02-regression/slides/02-1-regression.html#exercise-do-the-calculus",
     "href": "weeks/02-regression/slides/02-1-regression.html#exercise-do-the-calculus",
     "title": "Machine learning",
     "section": "Exercise: do the calculus",
-    "text": "Exercise: do the calculus\nWe have the loss function\n\\[L(\\mathbf X, \\mathbf y, \\mathbf \\beta) = (\\mathbf y - \\mathbf X \\beta)^\\top(\\mathbf y - \\mathbf X \\beta)\\]\n(just a different way of writing sum of squared errors)\n\nConsider each coordinate separately and take univariate partial derivatives\nUse vector calculus and compute the gradient\n(Or even use matrix calculus identities)\n\n\nReach the same conclusion: at a stationary point of \\(L\\),\n\\[\\mathbf X^\\top \\mathbf X \\hat \\beta = \\mathbf X^\\top \\mathbf y\\]"
+    "text": "Exercise: do the calculus\n\nSkip if behind: “the normal equations; read this at home”.\n\nWe have the loss function\n\\[L(\\mathbf X, \\mathbf y, \\mathbf \\beta) = (\\mathbf y - \\mathbf X \\beta)^\\top(\\mathbf y - \\mathbf X \\beta)\\]\n(just a different way of writing sum of squared errors)\n\nConsider each coordinate separately and take univariate partial derivatives\nUse vector calculus and compute the gradient\n(Or even use matrix calculus identities)\n\n\nReach the same conclusion: at a stationary point of \\(L\\),\n\\[\\mathbf X^\\top \\mathbf X \\hat \\beta = \\mathbf X^\\top \\mathbf y\\]"
   },
   {
     "objectID": "weeks/02-regression/slides/02-1-regression.html#history-frisch-and-waugh-1933",
     "href": "weeks/02-regression/slides/02-1-regression.html#history-frisch-and-waugh-1933",
     "title": "Machine learning",
     "section": "History: Frisch and Waugh, 1933",
-    "text": "History: Frisch and Waugh, 1933\nRagnar Frisch and Frederick Waugh, Econometrica, volume 1\nEconomists were “detrending” time series by hand before regressing one on another. Frisch and Waugh asked: is that the same as putting time in as a regressor?\nExactly the same, they proved. Lovell (1963) generalized it to any set of columns\n\nWhy care: it relates multiple regression coefficients to an intuitive univariate regression"
+    "text": "History: Frisch and Waugh, 1933\n\n1 min, or compress: detrending by hand equals adding time as a regressor. Not how lm computes (QR).\n\nRagnar Frisch and Frederick Waugh, Econometrica, volume 1\nEconomists were “detrending” time series by hand before regressing one on another. Frisch and Waugh asked: is that the same as putting time in as a regressor?\nExactly the same, they proved. Lovell (1963) generalized it to any set of columns\n\nWhy care: it relates multiple regression coefficients to an intuitive univariate regression"
   },
   {
     "objectID": "weeks/02-regression/slides/02-1-regression.html#partialling-out-theorem-frischwaughlovell",
     "href": "weeks/02-regression/slides/02-1-regression.html#partialling-out-theorem-frischwaughlovell",
     "title": "Machine learning",
     "section": "Partialling-out theorem (Frisch–Waugh–Lovell)",
-    "text": "Partialling-out theorem (Frisch–Waugh–Lovell)\n\\(\\mathbf X = [\\mathbf X_1 \\;\\; \\mathbf x_2]\\), full column rank, the intercept column inside \\(\\mathbf X_1\\). \\(\\mathbf M_1 = \\mathbf I - \\mathbf X_1(\\mathbf X_1^\\top\\mathbf X_1)^{-1}\\mathbf X_1^\\top\\) projects onto the orthogonal complement of \\(\\mathrm{col}(\\mathbf X_1)\\), so \\(\\tilde{\\mathbf x}_2 = \\mathbf M_1 \\mathbf x_2\\) is the residual of \\(\\mathbf x_2\\) after regressing it on \\(\\mathbf X_1\\). The coefficient on \\(\\mathbf x_2\\) in the regression of \\(\\mathbf y\\) on \\(\\mathbf X\\) is \\[\n\\hat\\beta_2 = \\frac{\\tilde{\\mathbf x}_2^\\top \\mathbf y}{\\tilde{\\mathbf x}_2^\\top \\tilde{\\mathbf x}_2}\n\\] (and the same number comes from regressing \\(\\mathbf M_1 \\mathbf y\\) on \\(\\tilde{\\mathbf x}_2\\): residual on residual).\n\nThe coefficient on \\(x_2\\) is the slope of \\(y\\) on what is left of \\(x_2\\) after \\(\\mathbf X_1\\) has explained what it can. Fitting to residuals: additive models, boosting and causal ML share the mechanism, not a guarantee."
+    "text": "Partialling-out theorem (Frisch–Waugh–Lovell)\n\nStatement, picture, proof. Two facts do the work: normal equations (r orthogonal to columns); projection symmetric + idempotent. Full rank: denominator &gt; 0, else NA. Gram-Schmidt column by column; backfitting, boosting, causal ML reuse it.\n\n\\(\\mathbf X = [\\mathbf X_1 \\;\\; \\mathbf x_2]\\), full column rank, the intercept column inside \\(\\mathbf X_1\\). \\(\\mathbf M_1 = \\mathbf I - \\mathbf X_1(\\mathbf X_1^\\top\\mathbf X_1)^{-1}\\mathbf X_1^\\top\\) projects onto the orthogonal complement of \\(\\mathrm{col}(\\mathbf X_1)\\), so \\(\\tilde{\\mathbf x}_2 = \\mathbf M_1 \\mathbf x_2\\) is the residual of \\(\\mathbf x_2\\) after regressing it on \\(\\mathbf X_1\\). The coefficient on \\(\\mathbf x_2\\) in the regression of \\(\\mathbf y\\) on \\(\\mathbf X\\) is \\[\n\\hat\\beta_2 = \\frac{\\tilde{\\mathbf x}_2^\\top \\mathbf y}{\\tilde{\\mathbf x}_2^\\top \\tilde{\\mathbf x}_2}\n\\] (and the same number comes from regressing \\(\\mathbf M_1 \\mathbf y\\) on \\(\\tilde{\\mathbf x}_2\\): residual on residual).\n\nThe coefficient on \\(x_2\\) is the slope of \\(y\\) on what is left of \\(x_2\\) after \\(\\mathbf X_1\\) has explained what it can. Fitting to residuals: additive models, boosting and causal ML share the mechanism, not a guarantee."
   },
   {
     "objectID": "weeks/02-regression/slides/02-1-regression.html#visualizing-orthogonal-subspaces",
     "href": "weeks/02-regression/slides/02-1-regression.html#visualizing-orthogonal-subspaces",
     "title": "Machine learning",
     "section": "Visualizing orthogonal subspaces",
-    "text": "Visualizing orthogonal subspaces\n\n\n\n\n\n\n\n\n\nProject everything onto the orthogonal complement of \\(\\mathrm{col}(\\mathbf X_1)\\), the grey plane. There, regress \\(\\tilde{\\mathbf y}\\) on \\(\\tilde{\\mathbf x}_2\\) through the origin: the slope is \\(\\hat\\beta_2\\) and \\(\\mathbf r\\) is the full regression’s residual"
+    "text": "Visualizing orthogonal subspaces\n\n2 min. col(X1) = one direction (intercept, n = 3); the plane = its complement. Project, then one univariate regression. Say “subspace”, “projection”. Intercept as X1: projection = centering.\n\n\n\n\n\n\n\n\n\n\nProject everything onto the orthogonal complement of \\(\\mathrm{col}(\\mathbf X_1)\\), the grey plane. There, regress \\(\\tilde{\\mathbf y}\\) on \\(\\tilde{\\mathbf x}_2\\) through the origin: the slope is \\(\\hat\\beta_2\\) and \\(\\mathbf r\\) is the full regression’s residual"
   },
   {
     "objectID": "weeks/02-regression/slides/02-1-regression.html#partialling-out-theorem-lines-12",
     "href": "weeks/02-regression/slides/02-1-regression.html#partialling-out-theorem-lines-12",
     "title": "Machine learning",
     "section": "Partialling-out theorem, lines 1–2",
-    "text": "Partialling-out theorem, lines 1–2\nThe full regression, with the normal equations read column by column: the residual is orthogonal to every column \\[\n\\mathbf y = \\mathbf X_1 \\hat{\\boldsymbol\\beta}_1 + \\mathbf x_2 \\hat\\beta_2 + \\mathbf r, \\qquad \\mathbf X_1^\\top \\mathbf r = \\mathbf 0,\\ \\ \\mathbf x_2^\\top \\mathbf r = 0\n\\]\n\nMultiply through by \\(\\mathbf M_1\\): \\[\n\\mathbf M_1 \\mathbf y = \\mathbf M_1 \\mathbf X_1 \\hat{\\boldsymbol\\beta}_1 + \\mathbf M_1 \\mathbf x_2 \\hat\\beta_2 + \\mathbf M_1 \\mathbf r\n\\]\n\n\n\\(\\mathbf M_1 \\mathbf X_1 = \\mathbf 0\\) and \\(\\mathbf M_1 \\mathbf r = \\mathbf r\\) (because \\(\\mathbf r \\perp \\mathrm{col}(\\mathbf X_1)\\)), so \\[\n\\mathbf M_1 \\mathbf y = \\tilde{\\mathbf x}_2 \\,\\hat\\beta_2 + \\mathbf r\n\\]"
+    "text": "Partialling-out theorem, lines 1–2\n\nQ1 (before click 1): multiply by what to kill X1? (M1)\nQ2 (before click 2): what happens to each term; why M1 r = r? (M1 X1 = 0; M1 x2 = x2-tilde; r already in the complement)\n\nThe full regression, with the normal equations read column by column: the residual is orthogonal to every column \\[\n\\mathbf y = \\mathbf X_1 \\hat{\\boldsymbol\\beta}_1 + \\mathbf x_2 \\hat\\beta_2 + \\mathbf r, \\qquad \\mathbf X_1^\\top \\mathbf r = \\mathbf 0,\\ \\ \\mathbf x_2^\\top \\mathbf r = 0\n\\]\n\nMultiply through by \\(\\mathbf M_1\\): \\[\n\\mathbf M_1 \\mathbf y = \\mathbf M_1 \\mathbf X_1 \\hat{\\boldsymbol\\beta}_1 + \\mathbf M_1 \\mathbf x_2 \\hat\\beta_2 + \\mathbf M_1 \\mathbf r\n\\]\n\n\n\\(\\mathbf M_1 \\mathbf X_1 = \\mathbf 0\\) and \\(\\mathbf M_1 \\mathbf r = \\mathbf r\\) (because \\(\\mathbf r \\perp \\mathrm{col}(\\mathbf X_1)\\)), so \\[\n\\mathbf M_1 \\mathbf y = \\tilde{\\mathbf x}_2 \\,\\hat\\beta_2 + \\mathbf r\n\\]"
   },
   {
     "objectID": "weeks/02-regression/slides/02-1-regression.html#partialling-out-theorem-lines-34",
     "href": "weeks/02-regression/slides/02-1-regression.html#partialling-out-theorem-lines-34",
     "title": "Machine learning",
     "section": "Partialling-out theorem, lines 3–4",
-    "text": "Partialling-out theorem, lines 3–4\n\\(\\mathbf M_1 \\mathbf y = \\tilde{\\mathbf x}_2 \\,\\hat\\beta_2 + \\mathbf r\\) is a vector equation with one unknown number, \\(\\hat\\beta_2\\)\n\nMultiply by \\(\\tilde{\\mathbf x}_2^\\top = \\mathbf x_2^\\top \\mathbf M_1\\): \\[\n\\tilde{\\mathbf x}_2^\\top \\mathbf M_1 \\mathbf y = \\tilde{\\mathbf x}_2^\\top \\tilde{\\mathbf x}_2\\, \\hat\\beta_2 + \\tilde{\\mathbf x}_2^\\top \\mathbf r\n\\]\n\n\nThe last term: \\(\\tilde{\\mathbf x}_2^\\top \\mathbf r = \\mathbf x_2^\\top \\mathbf M_1 \\mathbf r = \\mathbf x_2^\\top \\mathbf r = 0\\)"
+    "text": "Partialling-out theorem, lines 3–4\n\nQ1: one unknown number; multiply by what for a scalar equation with a positive coefficient? (x2-tilde transpose)\nQ2: what is x2-tilde transpose r? (x2 transpose M1 r = x2 transpose r = 0)\n\n\\(\\mathbf M_1 \\mathbf y = \\tilde{\\mathbf x}_2 \\,\\hat\\beta_2 + \\mathbf r\\) is a vector equation with one unknown number, \\(\\hat\\beta_2\\)\n\nMultiply by \\(\\tilde{\\mathbf x}_2^\\top = \\mathbf x_2^\\top \\mathbf M_1\\): \\[\n\\tilde{\\mathbf x}_2^\\top \\mathbf M_1 \\mathbf y = \\tilde{\\mathbf x}_2^\\top \\tilde{\\mathbf x}_2\\, \\hat\\beta_2 + \\tilde{\\mathbf x}_2^\\top \\mathbf r\n\\]\n\n\nThe last term: \\(\\tilde{\\mathbf x}_2^\\top \\mathbf r = \\mathbf x_2^\\top \\mathbf M_1 \\mathbf r = \\mathbf x_2^\\top \\mathbf r = 0\\)"
   },
   {
     "objectID": "weeks/02-regression/slides/02-1-regression.html#partialling-out-theorem-lines-56",
     "href": "weeks/02-regression/slides/02-1-regression.html#partialling-out-theorem-lines-56",
     "title": "Machine learning",
     "section": "Partialling-out theorem, lines 5–6",
-    "text": "Partialling-out theorem, lines 5–6\nLeft side: \\(\\tilde{\\mathbf x}_2^\\top \\mathbf M_1 \\mathbf y = \\mathbf x_2^\\top \\mathbf M_1 \\mathbf M_1 \\mathbf y\\)\n\n\\(= \\mathbf x_2^\\top \\mathbf M_1 \\mathbf y = \\tilde{\\mathbf x}_2^\\top \\mathbf y\\), using \\(\\mathbf M_1^\\top = \\mathbf M_1 = \\mathbf M_1^2\\)\n\n\nFull column rank makes \\(\\tilde{\\mathbf x}_2^\\top \\tilde{\\mathbf x}_2 &gt; 0\\), so \\[\n\\hat\\beta_2 = \\frac{\\tilde{\\mathbf x}_2^\\top \\mathbf y}{\\tilde{\\mathbf x}_2^\\top \\tilde{\\mathbf x}_2} = \\frac{\\tilde{\\mathbf x}_2^\\top \\tilde{\\mathbf y}}{\\tilde{\\mathbf x}_2^\\top \\tilde{\\mathbf x}_2}, \\qquad \\tilde{\\mathbf y} = \\mathbf M_1 \\mathbf y \\qquad \\blacksquare\n\\]\n(ESL §3.2.3.)"
+    "text": "Partialling-out theorem, lines 5–6\n\nQ1: two M1’s; which property drops one, which gave x2-tilde transpose = x2 transpose M1? (idempotent; symmetric)\nQ2: dividing by what, zero when? (squared length of x2-tilde; zero iff x2 in col(X1); full rank; the NA)\n\nLeft side: \\(\\tilde{\\mathbf x}_2^\\top \\mathbf M_1 \\mathbf y = \\mathbf x_2^\\top \\mathbf M_1 \\mathbf M_1 \\mathbf y\\)\n\n\\(= \\mathbf x_2^\\top \\mathbf M_1 \\mathbf y = \\tilde{\\mathbf x}_2^\\top \\mathbf y\\), using \\(\\mathbf M_1^\\top = \\mathbf M_1 = \\mathbf M_1^2\\)\n\n\nFull column rank makes \\(\\tilde{\\mathbf x}_2^\\top \\tilde{\\mathbf x}_2 &gt; 0\\), so \\[\n\\hat\\beta_2 = \\frac{\\tilde{\\mathbf x}_2^\\top \\mathbf y}{\\tilde{\\mathbf x}_2^\\top \\tilde{\\mathbf x}_2} = \\frac{\\tilde{\\mathbf x}_2^\\top \\tilde{\\mathbf y}}{\\tilde{\\mathbf x}_2^\\top \\tilde{\\mathbf x}_2}, \\qquad \\tilde{\\mathbf y} = \\mathbf M_1 \\mathbf y \\qquad \\blacksquare\n\\]\n(ESL §3.2.3.)"
   },
   {
     "objectID": "weeks/02-regression/slides/02-1-regression.html#before-the-seminar",
     "href": "weeks/02-regression/slides/02-1-regression.html#before-the-seminar",
     "title": "Machine learning",
     "section": "Before the seminar",
-    "text": "Before the seminar\n\nThis week: exercises 1 to 3 at the top of the notebook. The proof of the optimal model theorem; omitted-variable bias: what the normal equations say when a relevant column is left out; and today’s partialling-out proof again, with the slides closed\nEvery week: the notebook opens with a “Before the seminar” section. Do it before you arrive; the seminar’s problems start from it"
+    "text": "Before the seminar\n\nSay it twice: exercises are what the seminar varies; teachers give one hint. Standing expectation.\n\n\nThis week: exercises 1 to 3 at the top of the notebook. The proof of the optimal model theorem; omitted-variable bias: what the normal equations say when a relevant column is left out; and today’s partialling-out proof again, with the slides closed\nEvery week: the notebook opens with a “Before the seminar” section. Do it before you arrive; the seminar’s problems start from it"
   },
   {
     "objectID": "weeks/02-regression/slides/02-1-regression.html#concluding-points",
     "href": "weeks/02-regression/slides/02-1-regression.html#concluding-points",
     "title": "Machine learning",
     "section": "Concluding points",
-    "text": "Concluding points\nOne of the most commonly used methods, even with more complex ML often compare to regression as a “baseline”\nPerhaps the most complex method that is still considered relatively interpretable. But interpretation is actually trickier than most understand! (more on this next week!)\n\nVery often used in ways that don’t make sense by people who don’t know what they’re doing to reach conclusions that don’t work in the real world!\n. . .\nDone well: amazing, almost magically effective, worth many more years of study, can easily provide a lifetime of valuable usage to a wise practitioner"
+    "text": "Concluding points\n\nCompress: the baseline; interpretable but tricky; misused; done well, magic.\n\nOne of the most commonly used methods, even with more complex ML often compare to regression as a “baseline”\nPerhaps the most complex method that is still considered relatively interpretable. But interpretation is actually trickier than most understand! (more on this next week!)\n\nVery often used in ways that don’t make sense by people who don’t know what they’re doing to reach conclusions that don’t work in the real world!\n. . .\nDone well: amazing, almost magically effective, worth many more years of study, can easily provide a lifetime of valuable usage to a wise practitioner"
   },
   {
     "objectID": "weeks/01-introduction-foundations/slides/01-1-introduction.html#section",
     "href": "weeks/01-introduction-foundations/slides/01-1-introduction.html#section",
     "title": "Machine learning",
     "section": "",
-    "text": "ST310: Machine Learning (for Data Science)\nLecturer: Joshua Loftus\nWebsite: Moodle, and ml4ds.com\nSeminars start this week. Bring a laptop with R and RStudio (see about).\nA request. As a courtesy to me, please don’t use “AI” tools in your communications with me or the teaching staff. This also applies to all aspects of this course. We are here to train our own minds, not to replace them. I’ll say more about why during the term."
+    "text": "ST310: Machine Learning (for Data Science)\nLecturer: Joshua Loftus\nWebsite: Moodle, and ml4ds.com\nSeminars start this week. Bring a laptop with R and RStudio (see about).\nA request. As a courtesy to me, please don’t use “AI” tools in your communications with me or the teaching staff. This also applies to all aspects of this course. We are here to train our own minds, not to replace them. I’ll say more about why during the term.\n\nTiming, total 85 (the room is booked for 90; the rest is for questions). Course info 5 (format, how the course works, this week’s plan); preview 3 (the gapminder tabs, not walked line by line; xkcd); themes and self-intro 3; what is ML 11 (applications 2, ML proper 2, the field 2, notation 2, tasks 2, regression 1); how to predict, probability, the assumptions 6; the competition and its history 8 (four parts 3, Netflix 5); prediction, loss, held-out set and the rule 5; where would you look and Fix–Hodges 3; nearest neighbors 3, which k 2, the score for every k 3, the leaderboard 3, the smooth cousin 1; the bias–variance decomposition at the board 15; where the bias comes from 2; the curse 5; distances concentrate 2; the request (on the title slide) 2; two things to think about 2; until the seminar 2. Reading is not spoken.\nCut order if short: (1) the self-intro to one line; (2) Fix and Hodges to one sentence; (3) the smooth cousin to its question alone (“what is a local average trying to land on?”, which week 2 retrieves); (4) the preview tabs to the plot alone; (5) distances concentrate narrated from the figure. Does not move: the bias–variance decomposition and its backups; the score for every k; the leaderboard and its bars; the rule; the cube table; the two closing questions.\nPace: 0:20 what-is-ML done, notation on the board. 0:45 the leaderboard shown, the smooth-cousin question asked, the board starts. 1:00 noise + bias² + variance boxed and labeled. 1:20 the closing questions.\nBoard script: instructor project, week 1, board_bias_variance."
   },
   {
     "objectID": "weeks/01-introduction-foundations/slides/01-1-introduction.html#about-the-course",
     "href": "weeks/01-introduction-foundations/slides/01-1-introduction.html#about-the-course",
     "title": "Machine learning",
     "section": "About the course",
-    "text": "About the course\nCourse info, teaching philosophy, ML overview"
+    "text": "About the course\nCourse info, teaching philosophy, ML overview\n\n\nAnimation shows lasso, a method we’ll learn about later."
   },
   {
     "objectID": "weeks/01-introduction-foundations/slides/01-1-introduction.html#format",
@@ -333,7 +333,7 @@
     "href": "weeks/01-introduction-foundations/slides/01-1-introduction.html#the-gapminder-data",
     "title": "Machine learning",
     "section": "The gapminder data",
-    "text": "The gapminder data\n\nDataCodePlotModifyPlot again\n\n\n\n\n\n\n\ncountry\ncontinent\nyear\nlifeExp\npop\ngdpPercap\n\n\n\n\nAfghanistan\nAsia\n1952\n28.801\n8425333\n779.4453\n\n\nAfghanistan\nAsia\n1957\n30.332\n9240934\n820.8530\n\n\nAfghanistan\nAsia\n1962\n31.997\n10267083\n853.1007\n\n\nAfghanistan\nAsia\n1967\n34.020\n11537966\n836.1971\n\n\nAfghanistan\nAsia\n1972\n36.088\n13079460\n739.9811\n\n\nAfghanistan\nAsia\n1977\n38.438\n14880372\n786.1134\n\n\n\n\n\n\n\n\ngdp_data &lt;- gapminder |&gt;\n  filter(year == max(year))\n\nlife_exp_plot &lt;-\n  ggplot(gdp_data, aes(x = gdpPercap, y = lifeExp)) +\n  geom_point(aes(color = continent,\n                 shape = continent,\n                 size = pop))\n\nlife_exp_plot +\n  stat_smooth(formula = y ~ x, method = \"loess\", span = 1)\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nlife_exp_plot +\n  scale_x_log10() +\n  stat_smooth(formula = y ~ x, method = \"lm\") +\n  xlab(\"GDP per capita\") +\n  ylab(\"Life expectancy\")"
+    "text": "The gapminder data\n\nDataCodePlotModifyPlot again\n\n\n\n\n\n\n\ncountry\ncontinent\nyear\nlifeExp\npop\ngdpPercap\n\n\n\n\nAfghanistan\nAsia\n1952\n28.801\n8425333\n779.4453\n\n\nAfghanistan\nAsia\n1957\n30.332\n9240934\n820.8530\n\n\nAfghanistan\nAsia\n1962\n31.997\n10267083\n853.1007\n\n\nAfghanistan\nAsia\n1967\n34.020\n11537966\n836.1971\n\n\nAfghanistan\nAsia\n1972\n36.088\n13079460\n739.9811\n\n\nAfghanistan\nAsia\n1977\n38.438\n14880372\n786.1134\n\n\n\n\n\n\n\n\ngdp_data &lt;- gapminder |&gt;\n  filter(year == max(year))\n\nlife_exp_plot &lt;-\n  ggplot(gdp_data, aes(x = gdpPercap, y = lifeExp)) +\n  geom_point(aes(color = continent,\n                 shape = continent,\n                 size = pop))\n\nlife_exp_plot +\n  stat_smooth(formula = y ~ x, method = \"loess\", span = 1)\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nlife_exp_plot +\n  scale_x_log10() +\n  stat_smooth(formula = y ~ x, method = \"lm\") +\n  xlab(\"GDP per capita\") +\n  ylab(\"Life expectancy\")\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nPreview of some R. Model complexity: nonlinear vs relatively simple (linear) model. Linear model may not fit the data as well; but interpretable, one slope to summarize the relationship; but reliable/stable. Machine learning allows us to find models with just the right amount of complexity. Do not walk the code; that is the seminar’s job."
   },
   {
     "objectID": "weeks/01-introduction-foundations/slides/01-1-introduction.html#machine-learning-in-one-picture",
@@ -347,21 +347,21 @@
     "href": "weeks/01-introduction-foundations/slides/01-1-introduction.html#teachingcourse-philosophy",
     "title": "Machine learning",
     "section": "Teaching/course philosophy",
-    "text": "Teaching/course philosophy"
+    "text": "Teaching/course philosophy\n\nNot just math, also my opinions. Textbooks are excellent, read them! But: value added by lectures."
   },
   {
     "objectID": "weeks/01-introduction-foundations/slides/01-1-introduction.html#recurring-themes",
     "href": "weeks/01-introduction-foundations/slides/01-1-introduction.html#recurring-themes",
     "title": "Machine learning",
     "section": "Recurring themes",
-    "text": "Recurring themes\nConcepts that keep coming back\n\nHeld-out evaluation: a model is judged on data it never saw\nBias–variance: flexible models need data near the point\nPrediction \\(\\neq\\) explanation \\(\\neq\\) intervention\nFitting to residuals: one operation in regression, additive models, boosting, causal ML\nDistribution shift: test data look like training data by construction; the world need not\n\n\nHow the course runs\n\nLearning takes work: productive struggle, two words, both necessary\nKnowing a method includes knowing what it does not establish"
+    "text": "Recurring themes\nConcepts that keep coming back\n\nHeld-out evaluation: a model is judged on data it never saw\nBias–variance: flexible models need data near the point\nPrediction \\(\\neq\\) explanation \\(\\neq\\) intervention\nFitting to residuals: one operation in regression, additive models, boosting, causal ML\nDistribution shift: test data look like training data by construction; the world need not\n\n\nHow the course runs\n\nLearning takes work: productive struggle, two words, both necessary\nKnowing a method includes knowing what it does not establish\n\n\nExamples with ethical aspects; explicit consideration of ethics and professional responsibilities of data scientists. Future lectures include a dose of philosophy, vaccinating against mindless application of tools. Don’t be a zombie data scientist. Learn from each other."
   },
   {
     "objectID": "weeks/01-introduction-foundations/slides/01-1-introduction.html#please-allow-me-to-introduce-myself",
     "href": "weeks/01-introduction-foundations/slides/01-1-introduction.html#please-allow-me-to-introduce-myself",
     "title": "Machine learning",
     "section": "Please allow me to introduce myself",
-    "text": "Please allow me to introduce myself\n\n\nI’m Joshua Loftus\n\nFrom the US; used to teach at NYU\nCambridge postdoc; Stats PhD from Stanford\nReproducibility, fairness, interpretability, causality\nFirst-gen at university\nTravel, reading, audiobooks, lifting and, NEW: parenting"
+    "text": "Please allow me to introduce myself\n\n\nI’m Joshua Loftus\n\nFrom the US; used to teach at NYU\nCambridge postdoc; Stats PhD from Stanford\nReproducibility, fairness, interpretability, causality\nFirst-gen at university\nTravel, reading, audiobooks, lifting and, NEW: parenting\n\n\n\n\n\nI am a person in the world, not just on lecture slides. For seminars, help from the very capable teaching staff. Am I trustworthy? Why should you listen to me? You decide!"
   },
   {
     "objectID": "weeks/01-introduction-foundations/slides/01-1-introduction.html#what-is-machine-learning",
@@ -389,7 +389,7 @@
     "href": "weeks/01-introduction-foundations/slides/01-1-introduction.html#machine-learning-the-field",
     "title": "Machine learning",
     "section": "Machine learning, the field",
-    "text": "Machine learning, the field\n\n\nTwo lineages\n\nStatistics: least squares (Gauss, Legendre, c. 1805), regression, likelihood. Models of how data arise\nComputer science: the perceptron (1958), learning theory (Valiant 1984). Algorithms that improve with data\n\nBreiman (2001) called them the two cultures\n\nWhere the field meets\n\nICML, first held 1980\nNeurIPS (as NIPS), 1987\nCOLT, 1988\nMachine Learning journal, 1986; JMLR, 2001\n\nConference papers, not journal articles, are the main currency (unusual among sciences)"
+    "text": "Machine learning, the field\n\n\nTwo lineages\n\nStatistics: least squares (Gauss, Legendre, c. 1805), regression, likelihood. Models of how data arise\nComputer science: the perceptron (1958), learning theory (Valiant 1984). Algorithms that improve with data\n\nBreiman (2001) called them the two cultures\n\nWhere the field meets\n\nICML, first held 1980\nNeurIPS (as NIPS), 1987\nCOLT, 1988\nMachine Learning journal, 1986; JMLR, 2001\n\nConference papers, not journal articles, are the main currency (unusual among sciences)\n\n\nTwo minutes. The point is orientation: when a student reads “NeurIPS 2024” they should know what kind of venue that is, and that reviewed conference papers carry the field. Breiman’s “Statistical Modeling: The Two Cultures” (Statistical Science, 2001) is the essay to name; it argues for the algorithmic culture and its discussants argue back. Dates: ICML began as a workshop at Carnegie Mellon in 1980; NIPS was first held in Denver in 1987 and renamed NeurIPS in 2018; COLT at MIT in 1988; the journal Machine Learning in 1986; JMLR in 2001 after the editorial board of Machine Learning resigned over open access."
   },
   {
     "objectID": "weeks/01-introduction-foundations/slides/01-1-introduction.html#what-is-artificial-intelligence",
@@ -410,7 +410,7 @@
     "href": "weeks/01-introduction-foundations/slides/01-1-introduction.html#categories-of-ml-tasks",
     "title": "Machine learning",
     "section": "Categories of ML tasks",
-    "text": "Categories of ML tasks\nSupervised learning (this whole course)\nOften we focus on one variable, name it \\(Y\\), and give it the special status of being an “outcome”/“response”\nNot this course: unsupervised learning (clustering, dimension reduction), ranking, anomaly detection, network data, embeddings, recommender systems, bandits, etc."
+    "text": "Categories of ML tasks\nSupervised learning (this whole course)\nOften we focus on one variable, name it \\(Y\\), and give it the special status of being an “outcome”/“response”\nNot this course: unsupervised learning (clustering, dimension reduction), ranking, anomaly detection, network data, embeddings, recommender systems, bandits, etc.\n\nSay why: depth over coverage. Unsupervised methods are in ISLR chapter 12 for anyone who wants them; they are not assessed."
   },
   {
     "objectID": "weeks/01-introduction-foundations/slides/01-1-introduction.html#supervised-ml-sub-categories",
@@ -452,28 +452,28 @@
     "href": "weeks/01-introduction-foundations/slides/01-1-introduction.html#machine-learning-as-competition",
     "title": "Machine learning",
     "section": "Machine learning as competition",
-    "text": "Machine learning as competition\nA prediction competition:\n\ncurated data, the same for every competitor\na task: submit a model that predicts \\(y\\) from \\(x\\) for units nobody has seen\nan agreed score\nan evaluation dataset the competitors cannot see\n\nWinning model chosen by best score"
+    "text": "Machine learning as competition\nA prediction competition:\n\ncurated data, the same for every competitor\na task: submit a model that predicts \\(y\\) from \\(x\\) for units nobody has seen\nan agreed score\nan evaluation dataset the competitors cannot see\n\nWinning model chosen by best score\n\nThe name in the literature is the “common task framework”; say it once, then call it the competition. Everything distinctive later in the course is a specific way this clean picture breaks. Each time we will ask: what did winning establish?"
   },
   {
     "objectID": "weeks/01-introduction-foundations/slides/01-1-introduction.html#history-common-task-framework",
     "href": "weeks/01-introduction-foundations/slides/01-1-introduction.html#history-common-task-framework",
     "title": "Machine learning",
     "section": "History: common task framework",
-    "text": "History: common task framework\n\n\n\n\n\n\n\n\n1986\nDARPA funds speech recognition on the condition that every group is scored on the same held-out data by an outside referee (NIST). Progress, measured, for the first time\n\n\n2006\nNetflix offers $1,000,000 for a 10% improvement on its own recommender\n\n\n2010\nKaggle opens; ImageNet’s first yearly challenge (ILSVRC)\n\n\n\n\nDonoho (2017) called the recipe the common task framework and credited it with most of what “machine learning” has achieved since"
+    "text": "History: common task framework\n\n\n\n\n\n\n\n\n1986\nDARPA funds speech recognition on the condition that every group is scored on the same held-out data by an outside referee (NIST). Progress, measured, for the first time\n\n\n2006\nNetflix offers $1,000,000 for a 10% improvement on its own recommender\n\n\n2010\nKaggle opens; ImageNet’s first yearly challenge (ILSVRC)\n\n\n\n\nDonoho (2017) called the recipe the common task framework and credited it with most of what “machine learning” has achieved since\n\nThree minutes, on the history budget: this buys the name. Mark Liberman traced the origin to the DARPA speech programme of the mid-1980s; the referee was the National Institute of Standards and Technology, and the point was that groups had been reporting results on their own data with no way to compare. Donoho, “50 years of data science” (JCGS 2017), section on the CTF: “the secret sauce”. Kaggle was founded in April 2010; ILSVRC ran 2010–2017."
   },
   {
     "objectID": "weeks/01-introduction-foundations/slides/01-1-introduction.html#netflix-challenge",
     "href": "weeks/01-introduction-foundations/slides/01-1-introduction.html#netflix-challenge",
     "title": "Machine learning",
     "section": "Netflix challenge",
-    "text": "Netflix challenge\n\n\n$1,000,000\nfor the first team to beat Netflix’s own recommender by 10%\n100 million ratings; score on 3 million held back\n\n3 years\n5,000 teams submitted"
+    "text": "Netflix challenge\n\n\n$1,000,000\nfor the first team to beat Netflix’s own recommender by 10%\n100 million ratings; score on 3 million held back\n\n3 years\n5,000 teams submitted\n\n\nNetflix Prize. RMSE on held-out ratings; Cinematch scored 0.9514, the target was 0.8563. Progress prizes in 2007 and 2008. Tens of thousands of teams registered; about 5,100 submitted at least one entry. In 2009 two teams crossed 10%: BellKor’s Pragmatic Chaos and The Ensemble. On the public leaderboard (the “quiz” subset) The Ensemble was ahead, 0.8553 to 0.8554; the prize was decided on a separate, unrevealed “test” subset, where the two tied to four decimals (0.8567), and it went to the team that had submitted twenty minutes earlier. Ask the room: what does twenty minutes of difference tell you about the two methods? (Nothing.) That is the first appearance of a theme: the leaderboard number has noise in it. The validation week comes back to the two-subset structure.\nFigures: the Netflix Prize final leaderboard (September 2009) and the grand-prize reports."
   },
   {
     "objectID": "weeks/01-introduction-foundations/slides/01-1-introduction.html#and-then",
     "href": "weeks/01-introduction-foundations/slides/01-1-introduction.html#and-then",
     "title": "Machine learning",
     "section": "And then",
-    "text": "And then\nThe winning blend of hundreds of models was never put into production\nNetflix said the gain wasn’t worth the engineering, and the business had moved to streaming\nThe sequel was cancelled: researchers had re-identified “anonymous” users from their ratings\n\nWinning a competition is not always useful. This course will help you understand why"
+    "text": "And then\nThe winning blend of hundreds of models was never put into production\nNetflix said the gain wasn’t worth the engineering, and the business had moved to streaming\nThe sequel was cancelled: researchers had re-identified “anonymous” users from their ratings\n\nWinning a competition is not always useful. This course will help you understand why\n\n\nNetflix’s engineering blog (2012) said the final solution was not implemented; two of the 2007 progress-prize algorithms were. Netflix Prize 2 was announced in 2009 and cancelled in 2010 after a privacy lawsuit and FTC attention, following Narayanan and Shmatikov’s re-identification paper (2008), which linked the “anonymised” ratings to public IMDb reviews. Three lessons in one story: the score is noisy, the winner need not be deployable, and the data are people."
   },
   {
     "objectID": "weeks/01-introduction-foundations/slides/01-1-introduction.html#prediction-loss-held-out-set",
@@ -487,14 +487,14 @@
     "href": "weeks/01-introduction-foundations/slides/01-1-introduction.html#one-rule-before-we-start",
     "title": "Machine learning",
     "section": "One rule before we start",
-    "text": "One rule before we start\nAn input is fair game only if you would have it at the moment you need the prediction\nPredict 2007 life expectancy from GDP: fine\nPredict a patient’s readmission from the discharge letter written after readmission: not fine\nPredict a house’s sale price from its list price: fine. From the price it eventually sold for: that’s the answer, not an input"
+    "text": "One rule before we start\nAn input is fair game only if you would have it at the moment you need the prediction\nPredict 2007 life expectancy from GDP: fine\nPredict a patient’s readmission from the discharge letter written after readmission: not fine\nPredict a house’s sale price from its list price: fine. From the price it eventually sold for: that’s the answer, not an input\n\nThis is the first item on the checklist students will apply to their own project. It comes back in the validation week as leakage."
   },
   {
     "objectID": "weeks/01-introduction-foundations/slides/01-1-introduction.html#your-first-task",
     "href": "weeks/01-introduction-foundations/slides/01-1-introduction.html#your-first-task",
     "title": "Machine learning",
     "section": "Your first task",
-    "text": "Your first task\n\n\nYou are given GDP per capita for all 142 countries\nand life expectancy for 100 of them\nPredict life expectancy for the other 42\nSomeone else has the answers and will score you\n\n\n\n\n\n\n\n\n\n\ncrosses: the 42 countries you must predict\n\n\nWrite down, in one line, how you would do it."
+    "text": "Your first task\n\n\nYou are given GDP per capita for all 142 countries\nand life expectancy for 100 of them\nPredict life expectancy for the other 42\nSomeone else has the answers and will score you\n\n\n\n\n\n\n\n\n\n\ncrosses: the 42 countries you must predict\n\n\nWrite down, in one line, how you would do it.\n\n\nCollect three or four answers. Somebody will say “draw a line”, somebody “look at similar countries”, somebody “average”. All three are this week or next. Keep the answers on the board; we come back to them at the leaderboard."
   },
   {
     "objectID": "weeks/01-introduction-foundations/slides/01-1-introduction.html#where-would-you-look",
@@ -508,7 +508,7 @@
     "href": "weeks/01-introduction-foundations/slides/01-1-introduction.html#history-k-nearest-neighbors",
     "title": "Machine learning",
     "section": "History: k-nearest neighbors",
-    "text": "History: k-nearest neighbors\n\n\nEvelyn Fix and Joseph Hodges, Berkeley\nA report for the US Air Force School of Aviation Medicine, Texas\nThe idea: to classify a new case, look at the cases nearest to it\nUnpublished until 1989. By then it had a name and was everywhere\n\nCover and Hart, 1967: with enough data, one nearest neighbor gets within a factor of two of the best possible error (for classification, as \\(n \\to \\infty\\))"
+    "text": "History: k-nearest neighbors\n\n\nEvelyn Fix and Joseph Hodges, Berkeley\nA report for the US Air Force School of Aviation Medicine, Texas\nThe idea: to classify a new case, look at the cases nearest to it\nUnpublished until 1989. By then it had a name and was everywhere\n\nCover and Hart, 1967: with enough data, one nearest neighbor gets within a factor of two of the best possible error (for classification, as \\(n \\to \\infty\\))\n\n\nFix and Hodges, “Discriminatory analysis: nonparametric discrimination, consistency properties”, Randolph Field, 1951; reprinted in the International Statistical Review in 1989. Cover and Hart’s bound is asymptotic and for classification. The bias–variance decomposition, at the board in fifteen minutes, is a different kind of result: an exact finite-sample decomposition of the regression error, not a limit.\nSay: the method is so simple it did not need a paper. That is a warning as much as a compliment. Second on the cut order."
   },
   {
     "objectID": "weeks/01-introduction-foundations/slides/01-1-introduction.html#k-nearest-neighbors",
@@ -522,42 +522,42 @@
     "href": "weeks/01-introduction-foundations/slides/01-1-introduction.html#ctf-competition-which-k-would-you-submit",
     "title": "Machine learning",
     "section": "CTF competition: which \\(k\\) would you submit?",
-    "text": "CTF competition: which \\(k\\) would you submit?\n\nLook at the three panels again. Write down the \\(k\\) you would enter in the competition, and one reason."
+    "text": "CTF competition: which \\(k\\) would you submit?\n\nLook at the three panels again. Write down the \\(k\\) you would enter in the competition, and one reason.\n\n\n\nTake a show of hands for 1, 5, 20. Most rooms split between 5 and 20; a few brave people take 1 because “it fits the data perfectly”. Keep those people in mind for the next slide."
   },
   {
     "objectID": "weeks/01-introduction-foundations/slides/01-1-introduction.html#the-score-for-every-k",
     "href": "weeks/01-introduction-foundations/slides/01-1-introduction.html#the-score-for-every-k",
     "title": "Machine learning",
     "section": "The score, for every \\(k\\)",
-    "text": "The score, for every \\(k\\)\n\nAt \\(k = 1\\) the training error is exactly zero. Is that good news?"
+    "text": "The score, for every \\(k\\)\n\nAt \\(k = 1\\) the training error is exactly zero. Is that good news?\n\nLet them say why it is zero: each training point is its own nearest neighbor. Then leave “so what does that number tell you?” hanging. The full answer is the validation week. Do not give it."
   },
   {
     "objectID": "weeks/01-introduction-foundations/slides/01-1-introduction.html#the-leaderboard",
     "href": "weeks/01-introduction-foundations/slides/01-1-introduction.html#the-leaderboard",
     "title": "Machine learning",
     "section": "The leaderboard",
-    "text": "The leaderboard\n\nWhich model wins? What about those error bars?…"
+    "text": "The leaderboard\n\nWhich model wins? What about those error bars?…\n\nEach bar is one competitor’s own standard error: the standard error of a mean of 42 squared errors, computed as if the 42 losses were independent draws, which is an assumption about the countries rather than a fact about them. Whether the gap between two competitors scored on the same 42 countries is real is a different question, about the difference of their losses on the same units; it is left open this week. The seminar computes the bars. Do not do the seminar’s work here; just point at the bars and say “Netflix”."
   },
   {
     "objectID": "weeks/01-introduction-foundations/slides/01-1-introduction.html#the-smooth-cousin",
     "href": "weeks/01-introduction-foundations/slides/01-1-introduction.html#the-smooth-cousin",
     "title": "Machine learning",
     "section": "The smooth cousin",
-    "text": "The smooth cousin\nInstead of “the \\(k\\) nearest, equally”, weight every training point by how close it is: \\[\n\\hat f_h(x_0) = \\frac{\\sum_i K\\!\\left(\\frac{x_i - x_0}{h}\\right) y_i}{\\sum_i K\\!\\left(\\frac{x_i - x_0}{h}\\right)},\n\\qquad K(u) = e^{-u^2/2}\n\\]\n\nBoth are local averages. What number is a local average trying to land on?"
+    "text": "The smooth cousin\nInstead of “the \\(k\\) nearest, equally”, weight every training point by how close it is: \\[\n\\hat f_h(x_0) = \\frac{\\sum_i K\\!\\left(\\frac{x_i - x_0}{h}\\right) y_i}{\\sum_i K\\!\\left(\\frac{x_i - x_0}{h}\\right)},\n\\qquad K(u) = e^{-u^2/2}\n\\]\n\nBoth are local averages. What number is a local average trying to land on?\n\nOne minute: state it, ask the question, leave it open. The answer (the conditional expectation) is next week’s theorem. If cut, ask the question from the nearest-neighbors slide instead; week 2 retrieves it."
   },
   {
     "objectID": "weeks/01-introduction-foundations/slides/01-1-introduction.html#what-makes-a-nearest-neighbor-prediction-wrong-board",
     "href": "weeks/01-introduction-foundations/slides/01-1-introduction.html#what-makes-a-nearest-neighbor-prediction-wrong-board",
     "title": "Machine learning",
     "section": "What makes a nearest-neighbor prediction wrong? board",
-    "text": "What makes a nearest-neighbor prediction wrong? board\n\\(y_i = f^\\star(x_i) + \\varepsilon_i\\), inputs fixed, noise independent, mean \\(0\\), variance \\(\\sigma^2\\); new \\(Y_0 = f^\\star(x_0) + \\varepsilon_0\\).\nWe want \\(\\mathbb E\\big[(Y_0 - \\hat f_k(x_0))^2\\big]\\), the expected squared error of the \\(k\\)-nearest-neighbor prediction at \\(x_0\\).\n\nTwo facts from ST102 do all the work at the board. Which two? Write them down before we start."
+    "text": "What makes a nearest-neighbor prediction wrong? board\n\\(y_i = f^\\star(x_i) + \\varepsilon_i\\), inputs fixed, noise independent, mean \\(0\\), variance \\(\\sigma^2\\); new \\(Y_0 = f^\\star(x_0) + \\varepsilon_0\\).\nWe want \\(\\mathbb E\\big[(Y_0 - \\hat f_k(x_0))^2\\big]\\), the expected squared error of the \\(k\\)-nearest-neighbor prediction at \\(x_0\\).\n\nTwo facts from ST102 do all the work at the board. Which two? Write them down before we start.\n\n\nBoard script: instructor project, week 1, board_bias_variance. Why anyone cared: we just watched k trade one thing for another on the error curve; the decomposition names the two things. Collect the two answers, then go to the board; the next slide is what stays on the screen while you write."
   },
   {
     "objectID": "weeks/01-introduction-foundations/slides/01-1-introduction.html#biasvariance-decomposition-board",
     "href": "weeks/01-introduction-foundations/slides/01-1-introduction.html#biasvariance-decomposition-board",
     "title": "Machine learning",
     "section": "Bias–variance decomposition board",
-    "text": "Bias–variance decomposition board\n\\(y_i = f^\\star(x_i) + \\varepsilon_i\\), inputs fixed, noise independent, mean \\(0\\), variance \\(\\sigma^2\\); new \\(Y_0 = f^\\star(x_0) + \\varepsilon_0\\).\nBias–variance decomposition. \\[\n\\mathbb E\\big[(Y_0 - \\hat f_k(x_0))^2\\big]\n= \\underbrace{\\sigma^2}_{\\text{noise}}\n+ \\underbrace{\\Big[f^\\star(x_0) - \\tfrac{1}{k}\\textstyle\\sum_{l=1}^k f^\\star(x_{(l)})\\Big]^2}_{\\text{bias}^2}\n+ \\underbrace{\\frac{\\sigma^2}{k}}_{\\text{variance}}\n\\]\n\nnoise + bias² + variance. Variance falls in \\(k\\), always. Bias typically grows too, but it need not be monotonic (a constant \\(f^\\star\\) keeps it at zero for every \\(k\\))."
+    "text": "Bias–variance decomposition board\n\\(y_i = f^\\star(x_i) + \\varepsilon_i\\), inputs fixed, noise independent, mean \\(0\\), variance \\(\\sigma^2\\); new \\(Y_0 = f^\\star(x_0) + \\varepsilon_0\\).\nBias–variance decomposition. \\[\n\\mathbb E\\big[(Y_0 - \\hat f_k(x_0))^2\\big]\n= \\underbrace{\\sigma^2}_{\\text{noise}}\n+ \\underbrace{\\Big[f^\\star(x_0) - \\tfrac{1}{k}\\textstyle\\sum_{l=1}^k f^\\star(x_{(l)})\\Big]^2}_{\\text{bias}^2}\n+ \\underbrace{\\frac{\\sigma^2}{k}}_{\\text{variance}}\n\\]\n\nnoise + bias² + variance. Variance falls in \\(k\\), always. Bias typically grows too, but it need not be monotonic (a constant \\(f^\\star\\) keeps it at zero for every \\(k\\)).\n\n\nBackups follow, uncounted. This is the bias–variance trade-off, one of the most powerful ideas in statistics; it comes back in three more forms this term. Are the errors systematic (bias) or not (variance)?"
   },
   {
     "objectID": "weeks/01-introduction-foundations/slides/01-1-introduction.html#biasvariance-decomposition-line-1",
@@ -592,7 +592,7 @@
     "href": "weeks/01-introduction-foundations/slides/01-1-introduction.html#where-the-bias-comes-from",
     "title": "Machine learning",
     "section": "Where the bias comes from",
-    "text": "Where the bias comes from\n\nPink: the neighbors used at the dashed line. Dark curve: a stand-in for \\(f^\\star\\). With 30 neighbors the average of \\(f^\\star\\) over the pink points is not \\(f^\\star\\) at the line."
+    "text": "Where the bias comes from\n\nPink: the neighbors used at the dashed line. Dark curve: a stand-in for \\(f^\\star\\). With 30 neighbors the average of \\(f^\\star\\) over the pink points is not \\(f^\\star\\) at the line.\n\nNoise: nobody beats it on average. Variance: averaging helps, always. Bias: how far f* drifts across the neighborhood, which is set by how smooth f* is and by how far the neighbors are; for this smooth f* it grows with k, though the takeaway box says why it need not in general. The dark curve is a loess smooth drawn from all 142 countries as a stand-in for f*; it is never scored, so nothing leaks, and it is not a competitor. In one dimension the neighbors are close. What about ten?"
   },
   {
     "objectID": "weeks/01-introduction-foundations/slides/01-1-introduction.html#the-curse-of-dimensionality",
@@ -606,14 +606,14 @@
     "href": "weeks/01-introduction-foundations/slides/01-1-introduction.html#the-curse-of-dimensionality-edge-length",
     "title": "Machine learning",
     "section": "The curse of dimensionality: edge length",
-    "text": "The curse of dimensionality: edge length\nHow long must the edge be, to hold a fraction \\(r\\) of the population, in \\(d\\) dimensions?"
+    "text": "The curse of dimensionality: edge length\nHow long must the edge be, to hold a fraction \\(r\\) of the population, in \\(d\\) dimensions?\n\n\nThe phrase “curse of dimensionality” is Bellman’s (1957), from dynamic programming: a grid over a state space with d coordinates has an exponential number of cells. Ours is that a neighborhood in d dimensions is not small. One sentence of history, no more."
   },
   {
     "objectID": "weeks/01-introduction-foundations/slides/01-1-introduction.html#far-away-in-many-directions",
     "href": "weeks/01-introduction-foundations/slides/01-1-introduction.html#far-away-in-many-directions",
     "title": "Machine learning",
     "section": "Far away, in many directions",
-    "text": "Far away, in many directions\n\n\n\n\\(d\\)\nedge to hold 1%\nto hold 10%\n\n\n\n\n1\n0.01\n0.10\n\n\n2\n0.10\n0.32\n\n\n10\n0.63\n0.79\n\n\n100\n0.95\n0.98\n\n\n\nIn ten dimensions, a cube holding 1% of the population spans 63% of each axis. That is not local.\nA nearest-neighbor set is a ball around the query, not a cube, and near the boundary the calculation changes, but the lesson carries: the nearest 1% of the data is far away. So the decomposition’s bias term is where dimension bites: the neighbors are far away, and \\(f^\\star\\) has room to drift."
+    "text": "Far away, in many directions\n\n\n\n\\(d\\)\nedge to hold 1%\nto hold 10%\n\n\n\n\n1\n0.01\n0.10\n\n\n2\n0.10\n0.32\n\n\n10\n0.63\n0.79\n\n\n100\n0.95\n0.98\n\n\n\nIn ten dimensions, a cube holding 1% of the population spans 63% of each axis. That is not local.\nA nearest-neighbor set is a ball around the query, not a cube, and near the boundary the calculation changes, but the lesson carries: the nearest 1% of the data is far away. So the decomposition’s bias term is where dimension bites: the neighbors are far away, and \\(f^\\star\\) has room to drift.\n\nESL §2.5. Ask who got 0.63 before showing it. The number is an expected population fraction for an axis-aligned cube inside the support; a cube centered on a point near the boundary sticks out of the unit cube, and a k-NN neighborhood is an empirical ball, so do not present 0.63 as a property of the k nearest points. The seminar asks for the formula as a function of d."
   },
   {
     "objectID": "weeks/01-introduction-foundations/slides/01-1-introduction.html#distances-concentrate",
@@ -634,7 +634,7 @@
     "href": "weeks/01-introduction-foundations/slides/01-1-introduction.html#two-things-to-think-about",
     "title": "Machine learning",
     "section": "Two things to think about",
-    "text": "Two things to think about\n1. Your 1-NN submission had training error zero. What is that number measuring, and what would the competition have scored instead?\n2. Suppose we fit a model to the 142 countries in 2002 and test it on the same 142 countries in 1997, and it does well. Has it predicted anything new?"
+    "text": "Two things to think about\n1. Your 1-NN submission had training error zero. What is that number measuring, and what would the competition have scored instead?\n2. Suppose we fit a model to the 142 countries in 2002 and test it on the same 142 countries in 1997, and it does well. Has it predicted anything new?\n\nBoth answers are withheld: 1 is the validation week (training error is optimistic), 2 is the seminar’s last question and next week’s opener (test data look like training data by construction; the world need not)."
   },
   {
     "objectID": "weeks/01-introduction-foundations/slides/01-1-introduction.html#until-the-seminar",

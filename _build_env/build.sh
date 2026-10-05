@@ -48,7 +48,7 @@ instructor() {
   # Teacher notes, board scripts, complete notebooks (all formats in their YAML).
   for f in instructor/weeks/${WEEK:-*}/*.qmd instructor/weeks/${WEEK:-*}/notebooks/*_complete.qmd; do
     [ -e "$f" ] || continue
-    quarto render "$f" -M embed-resources:true
+    quarto render "$f" --embed-resources
   done
   # Their output lands under docs/instructor/ (project output-dir) or, if Quarto
   # treats them as outside the project, beside the source. Move either out.
