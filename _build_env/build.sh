@@ -88,8 +88,8 @@ check() {
   done
   if grep -lq '\.answer' weeks/*/notebooks/*.qmd 2>/dev/null; then echo "FAIL: .answer div in a student notebook"; fail=1; fi
   # style warnings, not failures
-  grep -rn -- '—' weeks instructor --include='*.qmd' && echo "WARN: em dashes above" || true
-  grep -rniw 'exam' weeks index.qmd about.qmd --include='*.qmd' && echo "WARN: 'exam' on the public site" || true
+  grep -rn --include="*.qmd" -e "—" weeks instructor/weeks | cut -c1-200 | head -40 || true
+  grep -rniw --include="*.qmd" -e "exam" weeks index.qmd about.qmd | cut -c1-200 | head -40 || true
   if [ "$fail" -eq 0 ]; then echo "checks passed"; fi
   return "$fail"
 }
