@@ -237,7 +237,6 @@ A week's delivery edits only its own block; nothing here changes. -->
 <p>Optional, deeper: ESL section 2.4 (the optimal model theorem) and section 3.2, pp.&nbsp;44–57 (3.2.3 is the partialling-out theorem).</p>
 <p><strong>Lecture:</strong> <a href="weeks/02-regression/slides/02-1-regression.html">slides</a></p>
 <p><strong>Seminar:</strong> <a href="weeks/02-regression/notebooks/notebook2.html">notebook</a> (<a href="https://ml4ds.com/weeks/02-regression/notebooks/notebook2.qmd" download="notebook2.qmd">.qmd</a>). Before the seminar, do exercises 1 to 3 at the top of the notebook (the two proofs the lecture left to you, and the partialling-out proof again with the slides closed); the seminar’s problems start from them. Bring a dataset of your own if you have one: a numeric outcome and a few predictors, one row per unit.</p>
-<p>Problem set 1 is released this week on Moodle and is due in week 5.</p>
 </section>
 <section id="week-3-classification-and-causality-part-1" class="level2">
 <h2 class="anchored" data-anchor-id="week-3-classification-and-causality-part-1">Week 3: classification, and causality (part 1)</h2>
@@ -269,7 +268,6 @@ A week's delivery edits only its own block; nothing here changes. -->
 <li>PPA Chapter 6, pp.&nbsp;100–106 (the generalization gap; what happens empirically with over-parameterized models), and Chapter 8, pp.&nbsp;146–148 (the holdout method and Kaggle’s secret holdout).</li>
 </ul>
 <p><strong>Lecture and seminar:</strong> released here at the start of the week. Cross-validation written out, with and without a leak; a competition run cleanly; a held-out score under three kinds of shift. Data: the (fictional) attrition outcome, the penguins, simulated data.</p>
-<p>Problem set 1 is due this week.</p>
 </section>
 <section id="week-6-reading-week" class="level2">
 <h2 class="anchored" data-anchor-id="week-6-reading-week">Week 6: reading week</h2>
@@ -296,7 +294,7 @@ A week's delivery edits only its own block; nothing here changes. -->
 <li>IML, the chapters “Individual conditional expectation (ICE)” and “Partial dependence plot (PDP)”: the definitions and the pictures, for recognition.</li>
 </ul>
 <p>Deeper, optional: Hastie and Tibshirani, <em>Generalized Additive Models</em> (1990), Chapter 4; Zhao and Hastie, “Causal interpretations of black-box models”, <em>Journal of Business and Economic Statistics</em> 2021.</p>
-<p><strong>Lecture and seminar:</strong> released here at the start of the week. Backfitting in ten lines against <code>mgcv</code> on the movies data, a random split against a split in time; partial dependence and ICE by hand on a simulation whose truth is known, against the total-effect curve. Data: IMDb films via <code>ggplot2movies</code>, and a supplied simulation. Problem set 2 is released this week.</p>
+<p><strong>Lecture and seminar:</strong> released here at the start of the week. Backfitting in ten lines against <code>mgcv</code> on the movies data, a random split against a split in time; partial dependence and ICE by hand on a simulation whose truth is known, against the total-effect curve. Data: IMDb films via <code>ggplot2movies</code>, and a supplied simulation.</p>
 </section>
 <section id="week-9-trees-and-ensembles" class="level2">
 <h2 class="anchored" data-anchor-id="week-9-trees-and-ensembles">Week 9: trees and ensembles</h2>
@@ -308,7 +306,7 @@ A week's delivery edits only its own block; nothing here changes. -->
 <li>ESL Chapter 15, section 15.4, pp.&nbsp;597–602 (why random forests work), and Chapter 10, sections 10.9–10.10, pp.&nbsp;353–361 (boosting trees as gradient descent), for the two board derivations.</li>
 </ul>
 <p>Deeper, optional: CausalML Chapter 8, “Predictive inference via modern nonlinear regression”, pp.&nbsp;200–208; Breiman, “Random forests”, <em>Machine Learning</em> 2001; Friedman, “Greedy function approximation: a gradient boosting machine”, <em>Annals of Statistics</em> 2001.</p>
-<p><strong>Lecture and seminar:</strong> released here at the start of the week. Split search implemented with running sums, then a recursive tree; training against test error along the pruning path; bagging by hand with an out-of-bag error, random forests by <code>mtry</code>, boosting by hand against <code>xgboost</code>; permutation importance by hand, on three inputs and then five. Data: the penguins and gapminder (<a href="data/gapminder.html">note</a>). Problem set 2 is due next week.</p>
+<p><strong>Lecture and seminar:</strong> released here at the start of the week. Split search implemented with running sums, then a recursive tree; training against test error along the pruning path; bagging by hand with an out-of-bag error, random forests by <code>mtry</code>, boosting by hand against <code>xgboost</code>; permutation importance by hand, on three inputs and then five. Data: the penguins and gapminder (<a href="data/gapminder.html">note</a>).</p>
 </section>
 <section id="week-10-explaining-intervening-shifting" class="level2">
 <h2 class="anchored" data-anchor-id="week-10-explaining-intervening-shifting">Week 10: explaining, intervening, shifting</h2>
@@ -320,7 +318,7 @@ A week's delivery edits only its own block; nothing here changes. -->
 <li>Zhao and Hastie, “Causal interpretations of black-box models”, <em>Journal of Business and Economic Statistics</em> 2021 (the back-door statement in the theorem).</li>
 </ul>
 <p>Deeper, optional: Chernozhukov et al., “Double/debiased machine learning for treatment and structural parameters”, <em>Econometrics Journal</em> 2018, sections 1–2; Shimodaira, “Improving predictive inference under covariate shift by weighting the log-likelihood function”, <em>Journal of Statistical Planning and Inference</em> 2000.</p>
-<p><strong>Lecture and seminar:</strong> released here at the start of the week. SHAP by hand on a three-unit table, then by software on the penguins forest with the identity checked; permutation importance against leave-one-covariate-out on one fit; one effect estimated by residual on residual with cross-fitting, two wrong versions and a hidden confounder; a shift diagnosed on gapminder 1952 against 2007. Data: penguins, gapminder, and supplied simulations. Problem set 2 is due this week.</p>
+<p><strong>Lecture and seminar:</strong> released here at the start of the week. SHAP by hand on a three-unit table, then by software on the penguins forest with the identity checked; permutation importance against leave-one-covariate-out on one fit; one effect estimated by residual on residual with cross-fitting, two wrong versions and a hidden confounder; a shift diagnosed on gapminder 1952 against 2007. Data: penguins, gapminder, and supplied simulations.</p>
 </section>
 <section id="week-11-what-does-winning-mean" class="level2">
 <h2 class="anchored" data-anchor-id="week-11-what-does-winning-mean">Week 11: what does winning mean?</h2>
@@ -332,7 +330,7 @@ A week's delivery edits only its own block; nothing here changes. -->
 <li>Wang, Kapoor, Barocas and Narayanan, “Against predictive optimization”, <em>ACM Journal on Responsible Computing</em> 2024, and the rubric at <a href="https://predictive-optimization.cs.princeton.edu/">predictive-optimization.cs.princeton.edu</a>: the project’s justification section uses it.</li>
 </ul>
 <p>Optional: ISLR Chapter 10, sections 10.1–10.2, pp.&nbsp;404–411 (single- and multilayer neural networks), for the optional segment; ISLR Chapter 12, section 12.1, from p.&nbsp;497, for the reader who wants to see what unsupervised learning is.</p>
-<p><strong>Lecture and seminar:</strong> released here at the start of the week, together with the theorems in one view (statements only, with the week each was proved or derived; bring it to the seminar and try to reproduce each statement from memory first, checking second). One unfamiliar case on paper; a simulated lender in R on which a partial dependence curve, an intervention claim and a SHAP value are checked against a known truth; your own project against MARA(s) and the rubric; problem set 2 retrieved. Data: a supplied simulation, and your project data.</p>
+<p><strong>Lecture and seminar:</strong> released here at the start of the week, together with the theorems in one view (statements only, with the week each was proved or derived; bring it to the seminar and try to reproduce each statement from memory first, checking second). One unfamiliar case on paper; a simulated lender in R on which a partial dependence curve, an intervention claim and a SHAP value are checked against a known truth; your own project against MARA(s) and the rubric. Data: a supplied simulation, and your project data.</p>
 
 
 </section>

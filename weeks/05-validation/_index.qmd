@@ -8,5 +8,3 @@ Why training error flatters a model (the optimism theorem), the standard error o
 - PPA Chapter 6, pp. 100–106 (the generalization gap; what happens empirically with over-parameterized models), and Chapter 8, pp. 146–148 (the holdout method and Kaggle's secret holdout).
 
 **Lecture and seminar:** released here at the start of the week. Cross-validation written out, with and without a leak; a competition run cleanly; a held-out score under three kinds of shift. Data: the (fictional) attrition outcome, the penguins, simulated data.
-
-Problem set 1 is due this week.

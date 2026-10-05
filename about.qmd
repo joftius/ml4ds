@@ -11,9 +11,7 @@ Lecturer: [Joshua Loftus](https://joshualoftus.com/). Seminars are run by the cl
 
 ## Assessment
 
-The assessment is as described in the [course guide](https://www.lse.ac.uk/resources/calendar2026-2027/courseGuides/ST/2026_ST310.htm); details of each component will be given on Moodle during the term.
-
-- **Formative.** Two problem sets (out in weeks 2 and 8) and short problems in the seminars. These don't count toward marks. Compare your work with the solutions when they're released, and if you have questions after that, submit your work on Moodle with specific feedback requests.
+The assessment is as described in the [course guide](https://www.lse.ac.uk/resources/calendar2026-2027/courseGuides/ST/2026_ST310.htm); details of each component will be given during the term.
 
 ## References
 
@@ -57,6 +55,6 @@ install.packages(c("tidyverse", "gapminder", "broom", "palmerpenguins", "GGally"
 
 This is every package the seminar notebooks load, for the whole term (`MASS`, also used, ships with R). Week 1 needs only the first three. The seminar notebooks are Quarto (`.qmd`) files: open them in RStudio and either press *Render* or run the chunks one at a time.
 
-The course guide requires students with no experience of R to complete the Digital Skills Lab's pre-sessional R course; if that is you and you have not done it, do it in the first week, because the seminars assume it from week 1 (writing a function and a `for` loop) and build on it (numerical linear algebra, recursion, several package interfaces). The Lab lists the current term's courses on Moodle and runs daily online drop-in sessions: [Digital Skills Lab](https://info.lse.ac.uk/current-students/digital-skills-lab/r). The first seminar starts with a chunk that loads the packages, so you will know at once whether your installation works.
+The course guide requires students with no experience of R to complete the Digital Skills Lab's pre-sessional R course; if that is you and you have not done it, do it in the first week, because the seminars assume it from week 1 (writing a function and a `for` loop) and build on it (numerical linear algebra, recursion, several package interfaces). The Lab lists the current term's courses and runs daily online drop-in sessions: [Digital Skills Lab](https://info.lse.ac.uk/current-students/digital-skills-lab/r). The first seminar starts with a chunk that loads the packages, so you will know at once whether your installation works.
 
 **Note**: on a Mac or Linux computer you may prefer to install R and RStudio with a package manager. Personally, on a Mac I use [Homebrew](https://brew.sh/).

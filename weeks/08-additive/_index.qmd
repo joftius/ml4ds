@@ -10,4 +10,4 @@ One curve per predictor: how an additive model is fitted (each component to what
 
 Deeper, optional: Hastie and Tibshirani, *Generalized Additive Models* (1990), Chapter 4; Zhao and Hastie, "Causal interpretations of black-box models", *Journal of Business and Economic Statistics* 2021.
 
-**Lecture and seminar:** released here at the start of the week. Backfitting in ten lines against `mgcv` on the movies data, a random split against a split in time; partial dependence and ICE by hand on a simulation whose truth is known, against the total-effect curve. Data: IMDb films via `ggplot2movies`, and a supplied simulation. Problem set 2 is released this week.
+**Lecture and seminar:** released here at the start of the week. Backfitting in ten lines against `mgcv` on the movies data, a random split against a split in time; partial dependence and ICE by hand on a simulation whose truth is known, against the total-effect curve. Data: IMDb films via `ggplot2movies`, and a supplied simulation.
