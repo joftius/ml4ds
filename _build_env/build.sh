@@ -27,6 +27,7 @@ student() {
     [ -e "$c" ] || continue
     w=$(basename "$(dirname "$(dirname "$c")")")
     s="weeks/$w/notebooks/$(basename "${c%_complete.qmd}").qmd"
+    mkdir -p "$(dirname "$s")"
     python3 _build_env/make_incomplete.py "$c" "$s"
   done
 }
