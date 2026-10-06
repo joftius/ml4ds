@@ -33,7 +33,7 @@ theme_set(theme_minimal())
 The lecture stated two results and left their proofs to you (exercises 1 and 2), and proved a third, which you redo with the slides closed (exercise 3). Do all three on paper before the seminar; the seminar's problems are variations on the first two. You may use, without proof, two facts about conditional expectation from ST102: the tower property, $\mathbb E[Z] = \mathbb E\big[\mathbb E[Z \mid X]\big]$, and taking out what is known, $\mathbb E[g(X)\, Z \mid X] = g(X)\, \mathbb E[Z \mid X]$ for any function $g$ of $X$ (given $X$, a function of $X$ is a constant).
 
 ::: {.callout-warning title="Hints"}
-Each exercise has hints, collapsed below it. Do not open a hint unless you have been stuck for at least a few minutes, and open them in order. The solutions are revealed in the seminar.
+Each exercise has hints, collapsed below it. Do not open a hint unless you have been stuck for at least a few minutes, and open them in order. Exercise 3's proof is on the lecture slides. Solutions to exercises 1 and 2 are shown in the seminar if you ask.
 :::
 
 **Exercise 1 (optimal model theorem).** Let $\mathbb E Y^2 < \infty$, $f^\star(x) = \mathbb E[Y \mid X = x]$ and $R(f) = \mathbb E\big[(Y - f(X))^2\big]$. Show that for every $f$ with $\mathbb E f(X)^2 < \infty$,
@@ -100,7 +100,7 @@ After multiplying by $\tilde{\mathbf x}_2^\top = \mathbf x_2^\top\mathbf M_1$, t
 
 (b) Deduce that $\mathrm{Var}(Y) = R(f^\star) + \mathrm{Var}\big(f^\star(X)\big)$, and write both terms on the right as conditional moments of $Y$ given $X$. Which identity from ST102 is this?
 
-(c) Week 1 scored methods by squared error on held-out data. Imagine two oracle entries: one predicts $\mathbb E Y$ for everyone, the other is $f^\star$. What is the gap between their risks? On an actual leaderboard the constant entry uses the training mean $\bar y$ and the best entry is some fitted $\hat f$; give two reasons the observed gap need not equal that quantity. Can any method's held-out squared error be below $R(f^\star)$ on average?
+(c) Week 1 scored methods by squared error on held-out data. Imagine two oracle entries: one predicts $\mathbb E Y$ for everyone, the other is $f^\star$. What is the gap between their risks? On an actual leaderboard the constant entry uses the training mean $\bar y$ and the best entry is some fitted $\hat f$; give two reasons the observed gap need not equal that quantity. For a predictor fitted and chosen without using the test set, can its expected held-out squared error be below $R(f^\star)$?
 
 **Problem 2 (leaving a variable out, exactly).** The setting of exercise 2, but forget the truth: let $\hat\beta_1$ and $\hat\beta_2$ be the least-squares coefficients from the long regression of $\mathbf y$ on both $\mathbf x_1$ and $\mathbf x_2$, with residual $\mathbf r$, so that $\mathbf y = \hat\beta_1\mathbf x_1 + \hat\beta_2\mathbf x_2 + \mathbf r$.
 
