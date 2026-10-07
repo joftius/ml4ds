@@ -206,7 +206,7 @@ window.Quarto = {
     <h2 id="toc-title">On this page</h2>
    
   <ul class="collapse">
-  <li><a href="#before-you-start" id="toc-before-you-start" class="nav-link active" data-scroll-target="#before-you-start">Before you start</a></li>
+  <li><a href="#before-the-seminar" id="toc-before-the-seminar" class="nav-link active" data-scroll-target="#before-the-seminar">Before the seminar</a></li>
   <li><a href="#problems" id="toc-problems" class="nav-link" data-scroll-target="#problems">Problems</a></li>
   <li><a href="#coding" id="toc-coding" class="nav-link" data-scroll-target="#coding">Coding</a></li>
   <li><a href="#before-you-leave" id="toc-before-you-leave" class="nav-link" data-scroll-target="#before-you-leave">Before you leave</a></li>
@@ -260,14 +260,165 @@ Note
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(broom)     <span class="co"># might need to install.packages("broom")</span></span>
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">theme_set</span>(<span class="fu">theme_minimal</span>())</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<section id="before-you-start" class="level2">
-<h2 class="anchored" data-anchor-id="before-you-start">Before you start</h2>
-<!-- 5 min -->
-<p>Without looking anything up: for the <code>gapminder</code> data, write down the four parts of a prediction competition (the unit, the inputs and outcome, the score, how the held-out set is chosen). Then, for each input: would you have it at the moment you need the prediction, for a country whose life expectancy you don’t know? “All of them” is an acceptable answer if you can say why.</p>
+<section id="before-the-seminar" class="level2">
+<h2 class="anchored" data-anchor-id="before-the-seminar">Before the seminar</h2>
+<!-- At home, before the seminar. -->
+<p>The lecture proved one result, which you redo with the slides closed (exercise 2), and stated another without proof, which you prove (exercise 3). Do all three exercises on paper before the seminar; the seminar’s problems are variations on exercise 2. You may use, without proof, two facts from ST102: for independent random variables the expectation of a product is the product of the expectations, and the variance of a sum is the sum of the variances.</p>
+<div class="callout callout-style-default callout-warning callout-titled" title="Hints">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Warning</span>Hints
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Exercises 2 and 3 have hints, collapsed below them. Do not open a hint unless you have been stuck for at least a few minutes, and open them in order. Exercise 2’s proof is on the lecture slides. Solutions are shown in the seminar if you ask.</p>
+</div>
+</div>
+<p><strong>Exercise 1 (the competition).</strong> Without looking anything up: for the <code>gapminder</code> data, write down the four parts of a prediction competition (the unit, the inputs and outcome, the score, how the held-out set is chosen). Then, for each input: would you have it at the moment you need the prediction, for a country whose life expectancy you don’t know? “All of them” is an acceptable answer if you can say why.</p>
+<p><strong>Exercise 2 (bias–variance decomposition).</strong> The lecture proved this one. Close the slides and prove it again. The training data are <span class="math inline">\(y_i = f^\star(x_i) + \varepsilon_i\)</span>, <span class="math inline">\(i = 1, \ldots, n\)</span>, with the inputs fixed and the noise terms independent, each with mean <span class="math inline">\(0\)</span> and variance <span class="math inline">\(\sigma^2\)</span>. A new outcome at the input <span class="math inline">\(x_0\)</span> is <span class="math inline">\(Y_0 = f^\star(x_0) + \varepsilon_0\)</span>, where <span class="math inline">\(\varepsilon_0\)</span> has the same mean and variance and is independent of the training noise. The prediction is <span class="math inline">\(\hat f_k(x_0) = \frac1k \sum_{l=1}^k y_{(l)}\)</span>, the average outcome of the <span class="math inline">\(k\)</span> training points nearest to <span class="math inline">\(x_0\)</span>. Show that <span class="math display">\[
+\mathbb E\big[(Y_0 - \hat f_k(x_0))^2\big] = \sigma^2 + \Big[f^\star(x_0) - \tfrac{1}{k}\textstyle\sum_{l=1}^k f^\star(x_{(l)})\Big]^2 + \frac{\sigma^2}{k}.
+\]</span> Independence is used twice. Where?</p>
+<div class="callout callout-style-default callout-note callout-titled" title="Hint 1">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-3-contents" aria-controls="callout-3" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Hint 1
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-3" class="callout-3-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Write <span class="math inline">\(Y_0 - \hat f_k(x_0) = \varepsilon_0 + \big[f^\star(x_0) - \hat f_k(x_0)\big]\)</span>. Square it and take expectations: three terms.</p>
+</div>
+</div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled" title="Hint 2">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-4-contents" aria-controls="callout-4" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Hint 2
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-4" class="callout-4-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>The middle term is <span class="math inline">\(2\,\mathbb E[\varepsilon_0\, g]\)</span> with <span class="math inline">\(g = f^\star(x_0) - \hat f_k(x_0)\)</span>, a function of the training data. What does independence let you do to the expectation of a product?</p>
+</div>
+</div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled" title="Hint 3">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-5-contents" aria-controls="callout-5" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Hint 3
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-5" class="callout-5-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>You are left with <span class="math inline">\(\sigma^2 + \mathbb E[Z^2]\)</span> for <span class="math inline">\(Z = f^\star(x_0) - \hat f_k(x_0)\)</span>. For any random variable, <span class="math inline">\(\mathbb E[Z^2] = (\mathbb E Z)^2 + \mathrm{Var}(Z)\)</span>.</p>
+</div>
+</div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled" title="Hint 4">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-6-contents" aria-controls="callout-6" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Hint 4
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-6" class="callout-6-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Write <span class="math inline">\(\hat f_k(x_0)\)</span> out in terms of <span class="math inline">\(f^\star\)</span> and the noise. Which parts of it are random? Then take its mean and its variance.</p>
+</div>
+</div>
+</div>
+<p><strong>Exercise 3 (distance concentration).</strong> The lecture stated this one without proof. Let <span class="math inline">\(X\)</span> and <span class="math inline">\(X'\)</span> be independent <span class="math inline">\(N(0, I_d)\)</span> vectors and let <span class="math inline">\(W = \|X - X'\|^2/2d\)</span>. You may use that a standard normal <span class="math inline">\(Z\)</span> has <span class="math inline">\(\mathbb E Z^4 = 3\)</span>.</p>
+<ol type="a">
+<li><p>Show that <span class="math inline">\(\mathbb E W = 1\)</span> and <span class="math inline">\(\mathrm{Var}(W) = 2/d\)</span>.</p></li>
+<li><p>Deduce that <span class="math inline">\(\Pr(|W - 1| &gt; \varepsilon) \le 2/(d\varepsilon^2)\)</span> for every <span class="math inline">\(\varepsilon &gt; 0\)</span>.</p></li>
+<li><p>Now take a query point and <span class="math inline">\(n - 1\)</span> other points, all independent <span class="math inline">\(N(0, I_d)\)</span>. Show that with probability at least <span class="math inline">\(1 - 2(n-1)/(d\varepsilon^2)\)</span>, every one of the <span class="math inline">\(n - 1\)</span> squared distances from the query lies between <span class="math inline">\(2d(1 - \varepsilon)\)</span> and <span class="math inline">\(2d(1 + \varepsilon)\)</span>. The <span class="math inline">\(n - 1\)</span> distances are not independent of each other. Why not, and why does your argument not need them to be?</p></li>
+</ol>
+<div class="callout callout-style-default callout-note callout-titled" title="Hint 1">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-7-contents" aria-controls="callout-7" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Hint 1
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-7" class="callout-7-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Coordinate <span class="math inline">\(j\)</span> of <span class="math inline">\(X - X'\)</span> is a difference of two independent standard normals. What is its distribution? Write it as a multiple of a standard normal <span class="math inline">\(Z_j\)</span>.</p>
+</div>
+</div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled" title="Hint 2">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-8-contents" aria-controls="callout-8" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Hint 2
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-8" class="callout-8-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Then <span class="math inline">\(W = \frac1d \sum_{j=1}^d Z_j^2\)</span>, an average of <span class="math inline">\(d\)</span> independent terms. Find the mean and the variance of one term; problem 2(a) does the rest.</p>
+</div>
+</div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled" title="Hint 3">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-9-contents" aria-controls="callout-9" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Hint 3
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-9" class="callout-9-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Part (b) is Chebyshev’s inequality: <span class="math inline">\(\Pr(|W - \mathbb E W| &gt; \varepsilon) \le \mathrm{Var}(W)/\varepsilon^2\)</span>.</p>
+</div>
+</div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled" title="Hint 4">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-10-contents" aria-controls="callout-10" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Hint 4
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-10" class="callout-10-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>For (c): “some distance falls outside the range” is a union of <span class="math inline">\(n - 1\)</span> events. How large can the probability of a union be?</p>
+</div>
+</div>
+</div>
 </section>
 <section id="problems" class="level2">
 <h2 class="anchored" data-anchor-id="problems">Problems</h2>
-<!-- 25 min. Pen and paper. Compare with a neighbor before asking. -->
+<!-- About 17 min. Pen and paper. Compare with a neighbor before asking. -->
 <p>These four problems rebuild the pieces of the lecture’s bias–variance decomposition. They use nothing beyond first-year probability.</p>
 <p><strong>Problem 1.</strong> Let <span class="math inline">\(Z\)</span> be a random variable with mean <span class="math inline">\(\mu\)</span> and variance <span class="math inline">\(\sigma^2\)</span>.</p>
 <ol type="a">
@@ -316,10 +467,10 @@ Note
 </section>
 <section id="coding" class="level2">
 <h2 class="anchored" data-anchor-id="coding">Coding</h2>
-<!-- 50 min: part 1 12, part 2 25, part 3 8, part 4 5. Skeleton lines in comments are scaffolds: the statistical operation is what you write. -->
+<!-- About 37 min: part 1 7, part 2 20, part 3 7, part 4 3. Skeleton lines in comments are scaffolds: the statistical operation is what you write. -->
 <section id="the-competition" class="level3">
 <h3 class="anchored" data-anchor-id="the-competition">1. The competition</h3>
-<!-- 12 min -->
+<!-- 7 min -->
 <p>After running <code>library(gapminder)</code> you can access the dataset. Try typing <code>View(gapminder)</code> in the Console.</p>
 <p>Take the countries observed in 2007. Split them at random into 100 countries you may use for fitting and 42 whose life expectancy is hidden from you. (You have it, of course. Don’t look at it until the end of each part; that is the rule of the competition.)</p>
 <div class="cell">
@@ -362,7 +513,7 @@ Note
 </section>
 <section id="nearest-neighbors-by-hand" class="level3">
 <h3 class="anchored" data-anchor-id="nearest-neighbors-by-hand">2. Nearest neighbors, by hand</h3>
-<!-- 25 min -->
+<!-- 20 min -->
 <p>You may use <code>abs</code>, <code>order</code>, <code>mean</code> and a <code>for</code> loop, but not a library that does nearest neighbors for you. The point is to see the mechanism: a prediction is an average of the outcomes of the nearest training points (problem 4, in code).</p>
 <p><strong>Step 1.</strong> Write a function that takes one new input <code>x0</code>, the training inputs <code>x</code> and outcomes <code>y</code>, and a number of neighbors <code>k</code>, and returns the average outcome of the <code>k</code> training points nearest to <code>x0</code>. The distances are computed for you; you write the two lines that pick the neighbors and average their outcomes.</p>
 <div class="cell">
@@ -371,12 +522,22 @@ Note
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="co"># ...</span></span>
 <span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<details>
-<summary>
-Hint (open after your first attempt)
-</summary>
+<div class="callout callout-style-default callout-note callout-titled" title="Hint 1">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-11-contents" aria-controls="callout-11" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Hint 1
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-11" class="callout-11-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
 <p><code>order(distances)</code> gives the positions of the distances from smallest to largest, so its first <code>k</code> entries are the positions of the <code>k</code> nearest points.</p>
-</details>
+</div>
+</div>
+</div>
 <p>Check it on problem 4’s data first: <code>knn_predict(3.5, c(1, 2, 4, 7, 8), c(3, 5, 4, 10, 9), k = 3)</code> should give the number you computed by hand.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">knn_predict</span>(<span class="fl">3.5</span>, <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">4</span>, <span class="dv">7</span>, <span class="dv">8</span>), <span class="fu">c</span>(<span class="dv">3</span>, <span class="dv">5</span>, <span class="dv">4</span>, <span class="dv">10</span>, <span class="dv">9</span>), <span class="at">k =</span> <span class="dv">3</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -444,7 +605,7 @@ Hint (open after your first attempt)
 </section>
 <section id="the-score-is-a-random-variable" class="level3">
 <h3 class="anchored" data-anchor-id="the-score-is-a-random-variable">3. The score is a random variable</h3>
-<!-- 8 min -->
+<!-- 7 min -->
 <p>Your test MSE is an average of 42 losses. From the split you already have, compute the 42 individual squared errors of the <code>k = 5</code> predictor, their mean (the test MSE again) and the standard error of that mean, <span class="math inline">\(\text{sd(losses)}/\sqrt{42}\)</span>. (This standard error treats the 42 losses as independent draws; that is an assumption about the countries, not a fact about them.)</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># losses &lt;- ____</span></span>
@@ -455,7 +616,7 @@ Hint (open after your first attempt)
 </section>
 <section id="predicting-on-new-data" class="level3">
 <h3 class="anchored" data-anchor-id="predicting-on-new-data">4. Predicting on new data</h3>
-<!-- 5 min -->
+<!-- 3 min -->
 <p>Models are supposed to capture structure in the data that corresponds to structure in the real world, and if the real world isn’t misbehaving, that structure should be somewhat stable. Suppose the relationship changed dramatically from one time period to another: then a model fit on one period would be less useful, because it might fit poorly on data from another.</p>
 <p>Create the 1997 data, then get predictions for every 1997 country from the straight line (fitted on 2007 training countries) with the <code>newdata</code> argument, and compute the MSE.</p>
 <div class="cell">
@@ -468,7 +629,7 @@ Hint (open after your first attempt)
 </section>
 <section id="before-you-leave" class="level2">
 <h2 class="anchored" data-anchor-id="before-you-leave">Before you leave</h2>
-<!-- 5 min -->
+<!-- 3 min -->
 <p>Compare your table from part 2 with your neighbor’s. Did the same <code>k</code> win? Write one sentence on what that means for a leaderboard, and one on what the organizer should report next to each score.</p>
 
 

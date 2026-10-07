@@ -12,13 +12,19 @@ execute:
   error: false
 ---
 
-<!-- Teacher version. Every answer sits in a collapsed box headed "Reveal answer" or
-"Reveal solution"; click to open it on screen as the room gets there. The student
-file notebook1.qmd is generated from this one by _build_env/make_incomplete.py,
-which removes every box with class .answer. Do not edit the student file by hand,
-and do not release this file. In the seminar, reveal each answer when about two
-thirds of the room has something written; for the coding parts, reveal a solution
-only after the checkpoint has stopped someone. -->
+<!-- Teacher version. This file is shown on screen in the seminar, so nothing in it
+is addressed to the teacher except this comment. Boxes: blue "Hint 1, 2, ..." and
+green "Reveal solution/answer", all collapsed; click to open. Hints are revealed in
+order, after the room has had a few minutes, the solution last. Hints and solutions
+carrying the class .answer are removed from the student file notebook1.qmd by
+_build_env/make_incomplete.py; hints without it (the pre-seminar exercises and the
+coding hint) stay in the student file. Do not edit the student file by hand.
+
+How this seminar runs: students do exercises 1 to 3 at home (2 redoes the lecture's
+proof, 3 proves the result the lecture stated). In the room: exercise 1's answer
+(about 3 minutes), problems 1 to 4 (about 17), the coding (about 37), the closing
+question (3). For the coding parts, reveal a solution only after the checkpoint has
+stopped someone. The teacher note has the keep-or-rush list. -->
 
 ```{r}
 #| label: setup
@@ -28,19 +34,103 @@ library(broom)     # might need to install.packages("broom")
 theme_set(theme_minimal())
 ```
 
-## Before you start
+## Before the seminar
 
-<!-- 5 min -->
+<!-- At home, before the seminar. -->
 
-Without looking anything up: for the `gapminder` data, write down the four parts of a prediction competition (the unit, the inputs and outcome, the score, how the held-out set is chosen). Then, for each input: would you have it at the moment you need the prediction, for a country whose life expectancy you don't know? "All of them" is an acceptable answer if you can say why.
+The lecture proved one result, which you redo with the slides closed (exercise 2), and stated another without proof, which you prove (exercise 3). Do all three exercises on paper before the seminar; the seminar's problems are variations on exercise 2. You may use, without proof, two facts from ST102: for independent random variables the expectation of a product is the product of the expectations, and the variance of a sum is the sum of the variances.
+
+::: {.callout-warning title="Hints"}
+Exercises 2 and 3 have hints, collapsed below them. Do not open a hint unless you have been stuck for at least a few minutes, and open them in order. Exercise 2's proof is on the lecture slides. Solutions are shown in the seminar if you ask.
+:::
+
+**Exercise 1 (the competition).** Without looking anything up: for the `gapminder` data, write down the four parts of a prediction competition (the unit, the inputs and outcome, the score, how the held-out set is chosen). Then, for each input: would you have it at the moment you need the prediction, for a country whose life expectancy you don't know? "All of them" is an acceptable answer if you can say why.
 
 ::: {.callout-tip .answer collapse="true" title="Reveal answer"}
-Unit: a country in one year (2007). Inputs: `gdpPercap`, `pop`, `continent` (`year` is constant, so it carries nothing). Outcome: `lifeExp`. Score: mean squared error on the held-out countries (a choice; the classification week asks who made it). Held-out set: a random subset of countries, chosen once, never used for fitting. All of the inputs are available in principle, and a justified "all of them" is a full answer; the sharper point is that `lifeExp` is built from the same national statistics as `pop`, so "we don't know life expectancy but we know population exactly" is a fiction to keep in mind. The purpose is to make students check each input against the moment of prediction, not to find a trap.
+Unit: a country in one year (2007). Inputs: `gdpPercap`, `pop`, `continent` (`year` is constant, so it carries nothing). Outcome: `lifeExp`. Score: mean squared error on the held-out countries (a choice; the classification week asks who made it). Held-out set: a random subset of countries, chosen once, never used for fitting. All of the inputs are available in principle, and a justified "all of them" is a full answer; the sharper point is that `lifeExp` is built from the same national statistics as `pop`, so "we don't know life expectancy but we know population exactly" is a fiction to keep in mind.
+:::
+
+**Exercise 2 (bias--variance decomposition).** The lecture proved this one. Close the slides and prove it again. The training data are $y_i = f^\star(x_i) + \varepsilon_i$, $i = 1, \ldots, n$, with the inputs fixed and the noise terms independent, each with mean $0$ and variance $\sigma^2$. A new outcome at the input $x_0$ is $Y_0 = f^\star(x_0) + \varepsilon_0$, where $\varepsilon_0$ has the same mean and variance and is independent of the training noise. The prediction is $\hat f_k(x_0) = \frac1k \sum_{l=1}^k y_{(l)}$, the average outcome of the $k$ training points nearest to $x_0$. Show that
+$$
+\mathbb E\big[(Y_0 - \hat f_k(x_0))^2\big] = \sigma^2 + \Big[f^\star(x_0) - \tfrac{1}{k}\textstyle\sum_{l=1}^k f^\star(x_{(l)})\Big]^2 + \frac{\sigma^2}{k}.
+$$
+Independence is used twice. Where?
+
+::: {.callout-note collapse="true" title="Hint 1"}
+Write $Y_0 - \hat f_k(x_0) = \varepsilon_0 + \big[f^\star(x_0) - \hat f_k(x_0)\big]$. Square it and take expectations: three terms.
+:::
+
+::: {.callout-note collapse="true" title="Hint 2"}
+The middle term is $2\,\mathbb E[\varepsilon_0\, g]$ with $g = f^\star(x_0) - \hat f_k(x_0)$, a function of the training data. What does independence let you do to the expectation of a product?
+:::
+
+::: {.callout-note collapse="true" title="Hint 3"}
+You are left with $\sigma^2 + \mathbb E[Z^2]$ for $Z = f^\star(x_0) - \hat f_k(x_0)$. For any random variable, $\mathbb E[Z^2] = (\mathbb E Z)^2 + \mathrm{Var}(Z)$.
+:::
+
+::: {.callout-note collapse="true" title="Hint 4"}
+Write $\hat f_k(x_0)$ out in terms of $f^\star$ and the noise. Which parts of it are random? Then take its mean and its variance.
+:::
+
+::: {.callout-tip .answer collapse="true" title="Reveal solution"}
+The lecture's five lines. Hint 1:
+$$
+\mathbb E\big[(Y_0 - \hat f_k(x_0))^2\big] = \mathbb E[\varepsilon_0^2] + 2\,\mathbb E\big[\varepsilon_0\,(f^\star(x_0) - \hat f_k(x_0))\big] + \mathbb E\big[(f^\star(x_0) - \hat f_k(x_0))^2\big].
+$$
+Hint 2: $\varepsilon_0$ is independent of the training noise, so of $\hat f_k(x_0)$, and has mean $0$. The middle term is $2\,\mathbb E[\varepsilon_0]\,\mathbb E[f^\star(x_0) - \hat f_k(x_0)] = 0$, and $\mathbb E[\varepsilon_0^2] = \sigma^2$. Hint 3, with $Z = f^\star(x_0) - \hat f_k(x_0)$: subtracting a random variable from a constant keeps its variance, so
+$$
+\mathbb E[Z^2] = \big[f^\star(x_0) - \mathbb E\hat f_k(x_0)\big]^2 + \mathrm{Var}\big(\hat f_k(x_0)\big).
+$$
+Hint 4: **with the inputs fixed, the $k$ nearest training points are the same $k$ points whatever the noise turns out to be**. So $\hat f_k(x_0) = \frac1k\sum_l \big[f^\star(x_{(l)}) + \varepsilon_{(l)}\big]$ is a fixed number plus an average of $k$ independent noise terms: its mean is $\frac1k\sum_l f^\star(x_{(l)})$ and its variance is $\frac{1}{k^2}\cdot k\sigma^2 = \sigma^2/k$. Substitute.
+
+Independence is used twice: between $\varepsilon_0$ and the training noise (the cross term vanishes), and among the neighbors' noise terms (the variance of their average is $\sigma^2/k$). Problems 3(b) and 2(b) show what happens when each one fails.
+
+Common errors: treating the set of neighbors as random; dropping the cross term without saying why it is zero; $\mathrm{Var}(\hat f_k(x_0)) = \sigma^2$ or $\sigma^2/k^2$.
+:::
+
+**Exercise 3 (distance concentration).** The lecture stated this one without proof. Let $X$ and $X'$ be independent $N(0, I_d)$ vectors and let $W = \|X - X'\|^2/2d$. You may use that a standard normal $Z$ has $\mathbb E Z^4 = 3$.
+
+(a) Show that $\mathbb E W = 1$ and $\mathrm{Var}(W) = 2/d$.
+
+(b) Deduce that $\Pr(|W - 1| > \varepsilon) \le 2/(d\varepsilon^2)$ for every $\varepsilon > 0$.
+
+(c) Now take a query point and $n - 1$ other points, all independent $N(0, I_d)$. Show that with probability at least $1 - 2(n-1)/(d\varepsilon^2)$, every one of the $n - 1$ squared distances from the query lies between $2d(1 - \varepsilon)$ and $2d(1 + \varepsilon)$. The $n - 1$ distances are not independent of each other. Why not, and why does your argument not need them to be?
+
+::: {.callout-note collapse="true" title="Hint 1"}
+Coordinate $j$ of $X - X'$ is a difference of two independent standard normals. What is its distribution? Write it as a multiple of a standard normal $Z_j$.
+:::
+
+::: {.callout-note collapse="true" title="Hint 2"}
+Then $W = \frac1d \sum_{j=1}^d Z_j^2$, an average of $d$ independent terms. Find the mean and the variance of one term; problem 2(a) does the rest.
+:::
+
+::: {.callout-note collapse="true" title="Hint 3"}
+Part (b) is Chebyshev's inequality: $\Pr(|W - \mathbb E W| > \varepsilon) \le \mathrm{Var}(W)/\varepsilon^2$.
+:::
+
+::: {.callout-note collapse="true" title="Hint 4"}
+For (c): "some distance falls outside the range" is a union of $n - 1$ events. How large can the probability of a union be?
+:::
+
+::: {.callout-tip .answer collapse="true" title="Reveal solution"}
+(a) $X_j - X'_j \sim N(0, 2)$, so $X_j - X'_j = \sqrt 2\, Z_j$ with $Z_1, \ldots, Z_d$ independent standard normals, and $\|X - X'\|^2 = 2\sum_j Z_j^2$. So $W = \frac1d\sum_j Z_j^2$. Each $Z_j^2$ has mean $1$ and variance $\mathbb E Z_j^4 - 1 = 2$. An average of $d$ independent terms keeps the mean and divides the variance by $d$: $\mathbb E W = 1$ and $\mathrm{Var}(W) = 2/d$.
+
+(b) Chebyshev, with the mean and variance from (a).
+
+(c) Let $W_i$ be $W$ computed from the query and point $i$. The query and point $i$ are two independent $N(0, I_d)$ vectors, so (b) holds for each $W_i$. **The probability of a union is at most the sum of the probabilities, whether or not the events are independent**:
+$$
+\Pr\big(\text{some } |W_i - 1| > \varepsilon\big) \le \sum_{i=1}^{n-1} \Pr\big(|W_i - 1| > \varepsilon\big) \le \frac{2(n-1)}{d\varepsilon^2}.
+$$
+Otherwise every squared distance $2dW_i$ lies between $2d(1 - \varepsilon)$ and $2d(1 + \varepsilon)$. The $W_i$ are dependent because they share the query point: a query far from the origin is far from all the others at once.
+
+For $n$ fixed and $d$ large, the nearest of the $n - 1$ points is about as far away as the farthest, so "nearest" says little. The bound itself is loose, because Chebyshev uses nothing but the variance: with $n = 500$ and $\varepsilon = 0.1$ it is below $1$ only for $d$ above about $100{,}000$, while the lecture's histograms are already narrow at $d = 100$.
+
+Common errors: giving $X_j - X'_j$ variance $1$ (the variances add, to $2$); multiplying the $n - 1$ probabilities in (c) as if the distances were independent; reading (c) as a statement about small $d$.
 :::
 
 ## Problems
 
-<!-- 25 min. Pen and paper. Compare with a neighbor before asking. -->
+<!-- About 17 min. Pen and paper. Compare with a neighbor before asking. -->
 
 These four problems rebuild the pieces of the lecture's bias--variance decomposition. They use nothing beyond first-year probability.
 
@@ -52,14 +142,18 @@ These four problems rebuild the pieces of the lecture's bias--variance decomposi
 
 (c) Now let $Z = f^\star(x_0) - \hat f(x_0)$, where $f^\star(x_0)$ is a fixed number and $\hat f(x_0)$ is a random predictor with mean $m$ and variance $v$. Write $\mathbb E[Z^2]$ in terms of $f^\star(x_0)$, $m$ and $v$. Which piece is a bias, and which a variance?
 
+::: {.callout-note .answer collapse="true" title="Hint 1"}
+For (a), expand $(Z - \mu)^2$ inside the expectation.
+:::
+
 ::: {.callout-tip .answer collapse="true" title="Reveal answer"}
 (a) $\mathrm{Var}(Z) = \mathbb E[(Z - \mu)^2] = \mathbb E[Z^2] - 2\mu\,\mathbb E[Z] + \mu^2 = \mathbb E[Z^2] - \mu^2$, so $\mathbb E[Z^2] = \sigma^2 + \mu^2$.
 
 (b) $\mathbb E[\varepsilon_0^2] = \sigma^2 + 0^2 = \sigma^2$. This is the noise term: it is there whatever the predictor does.
 
-(c) $Z$ has mean $f^\star(x_0) - m$ and variance $v$ (subtracting a random variable from a constant keeps the variance), so $\mathbb E[Z^2] = [f^\star(x_0) - m]^2 + v$. The first piece is the squared bias, the second the variance of the predictor. This is line 3 of the board derivation: "add and subtract $\mathbb E \hat f(x_0)$" is exactly part (a) applied to $Z$.
+(c) $Z$ has mean $f^\star(x_0) - m$ and variance $v$ (subtracting a random variable from a constant keeps the variance), so $\mathbb E[Z^2] = [f^\star(x_0) - m]^2 + v$. The first piece is the squared bias, the second the variance of the predictor. This is line 3 of the lecture's proof: "add and subtract $\mathbb E \hat f(x_0)$" is part (a) applied to $Z$.
 
-Common error: writing $\mathbb E[Z^2] = (\mathbb E Z)^2$. Minimal hint for (a): "expand $(Z - \mu)^2$".
+Common error: writing $\mathbb E[Z^2] = (\mathbb E Z)^2$.
 :::
 
 **Problem 2.** Let $Y_1, \ldots, Y_k$ be independent random variables, each with variance $\sigma^2$, and let $\bar Y = \frac1k \sum_{l=1}^k Y_l$.
@@ -71,7 +165,7 @@ Common error: writing $\mathbb E[Z^2] = (\mathbb E Z)^2$. Minimal hint for (a): 
 ::: {.callout-tip .answer collapse="true" title="Reveal answer"}
 (a) $\mathrm{Var}(\bar Y) = \frac{1}{k^2}\sum_l \mathrm{Var}(Y_l) = \frac{1}{k^2} \cdot k\sigma^2 = \sigma^2/k$. Independence (uncorrelatedness is enough) is what lets the variance of the sum be the sum of the variances: the cross terms $\mathrm{Cov}(Y_l, Y_{l'})$ vanish. This is the variance term of the bias--variance decomposition: the $k$ neighbors' noises are independent, so averaging them divides the variance by $k$.
 
-(b) $\bar Y = Y_1$, so $\mathrm{Var}(\bar Y) = \sigma^2$: no reduction at all. Averaging only helps to the extent that the things averaged carry independent noise. (The tree-methods week returns to the in-between case, positively correlated terms, where the variance of an average is $\rho\sigma^2 + (1 - \rho)\sigma^2/k$; do not derive it now.)
+(b) $\bar Y = Y_1$, so $\mathrm{Var}(\bar Y) = \sigma^2$: no reduction at all. Averaging only helps to the extent that the things averaged carry independent noise. (The tree-methods week returns to the in-between case, positively correlated terms, where the variance of an average is $\rho\sigma^2 + (1 - \rho)\sigma^2/k$.)
 
 Common error: $\mathrm{Var}(\bar Y) = \sigma^2/k$ in (b) too, by applying the formula without its assumption.
 :::
@@ -82,12 +176,14 @@ Common error: $\mathrm{Var}(\bar Y) = \sigma^2/k$ in (b) too, by applying the fo
 
 (b) Give an example where $\mathbb E[\varepsilon_0] = 0$ but $\mathbb E[\varepsilon_0\, g] \neq 0$. (Think about what happens if the "new" point is one of the training points.)
 
+::: {.callout-note .answer collapse="true" title="Hint 1"}
+For (a): what does independence let you do to the expectation of a product?
+:::
+
 ::: {.callout-tip .answer collapse="true" title="Reveal answer"}
-(a) Independence gives $\mathbb E[\varepsilon_0\, g] = \mathbb E[\varepsilon_0]\,\mathbb E[g] = 0 \cdot \mathbb E[g] = 0$. (Mean zero plus zero correlation would also suffice, since $\mathbb E[\varepsilon_0 g] = \mathrm{Cov}(\varepsilon_0, g) + \mathbb E[\varepsilon_0]\mathbb E[g]$; independence is the assumption in force.) This is line 2 of the board derivation: the cross term dies.
+(a) Independence gives $\mathbb E[\varepsilon_0\, g] = \mathbb E[\varepsilon_0]\,\mathbb E[g] = 0 \cdot \mathbb E[g] = 0$. (Mean zero plus zero correlation would also suffice, since $\mathbb E[\varepsilon_0 g] = \mathrm{Cov}(\varepsilon_0, g) + \mathbb E[\varepsilon_0]\mathbb E[g]$; independence is the assumption in force.) This is line 2 of the lecture's proof: the cross term vanishes.
 
-(b) Take $g = \varepsilon_0$ itself: $\mathbb E[\varepsilon_0 \cdot \varepsilon_0] = \sigma^2 \neq 0$. That is what happens when the point you evaluate on is a training point: $\hat f_k(x_0)$ then contains $\varepsilon_0$, the cross term does not vanish, and the error at that point is *smaller* than the bias--variance decomposition says. With $k = 1$ it is exactly zero. So training error is not the quantity in the bias--variance decomposition. Leave it there; the validation week does the rest.
-
-Minimal hint for (a): "what does independence let you do to an expectation of a product?"
+(b) Take $g = \varepsilon_0$ itself: $\mathbb E[\varepsilon_0 \cdot \varepsilon_0] = \sigma^2 \neq 0$. That is what happens when the point you evaluate on is a training point: $\hat f_k(x_0)$ then contains $\varepsilon_0$, the cross term does not vanish, and the error at that point is *smaller* than the bias--variance decomposition says. With $k = 1$ it is exactly zero. So training error is not the quantity in the bias--variance decomposition. The validation week does the rest.
 :::
 
 **Problem 4.** Five training points, one input each:
@@ -114,11 +210,11 @@ Common error in (a): forgetting to sort the distances before taking the first $k
 
 ## Coding
 
-<!-- 50 min: part 1 12, part 2 25, part 3 8, part 4 5. Skeleton lines in comments are scaffolds: the statistical operation is what you write. -->
+<!-- About 37 min: part 1 7, part 2 20, part 3 7, part 4 3. Skeleton lines in comments are scaffolds: the statistical operation is what you write. -->
 
 ### 1. The competition
 
-<!-- 12 min -->
+<!-- 7 min -->
 
 After running `library(gapminder)` you can access the dataset. Try typing `View(gapminder)` in the Console.
 
@@ -200,7 +296,7 @@ Typically the line's test MSE is about a third of the baseline's (across random 
 
 ### 2. Nearest neighbors, by hand
 
-<!-- 25 min -->
+<!-- 20 min -->
 
 You may use `abs`, `order`, `mean` and a `for` loop, but not a library that does nearest neighbors for you. The point is to see the mechanism: a prediction is an average of the outcomes of the nearest training points (problem 4, in code).
 
@@ -214,11 +310,9 @@ knn_predict <- function(x0, x, y, k) {
 }
 ```
 
-<details><summary>Hint (open after your first attempt)</summary>
-
+::: {.callout-note collapse="true" title="Hint 1"}
 `order(distances)` gives the positions of the distances from smallest to largest, so its first `k` entries are the positions of the `k` nearest points.
-
-</details>
+:::
 
 ::: {.callout-tip .answer collapse="true" title="Reveal solution"}
 ```{r}
@@ -299,7 +393,7 @@ stopifnot(length(pred) == nrow(test), all(is.finite(pred)), mse_knn5 > 0)
 **Question 2.** Before you run it: what do you expect the training MSE at `k = 1` to be, and why? Write your prediction down first.
 
 ::: {.callout-tip .answer collapse="true" title="Reveal answer"}
-Exactly zero: every training point is its own nearest neighbor (with distinct inputs). Problems 3(b) and 4(b) are the same point. It tells you nothing about the competition score; do not lecture it, the full treatment is the validation week.
+Exactly zero: every training point is its own nearest neighbor (with distinct inputs). Problems 3(b) and 4(b) are the same point. It tells you nothing about the competition score; the full treatment is the validation week.
 :::
 
 ```{r}
@@ -362,12 +456,12 @@ stopifnot(nrow(results) == 7, results$train_mse[1] == 0 || any(duplicated(train$
 **Question 3.** Which `k` would you submit, and what did you use to decide? You are about to report the same held-out score you chose on: is there a problem with that?
 
 ::: {.callout-tip .answer collapse="true" title="Reveal answer"}
-The `k` with the smallest test MSE. Which one that is depends on the split: across random splits the winner is 5, 10 or 25 about four times in five, occasionally 3, and `k = 1` wins on fewer than one split in a hundred. Two things are wrong. The differences among the middle `k`s are smaller than the standard error computed in part 3, so the fine ranking is mostly noise. And the held-out set was used to *choose* `k`, so its score for the chosen `k` is no longer an untouched evaluation. Do not resolve this here: the protocol is the validation week, the reuse problem the regularization week. If a student raises it: "yes, write that question down".
+The `k` with the smallest test MSE. Which one that is depends on the split: across random splits the winner is 5, 10 or 25 about four times in five, occasionally 3, and `k = 1` wins on fewer than one split in a hundred. Two things are wrong. The differences among the middle `k`s are smaller than the standard error computed in part 3, so the fine ranking is mostly noise. And the held-out set was used to *choose* `k`, so its score for the chosen `k` is no longer an untouched evaluation. Both are left open for now: the protocol is the validation week, the reuse problem the regularization week.
 :::
 
 ### 3. The score is a random variable
 
-<!-- 8 min -->
+<!-- 7 min -->
 
 Your test MSE is an average of 42 losses. From the split you already have, compute the 42 individual squared errors of the `k = 5` predictor, their mean (the test MSE again) and the standard error of that mean, $\text{sd(losses)}/\sqrt{42}$. (This standard error treats the 42 losses as independent draws; that is an assumption about the countries, not a fact about them.)
 
@@ -393,7 +487,7 @@ Usually yes, sometimes no: the standard errors on these data are typically 10–
 
 ### 4. Predicting on new data
 
-<!-- 5 min -->
+<!-- 3 min -->
 
 Models are supposed to capture structure in the data that corresponds to structure in the real world, and if the real world isn't misbehaving, that structure should be somewhat stable. Suppose the relationship changed dramatically from one time period to another: then a model fit on one period would be less useful, because it might fit poorly on data from another.
 
@@ -422,10 +516,10 @@ Country-level GDP and life expectancy move slowly, so the 1997 rows are nearly t
 
 ## Before you leave
 
-<!-- 5 min -->
+<!-- 3 min -->
 
 Compare your table from part 2 with your neighbor's. Did the same `k` win? Write one sentence on what that means for a leaderboard, and one on what the organizer should report next to each score.
 
 ::: {.callout-tip .answer collapse="true" title="Reveal answer"}
-Different splits, often a different winner among the middle `k`s: a leaderboard ranking is a statement about one held-out set, and a gap smaller than a standard error is not established. The organizer should report a standard error with every score; how two competitors scored on the same units should be compared is left open this week. Collect a few sentences; week 2's opener uses them.
+Different splits, often a different winner among the middle `k`s: a leaderboard ranking is a statement about one held-out set, and a gap smaller than a standard error is not established. The organizer should report a standard error with every score; how two competitors scored on the same units should be compared is left open this week.
 :::
