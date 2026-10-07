@@ -82,6 +82,11 @@ site() {
   quarto render
   echo "ml4ds.com" > docs/CNAME
   touch docs/.nojekyll
+  # Quarto stamps each sitemap entry with its source file's modification time, which in a fresh
+  # clone is the clone time: every branch would rewrite every line and no two would merge.
+  if [ -f docs/sitemap.xml ]; then
+    grep -v '<lastmod>' docs/sitemap.xml > docs/sitemap.xml.tmp && mv docs/sitemap.xml.tmp docs/sitemap.xml
+  fi
   for d in decks-notes seminar-teachers; do
     mkdir -p "docs/$d"
     [ -d "$keep/$d" ] && cp -R "$keep/$d/." "docs/$d/"
