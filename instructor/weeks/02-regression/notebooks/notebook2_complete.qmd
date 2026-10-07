@@ -1,0 +1,723 @@
+---
+title: "Week 2 seminar (complete)"
+author: "Joshua Loftus"
+format:
+  html:
+    toc: true
+    embed-resources: false
+execute:
+  echo: true
+  warning: false
+  message: false
+  error: false
+---
+
+<!-- Teacher version. This file is shown on screen in the seminar, so nothing in it
+is addressed to the teacher except this comment. Boxes: blue "Hint 1, 2, ..." and
+green "Reveal solution/answer", all collapsed; click to open. Hints are revealed in
+order, after the room has had a few minutes, the solution last. Hints and solutions
+carrying the class .answer are removed from the student file notebook2.qmd by
+_build_env/make_incomplete.py; hints without it (the pre-seminar exercises and the
+optional problems) stay in the student file, behind a warning not to open them
+early. Do not edit the student file by hand, and do not release this file.
+
+How this seminar runs (3 October): students do exercises 1 to 3 at home (3 redoes
+the lecture's proof and is not gone through in the room). In the
+room: problems 1 and 2 (about 20 minutes, hints then answers), then the coding
+(about 35). Everything headed "Optional, can be done at home" is outside the
+seminar. If the room runs slow, protect problem 2 and coding part 3. -->
+
+```{r}
+#| label: setup
+library(tidyverse)      # should've already install.packages("tidyverse")
+library(gapminder)      # might need to install.packages("gapminder")
+library(broom)          # might need to install.packages("broom")
+library(palmerpenguins) # might need to install.packages("palmerpenguins")
+library(GGally)         # might need to install.packages("GGally")
+theme_set(theme_minimal())
+```
+
+## Before the seminar
+
+<!-- At home, before the seminar. -->
+
+The lecture stated two results and left their proofs to you (exercises 1 and 2), and proved a third, which you redo with the slides closed (exercise 3). Do all three on paper before the seminar; the seminar's problems are variations on the first two. You may use, without proof, two facts about conditional expectation from ST102: the tower property, $\mathbb E[Z] = \mathbb E\big[\mathbb E[Z \mid X]\big]$, and taking out what is known, $\mathbb E[g(X)\, Z \mid X] = g(X)\, \mathbb E[Z \mid X]$ for any function $g$ of $X$ (given $X$, a function of $X$ is a constant).
+
+::: {.callout-warning title="Hints"}
+Each exercise has hints, collapsed below it. Do not open a hint unless you have been stuck for at least a few minutes, and open them in order. Exercise 3's proof is on the lecture slides. Solutions to exercises 1 and 2 are shown in the seminar if you ask.
+:::
+
+**Exercise 1 (optimal model theorem).** Let $\mathbb E Y^2 < \infty$, $f^\star(x) = \mathbb E[Y \mid X = x]$ and $R(f) = \mathbb E\big[(Y - f(X))^2\big]$. Show that for every $f$ with $\mathbb E f(X)^2 < \infty$,
+$$
+R(f) = R(f^\star) + \mathbb E\big[(f^\star(X) - f(X))^2\big].
+$$
+Conclude that $f^\star$ has the smallest risk of all functions of $X$, and that the excess risk of any $f$, fitted by any method, is the one number $\mathbb E[(f^\star(X) - f(X))^2]$.
+
+::: {.callout-note collapse="true" title="Hint 1"}
+Add and subtract $f^\star(X)$ inside the square, then expand.
+:::
+
+::: {.callout-note collapse="true" title="Hint 2"}
+Show that the cross term, $\mathbb E\big[(Y - f^\star(X))\,(f^\star(X) - f(X))\big]$, is zero.
+:::
+
+::: {.callout-note collapse="true" title="Hint 3"}
+Condition on $X$ first (the tower property), then take out what is known.
+:::
+
+::: {.callout-tip .answer collapse="true" title="Reveal solution"}
+Hints 1 to 3 in order. Expanding $Y - f(X) = \big(Y - f^\star(X)\big) + \big(f^\star(X) - f(X)\big)$:
+$$
+R(f) = R(f^\star) + \mathbb E\big[(f^\star(X) - f(X))^2\big] + 2\,\mathbb E\big[(Y - f^\star(X))\,(f^\star(X) - f(X))\big].
+$$
+The cross term vanishes because $g(X) = f^\star(X) - f(X)$ is a function of $X$:
+$$
+\mathbb E\big[(Y - f^\star(X))\,g(X)\big] = \mathbb E\Big[g(X)\,\mathbb E\big[Y - f^\star(X) \mid X\big]\Big] = 0,
+$$
+by the tower property, then taking out what is known, then $\mathbb E[Y \mid X] = f^\star(X)$, the definition of $f^\star$. (Square-integrability makes every expectation finite; Cauchy-Schwarz for the cross term.) Hence $R(f) - R(f^\star) = \mathbb E[(f^\star(X) - f(X))^2] \ge 0$, with equality only when $f(X) = f^\star(X)$ with probability one. $\blacksquare$
+
+The fact that does the work: a residual against the conditional mean, $Y - f^\star(X)$, is orthogonal to every function of $X$. It is the same first move as week 1's bias-variance decomposition, and the cross term dies for the same reason.
+
+Common errors: taking $f^\star(X)$ outside an expectation without conditioning first; writing $\mathbb E[Y - f^\star(X)] = 0$, which is true but not enough (the cross term needs the conditional version, $\mathbb E[Y - f^\star(X) \mid X] = 0$, because $g(X)$ is random); assuming $f$ is linear. The theorem needs no linearity, which is the point of it.
+:::
+
+**Exercise 2 (omitted-variable bias).** Two predictors matter: $\mathbf y = \beta_1 \mathbf x_1 + \beta_2 \mathbf x_2 + \boldsymbol\varepsilon$, all vectors in $\mathbb R^n$ and centered (the intercept partialled out, as in the lecture). What is fixed: the inputs $\mathbf x_1$ and $\mathbf x_2$, which we condition on. What is random: the noise, with $\mathbb E\,\boldsymbol\varepsilon = \mathbf 0$, and through it $\mathbf y$. Somebody regresses $\mathbf y$ on $\mathbf x_1$ alone and reports $\hat\beta_{\text{short}} = \mathbf x_1^\top\mathbf y / \mathbf x_1^\top\mathbf x_1$, random through $\mathbf y$. Show that
+$$
+\mathbb E\big[\hat\beta_{\text{short}} \mid \mathbf x_1, \mathbf x_2\big] = \beta_1 + \beta_2\,\hat\delta, \qquad \hat\delta = \frac{\mathbf x_1^\top\mathbf x_2}{\mathbf x_1^\top\mathbf x_1},
+$$
+say in words what $\hat\delta$ is, and say why it carries no randomness. When is the short regression unbiased for $\beta_1$?
+
+::: {.callout-note collapse="true" title="Hint 1"}
+Substitute the model for $\mathbf y$ inside $\mathbf x_1^\top\mathbf y$ and split the fraction into three terms.
+:::
+
+::: {.callout-note collapse="true" title="Hint 2"}
+Two of the three terms are numbers once the inputs are fixed. Only the noise term is random: what is its expectation given the inputs?
+:::
+
+::: {.callout-tip .answer collapse="true" title="Reveal solution"}
+Hint 1: $\mathbf x_1^\top\mathbf y = \beta_1\,\mathbf x_1^\top\mathbf x_1 + \beta_2\,\mathbf x_1^\top\mathbf x_2 + \mathbf x_1^\top\boldsymbol\varepsilon$, so
+$$
+\hat\beta_{\text{short}} = \beta_1 + \beta_2\,\hat\delta + \frac{\mathbf x_1^\top\boldsymbol\varepsilon}{\mathbf x_1^\top\mathbf x_1}.
+$$
+Hint 2: conditioning on the inputs, the last term has expectation $\mathbf x_1^\top\,\mathbb E[\boldsymbol\varepsilon \mid \mathbf x_1, \mathbf x_2] / \mathbf x_1^\top\mathbf x_1 = 0$; the noise is mean zero given the inputs, and this is the one place the randomness enters. $\blacksquare$
+
+$\hat\delta$ is the least-squares slope of $\mathbf x_2$ on $\mathbf x_1$ in these inputs (through the origin, which for centered vectors is the slope with an intercept): units of $x_2$ per unit of $x_1$, a regression slope and not a correlation. It is a function of the fixed inputs only, so once they are given it is a number; the hat records that it is computed from data, not that it is random (contrast $\hat\beta_{\text{short}}$, which is random through $\mathbf y$). The bias $\beta_2\hat\delta$ is zero when the left-out variable does not matter ($\beta_2 = 0$) or is orthogonal to the kept one ($\hat\delta = 0$, uncorrelated after centering); otherwise it has either sign and can be larger than $\beta_1$ itself.
+
+Common errors: using $\mathbf x_1^\top\mathbf x_2$ for raw vectors when an intercept is fitted (the formula is then about the wrong regression); reading $\hat\delta$ as a correlation; "the bias is $\beta_2$", forgetting $\hat\delta$; treating $\boldsymbol\varepsilon$ as zero rather than mean zero (the expectation is needed here; the exact in-sample version is problem 2); writing $\mathbb E\,\hat\beta_{\text{short}}$ without saying what is being averaged over (the noise, with the inputs held fixed).
+:::
+
+**Exercise 3 (partialling-out theorem).** The lecture proved this one. Close the slides and prove it again. $\mathbf X = [\mathbf X_1 \;\; \mathbf x_2]$ has full column rank, with the intercept column inside $\mathbf X_1$; $\mathbf M_1 = \mathbf I - \mathbf X_1(\mathbf X_1^\top\mathbf X_1)^{-1}\mathbf X_1^\top$ and $\tilde{\mathbf x}_2 = \mathbf M_1\mathbf x_2$. You may use that $\mathbf M_1$ is symmetric, that $\mathbf M_1^2 = \mathbf M_1$ and that $\mathbf M_1\mathbf X_1 = \mathbf 0$ (optional problem 4 proves all three). Show that the coefficient on $\mathbf x_2$ in the least-squares regression of $\mathbf y$ on $\mathbf X$ is
+$$
+\hat\beta_2 = \frac{\tilde{\mathbf x}_2^\top \mathbf y}{\tilde{\mathbf x}_2^\top \tilde{\mathbf x}_2},
+$$
+and that regressing $\tilde{\mathbf y} = \mathbf M_1\mathbf y$ on $\tilde{\mathbf x}_2$ gives the same number. Where is full column rank used?
+
+::: {.callout-note collapse="true" title="Hint 1"}
+Start from the full regression and its normal equations: $\mathbf y = \mathbf X_1\hat{\boldsymbol\beta}_1 + \mathbf x_2\hat\beta_2 + \mathbf r$, with $\mathbf X_1^\top\mathbf r = \mathbf 0$ and $\mathbf x_2^\top\mathbf r = 0$. Which matrix removes the $\mathbf X_1$ term?
+:::
+
+::: {.callout-note collapse="true" title="Hint 2"}
+Multiply through by $\mathbf M_1$ and say what happens to each of the three terms on the right. For the last one, write $\mathbf M_1\mathbf r = \mathbf r - \mathbf X_1(\mathbf X_1^\top\mathbf X_1)^{-1}\mathbf X_1^\top\mathbf r$.
+:::
+
+::: {.callout-note collapse="true" title="Hint 3"}
+You now have $\mathbf M_1\mathbf y = \tilde{\mathbf x}_2\,\hat\beta_2 + \mathbf r$: a vector equation with one unknown number. Multiply by a row vector that turns it into a scalar equation in which the coefficient of $\hat\beta_2$ is positive.
+:::
+
+::: {.callout-note collapse="true" title="Hint 4"}
+After multiplying by $\tilde{\mathbf x}_2^\top = \mathbf x_2^\top\mathbf M_1$, two things remain: the term $\tilde{\mathbf x}_2^\top\mathbf r$, and an extra $\mathbf M_1$ on the left side. Each goes away by one of the properties of $\mathbf M_1$ you were given.
+:::
+
+::: {.callout-tip .answer collapse="true" title="Reveal solution"}
+The lecture's six lines. Hint 1 is the start. Hint 2: $\mathbf M_1\mathbf y = \mathbf M_1\mathbf X_1\hat{\boldsymbol\beta}_1 + \mathbf M_1\mathbf x_2\hat\beta_2 + \mathbf M_1\mathbf r$, where $\mathbf M_1\mathbf X_1 = \mathbf 0$, $\mathbf M_1\mathbf x_2 = \tilde{\mathbf x}_2$ by definition, and $\mathbf M_1\mathbf r = \mathbf r$ because $\mathbf X_1^\top\mathbf r = \mathbf 0$ (the residual is already in the orthogonal complement of $\mathrm{col}(\mathbf X_1)$). So
+$$
+\mathbf M_1\mathbf y = \tilde{\mathbf x}_2\,\hat\beta_2 + \mathbf r.
+$$
+Hint 3: multiply by $\tilde{\mathbf x}_2^\top$:
+$$
+\tilde{\mathbf x}_2^\top\mathbf M_1\mathbf y = \tilde{\mathbf x}_2^\top\tilde{\mathbf x}_2\,\hat\beta_2 + \tilde{\mathbf x}_2^\top\mathbf r.
+$$
+Hint 4, in two steps. **Symmetry moves $\mathbf M_1$ across an inner product**: $\tilde{\mathbf x}_2^\top\mathbf r = \mathbf x_2^\top\mathbf M_1\mathbf r = \mathbf x_2^\top\mathbf r = 0$, the last normal equation. **Idempotence removes the extra $\mathbf M_1$**: $\tilde{\mathbf x}_2^\top\mathbf M_1\mathbf y = \mathbf x_2^\top\mathbf M_1\mathbf M_1\mathbf y = \mathbf x_2^\top\mathbf M_1\mathbf y = \tilde{\mathbf x}_2^\top\mathbf y$. Hence $\tilde{\mathbf x}_2^\top\mathbf y = \tilde{\mathbf x}_2^\top\tilde{\mathbf x}_2\,\hat\beta_2$. Full column rank is used twice: it makes $\mathbf X_1^\top\mathbf X_1$ invertible, so that $\mathbf M_1$ is defined, and it makes $\tilde{\mathbf x}_2 \ne \mathbf 0$ (otherwise $\mathbf x_2 = \mathbf X_1(\mathbf X_1^\top\mathbf X_1)^{-1}\mathbf X_1^\top\mathbf x_2$ would be a combination of the columns of $\mathbf X_1$), so $\tilde{\mathbf x}_2^\top\tilde{\mathbf x}_2 > 0$ and we may divide. $\blacksquare$
+
+Residual on residual: the slope through the origin of $\tilde{\mathbf y}$ on $\tilde{\mathbf x}_2$ is $\tilde{\mathbf x}_2^\top\tilde{\mathbf y}/\tilde{\mathbf x}_2^\top\tilde{\mathbf x}_2$, and $\tilde{\mathbf x}_2^\top\tilde{\mathbf y} = \tilde{\mathbf x}_2^\top\mathbf M_1\mathbf y = \tilde{\mathbf x}_2^\top\mathbf y$ by the idempotence step again. (No intercept is needed in that regression: the intercept column is inside $\mathbf X_1$, so both residuals already sum to zero.)
+
+Common errors: "$\mathbf M_1\mathbf x_2 = \mathbf 0$" (true exactly for vectors in $\mathrm{col}(\mathbf X_1)$, which full column rank rules out for $\mathbf x_2$); asserting $\mathbf M_1\mathbf r = \mathbf r$ without saying which normal equations give it; using $\mathbf M_1\mathbf y = \mathbf y$; dividing by $\tilde{\mathbf x}_2^\top\tilde{\mathbf x}_2$ without saying why it is not zero; writing a ratio of vectors.
+:::
+
+## Problems
+
+<!-- About 20 min: problems 1 and 2, pen and paper. Hints are revealed in order after a few minutes, the solution last. -->
+
+**Problem 1 (the constant predictor).** The setting of exercise 1.
+
+(a) Take $f$ to be a constant $c$. Which $c$ minimizes $R(c)$, and what is $R(c)$ at the minimum? Express the answer in terms of $R(f^\star)$ and $\mathrm{Var}\big(f^\star(X)\big)$.
+
+(b) Deduce that $\mathrm{Var}(Y) = R(f^\star) + \mathrm{Var}\big(f^\star(X)\big)$, and write both terms on the right as conditional moments of $Y$ given $X$. Which identity from ST102 is this?
+
+(c) Week 1 scored methods by squared error on held-out data. Imagine two oracle entries: one predicts $\mathbb E Y$ for everyone, the other is $f^\star$. What is the gap between their risks? On an actual leaderboard the constant entry uses the training mean $\bar y$ and the best entry is some fitted $\hat f$; give two reasons the observed gap need not equal that quantity. For a predictor fitted and chosen without using the test set, can its expected held-out squared error be below $R(f^\star)$?
+
+::: {.callout-note .answer collapse="true" title="Hint 1"}
+(a) Apply the theorem with $f = c$, then add and subtract $\mathbb E f^\star(X)$ inside the remaining square: exercise 1's move again, with nothing left to condition on.
+:::
+
+::: {.callout-note .answer collapse="true" title="Hint 2"}
+(b) $R(\mathbb E Y)$ is a variance you know. (c) Apply the theorem to a fitted $\hat f$ conditionally on the training data.
+:::
+
+::: {.callout-tip .answer collapse="true" title="Reveal answer"}
+(a) By the theorem, $R(c) = R(f^\star) + \mathbb E[(f^\star(X) - c)^2]$, and $\mathbb E[(f^\star(X) - c)^2] = \mathrm{Var}(f^\star(X)) + (\mathbb E f^\star(X) - c)^2$ (hint 1: the cross term is zero because $f^\star(X) - \mathbb E f^\star(X)$ has mean zero). So the minimizer is $c^\star = \mathbb E f^\star(X) = \mathbb E Y$, by the tower property, and $R(c^\star) = R(f^\star) + \mathrm{Var}(f^\star(X))$.
+
+(b) $R(\mathbb E Y) = \mathbb E[(Y - \mathbb E Y)^2] = \mathrm{Var}(Y)$, so $\mathrm{Var}(Y) = R(f^\star) + \mathrm{Var}(f^\star(X))$. Conditioning on $X$ inside $R(f^\star)$ gives $R(f^\star) = \mathbb E\big[\mathbb E[(Y - \mathbb E[Y \mid X])^2 \mid X]\big] = \mathbb E[\mathrm{Var}(Y \mid X)]$, and $\mathrm{Var}(f^\star(X)) = \mathrm{Var}(\mathbb E[Y \mid X])$. This is the law of total variance, $\mathrm{Var}(Y) = \mathbb E[\mathrm{Var}(Y \mid X)] + \mathrm{Var}(\mathbb E[Y \mid X])$: the optimal model theorem evaluated at the best constant.
+
+(c) $R(\mathbb E Y) - R(f^\star) = \mathrm{Var}(f^\star(X))$ by (b): the part of the variance of $Y$ that is predictable from $X$ at all. Equivalently $1 - R(f^\star)/\mathrm{Var}(Y)$ is the ceiling on the population $R^2$ of every method, a property of the joint distribution of $(X, Y)$ and not of any method. An observed gap differs from it for three reasons: the constant entry is $\bar y$, not $\mathbb E Y$, and $R(\bar y) = \mathrm{Var}(Y) + (\bar y - \mathbb E Y)^2$, an extra term of order $\mathrm{Var}(Y)/n$ on average; the best entry is a fitted $\hat f$, not $f^\star$, and its risk exceeds $R(f^\star)$ by its own excess risk $\mathbb E[(f^\star(X) - \hat f(X))^2]$, which reduces the gap, other things equal; and both scores are averages over a finite test set, which is what the error bars on week 1's leaderboard were for. No: for a fitted $\hat f$ and a fresh pair $(X, Y)$ independent of the training data, the theorem applied conditionally on the training data gives $\mathbb E[(Y - \hat f(X))^2] = R(f^\star) + \mathbb E[(f^\star(X) - \hat f(X))^2] \ge R(f^\star)$; a score below $R(f^\star)$ is test-set noise. The entry with the best observed test score is a different matter: it was chosen using those scores, so its winning score is biased downward as an estimate of its own risk. That is selection bias in the score; the risk of every entry is still at least $R(f^\star)$.
+
+Common errors: differentiating $\mathbb E[(Y - c)^2]$ in $c$ directly (correct, but it misses that this is the theorem again); $\mathrm{Var}(Y) = R(f^\star)$, forgetting the predictable part; in (c), "a better method could beat $R(f^\star)$": nothing can, on average, by the theorem.
+:::
+
+**Problem 2 (leaving a variable out, exactly).** The setting of exercise 2, but forget the truth: let $\hat\beta_1$ and $\hat\beta_2$ be the least-squares coefficients from the long regression of $\mathbf y$ on both $\mathbf x_1$ and $\mathbf x_2$, with residual $\mathbf r$, so that $\mathbf y = \hat\beta_1\mathbf x_1 + \hat\beta_2\mathbf x_2 + \mathbf r$.
+
+(a) Show that $\hat\beta_{\text{short}} = \hat\beta_1 + \hat\beta_2\,\hat\delta$ exactly, with no expectation. Which fact about $\mathbf r$ did you use?
+
+(b) Numbers: $\mathbf x_1 = (-1, 0, 1)$, $\mathbf x_2 = (-2, 1, 1)$, $\beta_1 = 1$, $\beta_2 = 2$. Compute $\hat\delta$, and what the short regression estimates on average.
+
+(c) Suppose $\mathbf x_1^\top\mathbf x_2 = 0$. What happens to the coefficient on $\mathbf x_1$ when $\mathbf x_2$ is dropped? Reconcile your answer with the partialling-out theorem: what is the residual of $\mathbf x_1$ after regressing it on $\mathbf x_2$?
+
+::: {.callout-note .answer collapse="true" title="Hint 1"}
+(a) Multiply the fitted equation $\mathbf y = \hat\beta_1\mathbf x_1 + \hat\beta_2\mathbf x_2 + \mathbf r$ by $\mathbf x_1^\top$, as in exercise 2, and look at the last term.
+:::
+
+::: {.callout-note .answer collapse="true" title="Hint 2"}
+(a) Which fact about a least-squares residual makes that last term vanish exactly? It is the sample version of the fact that killed the cross term in exercise 1. (c) In the theorem, partial $\mathbf x_2$ out of $\mathbf x_1$: what is left of $\mathbf x_1$ when the two are orthogonal?
+:::
+
+::: {.callout-tip .answer collapse="true" title="Reveal answer"}
+(a) Multiplying by $\mathbf x_1^\top$ and dividing by $\mathbf x_1^\top\mathbf x_1$: $\hat\beta_{\text{short}} = \hat\beta_1 + \hat\beta_2\hat\delta + \mathbf x_1^\top\mathbf r/\mathbf x_1^\top\mathbf x_1$, and $\mathbf x_1^\top\mathbf r = 0$ by the normal equations. The fact: **a least-squares residual is orthogonal to every column it was fitted on**, the sample twin of exercise 1's population fact (the residual $Y - f^\star(X)$ is orthogonal to every function of $X$). The same algebra as exercise 2 with the fitted coefficients in place of the truth and the residual in place of the noise, except that the last term is exactly zero rather than zero on average: the noise is not orthogonal to $\mathbf x_1$ in the sample, only mean zero given the inputs, which is why exercise 2 needs an expectation and this problem does not. Coding part 3 checks the identity on real data to every printed digit.
+
+(b) Both vectors are centered, so the formula applies as written. $\mathbf x_1^\top\mathbf x_2 = 2 + 0 + 1 = 3$ and $\mathbf x_1^\top\mathbf x_1 = 2$, so $\hat\delta = 1.5$ and $\mathbb E\,\hat\beta_{\text{short}} = 1 + 2 \times 1.5 = 4$: four times the coefficient it was meant to estimate.
+
+(c) $\hat\delta = 0$, so $\hat\beta_{\text{short}} = \hat\beta_1$: dropping an orthogonal column does not move the coefficient, and by exercise 2 the short regression is then unbiased. From the theorem: partial $\mathbf x_2$ out of $\mathbf x_1$; the residual is $\mathbf x_1 - \mathbf x_2\,(\mathbf x_2^\top\mathbf x_1)/(\mathbf x_2^\top\mathbf x_2) = \mathbf x_1$ when the two are orthogonal, so the long coefficient on $\mathbf x_1$ is $\mathbf x_1^\top\mathbf y/\mathbf x_1^\top\mathbf x_1$, which is the short one. On the standard error: the two regressions estimate the noise variance from different residuals, and the short one's residual still contains $\hat\beta_2\mathbf x_2$, so the reported standard error usually grows when a relevant orthogonal column is dropped even though the coefficient does not move; the details are for the validation week.
+
+Common errors: raw vectors in place of centered ones; believing (a) needs an expectation (it is an identity of the data); in (c), "the coefficient is the same, so the two regressions are the same" (the residuals differ).
+:::
+
+### Optional, can be done at home
+
+<!-- Not in the seminar. The hat-matrix facts are checked numerically in coding part 1 and reused in the validation week. Hints are in the student file. -->
+
+**Problem 3 (normal equations, and centering).** Simple regression, from the lecture's "nice geometry" slide. The training error is $\hat R_n(\alpha, \beta) = \frac1n\sum_{i=1}^n (y_i - \alpha - \beta x_i)^2$.
+
+(a) Compute $\partial \hat R_n/\partial\alpha$ and $\partial \hat R_n/\partial\beta$, set both to zero, and show that the residuals $r_i = y_i - \hat\alpha - \hat\beta x_i$ satisfy $\sum_i r_i = 0$ and $\sum_i x_i r_i = 0$. Write the same two equations as $\mathbf X^\top \mathbf r = \mathbf 0$ with $\mathbf X = [\mathbf 1 \;\; \mathbf x]$.
+
+(b) Solve them: show $\hat\beta = \sum_i (x_i - \bar x)(y_i - \bar y) \big/ \sum_i (x_i - \bar x)^2$ and $\hat\alpha = \bar y - \hat\beta \bar x$.
+
+(c) In the partialling-out theorem take $\mathbf X_1 = \mathbf 1$, the column of ones, and $\mathbf x_2 = \mathbf x$. What is $\mathbf M_1 \mathbf x$? Conclude that the slope of $\mathbf y$ on $\mathbf x$ in a regression *with* an intercept is the slope through the origin of the centered $\mathbf y$ on the centered $\mathbf x$, and check that this is (b).
+
+::: {.callout-note collapse="true" title="Hint 1"}
+(a) Differentiate one term of the sum first. (b) Use the first equation to eliminate $\hat\alpha$ from the second.
+:::
+
+::: {.callout-note collapse="true" title="Hint 2"}
+(c) $\mathbf H_1 = \mathbf 1(\mathbf 1^\top\mathbf 1)^{-1}\mathbf 1^\top$: what is $\mathbf 1^\top\mathbf 1$, and what does $\mathbf H_1$ do to a vector?
+:::
+
+::: {.callout-tip .answer collapse="true" title="Reveal answer"}
+(a) $\partial \hat R_n/\partial\alpha = -\frac2n\sum_i (y_i - \alpha - \beta x_i)$ and $\partial \hat R_n/\partial\beta = -\frac2n\sum_i x_i (y_i - \alpha - \beta x_i)$. Setting both to zero at $(\hat\alpha, \hat\beta)$ gives $\sum_i r_i = 0$ and $\sum_i x_i r_i = 0$: the two rows of $\mathbf X^\top\mathbf r = \mathbf 0$, one per column of $\mathbf X$. Since $\bar r = 0$ and $\sum x_i r_i = 0$, the sample correlation of $x$ and $r$ is zero: no *linear* signal is left in the residuals, which is all least squares promises.
+
+(b) The first equation gives $\hat\alpha = \bar y - \hat\beta \bar x$. Substitute into the second: $\sum_i x_i (y_i - \bar y - \hat\beta(x_i - \bar x)) = 0$, and because $\sum_i (y_i - \bar y) = 0 = \sum_i (x_i - \bar x)$ you may replace $x_i$ by $x_i - \bar x$ in the sum, giving $\hat\beta = \sum_i (x_i - \bar x)(y_i - \bar y) / \sum_i (x_i - \bar x)^2$.
+
+(c) $\mathbf H_1 = \mathbf 1(\mathbf 1^\top\mathbf 1)^{-1}\mathbf 1^\top = \frac1n \mathbf 1\mathbf 1^\top$, so $\mathbf H_1\mathbf x = \bar x\mathbf 1$ and $\mathbf M_1\mathbf x = \mathbf x - \bar x\mathbf 1$: partialling out the intercept *is* centering. The theorem gives $\hat\beta = \tilde{\mathbf x}^\top\mathbf y/\tilde{\mathbf x}^\top\tilde{\mathbf x}$ with $\tilde{\mathbf x} = \mathbf x - \bar x\mathbf 1$, and since $\tilde{\mathbf x}^\top \mathbf y = \tilde{\mathbf x}^\top(\mathbf y - \bar y\mathbf 1)$ (the centered $\tilde{\mathbf x}$ sums to zero) this is $\sum (x_i - \bar x)(y_i - \bar y)/\sum(x_i - \bar x)^2$, part (b). The same step is why exercise 2 and problem 2 use centered vectors whenever an intercept is fitted.
+
+Common errors: the chain rule's $-1$ (harmless here); in (b), dividing by $\sum x_i^2$ instead of $\sum (x_i - \bar x)^2$.
+:::
+
+**Problem 4 (the hat matrix).** $\mathbf X$ is $n \times q$ with full column rank ($q = p + 1$ columns, the intercept counted), $\mathbf H = \mathbf X(\mathbf X^\top\mathbf X)^{-1}\mathbf X^\top$ and $\mathbf M = \mathbf I - \mathbf H$.
+
+(a) Show $\mathbf H^2 = \mathbf H$ and $\mathbf H^\top = \mathbf H$, and compute $\mathrm{tr}(\mathbf H)$.
+
+(b) Show $\mathbf M^2 = \mathbf M$, $\mathbf M^\top = \mathbf M$ and $\mathbf M \mathbf X = \mathbf 0$. In one sentence each: what is $\mathbf H\mathbf y$, and what is $\mathbf M\mathbf y$?
+
+(c) Use (b) to show that the residual vector $\mathbf r = \mathbf M\mathbf y$ satisfies $\mathbf X^\top \mathbf r = \mathbf 0$ (the normal equations again, from the geometry instead of the calculus). Where did full column rank get used?
+
+::: {.callout-note collapse="true" title="Hint 1"}
+(a) For the trace, $\mathrm{tr}(\mathbf A\mathbf B) = \mathrm{tr}(\mathbf B\mathbf A)$ with $\mathbf A = \mathbf X$.
+:::
+
+::: {.callout-note collapse="true" title="Hint 2"}
+(c) Write $\mathbf X^\top\mathbf r = \mathbf X^\top\mathbf M\mathbf y$ and use $\mathbf M^\top = \mathbf M$ to move $\mathbf M$ onto $\mathbf X$.
+:::
+
+::: {.callout-tip .answer collapse="true" title="Reveal answer"}
+(a) $\mathbf H^2 = \mathbf X(\mathbf X^\top\mathbf X)^{-1}\mathbf X^\top\mathbf X(\mathbf X^\top\mathbf X)^{-1}\mathbf X^\top = \mathbf H$, the middle $(\mathbf X^\top\mathbf X)^{-1}\mathbf X^\top\mathbf X$ cancelling; $\mathbf H^\top = \mathbf H$ because $(\mathbf X^\top\mathbf X)^{-1}$ is symmetric; $\mathrm{tr}(\mathbf H) = \mathrm{tr}\big((\mathbf X^\top\mathbf X)^{-1}\mathbf X^\top\mathbf X\big) = \mathrm{tr}(\mathbf I_q) = q$ by the cyclic property $\mathrm{tr}(\mathbf A\mathbf B) = \mathrm{tr}(\mathbf B\mathbf A)$. So the hat matrix has trace $p + 1$ with the intercept counted: the number of coefficients. (The validation week turns this trace into degrees of freedom.)
+
+(b) $\mathbf M^2 = \mathbf I - 2\mathbf H + \mathbf H^2 = \mathbf I - \mathbf H = \mathbf M$; symmetric because $\mathbf H$ is; $\mathbf M\mathbf X = \mathbf X - \mathbf X(\mathbf X^\top\mathbf X)^{-1}\mathbf X^\top\mathbf X = \mathbf X - \mathbf X = \mathbf 0$. $\mathbf H\mathbf y$ is the fitted vector $\hat{\mathbf y}$, the point of $\mathrm{col}(\mathbf X)$ closest to $\mathbf y$; $\mathbf M\mathbf y$ is the residual vector, what is left of $\mathbf y$ after $\mathrm{col}(\mathbf X)$ has explained what it can.
+
+(c) $\mathbf X^\top\mathbf r = \mathbf X^\top\mathbf M\mathbf y = (\mathbf M\mathbf X)^\top\mathbf y = \mathbf 0$, using $\mathbf M^\top = \mathbf M$ and $\mathbf M\mathbf X = \mathbf 0$. Full column rank is what makes $\mathbf X^\top\mathbf X$ invertible, so that $\mathbf H$ is defined at all; without it the projection onto $\mathrm{col}(\mathbf X)$ still exists (a pseudoinverse gives it) but the coefficients are not unique, which is the `NA` that `lm` prints when one column is a copy of the others.
+
+Common errors: $\mathrm{tr}(\mathbf H) = n$ (confusing $\mathbf H$ with the identity); claiming $\mathbf H = \mathbf I$ because $\mathbf H^2 = \mathbf H$.
+:::
+
+**Problem 5 (a zero slope with a predictable outcome).** Let $X$ take the values $-1, 0, 1$ with probability $1/3$ each, let $\varepsilon$ be independent of $X$ and take the values $-1, 1$ with probability $1/2$ each, and let $Y = X^2 + \varepsilon$.
+
+(a) Find $f^\star(x)$ under squared loss, and its risk $R(f^\star)$.
+
+(b) Find the best linear predictor $a + bX$, the minimizer of $\mathbb E[(Y - a - bX)^2]$, and its risk. Compute $\mathrm{Cov}(X, Y)$.
+
+(c) What does the example say about using correlation to decide whether $X$ predicts $Y$? Which result from the lecture gives the excess risk of the best line, and what is it here?
+
+::: {.callout-note collapse="true" title="Hint 1"}
+(a) $\mathbb E[Y \mid X = x]$ is $x^2$ plus the mean of the noise.
+:::
+
+::: {.callout-note collapse="true" title="Hint 2"}
+(b) The best line's slope is $\mathrm{Cov}(X, Y)/\mathrm{Var}(X)$; compute $\mathbb E X^3$. Its risk is then the variance of something.
+:::
+
+::: {.callout-tip .answer collapse="true" title="Reveal answer"}
+(a) $f^\star(x) = \mathbb E[Y \mid X = x] = x^2$, because $\varepsilon$ is independent of $X$ with mean zero; $R(f^\star) = \mathbb E\,\varepsilon^2 = 1$.
+
+(b) $\mathbb E X = 0$ and $\mathbb E X^3 = 0$, so $\mathrm{Cov}(X, Y) = \mathrm{Cov}(X, X^2) = \mathbb E X^3 - \mathbb E X\,\mathbb E X^2 = 0$: the slope is $b = 0$ and the intercept is $a = \mathbb E Y = \mathbb E X^2 = 2/3$. Its risk is $\mathbb E[(Y - 2/3)^2] = \mathrm{Var}(Y) = \mathrm{Var}(X^2) + \mathrm{Var}(\varepsilon) = (\mathbb E X^4 - (\mathbb E X^2)^2) + 1 = (2/3 - 4/9) + 1 = 11/9$.
+
+(c) Zero correlation and a zero slope, yet $Y$ is predictable from $X$ up to the noise: correlation detects linear signal only. The optimal model theorem gives the excess risk of any predictor as $\mathbb E[(f^\star(X) - f(X))^2]$; for the best line that is $\mathbb E[(X^2 - 2/3)^2] = \mathrm{Var}(X^2) = 2/9$, which is $11/9 - 1$. The same lesson as coding part 4's `x2`, in a case small enough to do by hand.
+
+Common errors: concluding from $\mathrm{Cov}(X, Y) = 0$ that $X$ carries no information about $Y$; computing $\mathrm{Var}(Y)$ as $\mathrm{Var}(\varepsilon)$ alone.
+:::
+
+**Problem 6 (why collinearity makes a coefficient uncertain).** Fixed design: $\mathbf y = \mathbf X_1\boldsymbol\beta_1 + \mathbf x_2\beta_2 + \boldsymbol\varepsilon$ with $\mathbb E\,\boldsymbol\varepsilon = \mathbf 0$ and $\mathrm{Cov}(\boldsymbol\varepsilon) = \sigma^2\mathbf I$, full column rank, and $\tilde{\mathbf x}_2 = \mathbf M_1\mathbf x_2$ as in the lecture.
+
+(a) Use the partialling-out theorem to show that $\hat\beta_2 = \beta_2 + \tilde{\mathbf x}_2^\top\boldsymbol\varepsilon / \tilde{\mathbf x}_2^\top\tilde{\mathbf x}_2$. Which two facts about $\mathbf M_1$ do you need?
+
+(b) Find $\mathbb E\,\hat\beta_2$ and $\mathrm{Var}(\hat\beta_2)$.
+
+(c) What happens as $\mathbf x_2$ becomes almost a linear combination of the columns of $\mathbf X_1$? Compare two designs with $\tilde{\mathbf x}_2^\top\tilde{\mathbf x}_2 = 100$ and $\tilde{\mathbf x}_2^\top\tilde{\mathbf x}_2 = 4$, with the same $\sigma^2$.
+
+::: {.callout-note collapse="true" title="Hint 1"}
+(a) The theorem gives $\hat\beta_2 = \tilde{\mathbf x}_2^\top\mathbf y/\tilde{\mathbf x}_2^\top\tilde{\mathbf x}_2$; substitute the model for $\mathbf y$.
+:::
+
+::: {.callout-note collapse="true" title="Hint 2"}
+(a) You need $\tilde{\mathbf x}_2^\top\mathbf X_1 = \mathbf 0$ and $\tilde{\mathbf x}_2^\top\mathbf x_2 = \tilde{\mathbf x}_2^\top\tilde{\mathbf x}_2$: which property of $\mathbf M_1$ gives each? (b) For the variance of a ratio with a fixed denominator, square the denominator.
+:::
+
+::: {.callout-tip .answer collapse="true" title="Reveal answer"}
+(a) By the theorem, $\hat\beta_2 = \tilde{\mathbf x}_2^\top\mathbf y / \tilde{\mathbf x}_2^\top\tilde{\mathbf x}_2$. Substitute the model for $\mathbf y$: $\tilde{\mathbf x}_2^\top\mathbf X_1 = \mathbf x_2^\top\mathbf M_1\mathbf X_1 = \mathbf 0$ ($\mathbf M_1$ is symmetric and $\mathbf M_1\mathbf X_1 = \mathbf 0$), and $\tilde{\mathbf x}_2^\top\mathbf x_2 = \mathbf x_2^\top\mathbf M_1\mathbf x_2 = \mathbf x_2^\top\mathbf M_1\mathbf M_1\mathbf x_2 = \tilde{\mathbf x}_2^\top\tilde{\mathbf x}_2$ ($\mathbf M_1$ is idempotent). So $\hat\beta_2 = \beta_2 + \tilde{\mathbf x}_2^\top\boldsymbol\varepsilon / \tilde{\mathbf x}_2^\top\tilde{\mathbf x}_2$: the fitted coefficient is the true one plus the noise projected onto $\tilde{\mathbf x}_2$.
+
+(b) $\mathbb E\,\hat\beta_2 = \beta_2$, and $\mathrm{Var}(\hat\beta_2) = \tilde{\mathbf x}_2^\top(\sigma^2\mathbf I)\tilde{\mathbf x}_2 / (\tilde{\mathbf x}_2^\top\tilde{\mathbf x}_2)^2 = \sigma^2 / \tilde{\mathbf x}_2^\top\tilde{\mathbf x}_2$.
+
+(c) The denominator is the squared length of what is left of $\mathbf x_2$ after $\mathbf X_1$ has explained what it can. As $\mathbf x_2$ approaches $\mathrm{col}(\mathbf X_1)$ that length goes to zero and the variance blows up; at zero the coefficient is not identified, which is the `NA` from the lecture. With $100$ against $4$ the variance ratio is $25$: a standard deviation five times larger in the second design. Collinearity does not bias the coefficient; it makes it uncertain, and the picture in the lecture says why: a short $\tilde{\mathbf x}_2$ is a short baseline for a slope.
+
+Common errors: writing $\mathrm{Var}(\hat\beta_2) = \sigma^2/\mathbf x_2^\top\mathbf x_2$ (the raw column instead of the residual), which is the variance when $\mathbf x_2$ is the only column (regression through the origin); with an intercept the denominator is $\sum_i (x_{2i} - \bar x_2)^2$, which is this problem's formula with $\mathbf X_1 = \mathbf 1$; forgetting the square in the denominator when taking the variance of the ratio.
+:::
+
+## Coding
+
+<!-- About 35 min: part 1 5, part 2 10, part 3 12, part 4 8. Skeleton lines in comments are scaffolds: the statistical operation is what you write. Everything headed "Optional, can be done at home" is outside the seminar. -->
+
+### 1. Matrices and vectors in R
+
+<!-- 5 min: step 1. The pieces and step 2 are optional. -->
+
+The lecture's formula $\hat\beta = (\mathbf X^\top\mathbf X)^{-1}\mathbf X^\top\mathbf y$ is a few lines of R.
+
+#### Optional, can be done at home: the pieces
+
+Skip to step 1 if `%*%`, `t()` and `solve()` are familiar.
+
+```{r}
+# byrow = FALSE default
+x <- matrix(1:9, nrow = 3, ncol = 3)
+x
+beta <- rep(1, 3)
+beta
+```
+
+Multiplication is `%*%` (yes, really). Beware "Error: non-conformable arguments"; always check dimensions. If the dimension of one object divides the dimension of another, R may "conveniently" (unintuitively) repeat the smaller one.
+
+```{r}
+dim(x)
+dim(beta) # frustrating
+x %*% beta
+```
+
+Transpose and symmetry: even if a matrix $\mathbf A$ is not square, both $\mathbf A^\top\mathbf A$ and $\mathbf A\mathbf A^\top$ are square and symmetric (often one is invertible).
+
+```{r}
+A <- matrix(c(rep(1, 4), 0, 0), nrow = 3, byrow = FALSE)
+A
+t(A) %*% A
+```
+
+Pseudoinversion: `ginv()` in the `MASS` library (installed with R) computes $\mathbf A^\dagger = (\mathbf A^\top\mathbf A)^{-1}\mathbf A^\top$ when that exists, so $\mathbf A^\dagger\mathbf A = \mathbf I$; it is a left inverse here, not a right one.
+
+```{r}
+Ainv <- MASS::ginv(A)
+Ainv %*% A   # the 2 x 2 identity matrix
+A %*% Ainv   # not a right inverse
+```
+
+#### The formula
+
+**Step 1.** Take the 2007 countries, build the design matrix for `lifeExp ~ lgdp + lpop` with `model.matrix` (it adds the column of ones), and compute $\hat\beta$ from the formula. Compare with `lm`.
+
+```{r}
+gm <- gapminder |>
+  filter(year == 2007) |>
+  mutate(lgdp = log10(gdpPercap), lpop = log10(pop))
+X <- model.matrix(lifeExp ~ lgdp + lpop, data = gm)
+y <- gm$lifeExp
+head(X, 3)
+```
+
+```{r}
+#| eval: false
+# beta_hat <- solve(____ %*% ____) %*% ____ %*% ____
+# cbind(formula = beta_hat, lm = coef(lm(lifeExp ~ lgdp + lpop, data = gm)))
+...
+```
+
+::: {.callout-tip .answer collapse="true" title="Reveal solution"}
+```{r}
+beta_hat <- solve(t(X) %*% X) %*% t(X) %*% y
+cbind(formula = beta_hat, lm = coef(lm(lifeExp ~ lgdp + lpop, data = gm)))
+```
+:::
+
+Checkpoint (run it; if it stops, check the order of the factors in the formula):
+
+```{r}
+#| eval: !expr exists("beta_hat")
+stopifnot(isTRUE(all.equal(as.numeric(beta_hat),
+                           as.numeric(coef(lm(lifeExp ~ lgdp + lpop, data = gm))))))
+```
+
+#### Optional, can be done at home: the hat matrix
+
+**Step 2.** Build the hat matrix $\mathbf H = \mathbf X(\mathbf X^\top\mathbf X)^{-1}\mathbf X^\top$ and check two of its properties numerically: its trace, and that $\mathbf H\mathbf y$ is `fitted(lm(...))`. (Optional problem 4 proves them.)
+
+```{r}
+#| eval: false
+# H <- ____
+# c(trace = sum(diag(H)), n = nrow(X), q = ncol(X))
+# all.equal(as.numeric(H %*% y), as.numeric(fitted(lm(lifeExp ~ lgdp + lpop, data = gm))))
+...
+```
+
+::: {.callout-tip .answer collapse="true" title="Reveal solution"}
+```{r}
+H <- X %*% solve(t(X) %*% X) %*% t(X)
+c(trace = sum(diag(H)), n = nrow(X), q = ncol(X))
+all.equal(as.numeric(H %*% y), as.numeric(fitted(lm(lifeExp ~ lgdp + lpop, data = gm))))
+```
+:::
+
+**Question 1.** The trace came out as a small integer. Which one, and why?
+
+::: {.callout-tip .answer collapse="true" title="Reveal answer"}
+$3 = q$, the number of columns of $\mathbf X$ (intercept, `lgdp`, `lpop`): $\mathrm{tr}(\mathbf H) = \mathrm{tr}\big((\mathbf X^\top\mathbf X)^{-1}\mathbf X^\top\mathbf X\big) = \mathrm{tr}(\mathbf I_q)$ by the cyclic property of the trace. It is the number of coefficients, not $n$ (optional problem 4(a)). Building `H` with `MASS::ginv(X)` instead of the explicit inverse gives the same matrix.
+:::
+
+### 2. Regression on real data
+
+<!-- 10 min: steps 1 and 3 and question 2. Step 2 and the block at the end are optional. -->
+
+In this part you are encouraged to use a dataset that you found interesting. Your dataset should have a numeric outcome variable and multiple predictor variables, and at least one of the predictors should also be numeric. Your dataset should not have any special structure that would clearly violate independence assumptions, e.g. observations with possible spatial or temporal correlation (the `gapminder` data above uses one year for this reason, so the same country is not repeated).
+
+Note: we also cannot deal with missing values right now so you may use `drop_na()`. The default below is the penguins.
+
+```{r}
+# Load dataset and pre-process if necessary
+penguins |>
+  drop_na() -> my_data # bad syntax, but fun!
+```
+
+**Step 1.** Choose one predictor variable and fit a simple linear model. Then use each of these functions on the model object and try to understand the output: `summary`, `predict`, `residuals`, `coef`, `confint`, `plot`.
+
+Many of these are shortcut functions that can be used on many different types of objects, e.g. models fit by other methods. To learn more about a function `f` type `?f` in the console, and to see how it works on linear model objects type `?f.lm`, e.g. `?plot.lm`.
+
+```{r}
+model_simple <- lm(body_mass_g ~ bill_length_mm, data = my_data)
+summary(model_simple)
+```
+
+```{r}
+#| eval: false
+# predict(model_simple) ; residuals(model_simple) ; coef(model_simple) ; confint(model_simple)
+...
+```
+
+::: {.callout-tip .answer collapse="true" title="Reveal solution"}
+```{r}
+coef(model_simple)
+confint(model_simple)
+head(predict(model_simple))
+head(residuals(model_simple))
+```
+:::
+
+```{r}
+#| fig-show: hold
+#| out-width: "48%"
+plot(model_simple)
+```
+
+**Question 2.** How do we interpret diagnostic plots?
+
+::: {.callout-tip .answer collapse="true" title="Reveal answer"}
+Generally looking for patterns in residuals, normality of their distribution (diagonal line in QQ plot), constant variance (homoscedasticity), and influential points (high-leverage outliers). Two cautions from the lecture: a correctly specified conditional mean gives $\mathbb E[\text{residual} \mid X] \approx 0$, but says nothing about the spread, so a fan shape is a separate matter (constant variance is its own assumption); and a pattern in a finite noisy sample is evidence that the class of functions may be missing something, not a proof that it is.
+:::
+
+**Step 2 (optional, can be done at home).** Create a scatterplot showing your simple linear model (just like last week: `geom_point`, then `geom_smooth(method = "lm")`).
+
+```{r}
+#| eval: false
+# my_data |> ggplot(aes(x = ____, y = ____)) + ____ + ____
+...
+```
+
+::: {.callout-tip .answer collapse="true" title="Reveal solution"}
+```{r}
+my_data |>
+  ggplot(aes(x = bill_length_mm, y = body_mass_g)) +
+  geom_point() +
+  geom_smooth(method = "lm")
+```
+:::
+
+**Step 3.** Multiple linear regression: repeat with a model using more than one predictor, and notice what's different about the output. Then use `tidy` and `glance` from the `broom` package and compare with `summary` (see `?tidy.lm`; piping `tidy()` into `knitr::kable()` formats it nicely), and draw the coefficients with their intervals using `ggcoef` from `GGally`.
+
+```{r}
+#| eval: false
+model_multiple <- lm(
+  body_mass_g ~ bill_length_mm + bill_depth_mm + sex,
+  data = my_data)
+# tidy(model_multiple, conf.int = TRUE) |> knitr::kable(digits = 2)
+# glance(model_multiple) |> knitr::kable(digits = 3)
+# ggcoef(____)
+...
+```
+
+::: {.callout-tip .answer collapse="true" title="Reveal solution"}
+```{r}
+#| out-width: "70%"
+model_multiple <- lm(
+  body_mass_g ~ bill_length_mm + bill_depth_mm + sex,
+  data = my_data)
+tidy(model_multiple, conf.int = TRUE) |> knitr::kable(digits = 2)
+glance(model_multiple) |> knitr::kable(digits = 3)
+ggcoef(model_multiple)
+```
+:::
+
+#### Optional, can be done at home
+
+<!-- Not in the seminar. -->
+
+`GGally` also has `ggnostic`, a grid of diagnostic plots for a multiple model, one column per predictor.
+
+```{r}
+#| eval: false
+# ggnostic(____)
+...
+```
+
+::: {.callout-tip .answer collapse="true" title="Reveal solution"}
+```{r}
+ggnostic(model_multiple)
+```
+:::
+
+There is also a function `ggpairs` useful for exploratory data analysis, but beware that it can be slow because it computes many pairwise plots. You may not want to rerun that code many times. There is an option `cache: true` that saves the result after running it once and then refuses to run it again unless you change the code chunk. You can also leave out variables you don't want to include using `select(-var1, -var2, ...)` or choose only some to include with `select(var1, var2, ...)`. Also see useful helper functions like `?tidyselect::starts_with`.
+
+```{r}
+#| eval: false
+#| cache: true
+# my_data |>
+#   select(-year, -island) |>
+#   ggpairs(progress = FALSE)
+...
+```
+
+::: {.callout-tip .answer collapse="true" title="Reveal solution"}
+```{r}
+#| cache: true
+my_data |>
+  select(contains("_")) |>
+  ggpairs(progress = FALSE)
+```
+:::
+
+**Step 4.** Pick at least one numeric predictor and include a non-linear transformation, e.g. a polynomial `y ~ poly(x, d)` or an interaction `y ~ x1 * x2`. Use `glance`, `tidy` and `plot` again on this model and note any differences.
+
+```{r}
+#| eval: false
+# model_transformed <- lm(____ ~ poly(____, 2) + ____, data = my_data)
+# glance(model_transformed)$r.squared
+...
+```
+
+::: {.callout-tip .answer collapse="true" title="Reveal solution"}
+```{r}
+model_transformed <- lm(
+  body_mass_g ~ poly(bill_length_mm, 2) + bill_depth_mm + sex,
+  data = my_data)
+c(linear = glance(model_multiple)$r.squared,
+  quadratic = glance(model_transformed)$r.squared)
+```
+:::
+
+**Question 3.** The pair plots from e.g. `ggnostic` or `ggpairs` show many 2-dimensional projections of the data, but there is no guarantee that these projections together help us understand higher dimensional relationships. What does this mean for diagnostic plots when our regression model is high dimensional (e.g. $p > 3$ predictors)?
+
+::: {.callout-tip .answer collapse="true" title="Reveal answer"}
+It is possible there is some higher dimensional pattern in the residuals that the pairs plot does not reveal to us: the model would have failed to capture some (non-linear) signal and our diagnostic method would fail to reveal that flaw. Part 4's required example is the opposite case, a pattern in one input that its residual plot does show; the first challenge at the end of part 4 (an interaction) builds the case that one-input plots miss.
+:::
+
+### 3. Partialling out, and the omitted variable
+
+<!-- 12 min -->
+
+Back to the 2007 countries: life expectancy on log GDP per capita, log population and continent.
+
+```{r}
+long <- lm(lifeExp ~ lgdp + lpop + continent, data = gm)
+tidy(long) |> knitr::kable(digits = 2)
+```
+
+**Step 1.** The partialling-out theorem says the coefficient on `lgdp` is the slope of `lifeExp` on the part of `lgdp` that the other columns cannot explain. Check it: regress `lgdp` on the other predictors (intercept included), keep the residual, and regress `lifeExp` on that residual. The two numbers should agree to every printed digit.
+
+```{r}
+#| eval: false
+# lgdp_tilde <- resid(lm(____ ~ ____, data = gm))
+# c(full = coef(long)[["lgdp"]],
+#   y_on_residual = coef(lm(gm$lifeExp ~ lgdp_tilde))[[2]])
+...
+```
+
+::: {.callout-tip .answer collapse="true" title="Reveal solution"}
+```{r}
+lgdp_tilde <- resid(lm(lgdp ~ lpop + continent, data = gm))
+c(full = coef(long)[["lgdp"]],
+  y_on_residual = coef(lm(gm$lifeExp ~ lgdp_tilde))[[2]])
+```
+:::
+
+Checkpoint:
+
+```{r}
+#| eval: !expr exists("lgdp_tilde")
+stopifnot(isTRUE(all.equal(coef(long)[["lgdp"]], coef(lm(gm$lifeExp ~ lgdp_tilde))[[2]])))
+```
+
+**Question 4.** In one sentence, what is the coefficient on `lgdp` in `long` the slope of? Your neighbor regressed the *residual* of `lifeExp` (on `lpop` and `continent`) on `lgdp_tilde` and got the same number. Why is that not a coincidence?
+
+::: {.callout-tip .answer collapse="true" title="Reveal answer"}
+The slope of `lifeExp` on the part of `lgdp` not linearly explained by `lpop`, the continent indicators and the intercept. Residual on residual gives the same slope because $\tilde{\mathbf x}_2^\top \mathbf M_1 \mathbf y = \tilde{\mathbf x}_2^\top \mathbf y$: $\mathbf M_1$ is symmetric and idempotent, so it can be moved onto $\tilde{\mathbf x}_2$, where it changes nothing (lines 5 to 6 of the lecture's proof). If the numbers disagree, the residual came from the wrong regression (`lifeExp` instead of `lgdp` on the left), the two fits used different rows, or a column was left out of the auxiliary regression. Dropping the explicit intercept with `- 1` does not change the answer here: R then codes every continent with its own indicator, and together they span the constant column.
+:::
+
+**Step 2.** Now leave `lpop` out. Fit the short regression `lifeExp ~ lgdp + continent`, and the auxiliary regression of the omitted variable on what was kept, `lpop ~ lgdp + continent`. Check problem 2(a): the short coefficient on `lgdp` equals the long one plus the long coefficient on `lpop` times the auxiliary slope, exactly.
+
+```{r}
+#| eval: false
+# short <- lm(____, data = gm)
+# aux <- lm(____, data = gm)
+# c(short = coef(short)[["lgdp"]],
+#   long_plus_correction = coef(long)[["lgdp"]] + coef(long)[["lpop"]] * coef(aux)[["lgdp"]])
+...
+```
+
+::: {.callout-tip .answer collapse="true" title="Reveal solution"}
+```{r}
+short <- lm(lifeExp ~ lgdp + continent, data = gm)
+aux <- lm(lpop ~ lgdp + continent, data = gm)
+c(short = coef(short)[["lgdp"]],
+  long_plus_correction = coef(long)[["lgdp"]] + coef(long)[["lpop"]] * coef(aux)[["lgdp"]])
+```
+:::
+
+**Question 5.** Did leaving out `lpop` move the coefficient on `lgdp` by much, and in which direction? Exercise 2 names two things the size of the move depends on; which of them is small here? Is the short coefficient "wrong"?
+
+::: {.callout-tip .answer collapse="true" title="Reveal answer"}
+On these data the move is tiny, about $0.025$ years per unit of $\log_{10}$ GDP, and downward: 10.69 in the long regression, 10.66 in the short one. The long coefficient on `lpop` is itself near zero ($0.09$), so $\hat\beta_{\text{lpop}} \times \hat\delta = 0.09 \times (-0.27)$ is small even though the auxiliary slope $\hat\delta = -0.27$ is not. The size is the product of the two: how much the omitted variable matters *and* how correlated it is with what was kept, given the other columns. "Wrong" is the wrong word: the short and long coefficients are slopes on different residuals and answer different questions; which one you want depends on what you are holding fixed on purpose, and next week is about deciding that. (Problem 2(a) was stated for two predictors; with the continent indicators in both regressions the same algebra goes through, because the normal equations make the long residual orthogonal to every kept column, so the identity holds exactly as checked here.)
+:::
+
+### 4. Regression models with simulated data
+
+<!-- 8 min: the simulation code is written; the work is step 1 and question 6. The block at the end is optional. -->
+
+Now we want to simulate data in various ways, fit regression models to the data while pretending we don't know how it was generated, and then see how those models perform. We want to understand the limitations of regression models. *If something was wrong with the model, would we be able to tell?*
+
+Choose a functional form for the true outcome data generation process:
+
+```{r}
+f <- function(x1, x2, x3) x1 + 2*x2 - x2^2 # change this
+```
+
+Generate several predictor variables, an error term, and an outcome:
+
+```{r}
+simulate_data <- function(n) {
+  x1 <- rnorm(n, mean = 3, sd = 3) # change
+  x2 <- runif(n, min = 0, max = 2) # change
+  x3 <- rexp(n, rate = 2) # change
+  errors <- rnorm(n, sd = 1) # change
+  y <- f(x1, x2, x3) + errors
+  data.frame(y = y,
+             x1 = x1,
+             x2 = x2,
+             x3 = x3)
+}
+```
+
+Generate one dataset and use `ggpairs` to show pair plots:
+
+```{r}
+n <- 400
+sim_data <- simulate_data(n)
+ggpairs(sim_data, progress = FALSE)
+```
+
+**Step 1.** Fit `lm(y ~ ., data = sim_data)` (every column as a predictor) and look at the coefficients with their intervals (`tidy`, then `ggcoef`). Before you look: which coefficients do you expect to be near zero?
+
+```{r}
+#| eval: false
+# my_model <- lm(____, data = sim_data)
+# tidy(my_model, conf.int = TRUE) |> knitr::kable(digits = 2)
+# my_model |> ggcoef()
+...
+```
+
+::: {.callout-tip .answer collapse="true" title="Reveal solution"}
+```{r}
+#| out-width: "70%"
+my_model <- lm(y ~ ., data = sim_data)
+tidy(my_model, conf.int = TRUE) |> knitr::kable(digits = 2)
+my_model |> ggcoef()
+```
+:::
+
+**Question 6.** `x2` is in the true function, and its coefficient is close to zero (and `x3` is not in the truth). Why? Hint: what is the least-squares slope of $2x_2 - x_2^2$ on $x_2$ when $x_2 \sim U(0, 2)$? Then plot the residuals against `x2` (`augment(my_model)` from `broom` gives a data frame with a `.resid` column). Would part 2's diagnostics have caught this?
+
+```{r}
+#| eval: !expr exists("my_model")
+augment(my_model) |>
+  ggplot(aes(x2, .resid)) +
+  geom_point(alpha = 0.5) +
+  geom_smooth(se = FALSE)
+```
+
+::: {.callout-tip .answer collapse="true" title="Reveal answer"}
+Least squares fits the best *linear* approximation. For $X \sim U(0, 2)$, $\mathrm{Cov}(X, X^2)/\mathrm{Var}(X) = (2 - 1 \cdot 4/3)/(1/3) = 2$, so the population slope of $2X - X^2$ on $X$ is $2 - 2 = 0$; the predictors are independent, so this is also the multiple-regression coefficient, and the fitted coefficient is near zero with a tight interval (at $n = 400$ the estimate is usually within $\pm 0.15$ of zero and the interval about $\pm 0.2$ wide; at $n = 100$ the same picture, noisier). The derivative $2 - 2x_2$ is $+2$ at one end and $-2$ at the other; the linear fit averages it away. `x3` is simply irrelevant. The residuals against `x2` show an inverted U: the class of planes does not contain $f$, and a one-predictor residual plot does show it here, because the missing piece is a function of one input. A coefficient near zero with a tight interval is evidence of no *linear* signal, not of no effect.
+:::
+
+#### Optional, can be done at home
+
+<!-- Not in the seminar. -->
+
+**Experiment.** Repeat the steps above, making various choices: the number and distributions of predictor variables; the form of the true outcome generating function; the distribution of the noise (either just changing `sd` or using some other centered distribution); the sample size; the choice of fitted model (`poly(x2, 2)`?); which aspect of the model to interpret or check against the truth.
+
+**Challenge**: can you find some potential dangers of using regression models, where the model is wrong in some important way and our diagnostic methods fail to show us the problem? (A missing piece that depends on two inputs at once is a good place to start.)
+
+**Challenge**: what are some strengths or robustness properties of regression models that we should appreciate and trust in the long run? i.e. are there ways the model can be wrong but our conclusions from it will still (usually?) be good enough to use anyway?
+
+::: {.callout-tip .answer collapse="true" title="Reveal answer"}
+Danger: a missing piece that depends on two inputs at once. The sharpest case: let $U$ and $V$ be independent, each $\pm 1$ with probability $1/2$, and $Y = UV + \varepsilon$ with $\varepsilon \sim N(0, 1)$ independent of both. Then $f^\star(U, V) = UV$ with risk $1$; the best predictor of the form $a + bU + cV$ is the constant $0$, with risk $2$ ($\mathrm{Cov}(U, UV) = \mathbb E V = 0$, and the same for $V$); and $Y$ has the same distribution whatever the value of $U$, and whatever the value of $V$, so no plot of $Y$ or of the residuals against one input shows anything, although the pair predicts $Y$ up to the noise. With a product of continuous inputs in `f` (try $x_1 x_2$) the failure is partly visible: the coefficients are slopes of a plane through a curved surface, and the residuals against one input keep a flat mean but have a spread that changes with it, a bow tie. Strengths: when the truth is close to linear over the range of the data and $n$ is large relative to $p$, the fitted plane is close to the best plane and its predictions inside that range are hard to beat; and even when the truth is curved there is a best plane, the one with the smallest risk among planes (the optimal model theorem with the minimization restricted to planes), and least squares estimates it. Sample least squares minimizes training error. Estimating the coefficients from finite data can leave its population risk above that of the best plane, by an amount the validation week measures.
+:::
