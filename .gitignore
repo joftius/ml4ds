@@ -1,5 +1,12 @@
-# Never on GitHub: complete notebooks, teacher notes, board scripts, their renders.
-instructor/
+# instructor/: only the complete notebooks are tracked (7 October 2026; they are
+# released to students after a delay). Everything else there stays off GitHub:
+# renders, teacher notes, and anything private (exams, problem sets).
+instructor/*
+!instructor/weeks/
+instructor/weeks/*/*
+!instructor/weeks/*/notebooks/
+instructor/weeks/*/notebooks/*
+!instructor/weeks/*/notebooks/*_complete.qmd
 
 # Build state. docs/ (including docs/**/*_files/) is committed: it is the site.
 _freeze/
@@ -10,3 +17,9 @@ _freeze/
 
 /.quarto/
 **/*.quarto_ipynb
+
+# Render leftovers beside sources.
+weeks/**/*_cache/
+weeks/**/*_files/
+instructor/**/*_cache/
+instructor/**/*_files/

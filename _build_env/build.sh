@@ -4,7 +4,7 @@
 #
 #   _build_env/build.sh import <delivery-folder>      copy sources in (rsync; skips root-level *.md such as CHANGES.md)
 #   _build_env/build.sh student                       regenerate every weeks/*/notebooks/notebookN.qmd from instructor/.../notebookN_complete.qmd
-#   _build_env/build.sh instructor                    render instructor material -> instructor/_rendered/ (decks with notes, teacher notes, board scripts, complete notebooks)
+#   _build_env/build.sh instructor                    render instructor material -> instructor/_rendered/ (decks with notes, teacher notes, complete notebooks)
 #   _build_env/build.sh site                          clean public render -> docs/, restore CNAME
 #   _build_env/build.sh check                         gates; non-zero exit on any failure
 #   _build_env/build.sh push "<commit message>"       check, then git add/commit/push
@@ -83,9 +83,11 @@ check() {
   if grep -rlq --exclude-dir=seminar-teachers 'Reveal answer\|Reveal solution' docs; then echo "FAIL: answer boxes in docs/"; fail=1; fi
   if grep -rlq --exclude-dir=decks-notes 'class="notes"' docs --include='*.html'; then echo "FAIL: speaker notes in docs/"; fail=1; fi
   [ "$(cat docs/CNAME 2>/dev/null)" = "ml4ds.com" ] || { echo "FAIL: docs/CNAME"; fail=1; }
-  grep -q '^instructor/$' .gitignore || { echo "FAIL: instructor/ not in .gitignore"; fail=1; }
-  n=$(git ls-files | grep -c '^instructor/' || true)
-  [ "$n" -eq 0 ] || { echo "FAIL: instructor files tracked by git"; fail=1; }
+  # Under instructor/ only the complete notebooks are tracked.
+  n=$(git ls-files | grep '^instructor/' | grep -vc '^instructor/weeks/[^/]*/notebooks/[^/]*_complete\.qmd$' || true)
+  [ "$n" -eq 0 ] || { echo "FAIL: instructor files other than complete notebooks tracked by git"; fail=1; }
+  # Assessments never go in the repository, under any name.
+  if git ls-files | grep -iEq '(^|/)private/|(^|[/_-])exams?([._/-]|$)|problem[_-]?sets?([._/-]|$)|(^|[/_-])psets?([._/-]|$)|held_problems'; then echo "FAIL: an exam, problem-set or private file is tracked by git"; fail=1; fi
   for s in weeks/*/notebooks/notebook*.qmd; do
     [ -e "$s" ] || continue
     [ -e "docs/$s" ] || { echo "FAIL: $s not in docs/ (check the resources: pattern in _quarto.yml)"; fail=1; }
