@@ -170,3 +170,14 @@ $code-block-bg: #f6f6f6;
 
 // Boxes keep dark text on inverse (dark) slides.
 .reveal .inverse .ask, .reveal .inverse .leave, .reveal .inverse .recall { color: #1f1f1f; }
+
+// ---------------------------------------------------------------------
+// MathJax 4 (7 October 2026). Version 4 sets inline math as breakable inline
+// text at its own line height. On a slide that splits a formula across two
+// lines ("M_1 = I" at the end of one, the rest on the next) and makes every
+// line with math about 6 px taller than its neighbours. The first rule
+// restores the line height, the second keeps an inline formula on one line.
+// Measured on weeks 1 and 2: with both, slide heights equal the MathJax 3 ones.
+// ---------------------------------------------------------------------
+.reveal mjx-container:not([display="true"]) { line-height: 0; }
+.reveal mjx-container:not([display="true"]) mjx-break { white-space: nowrap !important; }
