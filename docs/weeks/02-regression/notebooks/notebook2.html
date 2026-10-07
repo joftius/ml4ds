@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.9.38">
+<meta name="generator" content="quarto-1.10.18">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -13,10 +13,13 @@
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
 */
-code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
-div.columns{display: flex; gap: min(4vw, 1.5em);}
-div.column{flex: auto; overflow-x: auto;}
+div.columns{display: flex; gap: 1.5em;}
+div.column{flex: auto;}
+@media screen {
+div.columns{gap: min(4vw, 1.5em);}
+div.column{overflow-x: auto;}
+}
 div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
 ul.task-list{list-style: none;}
 ul.task-list li input[type="checkbox"] {
@@ -71,10 +74,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="../../../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../../../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../../../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../../../site_libs/quarto-html/quarto-syntax-highlighting-15634bcf2e68342d4ad2dfa704d543f6.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="../../../site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../../../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../../../site_libs/bootstrap/bootstrap-4d3f3448f837ff03356db176d8adb603.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="../../../site_libs/bootstrap/bootstrap-2933ca209de16f787bfe4fe53c4e45ee.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "language": {
     "search-no-results-text": "No results",
@@ -92,7 +95,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 }</script>
 
   <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
-  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js" type="text/javascript"></script>
 
 <script type="text/javascript">
 const typesetMath = (el) => {
@@ -684,15 +687,15 @@ R(f) = R(f^\star) + \mathbb E\big[(f^\star(X) - f(X))^2\big].
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>Ainv <span class="sc">%*%</span> A   <span class="co"># the 2 x 2 identity matrix</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>     [,1]         [,2]
-[1,]    1 1.578934e-16
+[1,]    1 1.665335e-16
 [2,]    0 1.000000e+00</code></pre>
 </div>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>A <span class="sc">%*%</span> Ainv   <span class="co"># not a right inverse</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>             [,1]         [,2]         [,3]
 [1,] 1.000000e+00 5.551115e-17 5.551115e-17
-[2,] 1.578934e-16 5.000000e-01 5.000000e-01
-[3,] 1.578934e-16 5.000000e-01 5.000000e-01</code></pre>
+[2,] 1.665335e-16 5.000000e-01 5.000000e-01
+[3,] 1.665335e-16 5.000000e-01 5.000000e-01</code></pre>
 </div>
 </div>
 </section>
@@ -781,28 +784,28 @@ F-statistic: 176.2 on 1 and 331 DF,  p-value: &lt; 2.2e-16</code></pre>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="notebook2_files/figure-html/unnamed-chunk-12-1.png" class="img-fluid figure-img" style="width:48.0%"></p>
+<p><img src="notebook2_files/figure-html/unnamed-chunk-13-1.png" class="img-fluid figure-img" style="width:48.0%"></p>
 </figure>
 </div>
 </div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="notebook2_files/figure-html/unnamed-chunk-12-2.png" class="img-fluid figure-img" style="width:48.0%"></p>
+<p><img src="notebook2_files/figure-html/unnamed-chunk-13-2.png" class="img-fluid figure-img" style="width:48.0%"></p>
 </figure>
 </div>
 </div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="notebook2_files/figure-html/unnamed-chunk-12-3.png" class="img-fluid figure-img" style="width:48.0%"></p>
+<p><img src="notebook2_files/figure-html/unnamed-chunk-13-3.png" class="img-fluid figure-img" style="width:48.0%"></p>
 </figure>
 </div>
 </div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="notebook2_files/figure-html/unnamed-chunk-12-4.png" class="img-fluid figure-img" style="width:48.0%"></p>
+<p><img src="notebook2_files/figure-html/unnamed-chunk-13-4.png" class="img-fluid figure-img" style="width:48.0%"></p>
 </figure>
 </div>
 </div>
@@ -971,7 +974,7 @@ F-statistic: 176.2 on 1 and 331 DF,  p-value: &lt; 2.2e-16</code></pre>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="notebook2_files/figure-html/unnamed-chunk-24-1.png" class="img-fluid figure-img" width="1050"></p>
+<p><img src="notebook2_files/figure-html/unnamed-chunk-25-1.png" class="img-fluid figure-img" width="1050"></p>
 </figure>
 </div>
 </div>

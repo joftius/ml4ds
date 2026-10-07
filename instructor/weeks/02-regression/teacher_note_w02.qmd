@@ -1,0 +1,51 @@
+---
+title: "Teacher note: week 2 seminar"
+subtitle: "For class teachers"
+format:
+  html:
+    toc: false
+    embed-resources: true
+---
+
+## Keep or rush
+
+In seminar order. Planned total about 55 minutes.
+
+| Item | Min | | If short |
+|---|---:|---|---|
+| Problem 1(a, b): the best constant, total variance | 6 | Keep, briefly | One combined explanation: the best constant is $\mathbb E Y$, and its risk splits $\mathrm{Var}(Y)$ into a predictable and an unpredictable part |
+| Problem 1(c): the leaderboard gap | 4 | Rush; cut first | Say it: nothing beats $R(f^\star)$ on average |
+| Problem 2(a): the exact omitted-variable identity | 5 | Keep | The fact to say out loud: a least-squares residual is orthogonal to every column it was fitted on |
+| Problem 2(b): the numbers | 2 | Rush | Give them: $\hat\delta = 1.5$, so the short regression estimates 4 |
+| Problem 2(c): orthogonal columns | 2 | Rush | One sentence: the coefficient stays the same, the fitted values change |
+| Coding 1, step 1: the formula against `lm` | 5 | Rush | Reveal the solution and show the match |
+| Coding 2: steps 1 and 3, question 2 | 10 | Rush; cut second | The `tidy` table only |
+| Coding 3, step 1 and question 4: partialling out | 6 | Keep | |
+| Coding 3, step 2 and question 5: leaving `lpop` out | 6 | Keep | Give the code, keep the interpretation |
+| Coding 4, step 1: fit the simulated data | 3 | Rush | Run it |
+| Coding 4, question 6: a zero coefficient with a real signal | 5 | Keep | Show the residual plot; skip the covariance arithmetic |
+
+Minimum seminar, about 25 minutes: problem 2(a), coding 3, coding 4 question 6. With more time, add problem 1(a, b) back first.
+
+## If you read on
+
+How it runs
+
+- Students did exercises 1 to 3 at home. Open the [complete notebook](https://ml4ds.com/seminar-teachers/notebook2_complete.html) on screen: blue boxes are hints, opened in order after the room has had a few minutes; green boxes are answers.
+- Show an exercise's solution only if asked. Exercise 3's is the lecture's proof.
+- Everything headed "Optional, can be done at home" is outside the seminar.
+
+What students should see
+
+- The formula and `lm` agree.
+- The coefficient on `lgdp` is 10.69, and the residual regression gives the same number.
+- Leaving `lpop` out gives 10.66, which is $10.69 + 0.093 \times (-0.267)$.
+- In the simulation the coefficient on `x2` is within about 0.15 of zero, and the residuals against `x2` show an inverted U.
+
+Where they get stuck
+
+- `x * beta` in place of `x %*% beta`.
+- Adding an intercept column to a `model.matrix` that already has one.
+- In coding 3, regressing the residual on `lgdp` instead of `lifeExp` on the residual, or fitting the two regressions on different rows.
+- In coding 4, changing `f` but not the fitted model.
+- In the student file, a chunk with a blank starts with `#| eval: false`; they delete that line once the blank is filled.

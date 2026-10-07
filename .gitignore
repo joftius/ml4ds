@@ -1,15 +1,17 @@
-# instructor/: only the complete notebooks are tracked (7 October 2026; they are
-# released to students after a delay). Everything else there stays off GitHub:
-# renders, teacher notes, and anything private (exams, problem sets).
+# instructor/: the complete notebooks and the teacher notes are tracked
+# (7 October 2026; the notebooks are released to students after a delay).
+# Everything else there stays off GitHub: renders, and anything private
+# (exams, problem sets, held problems).
 instructor/*
 !instructor/weeks/
 instructor/weeks/*/*
+!instructor/weeks/*/teacher_note*.qmd
 !instructor/weeks/*/notebooks/
 instructor/weeks/*/notebooks/*
 !instructor/weeks/*/notebooks/*_complete.qmd
 
 # Build state. docs/ (including docs/**/*_files/) is committed: it is the site.
-_freeze/
+# _freeze/ is committed too, so a site render re-executes only what changed.
 .quarto/
 /.Rproj.user/
 /*.Rproj
