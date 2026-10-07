@@ -127,6 +127,8 @@ check() {
   if grep -lq '\.answer' weeks/*/notebooks/*.qmd 2>/dev/null; then echo "FAIL: .answer div in a student notebook"; fail=1; fi
   # Every teacher page must be self-contained (no sibling _files folder is published).
   if grep -lq '_files/libs/' docs/seminar-teachers/*.html docs/decks-notes/*.html 2>/dev/null; then echo "FAIL: a teacher page in docs/ is not self-contained"; fail=1; fi
+  # Math is rendered by MathJax 3 (pinned in _quarto.yml); version 4 changes every slide's layout.
+  if grep -rlq --include='*.html' 'mathjax@4' docs; then echo "FAIL: a page loads MathJax 4 (remove html-math-method from its YAML)"; fail=1; fi
   # Teacher pages are unlinked. A link from a public page is right only once the convenor has released that file.
   n=$(grep -rl --include='*.html' --exclude-dir=seminar-teachers --exclude-dir=decks-notes -e 'seminar-teachers/' -e 'decks-notes/' docs | tr '\n' ' ' || true)
   [ -z "$n" ] || echo "WARN: public page links to a teacher path: $n"
