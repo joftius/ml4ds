@@ -85,13 +85,10 @@ format:
       style: simple
       palette: light
 
-# MathJax 3, pinned (7 October 2026). Quarto 1.10 loads MathJax 4 by default, which
-# breaks inline formulas across lines and makes lines with math taller; the decks
-# were laid out and measured with version 3. A deck must not set html-math-method
-# itself, or it overrides this.
-html-math-method:
-  method: mathjax
-  url: "https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js"
+# Math: MathJax 4, Quarto 1.10's version when a page asks for mathjax. Set here for
+# every page because a revealjs deck with no html-math-method gets MathJax 2.7.9.
+# The two layout rules that decks need with version 4 are at the end of theme/st310.scss.
+html-math-method: mathjax
 
 execute:
   freeze: auto
