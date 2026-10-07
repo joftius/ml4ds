@@ -1,44 +1,41 @@
 ---
 title: "Teacher note: week N seminar"
-subtitle: "For class teachers. Not for students."
+subtitle: "For class teachers"
 format:
   html:
-    toc: true
-  pdf:
-    pdf-engine: xelatex
-    papersize: a4
-    geometry: margin=2cm
+    toc: false
+    embed-resources: true
 ---
 
 <!--
-TEMPLATE. Short: teachers should be able to prepare from it in twenty minutes.
-Must contain: the plan with minutes (80 of content inside the 90-minute
-booking); cut instructions that name the task, not a bare step number; the
-intervention thresholds in one line;
-expected answers to the opener and the problems (with common errors and the
-minimal hint to give); answers to the coding questions as ranges, since
-students' splits differ, tagged [unaffirmed] with a one-line gloss until
-someone has reproduced them outside the build sandbox; what changes with the alternative datasets; where
-students get stuck.
+TEMPLATE (7 October 2026). One page. The table is the note: write everything
+under "If you read on" assuming it may not be read. No summary, no plan
+narrative, no list of hints (they are in the complete notebook). Exemplar:
+instructor/weeks/02-regression/teacher_note_w02.qmd.
 -->
 
-## Plan
+## Keep or rush
 
-| Segment | Minutes | Students do | Teacher does |
-|---|---|---|---|
-| Opener | 5 | | |
-| Problems | 21 | | |
-| Coding | 49 | | |
-| Exit | 5 | | |
+In seminar order. Planned total about 55 minutes.
 
-Thresholds: R idiosyncrasies get a short leash; general debugging a longer one; statistical confusion the longest.
+| Item | Min | | If short |
+|---|---:|---|---|
+| Problem 1: ... | 0 | Keep | The one thing to say |
+| Problem 2: ... | 0 | Rush; cut first | The one-line fallback |
+| Coding 1: ... | 0 | Rush | |
 
-## Opener: expected answers
+Minimum seminar, about N minutes: the items to protect. With more time, add ... back first.
 
-## Problems: answers, common errors, minimal hints
+## If you read on
 
-## Coding: what students should see
+How it runs
 
-## Alternative datasets
+- Three lines at most: what students did before, the link to the complete notebook, what is outside the seminar.
 
-## Where students get stuck
+What students should see
+
+- The numbers.
+
+Where they get stuck
+
+- Five bullets at most.

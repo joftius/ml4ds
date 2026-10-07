@@ -2,26 +2,20 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://ml4ds.com/weeks/02-regression/slides/02-1-regression.html</loc>
-    <lastmod>2026-10-05T19:42:15.000Z</lastmod>
   </url>
   <url>
     <loc>https://ml4ds.com/weeks/01-introduction-foundations/slides/01-1-introduction.html</loc>
-    <lastmod>2026-09-28T09:07:01.000Z</lastmod>
   </url>
   <url>
     <loc>https://ml4ds.com/about.html</loc>
-    <lastmod>2026-10-05T20:17:10.000Z</lastmod>
   </url>
   <url>
     <loc>https://ml4ds.com/index.html</loc>
-    <lastmod>2026-09-28T08:27:22.000Z</lastmod>
   </url>
   <url>
     <loc>https://ml4ds.com/weeks/01-introduction-foundations/notebooks/notebook1.html</loc>
-    <lastmod>2026-10-06T10:07:16.111Z</lastmod>
   </url>
   <url>
     <loc>https://ml4ds.com/weeks/02-regression/notebooks/notebook2.html</loc>
-    <lastmod>2026-10-06T10:07:16.323Z</lastmod>
   </url>
 </urlset>
