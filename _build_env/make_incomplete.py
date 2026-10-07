@@ -19,10 +19,11 @@ Markers in the complete file:
   <details><summary>Hint ...</summary> ... </details>
       Kept as they are (collapsed in both renders).
 
-Everything else is copied verbatim. Skeleton chunks that contain a blank line
-`...` already carry `#| eval: false` in the complete file (so that the teacher
-render does not evaluate them either); the generator adds it where it is
-missing. The YAML title loses its " (complete)" suffix, and the teacher-only
+Everything else is copied verbatim. Skeleton chunks mark the place for the
+student's code with a commented line `# ...` (from 7 October 2026; a bare `...`
+is still recognized), so there is no line to delete. They already carry
+`#| eval: false` in the complete file (so that the teacher render does not
+evaluate them either); the generator adds it where it is missing. The YAML title loses its " (complete)" suffix, and the teacher-only
 HTML comment at the top is dropped. The script exits non-zero if an answer div
 is opened and never closed.
 """
@@ -30,8 +31,9 @@ import sys, re
 
 NOTICE = (
     "::: {.callout-note}\n"
-    "This is the student version of the notebook: the blanks are `...`. "
-    "A code chunk that contains a blank starts with `#| eval: false`, so the file "
+    "This is the student version of the notebook. The code you write goes where "
+    "a line says `# ...` or has a `____`. "
+    "A code chunk with a blank starts with `#| eval: false`, so the file "
     "renders as it stands; delete that line once you have filled the blank. "
     "Working through the chunks one at a time in RStudio (Ctrl/Cmd+Enter) is "
     "unaffected. Answers are revealed in the seminar.\n"
@@ -39,6 +41,7 @@ NOTICE = (
 )
 
 OPEN = re.compile(r"^:::+\s*\{[^}]*\.answer[^}]*\}\s*$")
+BLANK = re.compile(r"^[ \t]*(#[ \t]*)?\.\.\.[ \t]*$", flags=re.M)
 CLOSE = re.compile(r"^:::+\s*$")
 
 def check_markers(txt, name):
@@ -79,7 +82,7 @@ def derive(txt):
     # chunks that contain a blank do not evaluate in the student render
     def chunk_repl(m):
         fence, body, close = m.group(1), m.group(2), m.group(3)
-        has_blank = re.search(r"^[ \t]*\.\.\.[ \t]*$", body, flags=re.M) is not None
+        has_blank = BLANK.search(body) is not None
         has_eval = re.search(r"^#\|\s*eval\s*:", body, flags=re.M) is not None
         if has_blank and not has_eval:
             body = "#| eval: false\n" + body
@@ -108,7 +111,7 @@ if __name__ == "__main__":
         sys.exit(1)
     out = derive(txt)
     open(dst, "w").write(out)
-    n_ans = len(re.findall(r"^\s*\.\.\.\s*$", out, flags=re.M))
+    n_ans = len(BLANK.findall(out))
     n_off = len(re.findall(r"^#\| eval: false$", out, flags=re.M))
     n_left = len(re.findall(r"\.answer|Reveal (answer|solution)", out))
     print(f"wrote {dst}: {n_ans} blanks; {n_off} chunks with eval: false; {n_left} answer markers left")

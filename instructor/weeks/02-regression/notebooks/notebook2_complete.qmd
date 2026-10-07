@@ -372,7 +372,7 @@ head(X, 3)
 #| eval: false
 # beta_hat <- solve(____ %*% ____) %*% ____ %*% ____
 # cbind(formula = beta_hat, lm = coef(lm(lifeExp ~ lgdp + lpop, data = gm)))
-...
+# ...
 ```
 
 ::: {.callout-tip .answer collapse="true" title="Reveal solution"}
@@ -399,7 +399,7 @@ stopifnot(isTRUE(all.equal(as.numeric(beta_hat),
 # H <- ____
 # c(trace = sum(diag(H)), n = nrow(X), q = ncol(X))
 # all.equal(as.numeric(H %*% y), as.numeric(fitted(lm(lifeExp ~ lgdp + lpop, data = gm))))
-...
+# ...
 ```
 
 ::: {.callout-tip .answer collapse="true" title="Reveal solution"}
@@ -442,7 +442,7 @@ summary(model_simple)
 ```{r}
 #| eval: false
 # predict(model_simple) ; residuals(model_simple) ; coef(model_simple) ; confint(model_simple)
-...
+# ...
 ```
 
 ::: {.callout-tip .answer collapse="true" title="Reveal solution"}
@@ -471,7 +471,7 @@ Generally looking for patterns in residuals, normality of their distribution (di
 ```{r}
 #| eval: false
 # my_data |> ggplot(aes(x = ____, y = ____)) + ____ + ____
-...
+# ...
 ```
 
 ::: {.callout-tip .answer collapse="true" title="Reveal solution"}
@@ -493,7 +493,7 @@ model_multiple <- lm(
 # tidy(model_multiple, conf.int = TRUE) |> knitr::kable(digits = 2)
 # glance(model_multiple) |> knitr::kable(digits = 3)
 # ggcoef(____)
-...
+# ...
 ```
 
 ::: {.callout-tip .answer collapse="true" title="Reveal solution"}
@@ -517,7 +517,7 @@ ggcoef(model_multiple)
 ```{r}
 #| eval: false
 # ggnostic(____)
-...
+# ...
 ```
 
 ::: {.callout-tip .answer collapse="true" title="Reveal solution"}
@@ -534,7 +534,7 @@ There is also a function `ggpairs` useful for exploratory data analysis, but bew
 # my_data |>
 #   select(-year, -island) |>
 #   ggpairs(progress = FALSE)
-...
+# ...
 ```
 
 ::: {.callout-tip .answer collapse="true" title="Reveal solution"}
@@ -552,7 +552,7 @@ my_data |>
 #| eval: false
 # model_transformed <- lm(____ ~ poly(____, 2) + ____, data = my_data)
 # glance(model_transformed)$r.squared
-...
+# ...
 ```
 
 ::: {.callout-tip .answer collapse="true" title="Reveal solution"}
@@ -589,7 +589,7 @@ tidy(long) |> knitr::kable(digits = 2)
 # lgdp_tilde <- resid(lm(____ ~ ____, data = gm))
 # c(full = coef(long)[["lgdp"]],
 #   y_on_residual = coef(lm(gm$lifeExp ~ lgdp_tilde))[[2]])
-...
+# ...
 ```
 
 ::: {.callout-tip .answer collapse="true" title="Reveal solution"}
@@ -621,7 +621,7 @@ The slope of `lifeExp` on the part of `lgdp` not linearly explained by `lpop`, t
 # aux <- lm(____, data = gm)
 # c(short = coef(short)[["lgdp"]],
 #   long_plus_correction = coef(long)[["lgdp"]] + coef(long)[["lpop"]] * coef(aux)[["lgdp"]])
-...
+# ...
 ```
 
 ::: {.callout-tip .answer collapse="true" title="Reveal solution"}
@@ -682,7 +682,7 @@ ggpairs(sim_data, progress = FALSE)
 # my_model <- lm(____, data = sim_data)
 # tidy(my_model, conf.int = TRUE) |> knitr::kable(digits = 2)
 # my_model |> ggcoef()
-...
+# ...
 ```
 
 ::: {.callout-tip .answer collapse="true" title="Reveal solution"}

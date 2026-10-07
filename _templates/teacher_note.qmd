@@ -16,13 +16,15 @@ instructor/weeks/02-regression/teacher_note_w02.qmd.
 
 ## Keep or rush
 
-In seminar order. Planned total about 55 minutes.
+In seminar order. Planned total about 60 minutes.
 
 | Item | Min | | If short |
 |---|---:|---|---|
 | Problem 1: ... | 0 | Keep | The one thing to say |
 | Problem 2: ... | 0 | Rush; cut first | The one-line fallback |
 | Coding 1: ... | 0 | Rush | |
+
+: {tbl-colwidths="[32,6,16,46]"}
 
 Minimum seminar, about N minutes: the items to protect. With more time, add ... back first.
 

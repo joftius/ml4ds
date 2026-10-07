@@ -13,7 +13,7 @@ execute:
 ---
 
 ::: {.callout-note}
-This is the student version of the notebook: the blanks are `...`. A code chunk that contains a blank starts with `#| eval: false`, so the file renders as it stands; delete that line once you have filled the blank. Working through the chunks one at a time in RStudio (Ctrl/Cmd+Enter) is unaffected. Answers are revealed in the seminar.
+This is the student version of the notebook. The code you write goes where a line says `# ...` or has a `____`. A code chunk with a blank starts with `#| eval: false`, so the file renders as it stands; delete that line once you have filled the blank. Working through the chunks one at a time in RStudio (Ctrl/Cmd+Enter) is unaffected. Answers are revealed in the seminar.
 :::
 
 ```{r}
@@ -241,7 +241,7 @@ head(X, 3)
 #| eval: false
 # beta_hat <- solve(____ %*% ____) %*% ____ %*% ____
 # cbind(formula = beta_hat, lm = coef(lm(lifeExp ~ lgdp + lpop, data = gm)))
-...
+# ...
 ```
 
 Checkpoint (run it; if it stops, check the order of the factors in the formula):
@@ -261,7 +261,7 @@ stopifnot(isTRUE(all.equal(as.numeric(beta_hat),
 # H <- ____
 # c(trace = sum(diag(H)), n = nrow(X), q = ncol(X))
 # all.equal(as.numeric(H %*% y), as.numeric(fitted(lm(lifeExp ~ lgdp + lpop, data = gm))))
-...
+# ...
 ```
 
 **Question 1.** The trace came out as a small integer. Which one, and why?
@@ -292,7 +292,7 @@ summary(model_simple)
 ```{r}
 #| eval: false
 # predict(model_simple) ; residuals(model_simple) ; coef(model_simple) ; confint(model_simple)
-...
+# ...
 ```
 
 ```{r}
@@ -308,7 +308,7 @@ plot(model_simple)
 ```{r}
 #| eval: false
 # my_data |> ggplot(aes(x = ____, y = ____)) + ____ + ____
-...
+# ...
 ```
 
 **Step 3.** Multiple linear regression: repeat with a model using more than one predictor, and notice what's different about the output. Then use `tidy` and `glance` from the `broom` package and compare with `summary` (see `?tidy.lm`; piping `tidy()` into `knitr::kable()` formats it nicely), and draw the coefficients with their intervals using `ggcoef` from `GGally`.
@@ -321,7 +321,7 @@ model_multiple <- lm(
 # tidy(model_multiple, conf.int = TRUE) |> knitr::kable(digits = 2)
 # glance(model_multiple) |> knitr::kable(digits = 3)
 # ggcoef(____)
-...
+# ...
 ```
 
 #### Optional, can be done at home
@@ -333,7 +333,7 @@ model_multiple <- lm(
 ```{r}
 #| eval: false
 # ggnostic(____)
-...
+# ...
 ```
 
 There is also a function `ggpairs` useful for exploratory data analysis, but beware that it can be slow because it computes many pairwise plots. You may not want to rerun that code many times. There is an option `cache: true` that saves the result after running it once and then refuses to run it again unless you change the code chunk. You can also leave out variables you don't want to include using `select(-var1, -var2, ...)` or choose only some to include with `select(var1, var2, ...)`. Also see useful helper functions like `?tidyselect::starts_with`.
@@ -344,7 +344,7 @@ There is also a function `ggpairs` useful for exploratory data analysis, but bew
 # my_data |>
 #   select(-year, -island) |>
 #   ggpairs(progress = FALSE)
-...
+# ...
 ```
 
 **Step 4.** Pick at least one numeric predictor and include a non-linear transformation, e.g. a polynomial `y ~ poly(x, d)` or an interaction `y ~ x1 * x2`. Use `glance`, `tidy` and `plot` again on this model and note any differences.
@@ -353,7 +353,7 @@ There is also a function `ggpairs` useful for exploratory data analysis, but bew
 #| eval: false
 # model_transformed <- lm(____ ~ poly(____, 2) + ____, data = my_data)
 # glance(model_transformed)$r.squared
-...
+# ...
 ```
 
 **Question 3.** The pair plots from e.g. `ggnostic` or `ggpairs` show many 2-dimensional projections of the data, but there is no guarantee that these projections together help us understand higher dimensional relationships. What does this mean for diagnostic plots when our regression model is high dimensional (e.g. $p > 3$ predictors)?
@@ -376,7 +376,7 @@ tidy(long) |> knitr::kable(digits = 2)
 # lgdp_tilde <- resid(lm(____ ~ ____, data = gm))
 # c(full = coef(long)[["lgdp"]],
 #   y_on_residual = coef(lm(gm$lifeExp ~ lgdp_tilde))[[2]])
-...
+# ...
 ```
 
 Checkpoint:
@@ -396,7 +396,7 @@ stopifnot(isTRUE(all.equal(coef(long)[["lgdp"]], coef(lm(gm$lifeExp ~ lgdp_tilde
 # aux <- lm(____, data = gm)
 # c(short = coef(short)[["lgdp"]],
 #   long_plus_correction = coef(long)[["lgdp"]] + coef(long)[["lpop"]] * coef(aux)[["lgdp"]])
-...
+# ...
 ```
 
 **Question 5.** Did leaving out `lpop` move the coefficient on `lgdp` by much, and in which direction? Exercise 2 names two things the size of the move depends on; which of them is small here? Is the short coefficient "wrong"?
@@ -444,7 +444,7 @@ ggpairs(sim_data, progress = FALSE)
 # my_model <- lm(____, data = sim_data)
 # tidy(my_model, conf.int = TRUE) |> knitr::kable(digits = 2)
 # my_model |> ggcoef()
-...
+# ...
 ```
 
 **Question 6.** `x2` is in the true function, and its coefficient is close to zero (and `x3` is not in the truth). Why? Hint: what is the least-squares slope of $2x_2 - x_2^2$ on $x_2$ when $x_2 \sim U(0, 2)$? Then plot the residuals against `x2` (`augment(my_model)` from `broom` gives a data frame with a `.resid` column). Would part 2's diagnostics have caught this?
