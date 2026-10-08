@@ -1,0 +1,55 @@
+---
+title: "Teacher note: week 3 seminar"
+subtitle: "For class teachers"
+format:
+  html:
+    toc: false
+    embed-resources: true
+---
+
+## Keep or rush
+
+In seminar order. Planned total about 60 minutes.
+
+| Item | Min | | If short |
+|---|---:|---|---|
+| Problem 1(a, b): threshold $1/6$, the tie, $\hat p = 0.25$ | 5 | Keep | The rule is about the true $p$; with $\hat p$ it is only as good as the estimate |
+| Problem 1(c, d): two teams, what the survey decided | 3 | Rush; cut first | Say it: same model, same bird, different calls between $1/6$ and $1/2$ |
+| Problem 2(a, b): effect 1, naive slope 2 | 6 | Keep | The slope is the effect plus $\gamma\delta = 2 \cdot \tfrac12$ |
+| Problem 2(c): adjustment by hand | 4 | Keep | Average $t + 2z$ over $Z$; the noise term drops by independence |
+| Problem 2(d): the reverse world | 2 | Rush | Give it: slope 2, effect 0 |
+| Coding 1, steps 1 and 2, question 1: fit, read the odds | 5 | Keep | The multiplier is on the odds, not on $p$, and it is not causal |
+| Coding 1, step 3: confusion matrix | 3 | Rush | Reveal the solution |
+| Coding 1, step 4 and question 2: ROC by hand | 7 | Rush; cut second | Reveal the loop; keep "AUC is a ranking probability" |
+| Coding 1, step 5 and question 3: costs | 5 | Keep | The minimum sits near $1/6$; the survey chose it |
+| Coding 2, step 1 and question 4: slopes, predictions | 5 | Keep | Predictions written down before step 2 |
+| Coding 2, step 2: intervene with the same noise | 6 | Keep | Give `case_when` if stuck; keep the four right-hand sides |
+| Coding 2, step 3 and question 5: world D | 6 | Keep | The coefficient and the averaged difference agree |
+| Coding 2, question 6: same noise against fresh noise | 3 | Rush | One sentence: unit counterfactual against a new draw |
+
+: {tbl-colwidths="[32,6,16,46]"}
+
+Minimum seminar, about 25 minutes: problem 2(a to c), coding 2 steps 2 and 3. With more time, add problem 1(a, b) back first.
+
+## If you read on
+
+How it runs
+
+- Students did exercises 1 to 4 at home. Open the [complete notebook](https://ml4ds.com/seminar-teachers/notebook3_complete.html) on screen: blue boxes are hints, opened in order after the room has had a few minutes; green boxes are answers.
+- Show an exercise's solution only if asked. Exercise 3's is the lecture's proof.
+- Everything headed "Optional, can be done at home" is outside the seminar, including the `yardstick` checks.
+
+What students should see
+
+- 219 birds, 68 Chinstraps (0.31); always predicting Adelie scores 0.69.
+- Bill model: odds of Chinstrap times about 9 per millimeter of bill length; six errors at $\tfrac12$ (3 misses, 3 false alarms); `glm` warns that fitted probabilities are numerically 0 or 1.
+- Flipper model: AUC 0.734; with costs 5 and 1 the cost per bird is lowest, 0.58, at thresholds 0.16 and 0.17, against $1/6$; at $\tfrac12$ it is 1.11.
+- Four worlds: slopes near 2 in A, B and C and near $-3.8$ in D (they vary by student, no seed); intervention effects exactly 2, 0, 0 and $-3$; in D the coefficient on `X` with `Z` included is within about 0.1 of $-3$ and equals the averaged difference.
+
+Where they get stuck
+
+- The TPR denominator: the number of true Chinstraps, not the number predicted.
+- Redrawing the noise inside `intervene()`, then finding that the intervention "does something" in world C.
+- Writing world B's `Y_do` with `X_do` in it: in world B, `Y` does not depend on `X`.
+- In step 3 of part 2, `newdata = d` for both predictions (difference zero), or leaving `Z` out (the naive $-3.8$ comes back).
+- In the student file, a chunk with a blank starts with `#| eval: false`; they delete that line once the blank is filled. The `# ...` line can stay.
