@@ -5,8 +5,9 @@ Classification: logistic regression, a threshold and the two kinds of error on e
 **Reading**
 
 - ISLR Chapter 4 (Classification), sections 4.1–4.3, pp. 130–141. Section 4.4 (LDA, QDA, naive Bayes) is not part of this course; skim 4.5, pp. 158–164, for the comparison with $k$-nearest neighbors.
-- PPA Chapter 2, "Types of errors and successes" and "The Neyman–Pearson lemma", pp. 21–26, and "Decisions that discriminate", pp. 26–31.
-- PPA Chapter 9 (Causality), "The limitations of observation", pp. 179–181. Optional now and needed in week 8: "Confounding", pp. 189–192.
+- PPA Chapter 9 (Causality), from "The limitations of observation" through "Confounding", pp. 179–192.
+
+Optional: PPA Chapter 2 (Fundamentals of prediction), "Types of errors and successes" and "The Neyman–Pearson lemma", pp. 21–26, and "Decisions that discriminate", pp. 26–31.
 
 **Lecture:** [slides](weeks/03-classification-causality/slides/03-1-classification-causality.html)
 
