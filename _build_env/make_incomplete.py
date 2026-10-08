@@ -2,7 +2,16 @@
 """Derive the student notebook from the teacher (_complete) one.
 
 Usage:  make_incomplete.py <complete.qmd> <student.qmd>
+        make_incomplete.py --solutions <complete.qmd> <solutions.qmd>
         make_incomplete.py --check <complete.qmd>      (marker balance only)
+
+Three documents come from the one source (convenor, 8 October 2026). The
+teacher's notebook is the _complete file itself, published for seminar teachers
+only. The student notebook is that file without its answers. The notebook with
+solutions is what students are given the week after the seminar: a separate
+document, so that the two can differ. For now it is the complete notebook
+without the teacher-only comment at the top; what else differs is to be
+decided, and derive_solutions() below is the place for it.
 
 Revised 26 September 2026 for the 2026-27 seminar format: the teacher file
 carries every answer in a collapsible callout that the seminar teacher opens on
@@ -61,6 +70,11 @@ def check_markers(txt, name):
         problems.append(f"{name}: legacy 'ANSWER' marker found; this generator uses .answer divs")
     return problems
 
+def derive_solutions(txt):
+    """The notebook with solutions, for students. Answers are kept."""
+    # teacher-only comment immediately after the YAML header
+    return re.sub(r"(---\n.*?\n---\n)\s*<!-- Teacher version\..*?-->\n", r"\1", txt, count=1, flags=re.S)
+
 def derive(txt):
     out, skipping = [], False
     for line in txt.split("\n"):
@@ -102,6 +116,17 @@ if __name__ == "__main__":
         for p in problems:
             print(p, file=sys.stderr)
         sys.exit(1 if problems else 0)
+    if args and args[0] == "--solutions":
+        src, dst = args[1], args[2]
+        txt = open(src).read()
+        problems = check_markers(txt, src)
+        if problems:
+            for p in problems:
+                print(p, file=sys.stderr)
+            sys.exit(1)
+        open(dst, "w").write(derive_solutions(txt))
+        print(f"wrote {dst}")
+        sys.exit(0)
     src, dst = args[0], args[1]
     txt = open(src).read()
     problems = check_markers(txt, src)
