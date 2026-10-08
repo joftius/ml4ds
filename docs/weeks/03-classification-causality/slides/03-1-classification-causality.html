@@ -449,39 +449,9 @@ p(x) = P(Y = 1 \mid X = x) = \mathbb E[Y \mid X = x]
 p(x) &gt; c^\star = \frac{c_{FP}}{c_{FP} + c_{FN}},
 \]</span> and at <span class="math inline">\(p(x) = c^\star\)</span> either prediction is optimal. Equal costs give <span class="math inline">\(c^\star = \tfrac12\)</span>: predict the more probable class, the <strong>Bayes classifier</strong>.</p>
 <div class="leave">
-<p>The model supplies <span class="math inline">\(p\)</span>; the costs supply <span class="math inline">\(c^\star\)</span>, and somebody chose the costs. With <span class="math inline">\(\hat p\)</span> in place of <span class="math inline">\(p\)</span> it is a plug-in rule, only as good as the estimate.</p>
+<p>The model gives <span class="math inline">\(p\)</span>. The costs give <span class="math inline">\(c^\star\)</span>, and somebody chose the costs. With <span class="math inline">\(\hat p\)</span> in place of <span class="math inline">\(p\)</span>, the rule is only as good as the estimate.</p>
 </div>
 <p><strong>Proof</strong>: exercise 1 in the notebook, before the seminar. The same argument as week 2’s optimal model theorem: minimize the expected loss one <span class="math inline">\(x\)</span> at a time.</p>
-</section>
-<section id="one-slide-on-the-support-vector-machine" class="slide level2 inverse">
-<h2>One slide on the support vector machine</h2>
-<div class="columns">
-<div class="column" style="width:55%;">
-<div class="cell">
-<div class="cell-output-display">
-<div>
-<figure>
-<p><img data-src="03-1-classification-causality_files/figure-revealjs/hinge-1.png" style="width:96.0%"></p>
-</figure>
-</div>
-</div>
-</div>
-</div><div class="column" style="width:45%;">
-<p>Vapnik, Bell Labs, 1990s: forget probabilities, find the boundary with the <strong>widest margin</strong></p>
-<p>Equivalent to minimizing the <strong>hinge loss</strong> <span class="math inline">\(\max(0, 1 - y f(x))\)</span> plus a penalty on <span class="math inline">\(\|\beta\|\)</span> (week 7)</p>
-<p>Same picture as logistic regression, a different loss; the <em>kernel trick</em> makes the boundary curved</p>
-<p>Its output is a score, not a probability: the cost threshold above does not apply to it as it stands</p>
-</div></div>
-</section>
-<section id="no-free-lunch" class="slide level2">
-<h2>No free lunch</h2>
-<p><strong>No free lunch (stated).</strong> No method has lower error than every other on every distribution.</p>
-<p>Intuition, not a proof: the labels a method has seen say nothing, by themselves, about the points it has not seen</p>
-<p>Exercise 4 proves a version: on a finite domain, averaged over all labelings, every method’s error on unseen points is exactly <span class="math inline">\(\tfrac12\)</span></p>
-<p>So choosing a method is an <em>assumption</em> about the world. It does not say that methods are equally good on the problems we actually meet</p>
-<div class="ask">
-<p>In week 1’s seminar you scored a straight line and <span class="math inline">\(k\)</span> nearest neighbors on the same 42 held-out countries. Suppose the line had won by more than a standard error. Is that a fact about the two methods, or about the data?</p>
-</div>
 </section>
 <section id="causality-part-1" class="slide level2 center">
 <h2>Causality, part 1</h2>
@@ -567,7 +537,7 @@ p(x) &gt; c^\star = \frac{c_{FP}}{c_{FP} + c_{FN}},
 <p>(yes! and they are wrong!!!!)</p>
 </div>
 </section>
-<section id="section-2" class="slide level2 center">
+<section id="section-2" class="slide level2 inverse center">
 <h2></h2>
 <p>Warning: don’t go this way</p>
 <p>the next slide is about some common mistakes people make when interpreting regression coefficients</p>
@@ -692,7 +662,7 @@ p(x) &gt; c^\star = \frac{c_{FP}}{c_{FP} + c_{FN}},
 </div>
 </div>
 </section>
-<section id="are-these-associations-causal" class="slide level2">
+<section id="are-these-associations-causal" class="slide level2 inverse">
 <h2>Are these associations “causal”?</h2>
 <p>Yule found a positive association between <code>welfare</code> and <code>poverty</code> after “controlling for” <code>age</code></p>
 <p>Which is the cause and which is the effect?</p>
@@ -778,9 +748,7 @@ p(x) &gt; c^\star = \frac{c_{FP}}{c_{FP} + c_{FN}},
 </section>
 <section id="section-4" class="slide level2 center">
 <h2></h2>
-<p>(My conjecture: Fisher used genes as his example confounder because, in his day, they could not be measured, so his theory would be harder to disprove)</p>
 <p><em>Confounder adjustment</em> is why some people think <strong>multiple</strong> regression is One Weird Trick that lets us make causal conclusions</p>
-<p>(Statisticians Don’t Want You To Know!)</p>
 <p>It’s not that simple, and DAGs can help us understand why!</p>
 </section>
 <section id="simple-models-for-causality" class="slide level2">
@@ -850,37 +818,6 @@ p(x) &gt; c^\star = \frac{c_{FP}}{c_{FP} + c_{FN}},
 <p>Statistically indistinguishable cases (without “experimental” data)</p>
 <p>Importantly different consequences!</p>
 </section>
-<section id="three-worlds-one-slope" class="slide level2">
-<h2>Three worlds, one slope</h2>
-<div class="cell" data-layout-align="center">
-<div class="cell-output-display">
-<div class="quarto-figure quarto-figure-center">
-<figure>
-<p><img data-src="03-1-classification-causality_files/figure-revealjs/three-worlds-1.png" class="quarto-figure quarto-figure-center" style="width:67.0%"></p>
-</figure>
-</div>
-</div>
-</div>
-<p>300 simulated units per world. The population slope of <span class="math inline">\(Y\)</span> on <span class="math inline">\(X\)</span> is exactly <span class="math inline">\(2\)</span> in all three</p>
-<div class="ask">
-<p>We now set <span class="math inline">\(X\)</span> to <span class="math inline">\(X + 1\)</span> for every unit and recompute with the same noise. In which of the three worlds does <span class="math inline">\(Y\)</span> change, and by how much?</p>
-</div>
-</section>
-<section id="three-worlds-one-slope-one-intervention" class="slide level2">
-<h2>Three worlds, one slope, one intervention</h2>
-<div class="cell" data-layout-align="center">
-<div class="cell-output-display">
-<div class="quarto-figure quarto-figure-center">
-<figure>
-<p><img data-src="03-1-classification-causality_files/figure-revealjs/three-worlds-do-1.png" class="quarto-figure quarto-figure-center" style="width:74.0%"></p>
-</figure>
-</div>
-</div>
-</div>
-<div class="leave">
-<p>One fitted slope, three worlds, and acting on it works in exactly one: raising <span class="math inline">\(X\)</span> by one unit moves <span class="math inline">\(Y\)</span> by <span class="math inline">\(2\)</span> in A and by <span class="math inline">\(0\)</span> in B and C. Suppose each mechanism generated the data; apply the method; what happens when someone acts on it?</p>
-</div>
-</section>
 <section id="writing-an-intervention-down" class="slide level2">
 <h2>Writing an intervention down</h2>
 <p>Behind a DAG is a <strong>structural model</strong>: one equation per variable, from its parents and its own noise. With <span class="math inline">\(T\)</span> the target, <span class="math inline">\(Y\)</span> the outcome and <span class="math inline">\(Z\)</span> the other variables that matter: <span class="math display">\[
@@ -940,32 +877,48 @@ T = h(Z, \varepsilon_T), \qquad Y = g(T, Z, \varepsilon_Y), \qquad Z,\ \varepsil
 <div class="leave">
 <p>Fix <span class="math inline">\(T\)</span> at <span class="math inline">\(t\)</span>, average the conditional mean over the population’s <span class="math inline">\(Z\)</span>. Condition, in words: <span class="math inline">\(Z\)</span> holds every common cause of <span class="math inline">\(T\)</span> and <span class="math inline">\(Y\)</span> and no consequence of <span class="math inline">\(T\)</span>.</p>
 </div>
+<p><strong>Proof</strong>: exercise 3 in the notebook, before the seminar.</p>
 </section>
-<section id="adjustment-theorem-lines-12" class="slide level2">
-<h2>Adjustment theorem, lines 1–2</h2>
-<p>Under <span class="math inline">\(do(T = t)\)</span>, <span class="math inline">\(Y = g(t, Z, \varepsilon_Y)\)</span> with <span class="math inline">\(Z\)</span> and <span class="math inline">\(\varepsilon_Y\)</span> unchanged. Write <span class="math inline">\(m_t(z) = \mathbb E\big[g(t, z, \varepsilon_Y)\big]\)</span>, the average over the noise with <span class="math inline">\(Z\)</span> frozen at <span class="math inline">\(z\)</span></p>
-<div class="fragment">
-<p><span class="math inline">\(\varepsilon_Y\)</span> is independent of <span class="math inline">\(Z\)</span>, so freezing <span class="math inline">\(Z\)</span> at <span class="math inline">\(z\)</span> leaves the noise alone, and the tower property gives <span class="math display">\[
-\mathbb E[Y \mid do(T = t)] = \mathbb E\big[g(t, Z, \varepsilon_Y)\big] = \mathbb E_Z\big[m_t(Z)\big]
+<section id="the-propensity-score" class="slide level2">
+<h2>The propensity score</h2>
+<p>From here on <span class="math inline">\(T \in \{0, 1\}\)</span>: treated or not. The <strong>propensity score</strong> is the class probability from the first half of the lecture, with <span class="math inline">\(T\)</span> as the label and <span class="math inline">\(Z\)</span> as the input: <span class="math display">\[
+\pi(z) = P(T = 1 \mid Z = z)
 \]</span></p>
-</div>
-<div class="fragment">
-<p>As observed, on <span class="math inline">\(\{T = t, Z = z\}\)</span> the outcome is <span class="math inline">\(g(t, z, \varepsilon_Y)\)</span>. <span class="math inline">\(T = h(Z, \varepsilon_T)\)</span> and <span class="math inline">\(\varepsilon_Y\)</span> is independent of <span class="math inline">\((Z, \varepsilon_T)\)</span>, so of <span class="math inline">\((T, Z)\)</span>: <span class="math display">\[
-\mathbb E[Y \mid T = t, Z = z] = \mathbb E\big[g(t, z, \varepsilon_Y) \mid T = t, Z = z\big] = m_t(z)
-\]</span></p>
+<p>Logistic regression of <span class="math inline">\(T\)</span> on <span class="math inline">\(Z\)</span> estimates it: <code>glm(T ~ Z, family = binomial())</code></p>
+<div class="ask">
+<p>Suppose you can estimate <span class="math inline">\(\pi(z)\)</span> well, but you have no model for <span class="math inline">\(\mathbb E[Y \mid T, Z]\)</span>. How would you use <span class="math inline">\(\hat\pi\)</span> to estimate <span class="math inline">\(\mathbb E[Y \mid do(T = 1)]\)</span>?</p>
 </div>
 </section>
-<section id="adjustment-theorem-lines-34" class="slide level2">
-<h2>Adjustment theorem, lines 3–4</h2>
-<p>Both sides are <span class="math inline">\(m_t(z)\)</span> at every <span class="math inline">\(z\)</span> with <span class="math inline">\(P(T = t \mid Z = z) &gt; 0\)</span>. <span class="math inline">\(Z\)</span> is upstream of <span class="math inline">\(T\)</span>, so its distribution is the same as observed and under the intervention. Average over it: <span class="math display">\[
-\mathbb E[Y \mid do(T = t)] = \mathbb E_Z\big[m_t(Z)\big] = \mathbb E_Z\Big[\,\mathbb E[Y \mid T = t, Z]\,\Big] \qquad\blacksquare
+<section id="propensity-weighting-theorem" class="slide level2">
+<h2>Propensity weighting theorem</h2>
+<p><strong>Propensity weighting theorem.</strong> Structural model with independent noises, <span class="math inline">\(Z\)</span> observed, <span class="math inline">\(T \in \{0, 1\}\)</span>: <span class="math inline">\(T = h(Z, \varepsilon_T)\)</span>, <span class="math inline">\(Y = g(T, Z, \varepsilon_Y)\)</span>, <span class="math inline">\(\pi(z) = P(T = 1 \mid Z = z)\)</span>. If <span class="math inline">\(0 &lt; \pi(Z) &lt; 1\)</span> with probability one, <span class="math display">\[
+\mathbb E[Y \mid do(T = 1)] = \mathbb E\Big[\frac{T\,Y}{\pi(Z)}\Big], \qquad \mathbb E[Y \mid do(T = 0)] = \mathbb E\Big[\frac{(1 - T)\,Y}{1 - \pi(Z)}\Big]
 \]</span></p>
+<div class="leave">
+<p>Weight each treated unit by <span class="math inline">\(1/\pi(Z)\)</span>: it stands in for <span class="math inline">\(1/\pi(Z)\)</span> units with the same <span class="math inline">\(Z\)</span>. The adjustment theorem needs a model for <span class="math inline">\(Y\)</span>. This one needs a model for <span class="math inline">\(T\)</span>, and logistic regression gives one.</p>
+</div>
+</section>
+<section id="propensity-weighting-theorem-proof" class="slide level2">
+<h2>Propensity weighting theorem, proof</h2>
+<p><span class="math inline">\(T\)</span> is <span class="math inline">\(0\)</span> or <span class="math inline">\(1\)</span>, and when <span class="math inline">\(T = 1\)</span> the outcome is <span class="math inline">\(g(1, Z, \varepsilon_Y)\)</span>, so <span class="math inline">\(T\,Y = T\,g(1, Z, \varepsilon_Y)\)</span></p>
 <div class="fragment">
-<p><strong>Corollary.</strong> <span class="math inline">\(Z\)</span> empty: <span class="math inline">\(T = h(\varepsilon_T)\)</span> is independent of <span class="math inline">\(\varepsilon_Y\)</span> (randomization), and the same lines give <span class="math inline">\(\mathbb E[Y \mid do(T = t)] = \mathbb E[Y \mid T = t]\)</span></p>
+<p><span class="math inline">\(T = h(Z, \varepsilon_T)\)</span> and <span class="math inline">\(\varepsilon_T\)</span> is independent of <span class="math inline">\((Z, \varepsilon_Y)\)</span>, so given <span class="math inline">\((Z, \varepsilon_Y)\)</span> the chance that <span class="math inline">\(T = 1\)</span> is <span class="math inline">\(\pi(Z)\)</span>: <span class="math display">\[
+\mathbb E[T \mid Z, \varepsilon_Y] = \pi(Z)
+\]</span></p>
 </div>
 <div class="fragment">
-<p>Where it fails: a common cause left out of <span class="math inline">\(Z\)</span> makes <span class="math inline">\(\varepsilon_T\)</span> and <span class="math inline">\(\varepsilon_Y\)</span> dependent (line 2 breaks); a <span class="math inline">\(Z\)</span> that is a consequence of <span class="math inline">\(T\)</span> changes under the intervention (line 1 breaks); <span class="math inline">\(P(T = t \mid Z = z) = 0\)</span> leaves nothing to condition on</p>
+<p>Condition on <span class="math inline">\((Z, \varepsilon_Y)\)</span>, by the tower property: <span class="math display">\[
+\mathbb E\Big[\frac{T\,Y}{\pi(Z)}\Big] = \mathbb E\Big[\frac{\pi(Z)\, g(1, Z, \varepsilon_Y)}{\pi(Z)}\Big] = \mathbb E\big[g(1, Z, \varepsilon_Y)\big] = \mathbb E[Y \mid do(T = 1)] \qquad\blacksquare
+\]</span> The last step: under <span class="math inline">\(do(T = 1)\)</span>, <span class="math inline">\(Y = g(1, Z, \varepsilon_Y)\)</span> with <span class="math inline">\(Z\)</span> and <span class="math inline">\(\varepsilon_Y\)</span> unchanged. For <span class="math inline">\(T = 0\)</span>, the same with <span class="math inline">\(1 - T\)</span> and <span class="math inline">\(1 - \pi(Z)\)</span></p>
 </div>
+</section>
+<section id="where-propensity-weighting-fails" class="slide level2">
+<h2>Where propensity weighting fails</h2>
+<ul>
+<li><p><span class="math inline">\(\pi(Z)\)</span> near <span class="math inline">\(0\)</span> or <span class="math inline">\(1\)</span>: a few units get huge weights, and the estimate is unstable. The condition <span class="math inline">\(0 &lt; \pi(Z) &lt; 1\)</span> is about the population; in a sample it shows up as extreme weights</p></li>
+<li><p>A common cause left out of <span class="math inline">\(Z\)</span>: <span class="math inline">\(\varepsilon_T\)</span> and <span class="math inline">\(\varepsilon_Y\)</span> are dependent, and the second line of the proof breaks</p></li>
+<li><p><span class="math inline">\(\hat\pi\)</span> in place of <span class="math inline">\(\pi\)</span>: the weights are only as good as the logistic regression that produced them</p></li>
+</ul>
 </section>
 <section id="conclusions" class="slide level2 inverse">
 <h2>Conclusions</h2>
@@ -988,7 +941,7 @@ T = h(Z, \varepsilon_T), \qquad Y = g(T, Z, \varepsilon_Y), \qquad Z,\ \varepsil
 <section id="before-the-seminar" class="slide level2">
 <h2>Before the seminar</h2>
 <ul>
-<li>This week: exercises 1 to 4 at the top of the notebook. The proof of the optimal threshold theorem; the confounding gap; today’s adjustment proof again, with the slides closed; and no free lunch on a finite domain</li>
+<li>This week: exercises 1 to 4 at the top of the notebook. The proof of the optimal threshold theorem; the confounding gap; the proof of the adjustment theorem; and today’s propensity weighting proof again, with the slides closed</li>
 </ul>
 </section>
 <section id="causal-inference" class="slide level2 inverse center">

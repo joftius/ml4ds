@@ -2353,93 +2353,99 @@ window.Quarto = {
 <tbody>
 <tr class="odd">
 <td>Problem 1(a, b): threshold <span class="math inline">\(1/6\)</span>, the tie, <span class="math inline">\(\hat p = 0.25\)</span></td>
-<td style="text-align: right;">5</td>
+<td style="text-align: right;">4</td>
 <td>Keep</td>
 <td>The rule is about the true <span class="math inline">\(p\)</span>; with <span class="math inline">\(\hat p\)</span> it is only as good as the estimate</td>
 </tr>
 <tr class="even">
 <td>Problem 1(c, d): two teams, what the survey decided</td>
-<td style="text-align: right;">3</td>
+<td style="text-align: right;">2</td>
 <td>Rush; cut first</td>
 <td>Say it: same model, same bird, different calls between <span class="math inline">\(1/6\)</span> and <span class="math inline">\(1/2\)</span></td>
 </tr>
 <tr class="odd">
 <td>Problem 2(a, b): effect 1, naive slope 2</td>
-<td style="text-align: right;">6</td>
+<td style="text-align: right;">5</td>
 <td>Keep</td>
 <td>The slope is the effect plus <span class="math inline">\(\gamma\delta = 2 \cdot \tfrac12\)</span></td>
 </tr>
 <tr class="even">
 <td>Problem 2(c): adjustment by hand</td>
-<td style="text-align: right;">4</td>
+<td style="text-align: right;">3</td>
 <td>Keep</td>
 <td>Average <span class="math inline">\(t + 2z\)</span> over <span class="math inline">\(Z\)</span>; the noise term drops by independence</td>
 </tr>
 <tr class="odd">
-<td>Problem 2(d): the reverse world</td>
-<td style="text-align: right;">2</td>
-<td>Rush</td>
-<td>Give it: slope 2, effect 0</td>
+<td>Problem 3(a to c): weighting by hand</td>
+<td style="text-align: right;">5</td>
+<td>Keep</td>
+<td>Counts 10, 40, 40, 10; weighted, 50 of each <span class="math inline">\(Z\)</span> per arm; effect 2, naive 4.4</td>
 </tr>
 <tr class="even">
+<td>Problem 3(d): the largest weights</td>
+<td style="text-align: right;">1</td>
+<td>Rush</td>
+<td>Give it: treatment unlikely given <span class="math inline">\(Z\)</span>, weight large</td>
+</tr>
+<tr class="odd">
 <td>Coding 1, steps 1 and 2, question 1: fit, read the odds</td>
 <td style="text-align: right;">5</td>
 <td>Keep</td>
 <td>The multiplier is on the odds, not on <span class="math inline">\(p\)</span>, and it is not causal</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td>Coding 1, step 3: confusion matrix</td>
-<td style="text-align: right;">3</td>
+<td style="text-align: right;">2</td>
 <td>Rush</td>
 <td>Reveal the solution</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td>Coding 1, step 4 and question 2: ROC by hand</td>
-<td style="text-align: right;">7</td>
+<td style="text-align: right;">6</td>
 <td>Rush; cut second</td>
 <td>Reveal the loop; keep “AUC is a ranking probability”</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td>Coding 1, step 5 and question 3: costs</td>
 <td style="text-align: right;">5</td>
 <td>Keep</td>
 <td>The minimum sits near <span class="math inline">\(1/6\)</span>; the survey chose it</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td>Coding 2, step 1 and question 4: slopes, predictions</td>
-<td style="text-align: right;">5</td>
+<td style="text-align: right;">4</td>
 <td>Keep</td>
 <td>Predictions written down before step 2</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td>Coding 2, step 2: intervene with the same noise</td>
-<td style="text-align: right;">6</td>
+<td style="text-align: right;">5</td>
 <td>Keep</td>
 <td>Give <code>case_when</code> if stuck; keep the four right-hand sides</td>
 </tr>
-<tr class="even">
-<td>Coding 2, step 3 and question 5: world D</td>
-<td style="text-align: right;">6</td>
-<td>Keep</td>
-<td>The coefficient and the averaged difference agree</td>
-</tr>
 <tr class="odd">
-<td>Coding 2, question 6: same noise against fresh noise</td>
-<td style="text-align: right;">3</td>
+<td>Coding 2, step 3 and question 5: world D</td>
+<td style="text-align: right;">5</td>
 <td>Rush</td>
-<td>One sentence: unit counterfactual against a new draw</td>
+<td>The coefficient and the averaged difference agree; problem 2(c) did it by hand</td>
+</tr>
+<tr class="even">
+<td>Coding 2, step 4 and question 6: world E, three estimates</td>
+<td style="text-align: right;">8</td>
+<td>Keep</td>
+<td>Naive about 5.2, the other two near 2; look at the five largest weights</td>
 </tr>
 </tbody>
 </table>
-<p>Minimum seminar, about 25 minutes: problem 2(a to c), coding 2 steps 2 and 3. With more time, add problem 1(a, b) back first.</p>
+<p>Minimum seminar, about 25 minutes: problems 2(a to c) and 3(a to c), coding 2 steps 2 and 4. With more time, add problem 1(a, b) back first.</p>
 </section>
 <section id="if-you-read-on" class="level2">
 <h2 class="anchored" data-anchor-id="if-you-read-on">If you read on</h2>
 <p>How it runs</p>
 <ul>
 <li>Students did exercises 1 to 4 at home. Open the <a href="https://ml4ds.com/seminar-teachers/notebook3_complete.html">complete notebook</a> on screen: blue boxes are hints, opened in order after the room has had a few minutes; green boxes are answers.</li>
-<li>Show an exercise’s solution only if asked. Exercise 3’s is the lecture’s proof.</li>
-<li>Everything headed “Optional, can be done at home” is outside the seminar, including the <code>yardstick</code> checks.</li>
+<li>Show an exercise’s solution only if asked. Exercise 4’s is the lecture’s proof; exercise 3 proves the adjustment theorem, which the lecture only stated.</li>
+<li>Everything headed “Optional, can be done at home” is outside the seminar, including the <code>yardstick</code> checks, same noise against fresh noise (question 7) and world E repeated (question 8).</li>
 </ul>
 <p>What students should see</p>
 <ul>
@@ -2447,6 +2453,7 @@ window.Quarto = {
 <li>Bill model: odds of Chinstrap times about 9 per millimeter of bill length; six errors at <span class="math inline">\(\tfrac12\)</span> (3 misses, 3 false alarms); <code>glm</code> warns that fitted probabilities are numerically 0 or 1.</li>
 <li>Flipper model: AUC 0.734; with costs 5 and 1 the cost per bird is lowest, 0.58, at thresholds 0.16 and 0.17, against <span class="math inline">\(1/6\)</span>; at <span class="math inline">\(\tfrac12\)</span> it is 1.11.</li>
 <li>Four worlds: slopes near 2 in A, B and C and near <span class="math inline">\(-3.8\)</span> in D (they vary by student, no seed); intervention effects exactly 2, 0, 0 and <span class="math inline">\(-3\)</span>; in D the coefficient on <code>X</code> with <code>Z</code> included is within about 0.1 of <span class="math inline">\(-3\)</span> and equals the averaged difference.</li>
+<li>World E (2000 units, no seed): naive difference about 5.2 (the gap is <span class="math inline">\(3 \times 1.07\)</span>); regression coefficient between about 1.93 and 2.09; weighting estimate near 2 but the most variable, between about 1.7 and 2.3 in nine runs out of ten. The largest weight is usually 15 to 100, on a treated unit with <code>Z</code> below about <span class="math inline">\(-1.4\)</span> or an untreated one with <code>Z</code> above about 2. Over 200 runs (question 8) the standard deviations are about 0.2 for weighting and 0.05 for regression.</li>
 </ul>
 <p>Where they get stuck</p>
 <ul>
@@ -2454,6 +2461,7 @@ window.Quarto = {
 <li>Redrawing the noise inside <code>intervene()</code>, then finding that the intervention “does something” in world C.</li>
 <li>Writing world B’s <code>Y_do</code> with <code>X_do</code> in it: in world B, <code>Y</code> does not depend on <code>X</code>.</li>
 <li>In step 3 of part 2, <code>newdata = d</code> for both predictions (difference zero), or leaving <code>Z</code> out (the naive <span class="math inline">\(-3.8\)</span> comes back).</li>
+<li>In step 4 of part 2, <code>1 / pi_hat</code> for the untreated as well (the checkpoint stops it), or <code>(1 - X) * Y / pi_hat</code> in the estimate: the untreated half divides by <code>1 - pi_hat</code>.</li>
 <li>In the student file, a chunk with a blank starts with <code>#| eval: false</code>; they delete that line once the blank is filled. The <code># ...</code> line can stay.</li>
 </ul>
 </section>
