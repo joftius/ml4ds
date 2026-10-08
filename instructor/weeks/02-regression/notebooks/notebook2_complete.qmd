@@ -19,7 +19,7 @@ order, after the room has had a few minutes, the solution last. Hints and soluti
 carrying the class .answer are removed from the student file notebook2.qmd by
 _build_env/make_incomplete.py; hints without it (the pre-seminar exercises and the
 optional problems) stay in the student file, behind a warning not to open them
-early. Do not edit the student file by hand, and do not release this file.
+early. Do not edit the student file by hand.
 
 How this seminar runs (3 October): students do exercises 1 to 3 at home (3 redoes
 the lecture's proof and is not gone through in the room). In the
