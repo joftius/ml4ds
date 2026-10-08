@@ -12,4 +12,4 @@ If you finish these quickly you may want to start Chapter 3, because it's a long
 
 **Lecture:** [slides](weeks/01-introduction-foundations/slides/01-1-introduction.html)
 
-**Seminar:** [notebook](weeks/01-introduction-foundations/notebooks/notebook1.html) ([.qmd](https://ml4ds.com/weeks/01-introduction-foundations/notebooks/notebook1.qmd){download="notebook1.qmd"}) · [notebook with solutions](https://ml4ds.com/seminar-teachers/notebook1_complete.html)
+**Seminar:** [notebook](weeks/01-introduction-foundations/notebooks/notebook1.html) ([.qmd](https://ml4ds.com/weeks/01-introduction-foundations/notebooks/notebook1.qmd){download="notebook1.qmd"}) · [notebook with solutions](https://ml4ds.com/solutions/notebook1_solutions.html)
