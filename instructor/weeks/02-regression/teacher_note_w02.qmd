@@ -25,6 +25,8 @@ In seminar order. Planned total about 55 minutes.
 | Coding 4, step 1: fit the simulated data | 3 | Rush | Run it |
 | Coding 4, question 6: a zero coefficient with a real signal | 5 | Keep | Show the residual plot; skip the covariance arithmetic |
 
+: {tbl-colwidths="[32,6,16,46]"}
+
 Minimum seminar, about 25 minutes: problem 2(a), coding 3, coding 4 question 6. With more time, add problem 1(a, b) back first.
 
 ## If you read on
@@ -48,4 +50,4 @@ Where they get stuck
 - Adding an intercept column to a `model.matrix` that already has one.
 - In coding 3, regressing the residual on `lgdp` instead of `lifeExp` on the residual, or fitting the two regressions on different rows.
 - In coding 4, changing `f` but not the fitted model.
-- In the student file, a chunk with a blank starts with `#| eval: false`; they delete that line once the blank is filled.
+- In the student file, a chunk with a blank starts with `#| eval: false`; they delete that line once the blank is filled. The `# ...` line can stay.

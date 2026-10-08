@@ -124,7 +124,7 @@ window.Quarto = {
 };
 </script>
 
-<link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="../../../styles.css">
 </head>
 
 <body class="nav-fixed quarto-light">
@@ -250,7 +250,7 @@ Note
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>This is the student version of the notebook: the blanks are <code>...</code>. A code chunk that contains a blank starts with <code>#| eval: false</code>, so the file renders as it stands; delete that line once you have filled the blank. Working through the chunks one at a time in RStudio (Ctrl/Cmd+Enter) is unaffected. Answers are revealed in the seminar.</p>
+<p>This is the student version of the notebook. The code you write goes where a line says <code># ...</code> or has a <code>____</code>. A code chunk with a blank starts with <code>#| eval: false</code>, so the file renders as it stands; delete that line once you have filled the blank. Working through the chunks one at a time in RStudio (Ctrl/Cmd+Enter) is unaffected. Answers are revealed in the seminar.</p>
 </div>
 </div>
 <div class="cell">
@@ -719,7 +719,7 @@ R(f) = R(f^\star) + \mathbb E\big[(f^\star(X) - f(X))^2\big].
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="co"># beta_hat &lt;- solve(____ %*% ____) %*% ____ %*% ____</span></span>
 <span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a><span class="co"># cbind(formula = beta_hat, lm = coef(lm(lifeExp ~ lgdp + lpop, data = gm)))</span></span>
-<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a><span class="co"># ...</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>Checkpoint (run it; if it stops, check the order of the factors in the formula):</p>
 <div class="cell">
@@ -734,7 +734,7 @@ R(f) = R(f^\star) + \mathbb E\big[(f^\star(X) - f(X))^2\big].
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="co"># H &lt;- ____</span></span>
 <span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a><span class="co"># c(trace = sum(diag(H)), n = nrow(X), q = ncol(X))</span></span>
 <span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a><span class="co"># all.equal(as.numeric(H %*% y), as.numeric(fitted(lm(lifeExp ~ lgdp + lpop, data = gm))))</span></span>
-<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a><span class="co"># ...</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p><strong>Question 1.</strong> The trace came out as a small integer. Which one, and why?</p>
 </section>
@@ -777,7 +777,7 @@ F-statistic: 176.2 on 1 and 331 DF,  p-value: &lt; 2.2e-16</code></pre>
 </div>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="co"># predict(model_simple) ; residuals(model_simple) ; coef(model_simple) ; confint(model_simple)</span></span>
-<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a><span class="co"># ...</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(model_simple)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -814,7 +814,7 @@ F-statistic: 176.2 on 1 and 331 DF,  p-value: &lt; 2.2e-16</code></pre>
 <p><strong>Step 2 (optional, can be done at home).</strong> Create a scatterplot showing your simple linear model (just like last week: <code>geom_point</code>, then <code>geom_smooth(method = "lm")</code>).</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="co"># my_data |&gt; ggplot(aes(x = ____, y = ____)) + ____ + ____</span></span>
-<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a><span class="co"># ...</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p><strong>Step 3.</strong> Multiple linear regression: repeat with a model using more than one predictor, and notice what’s different about the output. Then use <code>tidy</code> and <code>glance</code> from the <code>broom</code> package and compare with <code>summary</code> (see <code>?tidy.lm</code>; piping <code>tidy()</code> into <code>knitr::kable()</code> formats it nicely), and draw the coefficients with their intervals using <code>ggcoef</code> from <code>GGally</code>.</p>
 <div class="cell">
@@ -824,7 +824,7 @@ F-statistic: 176.2 on 1 and 331 DF,  p-value: &lt; 2.2e-16</code></pre>
 <span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a><span class="co"># tidy(model_multiple, conf.int = TRUE) |&gt; knitr::kable(digits = 2)</span></span>
 <span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a><span class="co"># glance(model_multiple) |&gt; knitr::kable(digits = 3)</span></span>
 <span id="cb31-6"><a href="#cb31-6" aria-hidden="true" tabindex="-1"></a><span class="co"># ggcoef(____)</span></span>
-<span id="cb31-7"><a href="#cb31-7" aria-hidden="true" tabindex="-1"></a>...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb31-7"><a href="#cb31-7" aria-hidden="true" tabindex="-1"></a><span class="co"># ...</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <section id="optional-can-be-done-at-home-1" class="level4">
 <h4 class="anchored" data-anchor-id="optional-can-be-done-at-home-1">Optional, can be done at home</h4>
@@ -832,20 +832,20 @@ F-statistic: 176.2 on 1 and 331 DF,  p-value: &lt; 2.2e-16</code></pre>
 <p><code>GGally</code> also has <code>ggnostic</code>, a grid of diagnostic plots for a multiple model, one column per predictor.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ggnostic(____)</span></span>
-<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a><span class="co"># ...</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>There is also a function <code>ggpairs</code> useful for exploratory data analysis, but beware that it can be slow because it computes many pairwise plots. You may not want to rerun that code many times. There is an option <code>cache: true</code> that saves the result after running it once and then refuses to run it again unless you change the code chunk. You can also leave out variables you don’t want to include using <code>select(-var1, -var2, ...)</code> or choose only some to include with <code>select(var1, var2, ...)</code>. Also see useful helper functions like <code>?tidyselect::starts_with</code>.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="co"># my_data |&gt;</span></span>
 <span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a><span class="co">#   select(-year, -island) |&gt;</span></span>
 <span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a><span class="co">#   ggpairs(progress = FALSE)</span></span>
-<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a>...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a><span class="co"># ...</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p><strong>Step 4.</strong> Pick at least one numeric predictor and include a non-linear transformation, e.g.&nbsp;a polynomial <code>y ~ poly(x, d)</code> or an interaction <code>y ~ x1 * x2</code>. Use <code>glance</code>, <code>tidy</code> and <code>plot</code> again on this model and note any differences.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="co"># model_transformed &lt;- lm(____ ~ poly(____, 2) + ____, data = my_data)</span></span>
 <span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a><span class="co"># glance(model_transformed)$r.squared</span></span>
-<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a>...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a><span class="co"># ...</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p><strong>Question 3.</strong> The pair plots from e.g.&nbsp;<code>ggnostic</code> or <code>ggpairs</code> show many 2-dimensional projections of the data, but there is no guarantee that these projections together help us understand higher dimensional relationships. What does this mean for diagnostic plots when our regression model is high dimensional (e.g.&nbsp;<span class="math inline">\(p &gt; 3\)</span> predictors)?</p>
 </section>
@@ -927,7 +927,7 @@ F-statistic: 176.2 on 1 and 331 DF,  p-value: &lt; 2.2e-16</code></pre>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="co"># lgdp_tilde &lt;- resid(lm(____ ~ ____, data = gm))</span></span>
 <span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a><span class="co"># c(full = coef(long)[["lgdp"]],</span></span>
 <span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a><span class="co">#   y_on_residual = coef(lm(gm$lifeExp ~ lgdp_tilde))[[2]])</span></span>
-<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a>...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a><span class="co"># ...</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>Checkpoint:</p>
 <div class="cell">
@@ -940,7 +940,7 @@ F-statistic: 176.2 on 1 and 331 DF,  p-value: &lt; 2.2e-16</code></pre>
 <span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a><span class="co"># aux &lt;- lm(____, data = gm)</span></span>
 <span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a><span class="co"># c(short = coef(short)[["lgdp"]],</span></span>
 <span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a><span class="co">#   long_plus_correction = coef(long)[["lgdp"]] + coef(long)[["lpop"]] * coef(aux)[["lgdp"]])</span></span>
-<span id="cb38-5"><a href="#cb38-5" aria-hidden="true" tabindex="-1"></a>...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb38-5"><a href="#cb38-5" aria-hidden="true" tabindex="-1"></a><span class="co"># ...</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p><strong>Question 5.</strong> Did leaving out <code>lpop</code> move the coefficient on <code>lgdp</code> by much, and in which direction? Exercise 2 names two things the size of the move depends on; which of them is small here? Is the short coefficient “wrong”?</p>
 </section>
@@ -984,7 +984,7 @@ F-statistic: 176.2 on 1 and 331 DF,  p-value: &lt; 2.2e-16</code></pre>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="co"># my_model &lt;- lm(____, data = sim_data)</span></span>
 <span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a><span class="co"># tidy(my_model, conf.int = TRUE) |&gt; knitr::kable(digits = 2)</span></span>
 <span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a><span class="co"># my_model |&gt; ggcoef()</span></span>
-<span id="cb42-4"><a href="#cb42-4" aria-hidden="true" tabindex="-1"></a>...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb42-4"><a href="#cb42-4" aria-hidden="true" tabindex="-1"></a><span class="co"># ...</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p><strong>Question 6.</strong> <code>x2</code> is in the true function, and its coefficient is close to zero (and <code>x3</code> is not in the truth). Why? Hint: what is the least-squares slope of <span class="math inline">\(2x_2 - x_2^2\)</span> on <span class="math inline">\(x_2\)</span> when <span class="math inline">\(x_2 \sim U(0, 2)\)</span>? Then plot the residuals against <code>x2</code> (<code>augment(my_model)</code> from <code>broom</code> gives a data frame with a <code>.resid</code> column). Would part 2’s diagnostics have caught this?</p>
 <div class="cell">

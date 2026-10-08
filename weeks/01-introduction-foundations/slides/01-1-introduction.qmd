@@ -17,7 +17,6 @@ format:
     progress: true
     history: false
     footer: "ST310 Machine Learning"
-    html-math-method: mathjax
     # Speaker notes are stripped from the public render unless the environment
     # variable ST310_KEEP_NOTES is set (see _build_env/strip_notes.lua).
     filters:

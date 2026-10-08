@@ -13,7 +13,7 @@ execute:
 ---
 
 ::: {.callout-note}
-This is the student version of the notebook: the blanks are `...`. A code chunk that contains a blank starts with `#| eval: false`, so the file renders as it stands; delete that line once you have filled the blank. Working through the chunks one at a time in RStudio (Ctrl/Cmd+Enter) is unaffected. Answers are revealed in the seminar.
+This is the student version of the notebook. The code you write goes where a line says `# ...` or has a `____`. A code chunk with a blank starts with `#| eval: false`, so the file renders as it stands; delete that line once you have filled the blank. Working through the chunks one at a time in RStudio (Ctrl/Cmd+Enter) is unaffected. Answers are revealed in the seminar.
 :::
 
 ```{r}
@@ -99,7 +99,7 @@ Your split is different from your neighbor's. Keep that in mind all the way thro
 #| eval: false
 # gm_scatterplot <- ggplot(train, aes(x = ____, y = ____)) + geom_point()
 # gm_scatterplot
-...
+# ...
 ```
 
 #### The baseline competitor
@@ -110,7 +110,7 @@ The simplest competitor predicts the same number for every country: the training
 #| eval: false
 baseline <- mean(train$lifeExp)
 # mse_baseline <- mean((____ - ____)^2)
-...
+# ...
 ```
 
 #### A second competitor: a straight line
@@ -121,7 +121,7 @@ Fit `model_lm <- lm(lifeExp ~ lgdp, data = train)`. Get its predictions on the t
 #| eval: false
 model_lm <- lm(lifeExp ~ lgdp, data = train)
 # mse_lm <- mean((____ - predict(model_lm, newdata = ____))^2)
-...
+# ...
 ```
 
 **Question 1.** How much better than the baseline is the line? Is "better" here a statement about these 42 countries or about all countries?
@@ -138,7 +138,7 @@ You may use `abs`, `order`, `mean` and a `for` loop, but not a library that does
 #| eval: false
 knn_predict <- function(x0, x, y, k) {
   distances <- abs(x - x0)
-  ...
+  # ...
 }
 ```
 
@@ -162,7 +162,7 @@ Now on one country. For `x0 = 4` (GDP per capita of 10,000 dollars) and `k = 5`,
 # nearest5 <- order(abs(train$lgdp - 4))[1:5]
 # train[nearest5, c("country", "gdpPercap", "lifeExp")]
 # knn_predict(4, ____, ____, k = 5)
-...
+# ...
 ```
 
 Checkpoint (run it; if it stops, fix step 1 before going on):
@@ -180,10 +180,10 @@ stopifnot(length(knn_predict(4, train$lgdp, train$lifeExp, k = 5)) == 1,
 pred <- numeric(nrow(test))
 for (j in seq_len(nrow(test))) {
   # pred[j] <- ____
-  ...
+  # ...
 }
 # mse_knn5 <- mean((____ - ____)^2)
-...
+# ...
 ```
 
 Checkpoint:
@@ -203,10 +203,10 @@ knn_mse <- function(k, newdata) {
   pred <- numeric(nrow(newdata))
   for (j in seq_len(nrow(newdata))) {
     # pred[j] <- ____
-    ...
+    # ...
   }
   # mean((____ - ____)^2)
-  ...
+  # ...
 }
 ks <- c(1, 2, 3, 5, 10, 25, 50)
 results <- tibble(
@@ -247,7 +247,7 @@ Your test MSE is an average of 42 losses. From the split you already have, compu
 #| eval: false
 # losses <- ____
 # c(mean = mean(losses), se = ____)
-...
+# ...
 ```
 
 **Question 4.** Compare your test MSE and its standard error with your neighbor's. Are the two test MSEs within a standard error of each other? What made them different?
@@ -264,7 +264,7 @@ Create the 1997 data, then get predictions for every 1997 country from the strai
 #| eval: false
 gm1997 <- gapminder |> filter(year == 1997) |> mutate(lgdp = log10(gdpPercap))
 # mse_lm_1997 <- mean((gm1997$lifeExp - predict(model_lm, newdata = ____))^2)
-...
+# ...
 ```
 
 **Question 5.** Is it surprising how well the model does on 1997? The 1997 rows are the *same 142 countries*, ten years earlier. Has the model predicted anything new? What question does this test answer, and what question did the held-out split in part 1 answer?

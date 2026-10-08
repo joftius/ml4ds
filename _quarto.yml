@@ -85,6 +85,11 @@ format:
       style: simple
       palette: light
 
+# Math: MathJax 4, Quarto 1.10's version when a page asks for mathjax. Set here for
+# every page because a revealjs deck with no html-math-method gets MathJax 2.7.9.
+# The two layout rules that decks need with version 4 are at the end of theme/st310.scss.
+html-math-method: mathjax
+
 execute:
   freeze: auto
   warning: false

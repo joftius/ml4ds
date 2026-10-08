@@ -21,7 +21,6 @@ format:
     progress: true
     history: false
     footer: "ST310 Machine Learning"
-    html-math-method: mathjax
     # Figures render at their fig-width/fig-height; an overfull slide then shows
     # as overfull instead of auto-stretch shrinking the figure to fit.
     auto-stretch: false
