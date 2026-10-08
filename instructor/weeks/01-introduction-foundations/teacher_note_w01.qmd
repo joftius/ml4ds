@@ -1,0 +1,53 @@
+---
+title: "Teacher note: week 1 seminar"
+subtitle: "For class teachers"
+format:
+  html:
+    toc: false
+    embed-resources: true
+---
+
+## Keep or rush
+
+In seminar order. Planned total about 60 minutes.
+
+| Item | Min | | If short |
+|---|---:|---|---|
+| Exercise 1: the four parts of the competition | 3 | Rush | Read the answer out; a justified "all of them" is fine |
+| Problem 1: $\mathbb E[Z^2]$, bias and variance | 4 | Rush | Part (c) only: it is hint 3 of exercise 2 |
+| Problem 2: the variance of an average | 5 | Keep | Part (b): averaging copies of one variable reduces nothing |
+| Problem 3: the cross term | 5 | Keep | Part (b): at a training point the cross term does not vanish |
+| Problem 4: nearest neighbors by hand | 3 | Rush; cut first | Give the three numbers, 4, 4 and 6.2; coding 2 checks against them |
+| Coding 1: the split, the baseline, the line | 7 | Rush | Reveal the solutions and run them; keep question 1 |
+| Coding 2, steps 1 and 2: `knn_predict` and the loop | 12 | Keep | |
+| Coding 2, step 3: the table, questions 2 and 3 | 8 | Keep | Reveal the function; ask question 2 before the table |
+| Coding 3: the score's standard error, question 4 | 7 | Keep | Give the code, keep the comparison with a neighbor |
+| Coding 4: predicting 1997, question 5 | 3 | Rush; cut second | Say it: the same countries ten years earlier, not new ones |
+| Before you leave | 3 | Rush | One sentence each from two students |
+
+: {tbl-colwidths="[32,6,16,46]"}
+
+Minimum seminar, about 30 minutes: problem 3(b), coding 2, coding 3. With more time, add problem 2 back first.
+
+## If you read on
+
+How it runs
+
+- Students did exercises 1 to 3 at home. Open the [complete notebook](https://ml4ds.com/seminar-teachers/notebook1_complete.html) on screen: blue boxes are hints, opened in order after the room has had a few minutes; green boxes are answers.
+- Show the solution of exercise 2 or 3 only if asked. Exercise 2's is the lecture's proof.
+- There is no `set.seed`: every student has a different split, on purpose.
+
+What students should see
+
+- Baseline test MSE usually 115 to 190; the line 35 to 75; 5 nearest neighbors 35 to 85.
+- Training MSE at `k = 1` exactly zero.
+- The winning `k` is 5, 10 or 25 on most splits, and `k = 1` almost never.
+- The standard error for 5 nearest neighbors usually 10 to 25.
+
+Where they get stuck
+
+- `order` gives positions, `sort` gives values.
+- Looking up neighbors in `test` instead of `train` inside `knn_mse`.
+- Reading the standard error as the spread of the losses; it is the spread of their average.
+- Leaving `#| eval: false` on a chunk after filling the blank, then wondering why Render shows no output.
+- "Why is the training error zero" and "which k is best" are the questions to wait longest on.

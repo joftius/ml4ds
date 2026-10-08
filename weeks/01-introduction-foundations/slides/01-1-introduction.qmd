@@ -61,6 +61,16 @@ grid <- tibble(lgdp = seq(min(gm$lgdp), max(gm$lgdp), length.out = 300))
 
 ## {.inverse}
 
+::: {.notes}
+Plan 85 of 90 as taught; about 76 with the dark slides compressed. Dark = rush or skip; each dark slide's note says skip or gives the compressed phrase.
+
+Cut order: (1) self-intro, (2) Fix and Hodges, (3) smooth cousin, (4) preview tabs to the plot, (5) distances concentrate. Does not move: the proof, the score for every k, the leaderboard, the rule, the cube table, the two closing questions.
+
+Pace: 0:20 what-is-ML done. 0:45 leaderboard shown, proof starts. 1:00 noise + bias² + variance. 1:20 closing questions.
+
+In the notebook: the competition's four parts (ex. 1), this proof redone (ex. 2), distance concentration proved (ex. 3).
+:::
+
 ### ST310: Machine Learning (for Data Science)
 
 Lecturer: [Joshua Loftus](https://joshualoftus.com/)
@@ -71,25 +81,15 @@ Seminars start this week. Bring a laptop with R and RStudio (see [about](https:/
 
 **A request.** As a courtesy to me, please don't use "AI" tools in your communications with me or the teaching staff. This also applies to all aspects of this course. We are here to train our own minds, not to replace them. I'll say more about why during the term.
 
-::: {.notes}
-Timing, total 85 (the room is booked for 90; the rest is for questions). Course info 5 (format, how the course works, this week's plan); preview 3 (the gapminder tabs, not walked line by line; xkcd); themes and self-intro 3; what is ML 11 (applications 2, ML proper 2, the field 2, notation 2, tasks 2, regression 1); how to predict, probability, the assumptions 6; the competition and its history 8 (four parts 3, Netflix 5); prediction, loss, held-out set and the rule 5; where would you look and Fix–Hodges 3; nearest neighbors 3, which k 2, the score for every k 3, the leaderboard 3, the smooth cousin 1; the bias--variance decomposition at the board 15; where the bias comes from 2; the curse 5; distances concentrate 2; the request (on the title slide) 2; two things to think about 2; until the seminar 2. Reading is not spoken.
-
-Cut order if short: (1) the self-intro to one line; (2) Fix and Hodges to one sentence; (3) the smooth cousin to its question alone ("what is a local average trying to land on?", which week 2 retrieves); (4) the preview tabs to the plot alone; (5) distances concentrate narrated from the figure. Does not move: the bias--variance decomposition and its backups; the score for every k; the leaderboard and its bars; the rule; the cube table; the two closing questions.
-
-Pace: 0:20 what-is-ML done, notation on the board. 0:45 the leaderboard shown, the smooth-cousin question asked, the board starts. 1:00 noise + bias² + variance boxed and labeled. 1:20 the closing questions.
-
-Board script: instructor project, week 1, board_bias_variance.
-:::
-
 ## About the course
+
+::: {.notes}
+The animation is the lasso, a method for later in the term.
+:::
 
 Course info, teaching philosophy, ML overview
 
 ![](../../../files/lasso.gif){height="400"}
-
-::: {.notes}
-Animation shows lasso, a method we'll learn about later.
-:::
 
 ## Format
 
@@ -117,11 +117,19 @@ Supplemental
 
 ## Quick preview {.inverse .center}
 
+::: {.notes}
+Compress: the Plot tab on the next slide, nothing else.
+:::
+
 Don't worry about following all the details now
 
 We'll introduce R coding gradually
 
 ## The gapminder data
+
+::: {.notes}
+Do not walk the code; the seminar does. The line fits worse here, but it is one slope, and stable.
+:::
 
 ::: {.panel-tabset}
 
@@ -193,10 +201,6 @@ life_exp_plot +
 
 :::
 
-::: {.notes}
-Preview of some R. Model complexity: nonlinear vs relatively simple (linear) model. Linear model may not fit the data as well; but interpretable, one slope to summarize the relationship; but reliable/stable. Machine learning allows us to find models with just the right amount of complexity. Do not walk the code; that is the seminar's job.
-:::
-
 ## Machine learning in one picture
 
 ::: {.columns}
@@ -211,10 +215,14 @@ Preview of some R. Model complexity: nonlinear vs relatively simple (linear) mod
 ## Teaching/course philosophy {.inverse .center}
 
 ::: {.notes}
-Not just math, also my opinions. Textbooks are excellent, read them! But: value added by lectures.
+Compress: not just math, also my opinions. Read the textbooks.
 :::
 
 ## Recurring themes
+
+::: {.notes}
+Ethics and professional responsibility run through the examples. Don't be a zombie data scientist.
+:::
 
 Concepts that keep coming back
 
@@ -231,11 +239,11 @@ How the course runs
 - Learning takes work: productive struggle, two words, both necessary
 - Knowing a method includes knowing what it does not establish
 
-::: {.notes}
-Examples with ethical aspects; explicit consideration of ethics and professional responsibilities of data scientists. Future lectures include a dose of philosophy, vaccinating against mindless application of tools. Don't be a zombie data scientist. Learn from each other.
-:::
-
 ## Please allow me to introduce myself {.inverse}
+
+::: {.notes}
+Compress: one line on who I am.
+:::
 
 ::: {.columns}
 ::: {.column width="60%"}
@@ -252,15 +260,19 @@ I'm Joshua Loftus
 :::
 :::
 
-::: {.notes}
-I am a person in the world, not just on lecture slides. For seminars, help from the very capable teaching staff. Am I trustworthy? Why should you listen to me? You decide!
-:::
-
 ## What is "Machine Learning"? {.inverse .center}
+
+::: {.notes}
+Skip if behind.
+:::
 
 ### And why is it that?
 
 ## Machine learning applications {.inverse}
+
+::: {.notes}
+Compress: they write one example down; read two of the bullets.
+:::
 
 Can you think of an example? (Write it down)
 
@@ -288,6 +300,10 @@ etc...
 
 ## Machine learning, proper {.inverse}
 
+::: {.notes}
+Compress: here ML means the theory and the general methods.
+:::
+
 These *application* examples help motivate the value of ML
 
 (Actually, much of the value comes from work specific to the application, like the creation/gathering/processing of the data, and the real world *actions* taken based on the output of ML)
@@ -299,6 +315,10 @@ We'll use "ML" to refer to the *theory and general methods*
 (Skills like gathering and cleaning data are very useful--and we'll practice them a little--but they're not the main focus of this course)
 
 ## Machine learning, the field
+
+::: {.notes}
+Two minutes, orientation. Conference papers carry the field. Breiman (2001), the two cultures.
+:::
 
 ::: {.columns}
 ::: {.column width="50%"}
@@ -321,11 +341,11 @@ Conference papers, not journal articles, are the main currency (unusual among sc
 :::
 :::
 
-::: {.notes}
-Two minutes. The point is orientation: when a student reads "NeurIPS 2024" they should know what kind of venue that is, and that reviewed conference papers carry the field. Breiman's "Statistical Modeling: The Two Cultures" (Statistical Science, 2001) is the essay to name; it argues for the algorithmic culture and its discussants argue back. Dates: ICML began as a workshop at Carnegie Mellon in 1980; NIPS was first held in Denver in 1987 and renamed NeurIPS in 2018; COLT at MIT in 1988; the journal Machine Learning in 1986; JMLR in 2001 after the editorial board of Machine Learning resigned over open access.
-:::
-
 ## What is "artificial intelligence"? {.inverse}
+
+::: {.notes}
+Skip if behind.
+:::
 
 (Don't tell anyone I said this, but) It's a collection of computational tools that people use to create mathematically structured data out of non-mathematically structured data
 
@@ -377,15 +397,15 @@ Think about your application example (the one you wrote down)
 
 ## Categories of ML tasks
 
+::: {.notes}
+Depth over coverage. Unsupervised is ISLR chapter 12, not assessed.
+:::
+
 **Supervised learning** (this whole course)
 
 Often we focus on one variable, name it $Y$, and give it the special status of being an "outcome"/"response"
 
 **Not this course:** unsupervised learning (clustering, dimension reduction), ranking, anomaly detection, network data, embeddings, recommender systems, bandits, etc.
-
-::: {.notes}
-Say why: depth over coverage. Unsupervised methods are in ISLR chapter 12 for anyone who wants them; they are not assessed.
-:::
 
 ## Supervised ML sub-categories
 
@@ -452,6 +472,10 @@ $$
 
 ## Very useful assumptions! {.inverse}
 
+::: {.notes}
+Compress: squared error and i.i.d. sampling keep the math simple; both come back.
+:::
+
 ### The *why* of machine learning: "it works"
 
 - Squared error $\rightarrow$ simpler math
@@ -464,6 +488,10 @@ $$
 
 ## Machine learning as competition
 
+::: {.notes}
+The literature calls it the common task framework; say it once. Each time: what did winning establish?
+:::
+
 A **prediction competition**:
 
 1. curated data, the same for every competitor
@@ -473,11 +501,11 @@ A **prediction competition**:
 
 Winning model chosen by best score
 
-::: {.notes}
-The name in the literature is the "common task framework"; say it once, then call it the competition. Everything distinctive later in the course is a specific way this clean picture breaks. Each time we will ask: what did winning establish?
-:::
-
 ## History: common task framework
+
+::: {.notes}
+Three minutes; this buys the name. DARPA speech, mid-1980s, NIST as referee. Donoho (2017): the secret sauce.
+:::
 
 ::: {style="font-size: 1.25em"}
 | | |
@@ -491,11 +519,11 @@ The name in the literature is the "common task framework"; say it once, then cal
 
 Donoho (2017) called the recipe the *common task framework* and credited it with most of what "machine learning" has achieved since
 
-::: {.notes}
-Three minutes, on the history budget: this buys the name. Mark Liberman traced the origin to the DARPA speech programme of the mid-1980s; the referee was the National Institute of Standards and Technology, and the point was that groups had been reporting results on their own data with no way to compare. Donoho, "50 years of data science" (JCGS 2017), section on the CTF: "the secret sauce". Kaggle was founded in April 2010; ILSVRC ran 2010–2017.
-:::
-
 ## Netflix challenge
+
+::: {.notes}
+2009: two teams past 10%, tied at 0.8567 on the hidden set; the prize went to the one that submitted twenty minutes earlier. Ask what twenty minutes says about the two methods.
+:::
 
 ::: {.columns}
 ::: {.column width="50%"}
@@ -512,13 +540,11 @@ for the first team to beat Netflix's own recommender by 10%
 :::
 :::
 
-::: {.notes}
-Netflix Prize. RMSE on held-out ratings; Cinematch scored 0.9514, the target was 0.8563. Progress prizes in 2007 and 2008. Tens of thousands of teams registered; about 5,100 submitted at least one entry. In 2009 two teams crossed 10%: BellKor's Pragmatic Chaos and The Ensemble. On the public leaderboard (the "quiz" subset) The Ensemble was ahead, 0.8553 to 0.8554; the prize was decided on a separate, unrevealed "test" subset, where the two tied to four decimals (0.8567), and it went to the team that had submitted twenty minutes earlier. Ask the room: what does twenty minutes of difference tell you about the two methods? (Nothing.) That is the first appearance of a theme: the leaderboard number has noise in it. The validation week comes back to the two-subset structure.
-
-Figures: the Netflix Prize final leaderboard (September 2009) and the grand-prize reports.
-:::
-
 ## And then
+
+::: {.notes}
+Not put into production (Netflix blog, 2012). Sequel cancelled after Narayanan and Shmatikov re-identified users. Noisy score, undeployable winner, and the data are people.
+:::
 
 The winning blend of hundreds of models was never put into production
 
@@ -528,10 +554,6 @@ The sequel was cancelled: researchers had re-identified "anonymous" users from t
 
 ::: {.leave}
 Winning a competition is not always useful. This course will help you understand why
-:::
-
-::: {.notes}
-Netflix's engineering blog (2012) said the final solution was not implemented; two of the 2007 progress-prize algorithms were. Netflix Prize 2 was announced in 2009 and cancelled in 2010 after a privacy lawsuit and FTC attention, following Narayanan and Shmatikov's re-identification paper (2008), which linked the "anonymised" ratings to public IMDb reviews. Three lessons in one story: the score is noisy, the winner need not be deployable, and the data are people.
 :::
 
 ## Prediction, loss, held-out set
@@ -553,6 +575,10 @@ That number is the leaderboard.
 
 ## One rule before we start
 
+::: {.notes}
+First item on their project checklist. Returns in the validation week as leakage.
+:::
+
 An input is fair game only if you would have it **at the moment you need the prediction**
 
 Predict 2007 life expectancy from GDP: fine
@@ -561,11 +587,11 @@ Predict a patient's readmission from the discharge letter written *after* readmi
 
 Predict a house's sale price from its list price: fine. From the price it eventually sold for: that's the answer, not an input
 
-::: {.notes}
-This is the first item on the checklist students will apply to their own project. It comes back in the validation week as leakage.
-:::
-
 ## Your first task
+
+::: {.notes}
+Collect three or four answers: a line, similar countries, an average. Come back to them at the leaderboard.
+:::
 
 ::: {.columns}
 ::: {.column width="52%"}
@@ -595,11 +621,11 @@ ggplot(train, aes(lgdp, lifeExp)) +
 Write down, in one line, how you would do it.
 :::
 
-::: {.notes}
-Collect three or four answers. Somebody will say "draw a line", somebody "look at similar countries", somebody "average". All three are this week or next. Keep the answers on the board; we come back to them at the leaderboard.
-:::
-
 ## Where would you look? {.inverse}
+
+::: {.notes}
+Compress: ask it, take one answer.
+:::
 
 You know nothing about a country except its GDP.
 
@@ -607,7 +633,11 @@ Where would you look for its life expectancy?
 
 Remember that you have life expectancy data about some other countries...
 
-## History: k-nearest neighbors
+## History: k-nearest neighbors {.inverse}
+
+::: {.notes}
+Compress: Fix and Hodges, 1951, an Air Force report. So simple it did not need a paper.
+:::
 
 ::: {.columns}
 ::: {.column width="55%"}
@@ -622,12 +652,6 @@ Unpublished until 1989. By then it had a name and was everywhere
 ::: {.column width="45%"}
 Cover and Hart, 1967: with enough data, one nearest neighbor gets within a factor of two of the best possible error (for classification, as $n \to \infty$)
 :::
-:::
-
-::: {.notes}
-Fix and Hodges, "Discriminatory analysis: nonparametric discrimination, consistency properties", Randolph Field, 1951; reprinted in the International Statistical Review in 1989. Cover and Hart's bound is asymptotic and for classification. The bias--variance decomposition, at the board in fifteen minutes, is a different kind of result: an exact finite-sample decomposition of the regression error, not a limit.
-
-Say: the method is so simple it did not need a paper. That is a warning as much as a compliment. Second on the cut order.
 :::
 
 ## $k$ nearest neighbors
@@ -655,6 +679,10 @@ No formula, no parameters. One choice: $k$.
 
 ## CTF competition: which $k$ would you submit?
 
+::: {.notes}
+Show of hands for 1, 5, 20. Remember who chose 1.
+:::
+
 ::: {.ask}
 Look at the three panels again. Write down the $k$ you would enter in the competition, and one reason.
 :::
@@ -669,11 +697,11 @@ ggplot(train, aes(lgdp, lifeExp)) +
   labs(x = NULL, y = NULL)
 ```
 
-::: {.notes}
-Take a show of hands for 1, 5, 20. Most rooms split between 5 and 20; a few brave people take 1 because "it fits the data perfectly". Keep those people in mind for the next slide.
-:::
-
 ## The score, for every $k$
+
+::: {.notes}
+Let them say why it is zero. Leave open what the number tells you; that is the validation week.
+:::
 
 ```{r}
 #| fig-height: 4.2
@@ -697,11 +725,11 @@ ggplot(err, aes(k, MSE, colour = set)) +
 
 At $k = 1$ the training error is **exactly zero**. Is that good news?
 
-::: {.notes}
-Let them say why it is zero: each training point is its own nearest neighbor. Then leave "so what does that number tell you?" hanging. The full answer is the validation week. Do not give it.
-:::
-
 ## The leaderboard
+
+::: {.notes}
+Bars: each competitor's own standard error, the 42 losses treated as independent. Point at the bars and say Netflix. The seminar computes them.
+:::
 
 ```{r}
 #| fig-height: 4
@@ -728,11 +756,11 @@ ggplot(lb, aes(mse, entrant)) +
 
 Which model wins? What about those error bars?...
 
-::: {.notes}
-Each bar is one competitor's own standard error: the standard error of a mean of 42 squared errors, computed as if the 42 losses were independent draws, which is an assumption about the countries rather than a fact about them. Whether the gap between two competitors scored on the same 42 countries is real is a different question, about the difference of their losses on the same units; it is left open this week. The seminar computes the bars. Do not do the seminar's work here; just point at the bars and say "Netflix".
-:::
+## The smooth cousin {.inverse}
 
-## The smooth cousin
+::: {.notes}
+Compress: the question only. What is a local average trying to land on? Week 2 answers it.
+:::
 
 Instead of "the $k$ nearest, equally", weight *every* training point by how close it is:
 $$
@@ -756,25 +784,25 @@ ggplot(train, aes(lgdp, lifeExp)) +
 
 Both are local averages. What number is a local average *trying to land on*?
 
-::: {.notes}
-One minute: state it, ask the question, leave it open. The answer (the conditional expectation) is next week's theorem. If cut, ask the question from the nearest-neighbors slide instead; week 2 retrieves it.
-:::
+## What makes a nearest-neighbor prediction wrong?
 
-## What makes a nearest-neighbor prediction wrong? [board]{.board}
+::: {.notes}
+k traded one thing for another on the error curve; the proof names the two. Collect the two facts first.
+:::
 
 $y_i = f^\star(x_i) + \varepsilon_i$, inputs fixed, noise independent, mean $0$, variance $\sigma^2$; new $Y_0 = f^\star(x_0) + \varepsilon_0$.
 
 We want $\mathbb E\big[(Y_0 - \hat f_k(x_0))^2\big]$, the expected squared error of the $k$-nearest-neighbor prediction at $x_0$.
 
 ::: {.ask}
-Two facts from ST102 do all the work at the board. Which two? Write them down before we start.
+Two facts from ST102 do all the work in the proof. Which two? Write them down before we start.
 :::
+
+## Bias--variance decomposition
 
 ::: {.notes}
-Board script: instructor project, week 1, board_bias_variance. Why anyone cared: we just watched k trade one thing for another on the error curve; the decomposition names the two things. Collect the two answers, then go to the board; the next slide is what stays on the screen while you write.
+The proof is the next four slides. Systematic error is bias, the rest variance. It comes back in three more forms.
 :::
-
-## Bias--variance decomposition [board]{.board}
 
 $y_i = f^\star(x_i) + \varepsilon_i$, inputs fixed, noise independent, mean $0$, variance $\sigma^2$; new $Y_0 = f^\star(x_0) + \varepsilon_0$.
 
@@ -790,11 +818,7 @@ $$
 noise + bias² + variance. Variance falls in $k$, always. Bias typically grows too, but it need not be monotonic (a constant $f^\star$ keeps it at zero for every $k$).
 :::
 
-::: {.notes}
-Backups follow, uncounted. This is the bias–variance trade-off, one of the most powerful ideas in statistics; it comes back in three more forms this term. Are the errors systematic (bias) or not (variance)?
-:::
-
-## Bias--variance decomposition, line 1 {.backup visibility="uncounted"}
+## Bias--variance decomposition, line 1
 
 $$
 Y_0 - \hat f_k(x_0) = \varepsilon_0 + \big[f^\star(x_0) - \hat f_k(x_0)\big]
@@ -805,7 +829,7 @@ $$
 \mathbb E\big[(Y_0 - \hat f_k(x_0))^2\big] = \mathbb E[\varepsilon_0^2] + 2\,\mathbb E\big[\varepsilon_0 \,(f^\star(x_0) - \hat f_k(x_0))\big] + \mathbb E\big[(f^\star(x_0) - \hat f_k(x_0))^2\big]
 $$
 
-## Bias--variance decomposition, line 2 {.backup visibility="uncounted"}
+## Bias--variance decomposition, line 2
 
 $\varepsilon_0$ is independent of everything in $\hat f_k(x_0)$ and has mean $0$:
 $$
@@ -817,7 +841,7 @@ $$
 \sigma^2 + \mathbb E\big[(f^\star(x_0) - \hat f_k(x_0))^2\big]
 $$
 
-## Bias--variance decomposition, line 3 {.backup visibility="uncounted"}
+## Bias--variance decomposition, line 3
 
 Add and subtract $\mathbb E \hat f_k(x_0)$ inside the square:
 $$
@@ -826,7 +850,7 @@ $$
 
 (The cross term is $2[f^\star(x_0) - \mathbb E\hat f_k(x_0)]\,\mathbb E[\mathbb E\hat f_k(x_0) - \hat f_k(x_0)] = 0$.)
 
-## Bias--variance decomposition, lines 4 and 5 {.backup visibility="uncounted"}
+## Bias--variance decomposition, lines 4 and 5
 
 The neighborhood is fixed, so
 $$
@@ -843,6 +867,10 @@ $$
 (ESL §7.3, equation 7.10.)
 
 ## Where the bias comes from
+
+::: {.notes}
+Dark curve: loess on all 142 countries, a stand-in for f*, never scored. In one dimension the neighbors are close. What about ten?
+:::
 
 ```{r}
 #| fig-height: 4.2
@@ -866,10 +894,6 @@ ggplot(train, aes(lgdp, lifeExp)) +
 
 Pink: the neighbors used at the dashed line. Dark curve: a stand-in for $f^\star$. With 30 neighbors the average of $f^\star$ over the pink points is not $f^\star$ at the line.
 
-::: {.notes}
-Noise: nobody beats it on average. Variance: averaging helps, always. Bias: how far f* drifts across the neighborhood, which is set by how smooth f* is and by how far the neighbors are; for this smooth f* it grows with k, though the takeaway box says why it need not in general. The dark curve is a loess smooth drawn from all 142 countries as a stand-in for f*; it is never scored, so nothing leaks, and it is not a competitor. In one dimension the neighbors are close. What about ten?
-:::
-
 ## The curse of dimensionality
 
 Inputs uniform on $[0,1]^d$. Take an axis-aligned cube of edge length $e$ that sits inside the unit cube.
@@ -879,6 +903,10 @@ What fraction of the population lies inside it? So how long must the edge be to 
 :::
 
 ## The curse of dimensionality: edge length
+
+::: {.notes}
+Bellman's phrase (1957), from grids in dynamic programming. One sentence.
+:::
 
 How long must the edge be, to hold a fraction $r$ of the population, in $d$ dimensions?
 
@@ -893,11 +921,11 @@ ggplot(cd, aes(r, edge, colour = d)) + geom_line(linewidth = 1) +
   theme(legend.position = "right")
 ```
 
-::: {.notes}
-The phrase "curse of dimensionality" is Bellman's (1957), from dynamic programming: a grid over a state space with d coordinates has an exponential number of cells. Ours is that a neighborhood in d dimensions is not small. One sentence of history, no more.
-:::
-
 ## Far away, in many directions
+
+::: {.notes}
+Ask who got 0.63 first. It describes a cube inside the support, not the k nearest points. ESL 2.5.
+:::
 
 | $d$ | edge to hold 1% | to hold 10% |
 |---|---|---|
@@ -910,11 +938,11 @@ In ten dimensions, a cube holding 1% of the population spans 63% of each axis. T
 
 A nearest-neighbor set is a ball around the query, not a cube, and near the boundary the calculation changes, but the lesson carries: the nearest 1% of the data is far away. So the decomposition's bias term is where dimension bites: the neighbors are far away, and $f^\star$ has room to drift.
 
-::: {.notes}
-ESL §2.5. Ask who got 0.63 before showing it. The number is an expected population fraction for an axis-aligned cube inside the support; a cube centered on a point near the boundary sticks out of the unit cube, and a k-NN neighborhood is an empirical ball, so do not present 0.63 as a property of the k nearest points. The seminar asks for the formula as a function of d.
-:::
+## Distances concentrate {.inverse}
 
-## Distances concentrate
+::: {.notes}
+Compress: read the figure. In high dimension every point is about equally far away.
+:::
 
 ```{r}
 #| fig-height: 3.2
@@ -933,6 +961,10 @@ Why: $\|X - X'\|^2/2d$ is an average of $d$ independent coordinate terms, each w
 
 ## Distance concentration
 
+::: {.notes}
+Stated, not proved. The proof is exercise 3.
+:::
+
 **Distance concentration (stated, not proved).** For $X, X'$ independent $N(0, I_d)$, $\|X - X'\|^2/2d$ has mean $1$ and variance $2/d$, so by Chebyshev
 $$
 \Pr\!\left( \Big| \tfrac{\|X - X'\|^2}{2d} - 1 \Big| > \varepsilon \right) \le \tfrac{2}{d\varepsilon^2},
@@ -941,15 +973,19 @@ and by a union bound over the $n-1$ distances from a query point, every neighbor
 
 ## Two things to think about
 
+::: {.notes}
+Both withheld. 1 is the validation week; 2 is the seminar's last question.
+:::
+
 **1.** Your 1-NN submission had training error zero. What is that number measuring, and what would the competition have scored instead?
 
 **2.** Suppose we fit a model to the 142 countries in 2002 and test it on the *same 142 countries in 1997*, and it does well. Has it predicted anything new?
 
-::: {.notes}
-Both answers are withheld: 1 is the validation week (training error is optimistic), 2 is the seminar's last question and next week's opener (test data look like training data by construction; the world need not).
-:::
+## Before the seminar
 
-## Until the seminar
+::: {.notes}
+Exercises are what the seminar's problems vary. Standing expectation, every week.
+:::
 
 ::: {.ask}
 For the gapminder data, write down the four parts of the competition: the unit, the inputs and outcome, the score, and how the held-out set is chosen.
@@ -957,7 +993,9 @@ For the gapminder data, write down the four parts of the competition: the unit, 
 Then, for each input in the dataset: would you have it at the moment you need the prediction, for a country whose life expectancy you don't know?
 :::
 
-Bring it to the seminar.
+- That is exercise 1 at the top of the notebook. Exercise 2: today's proof of the bias--variance decomposition again, with the slides closed. Exercise 3: a proof of distance concentration
+
+- Every week: the notebook opens with a "Before the seminar" section. Do it before you arrive; the seminar's problems start from it
 
 ## Reading
 

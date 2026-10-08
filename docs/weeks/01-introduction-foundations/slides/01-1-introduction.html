@@ -706,7 +706,7 @@ X = (X_1, X_2, \ldots, X_p) \in \mathbb R^p
 <p>Where would you look for its life expectancy?</p>
 <p>Remember that you have life expectancy data about some other countries…</p>
 </section>
-<section id="history-k-nearest-neighbors" class="slide level2">
+<section id="history-k-nearest-neighbors" class="slide level2 inverse">
 <h2>History: k-nearest neighbors</h2>
 <div class="columns">
 <div class="column" style="width:55%;">
@@ -743,7 +743,7 @@ X = (X_1, X_2, \ldots, X_p) \in \mathbb R^p
 
 <img data-src="01-1-introduction_files/figure-revealjs/unnamed-chunk-12-1.png" width="1350" class="r-stretch"><p>Which model wins? What about those error bars?…</p>
 </section>
-<section id="the-smooth-cousin" class="slide level2">
+<section id="the-smooth-cousin" class="slide level2 inverse">
 <h2>The smooth cousin</h2>
 <p>Instead of “the <span class="math inline">\(k\)</span> nearest, equally”, weight <em>every</em> training point by how close it is: <span class="math display">\[
 \hat f_h(x_0) = \frac{\sum_i K\!\left(\frac{x_i - x_0}{h}\right) y_i}{\sum_i K\!\left(\frac{x_i - x_0}{h}\right)},
@@ -752,16 +752,16 @@ X = (X_1, X_2, \ldots, X_p) \in \mathbb R^p
 
 <img data-src="01-1-introduction_files/figure-revealjs/unnamed-chunk-13-1.png" width="1500" class="r-stretch"><p>Both are local averages. What number is a local average <em>trying to land on</em>?</p>
 </section>
-<section id="what-makes-a-nearest-neighbor-prediction-wrong-board" class="slide level2">
-<h2>What makes a nearest-neighbor prediction wrong? <span class="board">board</span></h2>
+<section id="what-makes-a-nearest-neighbor-prediction-wrong" class="slide level2">
+<h2>What makes a nearest-neighbor prediction wrong?</h2>
 <p><span class="math inline">\(y_i = f^\star(x_i) + \varepsilon_i\)</span>, inputs fixed, noise independent, mean <span class="math inline">\(0\)</span>, variance <span class="math inline">\(\sigma^2\)</span>; new <span class="math inline">\(Y_0 = f^\star(x_0) + \varepsilon_0\)</span>.</p>
 <p>We want <span class="math inline">\(\mathbb E\big[(Y_0 - \hat f_k(x_0))^2\big]\)</span>, the expected squared error of the <span class="math inline">\(k\)</span>-nearest-neighbor prediction at <span class="math inline">\(x_0\)</span>.</p>
 <div class="ask">
-<p>Two facts from ST102 do all the work at the board. Which two? Write them down before we start.</p>
+<p>Two facts from ST102 do all the work in the proof. Which two? Write them down before we start.</p>
 </div>
 </section>
-<section id="biasvariance-decomposition-board" class="slide level2">
-<h2>Bias–variance decomposition <span class="board">board</span></h2>
+<section id="biasvariance-decomposition" class="slide level2">
+<h2>Bias–variance decomposition</h2>
 <p><span class="math inline">\(y_i = f^\star(x_i) + \varepsilon_i\)</span>, inputs fixed, noise independent, mean <span class="math inline">\(0\)</span>, variance <span class="math inline">\(\sigma^2\)</span>; new <span class="math inline">\(Y_0 = f^\star(x_0) + \varepsilon_0\)</span>.</p>
 <p><strong>Bias–variance decomposition.</strong> <span class="math display">\[
 \mathbb E\big[(Y_0 - \hat f_k(x_0))^2\big]
@@ -773,7 +773,7 @@ X = (X_1, X_2, \ldots, X_p) \in \mathbb R^p
 <p>noise + bias² + variance. Variance falls in <span class="math inline">\(k\)</span>, always. Bias typically grows too, but it need not be monotonic (a constant <span class="math inline">\(f^\star\)</span> keeps it at zero for every <span class="math inline">\(k\)</span>).</p>
 </div>
 </section>
-<section id="biasvariance-decomposition-line-1" class="slide level2 backup" data-visibility="uncounted">
+<section id="biasvariance-decomposition-line-1" class="slide level2">
 <h2>Bias–variance decomposition, line 1</h2>
 <p><span class="math display">\[
 Y_0 - \hat f_k(x_0) = \varepsilon_0 + \big[f^\star(x_0) - \hat f_k(x_0)\big]
@@ -782,7 +782,7 @@ Y_0 - \hat f_k(x_0) = \varepsilon_0 + \big[f^\star(x_0) - \hat f_k(x_0)\big]
 \mathbb E\big[(Y_0 - \hat f_k(x_0))^2\big] = \mathbb E[\varepsilon_0^2] + 2\,\mathbb E\big[\varepsilon_0 \,(f^\star(x_0) - \hat f_k(x_0))\big] + \mathbb E\big[(f^\star(x_0) - \hat f_k(x_0))^2\big]
 \]</span></p>
 </section>
-<section id="biasvariance-decomposition-line-2" class="slide level2 backup" data-visibility="uncounted">
+<section id="biasvariance-decomposition-line-2" class="slide level2">
 <h2>Bias–variance decomposition, line 2</h2>
 <p><span class="math inline">\(\varepsilon_0\)</span> is independent of everything in <span class="math inline">\(\hat f_k(x_0)\)</span> and has mean <span class="math inline">\(0\)</span>: <span class="math display">\[
 \mathbb E\big[\varepsilon_0 \,(f^\star(x_0) - \hat f_k(x_0))\big] = \mathbb E[\varepsilon_0]\; \mathbb E\big[f^\star(x_0) - \hat f_k(x_0)\big] = 0
@@ -791,14 +791,14 @@ Y_0 - \hat f_k(x_0) = \varepsilon_0 + \big[f^\star(x_0) - \hat f_k(x_0)\big]
 \sigma^2 + \mathbb E\big[(f^\star(x_0) - \hat f_k(x_0))^2\big]
 \]</span></p>
 </section>
-<section id="biasvariance-decomposition-line-3" class="slide level2 backup" data-visibility="uncounted">
+<section id="biasvariance-decomposition-line-3" class="slide level2">
 <h2>Bias–variance decomposition, line 3</h2>
 <p>Add and subtract <span class="math inline">\(\mathbb E \hat f_k(x_0)\)</span> inside the square: <span class="math display">\[
 \mathbb E\big[(f^\star(x_0) - \hat f_k(x_0))^2\big] = \big[f^\star(x_0) - \mathbb E\hat f_k(x_0)\big]^2 + \mathrm{Var}\big(\hat f_k(x_0)\big)
 \]</span></p>
 <p>(The cross term is <span class="math inline">\(2[f^\star(x_0) - \mathbb E\hat f_k(x_0)]\,\mathbb E[\mathbb E\hat f_k(x_0) - \hat f_k(x_0)] = 0\)</span>.)</p>
 </section>
-<section id="biasvariance-decomposition-lines-4-and-5" class="slide level2 backup" data-visibility="uncounted">
+<section id="biasvariance-decomposition-lines-4-and-5" class="slide level2">
 <h2>Bias–variance decomposition, lines 4 and 5</h2>
 <p>The neighborhood is fixed, so <span class="math display">\[
 \mathbb E\hat f_k(x_0) = \frac{1}{k}\sum_{l=1}^k f^\star(x_{(l)}),
@@ -863,7 +863,7 @@ Y_0 - \hat f_k(x_0) = \varepsilon_0 + \big[f^\star(x_0) - \hat f_k(x_0)\big]
 <p>In ten dimensions, a cube holding 1% of the population spans 63% of each axis. That is not local.</p>
 <p>A nearest-neighbor set is a ball around the query, not a cube, and near the boundary the calculation changes, but the lesson carries: the nearest 1% of the data is far away. So the decomposition’s bias term is where dimension bites: the neighbors are far away, and <span class="math inline">\(f^\star\)</span> has room to drift.</p>
 </section>
-<section id="distances-concentrate" class="slide level2">
+<section id="distances-concentrate" class="slide level2 inverse">
 <h2>Distances concentrate</h2>
 
 <img data-src="01-1-introduction_files/figure-revealjs/unnamed-chunk-16-1.png" width="1500" class="r-stretch"><p>Why: <span class="math inline">\(\|X - X'\|^2/2d\)</span> is an average of <span class="math inline">\(d\)</span> independent coordinate terms, each with mean <span class="math inline">\(1\)</span>, so its spread falls like <span class="math inline">\(1/\sqrt d\)</span>: the same averaging that gave the bias–variance decomposition its variance term.</p>
@@ -879,13 +879,16 @@ Y_0 - \hat f_k(x_0) = \varepsilon_0 + \big[f^\star(x_0) - \hat f_k(x_0)\big]
 <p><strong>1.</strong> Your 1-NN submission had training error zero. What is that number measuring, and what would the competition have scored instead?</p>
 <p><strong>2.</strong> Suppose we fit a model to the 142 countries in 2002 and test it on the <em>same 142 countries in 1997</em>, and it does well. Has it predicted anything new?</p>
 </section>
-<section id="until-the-seminar" class="slide level2">
-<h2>Until the seminar</h2>
+<section id="before-the-seminar" class="slide level2">
+<h2>Before the seminar</h2>
 <div class="ask">
 <p>For the gapminder data, write down the four parts of the competition: the unit, the inputs and outcome, the score, and how the held-out set is chosen.</p>
 <p>Then, for each input in the dataset: would you have it at the moment you need the prediction, for a country whose life expectancy you don’t know?</p>
 </div>
-<p>Bring it to the seminar.</p>
+<ul>
+<li><p>That is exercise 1 at the top of the notebook. Exercise 2: today’s proof of the bias–variance decomposition again, with the slides closed. Exercise 3: a proof of distance concentration</p></li>
+<li><p>Every week: the notebook opens with a “Before the seminar” section. Do it before you arrive; the seminar’s problems start from it</p></li>
+</ul>
 </section>
 <section id="reading" class="slide level2">
 <h2>Reading</h2>
