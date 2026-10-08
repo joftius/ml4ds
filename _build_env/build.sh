@@ -133,8 +133,9 @@ check() {
   # Every page uses MathJax 4 (html-math-method in _quarto.yml). A deck that ends up without a math
   # method gets MathJax 2.7.9 from reveal's plugin; one that names another URL gets that.
   if grep -rlq --include='*.html' -e "mathjax: 'https://cdn.jsdelivr.net/npm/mathjax@[0-3]" docs; then echo "FAIL: a deck loads a MathJax older than 4 (check html-math-method in its YAML and in _quarto.yml)"; fail=1; fi
-  # Teacher pages are unlinked. A link from a public page is right only once the convenor has released that file.
-  n=$(grep -rl --include='*.html' --exclude-dir=seminar-teachers --exclude-dir=decks-notes -e 'seminar-teachers/' -e 'decks-notes/' docs | tr '\n' ' ' || true)
+  # Teacher notes and decks with notes are never linked from a public page. Complete notebooks are,
+  # from the week after their seminar (the release pull request adds the link).
+  n=$(grep -rl --include='*.html' --exclude-dir=seminar-teachers --exclude-dir=decks-notes -e 'seminar-teachers/teacher_note' -e 'decks-notes/' docs | tr '\n' ' ' || true)
   [ -z "$n" ] || echo "WARN: public page links to a teacher path: $n"
   # The site is built with one Quarto version; another one rewrites every page.
   if [ -f _build_env/QUARTO_VERSION ] && [ "$(quarto --version 2>/dev/null)" != "$(cat _build_env/QUARTO_VERSION)" ]; then
