@@ -1,0 +1,1426 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<script src="../../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../../site_libs/quarto-html/tabby.min.js"></script>
+<script src="../../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<link href="../../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../../site_libs/quarto-html/light-border.css" rel="stylesheet">
+<link href="../../../site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
+  <meta name="generator" content="quarto-1.10.18">
+
+  <meta name="author" content="Joshua Loftus">
+  <title>machine learning 4 data science – Machine learning</title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+  <link rel="stylesheet" href="../../../site_libs/revealjs/dist/reset.css">
+  <link rel="stylesheet" href="../../../site_libs/revealjs/dist/reveal.css">
+  <style>
+    /* Default styles provided by pandoc.
+    ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+    */
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: 1.5em;}
+    div.column{flex: auto;}
+    @media screen {
+    div.columns{gap: min(4vw, 1.5em);}
+    div.column{overflow-x: auto;}
+    }
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+      vertical-align: middle;
+    }
+    /* CSS for syntax highlighting */
+    html { -webkit-text-size-adjust: 100%; }
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      { color: #003b4f; background-color: #f1f3f5; }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span { color: #003b4f; } /* Normal */
+    code span.al { color: #ad0000; } /* Alert */
+    code span.an { color: #5e5e5e; } /* Annotation */
+    code span.at { color: #657422; } /* Attribute */
+    code span.bn { color: #ad0000; } /* BaseN */
+    code span.bu { } /* BuiltIn */
+    code span.cf { color: #003b4f; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #20794d; } /* Char */
+    code span.cn { color: #8f5902; } /* Constant */
+    code span.co { color: #5e5e5e; } /* Comment */
+    code span.cv { color: #5e5e5e; font-style: italic; } /* CommentVar */
+    code span.do { color: #5e5e5e; font-style: italic; } /* Documentation */
+    code span.dt { color: #ad0000; } /* DataType */
+    code span.dv { color: #ad0000; } /* DecVal */
+    code span.er { color: #ad0000; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #ad0000; } /* Float */
+    code span.fu { color: #4758ab; } /* Function */
+    code span.im { color: #00769e; } /* Import */
+    code span.in { color: #5e5e5e; } /* Information */
+    code span.kw { color: #003b4f; font-weight: bold; } /* Keyword */
+    code span.op { color: #5e5e5e; } /* Operator */
+    code span.ot { color: #003b4f; } /* Other */
+    code span.pp { color: #ad0000; } /* Preprocessor */
+    code span.sc { color: #5e5e5e; } /* SpecialChar */
+    code span.ss { color: #20794d; } /* SpecialString */
+    code span.st { color: #20794d; } /* String */
+    code span.va { color: #111111; } /* Variable */
+    code span.vs { color: #20794d; } /* VerbatimString */
+    code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
+  </style>
+  <link rel="stylesheet" href="../../../site_libs/revealjs/dist/theme/quarto-4ff0974c21d4a5644e87c327675c5c70.css">
+  <link href="../../../site_libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
+  <link href="../../../site_libs/revealjs/plugin/reveal-menu/menu.css" rel="stylesheet">
+  <link href="../../../site_libs/revealjs/plugin/reveal-menu/quarto-menu.css" rel="stylesheet">
+  <link href="../../../site_libs/revealjs/plugin/quarto-support/footer.css" rel="stylesheet">
+  <style type="text/css">
+    .reveal div.sourceCode {
+      margin: 0;
+      overflow: auto;
+    }
+    .reveal div.hanging-indent {
+      margin-left: 1em;
+      text-indent: -1em;
+    }
+    .reveal .slide:not(.center) {
+      height: 100%;
+    }
+    .reveal .slide.scrollable {
+      overflow-y: auto;
+    }
+    .reveal .footnotes {
+      height: 100%;
+      overflow-y: auto;
+    }
+    .reveal .slide .absolute {
+      position: absolute;
+      display: block;
+    }
+    .reveal .footnotes ol {
+      counter-reset: ol;
+      list-style-type: none; 
+      margin-left: 0;
+    }
+    .reveal .footnotes ol li:before {
+      counter-increment: ol;
+      content: counter(ol) ". "; 
+    }
+    .reveal .footnotes ol li > p:first-child {
+      display: inline-block;
+    }
+    .reveal .slide ul,
+    .reveal .slide ol {
+      margin-bottom: 0.5em;
+    }
+    .reveal .slide ul li,
+    .reveal .slide ol li {
+      margin-top: 0.4em;
+      margin-bottom: 0.2em;
+    }
+    .reveal .slide ul[role="tablist"] li {
+      margin-bottom: 0;
+    }
+    .reveal .slide ul li > *:first-child,
+    .reveal .slide ol li > *:first-child {
+      margin-block-start: 0;
+    }
+    .reveal .slide ul li > *:last-child,
+    .reveal .slide ol li > *:last-child {
+      margin-block-end: 0;
+    }
+    .reveal .slide .columns:nth-child(3) {
+      margin-block-start: 0.8em;
+    }
+    .reveal blockquote {
+      box-shadow: none;
+    }
+    .reveal .tippy-content>* {
+      margin-top: 0.2em;
+      margin-bottom: 0.7em;
+    }
+    .reveal .tippy-content>*:last-child {
+      margin-bottom: 0.2em;
+    }
+    .reveal .slide > img.stretch.quarto-figure-center,
+    .reveal .slide > img.r-stretch.quarto-figure-center {
+      display: block;
+      margin-left: auto;
+      margin-right: auto; 
+    }
+    .reveal .slide > img.stretch.quarto-figure-left,
+    .reveal .slide > img.r-stretch.quarto-figure-left  {
+      display: block;
+      margin-left: 0;
+      margin-right: auto; 
+    }
+    .reveal .slide > img.stretch.quarto-figure-right,
+    .reveal .slide > img.r-stretch.quarto-figure-right  {
+      display: block;
+      margin-left: auto;
+      margin-right: 0; 
+    }
+  </style>
+</head>
+<body class="quarto-light">
+  <div class="reveal">
+    <div class="slides">
+
+<section id="title-slide" class="quarto-title-block center">
+  <h1 class="title">Machine learning</h1>
+  <p class="subtitle">Week 3: classification, and causality (part 1)</p>
+
+<div class="quarto-title-authors">
+<div class="quarto-title-author">
+<div class="quarto-title-author-name">
+Joshua Loftus
+</div>
+        <p class="quarto-title-affiliation">
+            LSE
+          </p>
+    </div>
+</div>
+
+</section>
+<section id="section" class="slide level2 inverse">
+<h2></h2>
+<h3 id="week-3-classification-and-causality-part-1">Week 3: classification, and causality (part 1)</h3>
+<p>Part 1: classification, and what a mistake costs</p>
+<p>Part 2: causality and interventions</p>
+</section>
+<section id="where-week-2-left-the-target" class="slide level2">
+<h2>Where week 2 left the target</h2>
+<div class="retrieval">
+<p>Week 2, the optimal model theorem: under squared loss the best predictor of <span class="math inline">\(Y\)</span> from <span class="math inline">\(X\)</span> is the conditional mean, <span class="math inline">\(f^\star(x) = \mathbb E[Y \mid X = x]\)</span>, and any other <span class="math inline">\(f\)</span> pays <span class="math inline">\(\mathbb E[(f^\star(X) - f(X))^2]\)</span> on top of it.</p>
+</div>
+<p>Today the outcome is a label: <span class="math inline">\(Y \in \{0, 1\}\)</span>.</p>
+<div class="ask">
+<p>Write down what <span class="math inline">\(\mathbb E[Y \mid X = x]\)</span> is when <span class="math inline">\(Y\)</span> takes only the values <span class="math inline">\(0\)</span> and <span class="math inline">\(1\)</span>. Then write one thing a straight line <span class="math inline">\(x^\top\beta\)</span> gets wrong about it.</p>
+</div>
+</section>
+<section id="the-target-is-a-probability" class="slide level2">
+<h2>The target is a probability</h2>
+<p>For a <span class="math inline">\(0/1\)</span> outcome the conditional mean is a probability: <span class="math display">\[
+p(x) = P(Y = 1 \mid X = x) = \mathbb E[Y \mid X = x]
+\]</span></p>
+<p>So the optimal model theorem’s target is the <strong>class probability</strong> <span class="math inline">\(p(x)\)</span>, and a fitted model gives an estimate <span class="math inline">\(\hat p(x)\)</span></p>
+<p>A line <span class="math inline">\(x^\top\beta\)</span> does not stay inside <span class="math inline">\([0, 1]\)</span>: that is the first thing logistic regression fixes</p>
+<p>Notation for today: <span class="math inline">\(p(x)\)</span> the class probability, <span class="math inline">\(\hat p(x)\)</span> its estimate, and a <strong>threshold</strong> <span class="math inline">\(c\)</span>: predict <span class="math inline">\(1\)</span> when <span class="math inline">\(\hat p(x) &gt; c\)</span></p>
+</section>
+<section id="classification" class="slide level2 inverse">
+<h2>Classification</h2>
+<ul>
+<li><strong>Supervised learning</strong> with categorical/qualitative outcomes</li>
+</ul>
+<p>(in contrast to regression, with numeric outcomes)</p>
+<ul>
+<li><p>Often called “labels”, <span class="math inline">\(K\)</span> = number of unique classes</p></li>
+<li><p>Binary: positive/negative or 0/1 or yes/no or success/fail etc</p></li>
+</ul>
+<p><em>Label names not mathematically important</em> - e.g.&nbsp;use <span class="math inline">\(1, ..., K\)</span></p>
+<div class="fragment">
+<ul>
+<li><p>Limitations: labels already defined (not learned from data– that would be unsupervised learning), <span class="math inline">\(K\)</span> is fixed</p></li>
+<li><p>Plots: often use color/point shape for categorical variables</p></li>
+</ul>
+</div>
+</section>
+<section id="interpretable-classification" class="slide level2">
+<h2>Interpretable classification</h2>
+<h3 id="logistic-regression">Logistic regression</h3>
+<p><span class="math display">\[\mathbb E(Y| \mathbf X = \mathbf x) =  g^{-1}(\mathbf x^T \beta)\]</span> <span class="math display">\[g(p) = \log{\left(\frac{p}{1-p}\right)}\]</span></p>
+<h3 id="generalized-linear-models-glms">Generalized linear models (GLMs)</h3>
+<ul>
+<li><a href="https://en.wikipedia.org/wiki/Generalized_linear_model#General_linear_models">Various</a> “link” functions <span class="math inline">\(g\)</span></li>
+<li>Linear regression is a special case with <span class="math inline">\(g = \text{id}\)</span></li>
+<li>Logistic in <code>R</code>: <code>glm(..., family = binomial())</code></li>
+<li>Others: Poisson, multinomial, …, see <code>?family</code> in <code>R</code></li>
+</ul>
+</section>
+<section id="one-predictor-s-curve" class="slide level2">
+<h2>One predictor, “S curve”</h2>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="03-1-classification-causality_files/figure-revealjs/logit-1dm-1.png" class="quarto-figure quarto-figure-center" style="width:71.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="classificationsdecisions-threshold-probability" class="slide level2">
+<h2>Classifications/decisions: threshold probability</h2>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="03-1-classification-causality_files/figure-revealjs/logit-1d-class-1.png" class="quarto-figure quarto-figure-center" style="width:71.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="contours-of-glm-predicted-class-probabilities" class="slide level2">
+<h2>Contours of GLM-predicted class probabilities</h2>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="03-1-classification-causality_files/figure-revealjs/logit-contour-1.png" class="quarto-figure quarto-figure-center" style="width:71.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="classification-boundaries" class="slide level2 center">
+<h2>Classification boundaries</h2>
+<div style="font-size: 1.15em">
+<p><strong>Classification boundaries</strong> with</p>
+<h3 id="p-3-predictors"><span class="math inline">\(p = 3\)</span> predictors</h3>
+<p>Boundary = plane</p>
+<h3 id="p-3-predictors-1"><span class="math inline">\(p &gt; 3\)</span> predictors</h3>
+<p>Boundary = hyperplane</p>
+<p>(In practice, “high-dimensional” = can’t easily plot it)</p>
+</div>
+</section>
+<section id="interpretation-coefficients" class="slide level2">
+<h2>Interpretation: coefficients</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a aria-hidden="true" tabindex="-1"></a>model_fit <span class="ot">&lt;-</span> <span class="fu">glm</span>(y <span class="sc">~</span> x1 <span class="sc">+</span> x2, <span class="at">family =</span> <span class="st">"binomial"</span>, <span class="at">data =</span> train)</span>
+<span id="cb1-2"><a aria-hidden="true" tabindex="-1"></a>broom<span class="sc">::</span><span class="fu">tidy</span>(model_fit)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 3 × 5
+  term        estimate std.error statistic  p.value
+  &lt;chr&gt;          &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;
+1 (Intercept)    -2.24     0.656     -3.42 0.000635
+2 x1              2.17     0.584      3.72 0.000198
+3 x2              1.53     0.499      3.07 0.00215 </code></pre>
+</div>
+</div>
+<p>Coefficient scale: log-odds? Exponentiate <span class="math inline">\(\to\)</span> odds</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a aria-hidden="true" tabindex="-1"></a>broom<span class="sc">::</span><span class="fu">tidy</span>(model_fit, <span class="at">exponentiate =</span> <span class="cn">TRUE</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 3 × 5
+  term        estimate std.error statistic  p.value
+  &lt;chr&gt;          &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;
+1 (Intercept)    0.106     0.656     -3.42 0.000635
+2 x1             8.78      0.584      3.72 0.000198
+3 x2             4.62      0.499      3.07 0.00215 </code></pre>
+</div>
+</div>
+</section>
+<section id="interpretation-inference-and-diagnostics" class="slide level2">
+<h2>Interpretation: inference and diagnostics</h2>
+<ul>
+<li><p>Fitted by maximum likelihood; how <code>glm</code> does it: next week</p></li>
+<li><p>MLEs <span class="math inline">\(\to\)</span> asymptotic normality for intervals/tests</p></li>
+</ul>
+<p><code>summary()</code>, <code>coef()</code>, <code>confint()</code>, <code>anova()</code>, etc in <code>R</code></p>
+<ul>
+<li>“Deviance” instead of RSS</li>
+</ul>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a aria-hidden="true" tabindex="-1"></a>broom<span class="sc">::</span><span class="fu">glance</span>(model_fit)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 1 × 8
+  null.deviance df.null logLik   AIC   BIC deviance df.residual  nobs
+          &lt;dbl&gt;   &lt;int&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;    &lt;dbl&gt;       &lt;int&gt; &lt;int&gt;
+1          110.      79  -25.8  57.5  64.7     51.5          77    80</code></pre>
+</div>
+</div>
+<ul>
+<li>Because <span class="math inline">\(y\)</span> is 0 or 1, residual plots will show patterns, not as easy to interpret geometrically</li>
+</ul>
+</section>
+<section id="challenges" class="slide level2">
+<h2>Challenges</h2>
+<h4 id="separable-case-guaranteed-if-p-n">Separable case (guaranteed if <span class="math inline">\(p &gt; n\)</span>)</h4>
+<p>If classes can be perfectly separated, the MLE is undefined, fitting algorithm diverges as <span class="math inline">\(\hat \beta\)</span> coordinates <span class="math inline">\(\to \pm \infty\)</span></p>
+<p>Awkwardly, classification is <em>too easy</em>(!?) for this probabilistic approach</p>
+<h4 id="curse-of-dimensionality">Curse of dimensionality</h4>
+<p>Biased MLE and wrong variance/asymp. dist. if <span class="math inline">\(n/p \to \text{const}\)</span>, even if <span class="math inline">\(&gt; 1\)</span></p>
+<p><span class="source">See <a href="https://www.pnas.org/content/116/29/14516">Sur and Candès, (2019)</a></span></p>
+</section>
+<section id="classification-summary" class="slide level2 inverse">
+<h2>Classification summary</h2>
+<div class="columns">
+<div class="column" style="width:48%;">
+<ul>
+<li>Numeric prediction <span class="math inline">\(\to\)</span> classification</li>
+</ul>
+<p><span class="math display">\[\hat y = \mathbb I(\hat p &gt; c) = \begin{cases} 0 &amp; \text{ if } \hat p \leq c \\  1 &amp; \text{ if } \hat p &gt; c \end{cases}\]</span></p>
+<p>Log-odds function is monotonic, so (hyperplanes)</p>
+<p><span class="math display">\[\hat p &gt; c \leftrightarrow x^T \beta &gt; c'\]</span></p>
+</div><div class="column" style="width:52%;">
+<ul>
+<li>More classes: transform to binary, predict using largest <span class="math inline">\(\hat p_k\)</span></li>
+<li>Non-linear boundaries: transformation of predictors, or use methods other than GLMs (we’ll learn more soon)</li>
+<li>Some classification methods output categorical classes, not probabilities (or other numeric scores)</li>
+</ul>
+</div></div>
+</section>
+<section id="two-kinds-of-mistake" class="slide level2">
+<h2>Two kinds of mistake</h2>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="03-1-classification-causality_files/figure-revealjs/confusion-1.png" class="quarto-figure quarto-figure-center" style="width:60.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Move <span class="math inline">\(c\)</span> and the two kinds of mistake trade against each other. The two numbers that move: the <strong>true positive rate</strong> (TPR, sensitivity, recall) <span class="math inline">\(= \text{TP}/(\text{TP} + \text{FN})\)</span> and the <strong>false positive rate</strong> (FPR, one minus specificity) <span class="math inline">\(= \text{FP}/(\text{FP} + \text{TN})\)</span></p>
+<p>Accuracy <span class="math inline">\(= (\text{TP} + \text{TN})/n\)</span> hides the split. With 95% zeros, predicting <span class="math inline">\(0\)</span> for everyone already scores 95%</p>
+</section>
+<section id="roc-the-curve-invented-for-radar" class="slide level2">
+<h2>ROC: the curve invented for radar</h2>
+<div class="columns">
+<div class="column" style="width:45%;">
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure>
+<p><img data-src="03-1-classification-causality_files/figure-revealjs/roc-1.png" style="width:100.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+</div><div class="column" style="width:55%;">
+<p>The <strong>receiver operating characteristic</strong>: one point per threshold <span class="math inline">\(c\)</span>, from <span class="math inline">\(c = 1\)</span> (predict <span class="math inline">\(0\)</span> for everyone, bottom left) to <span class="math inline">\(c = 0\)</span> (top right)</p>
+<p>Lower <span class="math inline">\(c\)</span>: catch more of the 1s, raise more false alarms</p>
+<p><strong>AUC</strong>, the area under it: the probability that a random 1 scores above a random 0 (a tie counts half), a ranking quality that never asks where <span class="math inline">\(c\)</span> is</p>
+<p>Named for radar receivers in the 1940s. It does not answer the operator’s question: <em>which</em> point?</p>
+</div></div>
+</section>
+<section id="what-does-a-mistake-cost" class="slide level2">
+<h2>What does a mistake cost?</h2>
+<p>Predicting <span class="math inline">\(1\)</span> when the truth is <span class="math inline">\(0\)</span> costs <span class="math inline">\(c_{FP}\)</span>; predicting <span class="math inline">\(0\)</span> when the truth is <span class="math inline">\(1\)</span> costs <span class="math inline">\(c_{FN}\)</span>; a correct prediction costs nothing</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="03-1-classification-causality_files/figure-revealjs/cost-curve-1.png" class="quarto-figure quarto-figure-center" style="width:76.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="ask">
+<p>A miss costs ten times a false alarm and the model says <span class="math inline">\(\hat p = 0.3\)</span>. Predict <span class="math inline">\(1\)</span> or <span class="math inline">\(0\)</span>?</p>
+</div>
+</section>
+<section id="optimal-threshold-theorem" class="slide level2">
+<h2>Optimal threshold theorem</h2>
+<p><strong>Optimal threshold theorem.</strong> Let <span class="math inline">\(p(x) = P(Y = 1 \mid X = x)\)</span>, and let a false positive cost <span class="math inline">\(c_{FP}\)</span> and a false negative <span class="math inline">\(c_{FN}\)</span>, both <span class="math inline">\(\ge 0\)</span> and not both <span class="math inline">\(0\)</span>. The rule that minimizes expected cost at <span class="math inline">\(x\)</span> predicts <span class="math inline">\(1\)</span> exactly when <span class="math display">\[
+p(x) &gt; c^\star = \frac{c_{FP}}{c_{FP} + c_{FN}},
+\]</span> and at <span class="math inline">\(p(x) = c^\star\)</span> either prediction is optimal. Equal costs give <span class="math inline">\(c^\star = \tfrac12\)</span>: predict the more probable class, the <strong>Bayes classifier</strong>.</p>
+<div class="leave">
+<p>The model supplies <span class="math inline">\(p\)</span>; the costs supply <span class="math inline">\(c^\star\)</span>, and somebody chose the costs. With <span class="math inline">\(\hat p\)</span> in place of <span class="math inline">\(p\)</span> it is a plug-in rule, only as good as the estimate.</p>
+</div>
+<p><strong>Proof</strong>: exercise 1 in the notebook, before the seminar. The same argument as week 2’s optimal model theorem: minimize the expected loss one <span class="math inline">\(x\)</span> at a time.</p>
+</section>
+<section id="one-slide-on-the-support-vector-machine" class="slide level2 inverse">
+<h2>One slide on the support vector machine</h2>
+<div class="columns">
+<div class="column" style="width:55%;">
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure>
+<p><img data-src="03-1-classification-causality_files/figure-revealjs/hinge-1.png" style="width:96.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+</div><div class="column" style="width:45%;">
+<p>Vapnik, Bell Labs, 1990s: forget probabilities, find the boundary with the <strong>widest margin</strong></p>
+<p>Equivalent to minimizing the <strong>hinge loss</strong> <span class="math inline">\(\max(0, 1 - y f(x))\)</span> plus a penalty on <span class="math inline">\(\|\beta\|\)</span> (week 7)</p>
+<p>Same picture as logistic regression, a different loss; the <em>kernel trick</em> makes the boundary curved</p>
+<p>Its output is a score, not a probability: the cost threshold above does not apply to it as it stands</p>
+</div></div>
+</section>
+<section id="no-free-lunch" class="slide level2">
+<h2>No free lunch</h2>
+<p><strong>No free lunch (stated).</strong> No method has lower error than every other on every distribution.</p>
+<p>One precise version, exercise 4: on a finite domain, averaged over all possible labelings, every method’s error on the points it has not seen is exactly <span class="math inline">\(\tfrac12\)</span>. A method that does better on some labelings does worse on others</p>
+<p>What it says: choosing a method is an <em>assumption</em> about the world. What it does not say: that methods are equally good on the problems we actually meet, or that having an assumption is a flaw</p>
+<div class="ask">
+<p>In week 1’s seminar you scored a straight line and <span class="math inline">\(k\)</span> nearest neighbors on the same 42 held-out countries. Suppose the line had won by more than a standard error. Is that a fact about the two methods, or about the data?</p>
+</div>
+</section>
+<section id="causality-part-1" class="slide level2 center">
+<h2>Causality, part 1</h2>
+<div class="retrieval">
+<p>Week 1, concepts that keep coming back: prediction <span class="math inline">\(\neq\)</span> explanation <span class="math inline">\(\neq\)</span> intervention.</p>
+</div>
+<div class="ask">
+<p>A model predicts life expectancy from GDP per capita well on held-out countries. A minister raises GDP per capita by ten percent. What does the model say happens to life expectancy? Do you believe it?</p>
+</div>
+</section>
+<section id="history-from-the-stars-to-poor-law-statistics" class="slide level2 inverse">
+<h2>History: from the stars to “Poor Law Statistics”</h2>
+<ul>
+<li>Almost a century after Gauss</li>
+<li>Scientists correlating/regressing anything</li>
+<li>Problem: what does it mean?</li>
+</ul>
+<p>e.g.&nbsp;<a href="https://www.theguardian.com/education/2020/jun/19/ucl-renames-three-facilities-that-honoured-prominent-eugenicists">Francis Galton</a> correlated numeric traits between generations of organisms…</p>
+<p>But <em>why</em>? “<a href="https://en.wikipedia.org/wiki/Nature_versus_nurture">Nature versus nurture</a>” debate (still unresolved?)</p>
+<p>e.g.&nbsp;<a href="https://en.wikipedia.org/wiki/Udny_Yule">Udny Yule</a> and others correlated poverty (“pauperism”) with welfare (“out-relief”)…</p>
+<p>But <em>why</em>? “<a href="http://economistjourney.blogspot.com/2014/08/the-crazy-dream-of-george-udny-yule-is.html">Welfare</a> <a href="https://en.wikipedia.org/wiki/Welfare_trap">trap</a>” debate (still unresolved?)</p>
+</section>
+<section id="history-origin-of-multiple-regression" class="slide level2 inverse">
+<h2>History: origin of multiple regression</h2>
+<div class="columns">
+<div class="column" style="width:55%;">
+<ul>
+<li><p>Udny Yule (1871-1951)</p></li>
+<li><p>Studied this poverty question</p></li>
+<li><p>First paper using multiple regression in 1897</p></li>
+<li><p>Association between poverty and welfare while “controlling for” age</p></li>
+</ul>
+</div><div class="column" style="width:45%;">
+<p><img data-src="https://upload.wikimedia.org/wikipedia/en/4/4a/George_Udny_Yule.jpg" height="380"></p>
+</div></div>
+</section>
+<section id="history-yule-in-1897" class="slide level2 inverse">
+<h2>History: Yule, in 1897</h2>
+<blockquote>
+<p>Instead of speaking of “causal relation,” … we will use the terms “correlation,” …</p>
+</blockquote>
+<div class="columns">
+<div class="column" style="width:55%;">
+<ul>
+<li>Variables, roughly:
+<ul>
+<li><span class="math inline">\(Y =\)</span> prevalence of poverty</li>
+<li><span class="math inline">\(X_1 =\)</span> generosity of welfare policy</li>
+<li><span class="math inline">\(X_2 =\)</span> age</li>
+</ul></li>
+</ul>
+</div><div class="column" style="width:45%;">
+<ul>
+<li>Positive correlations:
+<ul>
+<li><span class="math inline">\(\text{cor}(Y, X_1) &gt; 0\)</span></li>
+<li><span class="math inline">\(\text{cor}(X_2, X_1) &gt; 0\)</span></li>
+</ul></li>
+</ul>
+</div></div>
+<p>Do more people enter/stay in poverty if welfare is more generous?</p>
+<p>Or is this association “due to” age?</p>
+</section>
+<section id="history-yule-in-1897-1" class="slide level2 inverse">
+<h2>History: Yule, in 1897</h2>
+<blockquote>
+<p>The investigation of <strong>causal relations</strong> between economic phenomena presents many problems of peculiar difficulty, and offers many opportunities for fallacious conclusions.</p>
+</blockquote>
+<blockquote>
+<p>Since the statistician can seldom or never make experiments for himself, he has to accept the data of daily experience, and <em>discuss as best he can the relations of a whole group of changes</em>; he <strong>cannot, like the physicist, narrow down the issue to the effect of one variation at a time. The problems of statistics are in this sense far more complex than the problems of physics</strong>.</p>
+</blockquote>
+</section>
+<section id="section-1" class="slide level2 center">
+<h2></h2>
+<div style="font-size: 1.5em; font-weight: 600; color: #440154">
+<p>[We] cannot […] narrow down the issue to the effect of <strong>one variation at a time</strong></p>
+</div>
+<div class="fragment">
+<p>but… isn’t this how <em>almost everyone</em> interprets regression coefficients?…</p>
+<div style="font-size: 2em">
+<p>🤔 🤨</p>
+</div>
+<p>(yes! and they are wrong!!!!)</p>
+</div>
+</section>
+<section id="section-2" class="slide level2 center">
+<h2></h2>
+<p>Warning: don’t go this way</p>
+<p>the next slide is about some common mistakes people make when interpreting regression coefficients</p>
+<p>(don’t try to memorize the formulas)</p>
+</section>
+<section id="interpreting-regression-coefficients" class="slide level2">
+<h2>Interpreting regression coefficients</h2>
+<p>People <em>want</em> these things to be true:</p>
+<ul>
+<li>“The linear <strong>model</strong> and our <strong>estimates</strong> are both good”</li>
+</ul>
+<p><span class="math display">\[\frac{\partial}{\partial x_j} \mathbb E[\mathbf y | \mathbf X] = \beta_j \approx \hat \beta_j\]</span></p>
+<ul>
+<li>“We can interpret <span class="math inline">\(\beta_j\)</span> as a causal parameter,” i.e.&nbsp;<strong>intervening</strong> to increase <span class="math inline">\(x_j\)</span> by 1 unit would result in conditional average of <span class="math inline">\(y\)</span> changing by <span class="math inline">\(\beta_j\)</span> units</li>
+</ul>
+<p><span class="math display">\[
+\text{If } (x_j \mapsto x_j + 1) \text{ then } (\mathbb E[y] \mapsto \mathbb E[\mathbf y | \mathbf X] + \hat \beta_j)
+\]</span></p>
+<h3 id="but-this-almost-never-works">But this <em>almost never</em> works!</h3>
+</section>
+<section id="ceteris-paribus" class="slide level2">
+<h2>Ceteris paribus</h2>
+<p>Many textbooks tell us something like:</p>
+<blockquote>
+<p>“The coefficient <span class="math inline">\(\hat \beta_j\)</span> estimates the relationship between the (conditional mean of the) outcome variable and <span class="math inline">\(x_j\)</span> <em>while holding all other predictors constant</em>”</p>
+</blockquote>
+<p>i.e.&nbsp;“<strong>ceteris paribus</strong>” or “other things equal” (unchanged)</p>
+<h4 id="fundamental-problem-of-interpreting-regression-coefficients">Fundamental problem of interpreting regression coefficients:</h4>
+<div class="fragment">
+<p>“holding all other predictors constant” is (almost) never applicable in the real world, i.e.&nbsp;ceteris is (almost) never paribus</p>
+<p>Reasons we’ll highlight: <strong>causality</strong> (today) and <strong>nonlinearity</strong> (the additive-models week)</p>
+</div>
+</section>
+<section id="interpreting-causality" class="slide level2">
+<h2>Interpreting causality</h2>
+<p>Back to Yule. What does <span class="math inline">\(\hat \beta_\text{welfare}\)</span> mean?</p>
+<div class="panel-tabset">
+<ul id="tabset-1" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-1-1">Poverty</a></li><li><a href="#tabset-1-2">Welfare</a></li></ul>
+<div class="tab-content">
+<div id="tabset-1-1">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">lm</span>(poverty <span class="sc">~</span> welfare <span class="sc">+</span> age) <span class="sc">|&gt;</span> broom<span class="sc">::</span><span class="fu">tidy</span>() <span class="sc">|&gt;</span> knitr<span class="sc">::</span><span class="fu">kable</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<table class="caption-top">
+<thead>
+<tr class="header">
+<th style="text-align: left;" data-quarto-table-cell-role="th">term</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">estimate</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">std.error</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">statistic</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">p.value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">(Intercept)</td>
+<td style="text-align: right;">0.028</td>
+<td style="text-align: right;">0.044</td>
+<td style="text-align: right;">0.644</td>
+<td style="text-align: right;">0.520</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">welfare</td>
+<td style="text-align: right;">0.500</td>
+<td style="text-align: right;">0.016</td>
+<td style="text-align: right;">31.334</td>
+<td style="text-align: right;">0.000</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">age</td>
+<td style="text-align: right;">0.188</td>
+<td style="text-align: right;">0.081</td>
+<td style="text-align: right;">2.319</td>
+<td style="text-align: right;">0.021</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div id="tabset-1-2">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">lm</span>(welfare <span class="sc">~</span> poverty <span class="sc">+</span> age) <span class="sc">|&gt;</span> broom<span class="sc">::</span><span class="fu">tidy</span>() <span class="sc">|&gt;</span> knitr<span class="sc">::</span><span class="fu">kable</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<table class="caption-top">
+<thead>
+<tr class="header">
+<th style="text-align: left;" data-quarto-table-cell-role="th">term</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">estimate</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">std.error</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">statistic</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">p.value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">(Intercept)</td>
+<td style="text-align: right;">-0.005</td>
+<td style="text-align: right;">0.062</td>
+<td style="text-align: right;">-0.079</td>
+<td style="text-align: right;">0.937</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">poverty</td>
+<td style="text-align: right;">0.993</td>
+<td style="text-align: right;">0.032</td>
+<td style="text-align: right;">31.334</td>
+<td style="text-align: right;">0.000</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">age</td>
+<td style="text-align: right;">0.537</td>
+<td style="text-align: right;">0.113</td>
+<td style="text-align: right;">4.744</td>
+<td style="text-align: right;">0.000</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="are-these-associations-causal" class="slide level2">
+<h2>Are these associations “causal”?</h2>
+<p>Yule found a positive association between <code>welfare</code> and <code>poverty</code> after “controlling for” <code>age</code></p>
+<p>Which is the cause and which is the effect?</p>
+<p>Both? Neither?</p>
+</section>
+<section id="history-another-important-historic-example" class="slide level2 inverse">
+<h2>History: another important historic example</h2>
+<div class="columns">
+<div class="column" style="width:35%;">
+<p><img data-src="img/chesterfield.jpg" height="440"></p>
+</div><div class="column" style="width:65%;">
+<p><strong>Smoking</strong> and <strong>lung cancer</strong></p>
+<p><img data-src="img/lung-cancer-deaths.png" height="360"></p>
+<p>(don’t smoke)</p>
+</div></div>
+</section>
+<section id="section-3" class="slide level2 inverse">
+<h2></h2>
+<p><a href="https://www.newstatesman.com/international/science-tech/2020/07/ra-fisher-and-science-hatred">R. A. Fisher</a> on <a href="https://www.york.ac.uk/depts/maths/histstat/smoking.htm">smoking</a> and lung cancer (in 1957)</p>
+<blockquote>
+<p>… the B.B.C. gave me the opportunity of putting forward examples of the two classes of alternative theories which <strong>any statistical association, observed without the predictions of a definite experiment</strong>, allows–namely, (1) that the supposed effect <strong>is really the cause</strong>, or in this case that incipient cancer, or a pre-cancerous condition with chronic inflammation, is a factor in inducing the smoking of cigarettes, or (2) that cigarette smoking and lung cancer, though not mutually causative, are <strong>both influenced by a common cause</strong>, in this case the individual genotype …</p>
+</blockquote>
+</section>
+<section id="graphical-notation-for-causality" class="slide level2">
+<h2>Graphical notation for causality</h2>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="03-1-classification-causality_files/figure-revealjs/dag-smoking-1.png" class="quarto-figure quarto-figure-center" style="width:45.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Variables: vertices (or nodes)</p>
+<p>Relationships: directed edges (arrows)</p>
+<p>Shaded node / dashed edges: unobserved variable</p>
+</section>
+<section id="two-of-fishers-theories" class="slide level2">
+<h2>Two of Fisher’s theories</h2>
+<div class="columns">
+<div class="column" style="width:50%;">
+<p>Smoking causes cancer?</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="03-1-classification-causality_files/figure-revealjs/dag-sc-1.png" class="quarto-figure quarto-figure-center" width="750"></p>
+</figure>
+</div>
+</div>
+</div>
+</div><div class="column" style="width:50%;">
+<p>Genotype is a common cause?</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="03-1-classification-causality_files/figure-revealjs/dag-gsc-1.png" class="quarto-figure quarto-figure-center" width="750"></p>
+</figure>
+</div>
+</div>
+</div>
+</div></div>
+</section>
+<section id="fisher-association-is-not-causation" class="slide level2 inverse center">
+<h2>Fisher: association is not causation</h2>
+<p>(He did not use graphical notation like this)</p>
+</section>
+<section id="idea-adjusting-for-confounders" class="slide level2">
+<h2>Idea: adjusting for confounders</h2>
+<p><strong>Confounders</strong>: other variables that obscure the (causal) relationship from <span class="math inline">\(X\)</span> to <span class="math inline">\(Y\)</span>, e.g.</p>
+<ul>
+<li><span class="math inline">\(Y\)</span>: health outcome</li>
+<li><span class="math inline">\(X\)</span>: treatment dose</li>
+<li><span class="math inline">\(Z\)</span>: disease severity</li>
+</ul>
+<p>Without considering <span class="math inline">\(Z\)</span>, it might seem like larger doses of <span class="math inline">\(X\)</span> correlate with worse health outcomes</p>
+<div class="fragment">
+<h3 id="solution-add-more-variables-to-the-model">Solution: add more variables to the model</h3>
+<p>Including (measured) confounders in the regression model may give us a more accurate estimate</p>
+</div>
+</section>
+<section id="section-4" class="slide level2 center">
+<h2></h2>
+<p>(My conjecture: Fisher used genes as his example confounder because, in his day, they could not be measured, so his theory would be harder to disprove)</p>
+<p><em>Confounder adjustment</em> is why some people think <strong>multiple</strong> regression is One Weird Trick that lets us make causal conclusions</p>
+<p>(Statisticians Don’t Want You To Know!)</p>
+<p>It’s not that simple, and DAGs can help us understand why!</p>
+</section>
+<section id="simple-models-for-causality" class="slide level2">
+<h2>Simple models for causality</h2>
+<p>Think about <strong>interventions</strong> that change some target variable <span class="math inline">\(T\)</span></p>
+<ul>
+<li><p>Forget about the arrows pointing into <span class="math inline">\(T\)</span> (intervention makes them irrelevant)</p></li>
+<li><p>Change <span class="math inline">\(T\)</span>, e.g.&nbsp;setting it to some arbitrary new value <span class="math inline">\(T = t\)</span></p></li>
+<li><p>This change propagates along directed paths out of <span class="math inline">\(T\)</span> to all descendant variables of <span class="math inline">\(T\)</span> in the graph, causing their values to change</p></li>
+</ul>
+<p>(All of these changes could be deterministic, but most likely in our usage they are probabilistic)</p>
+</section>
+<section id="which-variables-change" class="slide level2">
+<h2>Which variables change?</h2>
+<div class="columns">
+<div class="column" style="width:50%;">
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="03-1-classification-causality_files/figure-revealjs/dag-ex1-1.png" class="quarto-figure quarto-figure-center" style="width:72.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="03-1-classification-causality_files/figure-revealjs/dag-ex2-1.png" class="quarto-figure quarto-figure-center" style="width:72.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="03-1-classification-causality_files/figure-revealjs/dag-ex3-1.png" class="quarto-figure quarto-figure-center" style="width:72.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+</div><div class="column" style="width:50%;">
+<p><strong>Exercise</strong>: in each of these cases, if we intervene on <span class="math inline">\(X\)</span> which other variable(s) are changed as a result?</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="03-1-classification-causality_files/figure-revealjs/dag-ex4-1.png" class="quarto-figure quarto-figure-center" style="width:72.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+</div></div>
+</section>
+<section id="explaining-an-observed-correlation" class="slide level2">
+<h2>Explaining an observed correlation</h2>
+<p>We find a statistically significant correlation between <span class="math inline">\(X\)</span> and <span class="math inline">\(Y\)</span></p>
+<p>What does it mean?</p>
+<ol type="1">
+<li>False positive (spurious correlation)</li>
+<li><span class="math inline">\(X\)</span> causes <span class="math inline">\(Y\)</span></li>
+<li><span class="math inline">\(Y\)</span> causes <span class="math inline">\(X\)</span></li>
+<li>Both have common cause <span class="math inline">\(U\)</span> [possibly unobserved]</li>
+</ol>
+<p>Statistically indistinguishable cases (without “experimental” data)</p>
+<p>Importantly different consequences!</p>
+</section>
+<section id="three-worlds-one-slope" class="slide level2">
+<h2>Three worlds, one slope</h2>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="03-1-classification-causality_files/figure-revealjs/three-worlds-1.png" class="quarto-figure quarto-figure-center" style="width:67.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>300 simulated units per world. The population slope of <span class="math inline">\(Y\)</span> on <span class="math inline">\(X\)</span> is exactly <span class="math inline">\(2\)</span> in all three</p>
+<div class="ask">
+<p>We now set <span class="math inline">\(X\)</span> to <span class="math inline">\(X + 1\)</span> for every unit and recompute with the same noise. In which of the three worlds does <span class="math inline">\(Y\)</span> change, and by how much?</p>
+</div>
+</section>
+<section id="three-worlds-one-slope-one-intervention" class="slide level2">
+<h2>Three worlds, one slope, one intervention</h2>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="03-1-classification-causality_files/figure-revealjs/three-worlds-do-1.png" class="quarto-figure quarto-figure-center" style="width:74.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="leave">
+<p>One fitted slope, three worlds, and acting on it works in exactly one: raising <span class="math inline">\(X\)</span> by one unit moves <span class="math inline">\(Y\)</span> by <span class="math inline">\(2\)</span> in A and by <span class="math inline">\(0\)</span> in B and C. Suppose each mechanism generated the data; apply the method; what happens when someone acts on it?</p>
+</div>
+</section>
+<section id="writing-an-intervention-down" class="slide level2">
+<h2>Writing an intervention down</h2>
+<p>Behind a DAG is a <strong>structural model</strong>: one equation per variable, from its parents and its own noise. With <span class="math inline">\(T\)</span> the target, <span class="math inline">\(Y\)</span> the outcome and <span class="math inline">\(Z\)</span> the other variables that matter: <span class="math display">\[
+T = h(Z, \varepsilon_T), \qquad Y = g(T, Z, \varepsilon_Y), \qquad Z,\ \varepsilon_T,\ \varepsilon_Y \text{ independent}
+\]</span></p>
+<p><strong>Intervene</strong> on <span class="math inline">\(T\)</span>, written <span class="math inline">\(do(T = t)\)</span>: delete <span class="math inline">\(T\)</span>’s equation, set <span class="math inline">\(T = t\)</span>, recompute everything downstream with the <em>same</em> noise. <span class="math inline">\(Z\)</span> keeps its value</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="03-1-classification-causality_files/figure-revealjs/dag-do-1.png" class="quarto-figure quarto-figure-center" style="width:52.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="recovering-the-effect-from-what-we-observe" class="slide level2">
+<h2>Recovering the effect from what we observe</h2>
+<p>Under <span class="math inline">\(do(T = t)\)</span> the outcome is <span class="math inline">\(g(t, Z, \varepsilon_Y)\)</span>, so <span class="math inline">\(\mathbb E[Y \mid do(T = t)] = \mathbb E\, g(t, Z, \varepsilon_Y)\)</span>. Compare <span class="math inline">\(\mathbb E[Y \mid T = t]\)</span>: the average <span class="math inline">\(Y\)</span> among the units that <em>happened</em> to have <span class="math inline">\(T = t\)</span></p>
+<p>From observed <span class="math inline">\((T, Z, Y)\)</span>, with <span class="math inline">\(Z\)</span> observed, we can estimate conditional means such as <span class="math inline">\(\mathbb E[Y \mid T = t, Z]\)</span></p>
+<div class="ask">
+<p>Write down what you would compute from the observed data to get <span class="math inline">\(\mathbb E[Y \mid do(T = t)]\)</span>, and what has to be true of <span class="math inline">\(Z\)</span> for it to work.</p>
+</div>
+</section>
+<section id="the-confounding-gap" class="slide level2">
+<h2>The confounding gap</h2>
+<p>The same DAG, made linear: <span class="math inline">\(T = \alpha Z + \varepsilon_T\)</span>, <span class="math inline">\(\;Y = \tau T + \gamma Z + \varepsilon_Y\)</span>, noises independent with mean <span class="math inline">\(0\)</span> <span class="math display">\[
+\mathbb E[Y \mid do(T = 1)] - \mathbb E[Y \mid do(T = 0)] = \tau
+\]</span> <span class="math display">\[
+\mathbb E[Y \mid T = 1] - \mathbb E[Y \mid T = 0] = \tau + \gamma\,\big(\mathbb E[Z \mid T = 1] - \mathbb E[Z \mid T = 0]\big)
+\]</span></p>
+<div class="retrieval">
+<p>Week 2, omitted-variable bias: regressing on <span class="math inline">\(\mathbf x_1\)</span> alone gives <span class="math inline">\(\mathbb E\hat\beta_{\text{short}} = \beta_1 + \beta_2\hat\delta\)</span>, with <span class="math inline">\(\hat\delta\)</span> the slope of <span class="math inline">\(\mathbf x_2\)</span> on <span class="math inline">\(\mathbf x_1\)</span>.</p>
+</div>
+<div class="leave">
+<p>The naive difference is the effect plus what <span class="math inline">\(Z\)</span> contributes through selection: omitted-variable bias, read causally. Derivation: exercise 2.</p>
+</div>
+</section>
+<section id="adjustment-theorem" class="slide level2">
+<h2>Adjustment theorem</h2>
+<div class="columns">
+<div class="column" style="width:62%;">
+<p><strong>Adjustment theorem.</strong> Structural model with independent noises, <span class="math inline">\(Z\)</span> observed: <span class="math inline">\(T = h(Z, \varepsilon_T)\)</span>, <span class="math inline">\(Y = g(T, Z, \varepsilon_Y)\)</span>. Wherever <span class="math inline">\(P(T = t \mid Z) &gt; 0\)</span>, <span class="math display">\[
+\mathbb E[Y \mid do(T = t)] = \mathbb E_Z\Big[\, \mathbb E[Y \mid T = t, Z]\, \Big]
+\]</span> <strong>Corollary</strong> (<span class="math inline">\(Z\)</span> empty, <span class="math inline">\(T\)</span> randomized): <span class="math inline">\(\mathbb E[Y \mid do(T = t)] = \mathbb E[Y \mid T = t]\)</span>.</p>
+</div><div class="column" style="width:38%;">
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="03-1-classification-causality_files/figure-revealjs/dag-theorem-1.png" class="quarto-figure quarto-figure-center" style="width:88.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+</div></div>
+<div class="leave">
+<p>Fix <span class="math inline">\(T\)</span> at <span class="math inline">\(t\)</span>, average the conditional mean over the population’s <span class="math inline">\(Z\)</span>. Condition, in words: <span class="math inline">\(Z\)</span> holds every common cause of <span class="math inline">\(T\)</span> and <span class="math inline">\(Y\)</span> and no consequence of <span class="math inline">\(T\)</span>.</p>
+</div>
+</section>
+<section id="adjustment-theorem-lines-12" class="slide level2">
+<h2>Adjustment theorem, lines 1–2</h2>
+<p>Under <span class="math inline">\(do(T = t)\)</span>, <span class="math inline">\(Y = g(t, Z, \varepsilon_Y)\)</span> with <span class="math inline">\(Z\)</span> and <span class="math inline">\(\varepsilon_Y\)</span> unchanged. Write <span class="math inline">\(m_t(z) = \mathbb E\big[g(t, z, \varepsilon_Y)\big]\)</span>, the average over the noise with <span class="math inline">\(Z\)</span> frozen at <span class="math inline">\(z\)</span></p>
+<div class="fragment">
+<p><span class="math inline">\(\varepsilon_Y\)</span> is independent of <span class="math inline">\(Z\)</span>, so freezing <span class="math inline">\(Z\)</span> at <span class="math inline">\(z\)</span> leaves the noise alone, and the tower property gives <span class="math display">\[
+\mathbb E[Y \mid do(T = t)] = \mathbb E\big[g(t, Z, \varepsilon_Y)\big] = \mathbb E_Z\big[m_t(Z)\big]
+\]</span></p>
+</div>
+<div class="fragment">
+<p>As observed, on <span class="math inline">\(\{T = t, Z = z\}\)</span> the outcome is <span class="math inline">\(g(t, z, \varepsilon_Y)\)</span>. <span class="math inline">\(T = h(Z, \varepsilon_T)\)</span> and <span class="math inline">\(\varepsilon_Y\)</span> is independent of <span class="math inline">\((Z, \varepsilon_T)\)</span>, so of <span class="math inline">\((T, Z)\)</span>: <span class="math display">\[
+\mathbb E[Y \mid T = t, Z = z] = \mathbb E\big[g(t, z, \varepsilon_Y) \mid T = t, Z = z\big] = m_t(z)
+\]</span></p>
+</div>
+</section>
+<section id="adjustment-theorem-lines-34" class="slide level2">
+<h2>Adjustment theorem, lines 3–4</h2>
+<p>Both sides are <span class="math inline">\(m_t(z)\)</span> at every <span class="math inline">\(z\)</span> with <span class="math inline">\(P(T = t \mid Z = z) &gt; 0\)</span>. <span class="math inline">\(Z\)</span> is upstream of <span class="math inline">\(T\)</span>, so its distribution is the same as observed and under the intervention. Average over it: <span class="math display">\[
+\mathbb E[Y \mid do(T = t)] = \mathbb E_Z\big[m_t(Z)\big] = \mathbb E_Z\Big[\,\mathbb E[Y \mid T = t, Z]\,\Big] \qquad\blacksquare
+\]</span></p>
+<div class="fragment">
+<p><strong>Corollary.</strong> <span class="math inline">\(Z\)</span> empty: <span class="math inline">\(T = h(\varepsilon_T)\)</span> is independent of <span class="math inline">\(\varepsilon_Y\)</span> (randomization), and the same lines give <span class="math inline">\(\mathbb E[Y \mid do(T = t)] = \mathbb E[Y \mid T = t]\)</span></p>
+</div>
+<div class="fragment">
+<p>Where it fails: a common cause left out of <span class="math inline">\(Z\)</span> makes <span class="math inline">\(\varepsilon_T\)</span> and <span class="math inline">\(\varepsilon_Y\)</span> dependent (line 2 breaks); a <span class="math inline">\(Z\)</span> that is a consequence of <span class="math inline">\(T\)</span> changes under the intervention (line 1 breaks); <span class="math inline">\(P(T = t \mid Z = z) = 0\)</span> leaves nothing to condition on</p>
+</div>
+</section>
+<section id="conclusions" class="slide level2 inverse">
+<h2>Conclusions</h2>
+<p>Wisdom from one of the great early statistical explorers</p>
+<p><a href="https://mathshistory.st-andrews.ac.uk/Biographies/Yule/quotations/">Udny Yule</a>:</p>
+<blockquote>
+<p><strong>Measurement does not necessarily mean progress</strong>. Failing the possibility of measuring that which you desire, the lust for measurement may, for example, merely result in your measuring something else - and perhaps forgetting the difference - or in your ignoring some things because they cannot be measured.</p>
+</blockquote>
+<p>Remember: regression coefficients do not necessarily mean causal relationships</p>
+</section>
+<section id="section-5" class="slide level2 inverse center">
+<h2></h2>
+<h3 id="experiments">Experiments</h3>
+<p>Actually do interventions while collecting data</p>
+<h3 id="observational-studies">Observational studies</h3>
+<p>Try to infer causal relationships without interventions, by using <del>dark arts</del> more/specialized assumptions/methods that require careful interpretation</p>
+<p>(increasingly common due to superabundance of data)</p>
+<p>Scientific progress: be wrong in more interesting/specific ways</p>
+</section>
+<section id="before-the-seminar" class="slide level2">
+<h2>Before the seminar</h2>
+<ul>
+<li>This week: exercises 1 to 4 at the top of the notebook. The proof of the optimal threshold theorem; the confounding gap; today’s adjustment proof again, with the slides closed; and no free lunch on a finite domain</li>
+</ul>
+</section>
+<section id="causal-inference" class="slide level2 inverse center">
+<h2>Causal inference</h2>
+<h3 id="an-exciting-interdisciplinary-field">An exciting interdisciplinary field</h3>
+<h4 id="practically-important-connections-to-ml">Practically important, connections to ML</h4>
+<blockquote>
+<p>“Data scientists have hitherto only predicted the world in various ways; the point is to change it” - Joshua Loftus</p>
+</blockquote>
+
+
+</section>
+    </div>
+  <div class="quarto-auto-generated-content" style="display: none;">
+<div class="footer footer-default">
+<p>ST310 Machine Learning</p>
+</div>
+</div></div>
+
+  <script>window.backupDefine = window.define; window.define = undefined;</script>
+  <script src="../../../site_libs/revealjs/dist/reveal.js"></script>
+  <!-- reveal.js plugins -->
+  <script src="../../../site_libs/revealjs/plugin/quarto-line-highlight/line-highlight.js"></script>
+  <script src="../../../site_libs/revealjs/plugin/pdf-export/pdfexport.js"></script>
+  <script src="../../../site_libs/revealjs/plugin/reveal-menu/menu.js"></script>
+  <script src="../../../site_libs/revealjs/plugin/reveal-menu/quarto-menu.js"></script>
+  <script src="../../../site_libs/revealjs/plugin/quarto-support/support.js"></script>
+  
+
+  <script src="../../../site_libs/revealjs/plugin/notes/notes.js"></script>
+  <script src="../../../site_libs/revealjs/plugin/search/search.js"></script>
+  <script src="../../../site_libs/revealjs/plugin/zoom/zoom.js"></script>
+  <script src="../../../site_libs/revealjs/plugin/math/math.js"></script>
+  <script>window.define = window.backupDefine; window.backupDefine = undefined;</script>
+
+  <script>
+
+      // Full list of configuration options available at:
+      // https://revealjs.com/config/
+      Reveal.initialize({
+'controlsAuto': true,
+'previewLinksAuto': false,
+'pdfSeparateFragments': false,
+'autoAnimateEasing': "ease",
+'autoAnimateDuration': 1,
+'autoAnimateUnmatched': true,
+'jumpToSlide': true,
+'menu': {"side":"left","useTextContentForMissingTitles":true,"markers":false,"loadIcons":false,"custom":[{"title":"Tools","icon":"<i class=\"fas fa-gear\"></i>","content":"<ul class=\"slide-menu-items\">\n<li class=\"slide-tool-item active\" data-item=\"0\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.fullscreen(event)\"><kbd>f</kbd> Fullscreen</a></li>\n<li class=\"slide-tool-item\" data-item=\"1\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.speakerMode(event)\"><kbd>s</kbd> Speaker View</a></li>\n<li class=\"slide-tool-item\" data-item=\"2\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.overview(event)\"><kbd>o</kbd> Slide Overview</a></li>\n<li class=\"slide-tool-item\" data-item=\"3\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.togglePdfExport(event)\"><kbd>e</kbd> PDF Export Mode</a></li>\n<li class=\"slide-tool-item\" data-item=\"4\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.toggleScrollView(event)\"><kbd>r</kbd> Scroll View Mode</a></li>\n<li class=\"slide-tool-item\" data-item=\"5\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.keyboardHelp(event)\"><kbd>?</kbd> Keyboard Help</a></li>\n</ul>"}],"openButton":true},
+'smaller': false,
+ 
+        // Display controls in the bottom right corner
+        controls: false,
+
+        // Help the user learn the controls by providing hints, for example by
+        // bouncing the down arrow when they first encounter a vertical slide
+        controlsTutorial: false,
+
+        // Determines where controls appear, "edges" or "bottom-right"
+        controlsLayout: 'edges',
+
+        // Visibility rule for backwards navigation arrows; "faded", "hidden"
+        // or "visible"
+        controlsBackArrows: 'faded',
+
+        // Display a presentation progress bar
+        progress: true,
+
+        // Display the page number of the current slide
+        slideNumber: 'c/t',
+
+        // 'all', 'print', or 'speaker'
+        showSlideNumber: 'all',
+
+        // Add the current slide number to the URL hash so that reloading the
+        // page/copying the URL will return you to the same slide
+        hash: true,
+
+        // Start with 1 for the hash rather than 0
+        hashOneBasedIndex: false,
+
+        // Flags if we should monitor the hash and change slides accordingly
+        respondToHashChanges: true,
+
+        // Push each slide change to the browser history
+        history: false,
+
+        // Enable keyboard shortcuts for navigation
+        keyboard: true,
+
+        // Enable the slide overview mode
+        overview: true,
+
+        // Disables the default reveal.js slide layout (scaling and centering)
+        // so that you can use custom CSS layout
+        disableLayout: false,
+
+        // Vertical centering of slides
+        center: false,
+
+        // Enables touch navigation on devices with touch input
+        touch: true,
+
+        // Loop the presentation
+        loop: false,
+
+        // Change the presentation direction to be RTL
+        rtl: false,
+
+        // see https://revealjs.com/vertical-slides/#navigation-mode
+        navigationMode: 'linear',
+
+        // Randomizes the order of slides each time the presentation loads
+        shuffle: false,
+
+        // Turns fragments on and off globally
+        fragments: true,
+
+        // Flags whether to include the current fragment in the URL,
+        // so that reloading brings you to the same fragment position
+        fragmentInURL: false,
+
+        // Flags if the presentation is running in an embedded mode,
+        // i.e. contained within a limited portion of the screen
+        embedded: false,
+
+        // Flags if we should show a help overlay when the questionmark
+        // key is pressed
+        help: true,
+
+        // Flags if it should be possible to pause the presentation (blackout)
+        pause: true,
+
+        // Flags if speaker notes should be visible to all viewers
+        showNotes: false,
+
+        // Global override for autoplaying embedded media (null/true/false)
+        autoPlayMedia: null,
+
+        // Global override for preloading lazy-loaded iframes (null/true/false)
+        preloadIframes: null,
+
+        // Number of milliseconds between automatically proceeding to the
+        // next slide, disabled when set to 0, this value can be overwritten
+        // by using a data-autoslide attribute on your slides
+        autoSlide: 0,
+
+        // Stop auto-sliding after user input
+        autoSlideStoppable: true,
+
+        // Use this method for navigation when auto-sliding
+        autoSlideMethod: null,
+
+        // Specify the average time in seconds that you think you will spend
+        // presenting each slide. This is used to show a pacing timer in the
+        // speaker view
+        defaultTiming: null,
+
+        // Enable slide navigation via mouse wheel
+        mouseWheel: false,
+
+        // The display mode that will be used to show slides
+        display: 'block',
+
+        // Hide cursor if inactive
+        hideInactiveCursor: true,
+
+        // Time before the cursor is hidden (in ms)
+        hideCursorTime: 5000,
+
+        // Opens links in an iframe preview overlay
+        previewLinks: false,
+
+        // Transition style (none/fade/slide/convex/concave/zoom)
+        transition: 'none',
+
+        // Transition speed (default/fast/slow)
+        transitionSpeed: 'default',
+
+        // Transition style for full page slide backgrounds
+        // (none/fade/slide/convex/concave/zoom)
+        backgroundTransition: 'none',
+
+        // Number of slides away from the current that are visible
+        viewDistance: 3,
+
+        // Number of slides away from the current that are visible on mobile
+        // devices. It is advisable to set this to a lower number than
+        // viewDistance in order to save resources.
+        mobileViewDistance: 2,
+
+        // The "normal" size of the presentation, aspect ratio will be preserved
+        // when the presentation is scaled to fit different resolutions. Can be
+        // specified using percentage units.
+        width: 1280,
+
+        height: 720,
+
+        // Factor of the display size that should remain empty around the content
+        margin: 6.0e-2,
+
+        math: {
+          mathjax: 'https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js',
+          config: 'TeX-AMS_HTML-full',
+          tex2jax: {
+            inlineMath: [['\\(','\\)']],
+            displayMath: [['\\[','\\]']],
+            balanceBraces: true,
+            processEscapes: false,
+            processRefs: true,
+            processEnvironments: true,
+            preview: 'TeX',
+            skipTags: ['script','noscript','style','textarea','pre','code'],
+            ignoreClass: 'tex2jax_ignore',
+            processClass: 'tex2jax_process'
+          },
+        },
+
+        // reveal.js plugins
+        plugins: [QuartoLineHighlight, PdfExport, RevealMenu, QuartoSupport,
+
+          RevealMath,
+          RevealNotes,
+          RevealSearch,
+          RevealZoom
+        ]
+      });
+    </script>
+    
+    <script>
+      // htmlwidgets need to know to resize themselves when slides are shown/hidden.
+      // Fire the "slideenter" event (handled by htmlwidgets.js) when the current
+      // slide changes (different for each slide format).
+      (function () {
+        // dispatch for htmlwidgets
+        function fireSlideEnter() {
+          const event = window.document.createEvent("Event");
+          event.initEvent("slideenter", true, true);
+          window.document.dispatchEvent(event);
+        }
+
+        function fireSlideChanged(previousSlide, currentSlide) {
+          fireSlideEnter();
+
+          // dispatch for shiny
+          if (window.jQuery) {
+            if (previousSlide) {
+              window.jQuery(previousSlide).trigger("hidden");
+            }
+            if (currentSlide) {
+              window.jQuery(currentSlide).trigger("shown");
+            }
+          }
+        }
+
+        // hookup for slidy
+        if (window.w3c_slidy) {
+          window.w3c_slidy.add_observer(function (slide_num) {
+            // slide_num starts at position 1
+            fireSlideChanged(null, w3c_slidy.slides[slide_num - 1]);
+          });
+        }
+
+      })();
+    </script>
+
+    <script id="quarto-html-after-body" type="application/javascript">
+      window.document.addEventListener("DOMContentLoaded", function (event) {
+        const tabsets =  window.document.querySelectorAll(".panel-tabset-tabby")
+        tabsets.forEach(function(tabset) {
+          const tabby = new Tabby('#' + tabset.id);
+        });
+        const isCodeAnnotation = (el) => {
+          for (const clz of el.classList) {
+            if (clz.startsWith('code-annotation-')) {                     
+              return true;
+            }
+          }
+          return false;
+        }
+        const onCopySuccess = function(e) {
+          // button target
+          const button = e.trigger;
+          // don't keep focus
+          button.blur();
+          // flash "checked"
+          button.classList.add('code-copy-button-checked');
+          var currentTitle = button.getAttribute("title");
+          button.setAttribute("title", "Copied!");
+          let tooltip;
+          if (window.bootstrap) {
+            button.setAttribute("data-bs-toggle", "tooltip");
+            button.setAttribute("data-bs-placement", "left");
+            button.setAttribute("data-bs-title", "Copied!");
+            tooltip = new bootstrap.Tooltip(button, 
+              { trigger: "manual", 
+                customClass: "code-copy-button-tooltip",
+                offset: [0, -8]});
+            tooltip.show();    
+          }
+          setTimeout(function() {
+            if (tooltip) {
+              tooltip.hide();
+              button.removeAttribute("data-bs-title");
+              button.removeAttribute("data-bs-toggle");
+              button.removeAttribute("data-bs-placement");
+            }
+            button.setAttribute("title", currentTitle);
+            button.classList.remove('code-copy-button-checked');
+          }, 1000);
+          // clear code selection
+          e.clearSelection();
+        }
+        const getTextToCopy = function(trigger) {
+          const outerScaffold = trigger.parentElement.cloneNode(true);
+          const codeEl = outerScaffold.querySelector('code');
+          for (const childEl of codeEl.children) {
+            if (isCodeAnnotation(childEl)) {
+              childEl.remove();
+            }
+          }
+          return codeEl.innerText;
+        }
+        const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+          text: getTextToCopy
+        });
+        clipboard.on('success', onCopySuccess);
+        if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+          const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+            text: getTextToCopy,
+            container: window.document.getElementById('quarto-embedded-source-code-modal')
+          });
+          clipboardModal.on('success', onCopySuccess);
+        }
+          var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+          var mailtoRegex = new RegExp(/^mailto:/);
+            var filterRegex = new RegExp("https:\/\/ml4ds\.com");
+          var isInternal = (href) => {
+              return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+          }
+          // Inspect non-navigation links and adorn them if external
+         var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+          for (var i=0; i<links.length; i++) {
+            const link = links[i];
+            if (!isInternal(link.href)) {
+              // undo the damage that might have been done by quarto-nav.js in the case of
+              // links that we want to consider external
+              if (link.dataset.originalHref !== undefined) {
+                link.href = link.dataset.originalHref;
+              }
+            }
+          }
+        function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+          const config = {
+            allowHTML: true,
+            maxWidth: 500,
+            delay: 100,
+            arrow: false,
+            appendTo: function(el) {
+                return el.closest('section.slide') || el.parentElement;
+            },
+            interactive: true,
+            interactiveBorder: 10,
+            theme: 'light-border',
+            placement: 'bottom-start',
+          };
+          if (contentFn) {
+            config.content = contentFn;
+          }
+          if (onTriggerFn) {
+            config.onTrigger = onTriggerFn;
+          }
+          if (onUntriggerFn) {
+            config.onUntrigger = onUntriggerFn;
+          }
+            config['offset'] = [0,0];
+            config['maxWidth'] = 700;
+          window.tippy(el, config); 
+        }
+        const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+        for (var i=0; i<noterefs.length; i++) {
+          const ref = noterefs[i];
+          tippyHover(ref, function() {
+            // use id or data attribute instead here
+            let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+            try { href = new URL(href).hash; } catch {}
+            const id = href.replace(/^#\/?/, "");
+            const note = window.document.getElementById(id);
+            if (note) {
+              return note.innerHTML;
+            } else {
+              return "";
+            }
+          });
+        }
+        const findCites = (el) => {
+          const parentEl = el.parentElement;
+          if (parentEl) {
+            const cites = parentEl.dataset.cites;
+            if (cites) {
+              return {
+                el,
+                cites: cites.split(' ')
+              };
+            } else {
+              return findCites(el.parentElement)
+            }
+          } else {
+            return undefined;
+          }
+        };
+        var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+        for (var i=0; i<bibliorefs.length; i++) {
+          const ref = bibliorefs[i];
+          const citeInfo = findCites(ref);
+          if (citeInfo) {
+            tippyHover(citeInfo.el, function() {
+              var popup = window.document.createElement('div');
+              citeInfo.cites.forEach(function(cite) {
+                var citeDiv = window.document.createElement('div');
+                citeDiv.classList.add('hanging-indent');
+                citeDiv.classList.add('csl-entry');
+                var biblioDiv = window.document.getElementById('ref-' + cite);
+                if (biblioDiv) {
+                  citeDiv.innerHTML = biblioDiv.innerHTML;
+                }
+                popup.appendChild(citeDiv);
+              });
+              return popup.innerHTML;
+            });
+          }
+        }
+      });
+      </script>
+    
+
+</body></html>
