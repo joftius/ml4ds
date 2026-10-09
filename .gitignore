@@ -10,6 +10,9 @@ instructor/weeks/*/*
 instructor/weeks/*/notebooks/*
 !instructor/weeks/*/notebooks/*_complete.qmd
 
+# _solutions/ is not ignored: each week's rendered notebook with solutions is
+# tracked there until its release, when the build copies it to docs/solutions/.
+
 # Build state. docs/ (including docs/**/*_files/) is committed: it is the site.
 # _freeze/ is committed too, so a site render re-executes only what changed.
 .quarto/
