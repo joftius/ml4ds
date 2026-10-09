@@ -2358,7 +2358,7 @@ window.Quarto = {
   <li><a href="#coding" id="toc-coding" class="nav-link" data-scroll-target="#coding">Coding</a>
   <ul class="collapse">
   <li><a href="#penguins-a-probability-and-a-threshold" id="toc-penguins-a-probability-and-a-threshold" class="nav-link" data-scroll-target="#penguins-a-probability-and-a-threshold">1. Penguins: a probability and a threshold</a></li>
-  <li><a href="#four-worlds-and-the-adjustment-theorem-in-code" id="toc-four-worlds-and-the-adjustment-theorem-in-code" class="nav-link" data-scroll-target="#four-worlds-and-the-adjustment-theorem-in-code">2. Four worlds, and the adjustment theorem in code</a></li>
+  <li><a href="#simulated-worlds-adjustment-and-propensity-weighting" id="toc-simulated-worlds-adjustment-and-propensity-weighting" class="nav-link" data-scroll-target="#simulated-worlds-adjustment-and-propensity-weighting">2. Simulated worlds: adjustment and propensity weighting</a></li>
   <li><a href="#optional-can-be-done-at-home-another-dataset" id="toc-optional-can-be-done-at-home-another-dataset" class="nav-link" data-scroll-target="#optional-can-be-done-at-home-another-dataset">Optional, can be done at home: another dataset</a></li>
   </ul></li>
   </ul>
@@ -2400,12 +2400,13 @@ _build_env/make_incomplete.py; hints without it (the pre-seminar exercises and t
 optional problems) stay in the student file, behind a warning not to open them
 early. Do not edit the student file by hand.
 
-How this seminar runs: students do exercises 1 to 4 at home (3 redoes the lecture's
-proof and is not gone through in the room). In the room: problems 1 and 2 (about 20
-minutes, hints then answers), then the coding (about 40: part 1 20, part 2 20).
+How this seminar runs: students do exercises 1 to 4 at home (4 redoes the lecture's
+proof and is not gone through in the room). In the room: problems 1 to 3 (about 20
+minutes, hints then answers), then the coding (about 40: part 1 18, part 2 22).
 Everything headed "Optional, can be done at home" is outside the seminar. If the room
-runs slow, protect problem 2 and coding part 2, steps 2 and 3. Part 2 has no set.seed
-on purpose: every student's fitted slopes differ, the intervention effects do not. -->
+runs slow, protect problem 3 and coding part 2, steps 2 to 4. Part 2 has no set.seed
+on purpose: every student's fitted slopes and weighting estimates differ, the
+intervention effects do not. -->
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)       <span class="co"># should&#39;ve already install.packages(&quot;tidyverse&quot;)</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(palmerpenguins)  <span class="co"># might need to install.packages(&quot;palmerpenguins&quot;)</span></span>
@@ -2416,7 +2417,7 @@ on purpose: every student's fitted slopes differ, the intervention effects do no
 <section id="before-the-seminar" class="level2">
 <h2 class="anchored" data-anchor-id="before-the-seminar">Before the seminar</h2>
 <!-- At home, before the seminar. -->
-<p>The lecture proved one result, the adjustment theorem, which you prove again with the slides closed (exercise 3). It stated the optimal threshold theorem and no free lunch and left proofs to you (exercises 1 and 4), and it stated the confounding gap without deriving it (exercise 2). Do all four on paper before the seminar; the seminar’s problems are variations on exercises 1 to 3. You may use, without proof, two facts from ST102: the tower property, <span class="math inline">\(\mathbb E[W] = \mathbb E\big[\mathbb E[W \mid X]\big]\)</span>, and that if <span class="math inline">\(V\)</span> is independent of <span class="math inline">\(X\)</span>, then <span class="math inline">\(\mathbb E[k(X, V) \mid X = x] = \mathbb E[k(x, V)]\)</span> for any function <span class="math inline">\(k\)</span> (freeze <span class="math inline">\(X\)</span> at <span class="math inline">\(x\)</span>; the distribution of <span class="math inline">\(V\)</span> does not move).</p>
+<p>The lecture proved one result, the propensity weighting theorem, which you prove again with the slides closed (exercise 4). It stated the optimal threshold theorem and the adjustment theorem and left their proofs to you (exercises 1 and 3), and it stated the confounding gap without deriving it (exercise 2). Do all four on paper before the seminar; the seminar’s problems are variations on them. You may use, without proof, two facts from ST102: the tower property, <span class="math inline">\(\mathbb E[W] = \mathbb E\big[\mathbb E[W \mid X]\big]\)</span>, and that if <span class="math inline">\(V\)</span> is independent of <span class="math inline">\(X\)</span>, then <span class="math inline">\(\mathbb E[k(X, V) \mid X = x] = \mathbb E[k(x, V)]\)</span> for any function <span class="math inline">\(k\)</span> (freeze <span class="math inline">\(X\)</span> at <span class="math inline">\(x\)</span>; the distribution of <span class="math inline">\(V\)</span> does not move).</p>
 <div class="callout callout-style-default callout-warning callout-titled" title="Hints">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -2427,7 +2428,7 @@ on purpose: every student's fitted slopes differ, the intervention effects do no
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>Each exercise has hints, collapsed below it. Do not open a hint unless you have been stuck for at least a few minutes, and open them in order. Exercise 3’s proof is on the lecture slides. Solutions to exercises 1, 2 and 4 are shown in the seminar if you ask.</p>
+<p>Each exercise has hints, collapsed below it. Do not open a hint unless you have been stuck for at least a few minutes, and open them in order. Exercise 4’s proof is on the lecture slides. Solutions to exercises 1 to 3 are shown in the seminar if you ask.</p>
 </div>
 </div>
 <p><strong>Exercise 1 (optimal threshold theorem).</strong> Let <span class="math inline">\(p(x) = P(Y = 1 \mid X = x)\)</span>. A false positive (predict <span class="math inline">\(1\)</span>, truth <span class="math inline">\(0\)</span>) costs <span class="math inline">\(c_{FP} \ge 0\)</span>, a false negative (predict <span class="math inline">\(0\)</span>, truth <span class="math inline">\(1\)</span>) costs <span class="math inline">\(c_{FN} \ge 0\)</span>, not both are <span class="math inline">\(0\)</span>, and a correct prediction costs nothing. A rule <span class="math inline">\(\delta\)</span> assigns a prediction <span class="math inline">\(\delta(x) \in \{0, 1\}\)</span> to every <span class="math inline">\(x\)</span>.</p>
@@ -2604,7 +2605,7 @@ T = \alpha Z + \varepsilon_T, \qquad Y = \tau T + \gamma Z + \varepsilon_Y.
 </div>
 </div>
 </div>
-<p><strong>Exercise 3 (adjustment theorem).</strong> The lecture proved this one. Close the slides and prove it again. Structural model: <span class="math inline">\(Z\)</span>, <span class="math inline">\(\varepsilon_T\)</span> and <span class="math inline">\(\varepsilon_Y\)</span> independent, <span class="math inline">\(T = h(Z, \varepsilon_T)\)</span>, <span class="math inline">\(Y = g(T, Z, \varepsilon_Y)\)</span>; under <span class="math inline">\(do(T = t)\)</span> the equation for <span class="math inline">\(T\)</span> is deleted, <span class="math inline">\(T\)</span> is set to <span class="math inline">\(t\)</span>, and everything else keeps its equation and its noise. Show that, wherever <span class="math inline">\(P(T = t \mid Z) &gt; 0\)</span>, <span class="math display">\[
+<p><strong>Exercise 3 (adjustment theorem).</strong> The lecture stated this one; prove it. Structural model: <span class="math inline">\(Z\)</span>, <span class="math inline">\(\varepsilon_T\)</span> and <span class="math inline">\(\varepsilon_Y\)</span> independent, <span class="math inline">\(T = h(Z, \varepsilon_T)\)</span>, <span class="math inline">\(Y = g(T, Z, \varepsilon_Y)\)</span>; under <span class="math inline">\(do(T = t)\)</span> the equation for <span class="math inline">\(T\)</span> is deleted, <span class="math inline">\(T\)</span> is set to <span class="math inline">\(t\)</span>, and everything else keeps its equation and its noise. Show that, wherever <span class="math inline">\(P(T = t \mid Z) &gt; 0\)</span>, <span class="math display">\[
 \mathbb E[Y \mid do(T = t)] = \mathbb E_Z\Big[\,\mathbb E[Y \mid T = t, Z]\,\Big],
 \]</span> and say where each assumption is used: the independence of the noises, <span class="math inline">\(Z\)</span> not being a consequence of <span class="math inline">\(T\)</span>, and <span class="math inline">\(P(T = t \mid Z) &gt; 0\)</span>.</p>
 <div class="callout callout-style-default callout-note callout-titled" title="Hint 1">
@@ -2683,7 +2684,7 @@ T = \alpha Z + \varepsilon_T, \qquad Y = \tau T + \gamma Z + \varepsilon_Y.
 </div>
 <div id="callout-14" class="callout-14-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<p>The lecture’s lines. Hint 1: under <span class="math inline">\(do(T = t)\)</span>, <span class="math inline">\(Y = g(t, Z, \varepsilon_Y)\)</span>, with <span class="math inline">\(Z\)</span> and <span class="math inline">\(\varepsilon_Y\)</span> unchanged (<span class="math inline">\(Z\)</span> is upstream of <span class="math inline">\(T\)</span>). Hint 2: <span class="math inline">\(\varepsilon_Y\)</span> is independent of <span class="math inline">\(Z\)</span>, so <span class="math inline">\(\mathbb E[g(t, Z, \varepsilon_Y) \mid Z = z] = m_t(z)\)</span>, and by the tower property <span class="math display">\[
+<p>Hint 1: under <span class="math inline">\(do(T = t)\)</span>, <span class="math inline">\(Y = g(t, Z, \varepsilon_Y)\)</span>, with <span class="math inline">\(Z\)</span> and <span class="math inline">\(\varepsilon_Y\)</span> unchanged (<span class="math inline">\(Z\)</span> is upstream of <span class="math inline">\(T\)</span>). Hint 2: <span class="math inline">\(\varepsilon_Y\)</span> is independent of <span class="math inline">\(Z\)</span>, so <span class="math inline">\(\mathbb E[g(t, Z, \varepsilon_Y) \mid Z = z] = m_t(z)\)</span>, and by the tower property <span class="math display">\[
 \mathbb E[Y \mid do(T = t)] = \mathbb E\big[g(t, Z, \varepsilon_Y)\big] = \mathbb E_Z\big[m_t(Z)\big].
 \]</span> Hint 3: <span class="math inline">\(T = h(Z, \varepsilon_T)\)</span> is a function of <span class="math inline">\((Z, \varepsilon_T)\)</span> and <span class="math inline">\(\varepsilon_Y\)</span> is independent of <span class="math inline">\((Z, \varepsilon_T)\)</span>, so <span class="math inline">\(\varepsilon_Y\)</span> is independent of <span class="math inline">\((T, Z)\)</span>. Wherever <span class="math inline">\(P(T = t \mid Z = z) &gt; 0\)</span>, the event <span class="math inline">\(\{T = t, Z = z\}\)</span> can be conditioned on, and on it <span class="math inline">\(Y = g(t, z, \varepsilon_Y)\)</span>, so <span class="math display">\[
 \mathbb E[Y \mid T = t, Z = z] = \mathbb E\big[g(t, z, \varepsilon_Y) \mid T = t, Z = z\big] = m_t(z).
@@ -2694,13 +2695,11 @@ T = \alpha Z + \varepsilon_T, \qquad Y = \tau T + \gamma Z + \varepsilon_Y.
 </div>
 </div>
 </div>
-<p><strong>Exercise 4 (no free lunch on a finite domain).</strong> A finite set <span class="math inline">\(\mathcal X\)</span> has <span class="math inline">\(N\)</span> points. A <strong>labeling</strong> is a function <span class="math inline">\(f: \mathcal X \to \{0, 1\}\)</span>. A method sees the labels on a fixed training set <span class="math inline">\(S \subset \mathcal X\)</span> of <span class="math inline">\(m &lt; N\)</span> points and returns a classifier <span class="math inline">\(\hat h\)</span>, which may be any function of those <span class="math inline">\(m\)</span> labels. Its error on the points it has not seen is <span class="math display">\[
-\mathrm{err}(\hat h, f) = \frac{1}{N - m} \sum_{x \notin S} \mathbb 1\big[\hat h(x) \ne f(x)\big].
-\]</span></p>
+<p><strong>Exercise 4 (propensity weighting theorem).</strong> The lecture proved this one. Close the slides and prove it again. The structural model of exercise 3, with <span class="math inline">\(T \in \{0, 1\}\)</span> and the propensity score <span class="math inline">\(\pi(z) = P(T = 1 \mid Z = z)\)</span>, where <span class="math inline">\(0 &lt; \pi(Z) &lt; 1\)</span> with probability one.</p>
 <ol type="a">
-<li><p>Draw <span class="math inline">\(f\)</span> uniformly at random from all <span class="math inline">\(2^N\)</span> labelings. Show that <span class="math inline">\(\mathbb E\big[\mathrm{err}(\hat h, f)\big] = \tfrac12\)</span> for every method.</p></li>
-<li><p>Two methods, <span class="math inline">\(A\)</span> and <span class="math inline">\(B\)</span>. Suppose <span class="math inline">\(A\)</span>’s error on the unseen points is smaller than <span class="math inline">\(B\)</span>’s for some labeling. Show that <span class="math inline">\(B\)</span>’s is smaller than <span class="math inline">\(A\)</span>’s for another labeling.</p></li>
-<li><p>What would have to be true of the world for some method to do better than <span class="math inline">\(\tfrac12\)</span> on average?</p></li>
+<li><p>Show that <span class="math inline">\(\mathbb E[Y \mid do(T = 1)] = \mathbb E\big[T\,Y/\pi(Z)\big]\)</span>, and say where you used the independence of the noises, <span class="math inline">\(Z\)</span> not being a consequence of <span class="math inline">\(T\)</span>, and <span class="math inline">\(\pi(Z) &gt; 0\)</span>.</p></li>
+<li><p>Show that <span class="math inline">\(\mathbb E[Y \mid do(T = 0)] = \mathbb E\big[(1 - T)\,Y/(1 - \pi(Z))\big]\)</span>.</p></li>
+<li><p>Without the structural model, show by conditioning on <span class="math inline">\(Z\)</span> that <span class="math inline">\(\mathbb E\big[T\,Y/\pi(Z)\big] = \mathbb E_Z\big[\,\mathbb E[Y \mid T = 1, Z]\,\big]\)</span>. What does that say about the two theorems?</p></li>
 </ol>
 <div class="callout callout-style-default callout-note callout-titled" title="Hint 1">
 <div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-15-contents" aria-controls="callout-15" aria-expanded="false" aria-label="Toggle callout">
@@ -2714,7 +2713,9 @@ T = \alpha Z + \varepsilon_T, \qquad Y = \tau T + \gamma Z + \varepsilon_Y.
 </div>
 <div id="callout-15" class="callout-15-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<p>Uniform over all <span class="math inline">\(2^N\)</span> labelings means that the <span class="math inline">\(N\)</span> labels <span class="math inline">\(f(x)\)</span> are independent fair coin flips.</p>
+<ol type="a">
+<li><span class="math inline">\(T\)</span> is <span class="math inline">\(0\)</span> or <span class="math inline">\(1\)</span>. Check that <span class="math inline">\(T\,Y = T\,g(1, Z, \varepsilon_Y)\)</span> in both cases.</li>
+</ol>
 </div>
 </div>
 </div>
@@ -2730,7 +2731,9 @@ T = \alpha Z + \varepsilon_T, \qquad Y = \tau T + \gamma Z + \varepsilon_Y.
 </div>
 <div id="callout-16" class="callout-16-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<p>Fix <span class="math inline">\(x \notin S\)</span>. <span class="math inline">\(\hat h(x)\)</span> depends only on the labels on <span class="math inline">\(S\)</span>, and <span class="math inline">\(f(x)\)</span> is independent of them. Condition on the labels on <span class="math inline">\(S\)</span>: what is <span class="math inline">\(P\big(\hat h(x) \ne f(x)\big)\)</span>?</p>
+<ol type="a">
+<li>Use the second ST102 fact with <span class="math inline">\(V = \varepsilon_T\)</span> and <span class="math inline">\((Z, \varepsilon_Y)\)</span> in the role of <span class="math inline">\(X\)</span>: what is <span class="math inline">\(\mathbb E[T \mid Z, \varepsilon_Y]\)</span>? Then condition on <span class="math inline">\((Z, \varepsilon_Y)\)</span> with the tower property.</li>
+</ol>
 </div>
 </div>
 </div>
@@ -2746,8 +2749,8 @@ T = \alpha Z + \varepsilon_T, \qquad Y = \tau T + \gamma Z + \varepsilon_Y.
 </div>
 <div id="callout-17" class="callout-17-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<ol start="2" type="a">
-<li>Average <span class="math inline">\(\mathrm{err}(\hat h_A, f) - \mathrm{err}(\hat h_B, f)\)</span> over all <span class="math inline">\(2^N\)</span> labelings.</li>
+<ol start="3" type="a">
+<li><span class="math inline">\(T\,Y = Y\,\mathbb 1[T = 1]\)</span>, so <span class="math inline">\(\mathbb E[T\,Y \mid Z] = P(T = 1 \mid Z)\, \mathbb E[Y \mid T = 1, Z]\)</span>.</li>
 </ol>
 </div>
 </div>
@@ -2765,18 +2768,25 @@ T = \alpha Z + \varepsilon_T, \qquad Y = \tau T + \gamma Z + \varepsilon_Y.
 <div id="callout-18" class="callout-18-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <ol type="a">
-<li><p>Under the uniform distribution the <span class="math inline">\(N\)</span> labels are independent fair coin flips. Fix <span class="math inline">\(x \notin S\)</span>. Given the labels on <span class="math inline">\(S\)</span>, <span class="math inline">\(\hat h(x)\)</span> is a fixed number, <span class="math inline">\(0\)</span> or <span class="math inline">\(1\)</span>, and <span class="math inline">\(f(x)\)</span> is still a fair coin flip, independent of those labels, so <span class="math inline">\(P(\hat h(x) \ne f(x) \mid \text{labels on } S) = \tfrac12\)</span>, and so <span class="math inline">\(P(\hat h(x) \ne f(x)) = \tfrac12\)</span>. Averaging over the <span class="math inline">\(N - m\)</span> unseen points, <span class="math inline">\(\mathbb E[\mathrm{err}(\hat h, f)] = \tfrac12\)</span>. <span class="math inline">\(\blacksquare\)</span></p></li>
-<li><p>By (a), the average of <span class="math inline">\(\mathrm{err}(\hat h_A, f) - \mathrm{err}(\hat h_B, f)\)</span> over all labelings is <span class="math inline">\(\tfrac12 - \tfrac12 = 0\)</span>. A difference that averages to zero and is negative for one labeling must be positive for another.</p></li>
-<li><p>The labelings must not all be equally likely: the labels on <span class="math inline">\(S\)</span> have to carry information about the labels off <span class="math inline">\(S\)</span>, for example because nearby points tend to share a label, or because <span class="math inline">\(f\)</span> is a threshold of a linear score. Every method bets on some such structure (the nearest-neighbor method bets on the first, logistic regression on the second), and the bet pays off only on the labelings that have it. Choosing a method is choosing the bet.</p></li>
+<li>If <span class="math inline">\(T = 0\)</span> both sides of <span class="math inline">\(T\,Y = T\,g(1, Z, \varepsilon_Y)\)</span> are <span class="math inline">\(0\)</span>; if <span class="math inline">\(T = 1\)</span>, <span class="math inline">\(Y = g(1, Z, \varepsilon_Y)\)</span>. Next, <span class="math inline">\(T = h(Z, \varepsilon_T)\)</span> and <span class="math inline">\(\varepsilon_T\)</span> is independent of <span class="math inline">\((Z, \varepsilon_Y)\)</span>, so by the second ST102 fact <span class="math inline">\(\mathbb E[T \mid Z = z, \varepsilon_Y = e] = P\big(h(z, \varepsilon_T) = 1\big)\)</span>. The same fact with <span class="math inline">\(Z\)</span> alone gives <span class="math inline">\(\pi(z) = P\big(h(z, \varepsilon_T) = 1\big)\)</span>. So <span class="math inline">\(\mathbb E[T \mid Z, \varepsilon_Y] = \pi(Z)\)</span>. Since <span class="math inline">\(g(1, Z, \varepsilon_Y)/\pi(Z)\)</span> is a function of <span class="math inline">\((Z, \varepsilon_Y)\)</span>, and <span class="math inline">\(\pi(Z) &gt; 0\)</span> lets us divide, the tower property gives <span class="math display">\[
+\mathbb E\Big[\frac{T\,Y}{\pi(Z)}\Big] = \mathbb E\Big[\,\mathbb E[T \mid Z, \varepsilon_Y]\,\frac{g(1, Z, \varepsilon_Y)}{\pi(Z)}\Big] = \mathbb E\big[g(1, Z, \varepsilon_Y)\big] = \mathbb E[Y \mid do(T = 1)].
+\]</span> The last step: under <span class="math inline">\(do(T = 1)\)</span>, <span class="math inline">\(Y = g(1, Z, \varepsilon_Y)\)</span> with <span class="math inline">\(Z\)</span> and <span class="math inline">\(\varepsilon_Y\)</span> unchanged. <span class="math inline">\(\blacksquare\)</span></li>
 </ol>
-<p>Common errors: forgetting that the claim is about the points the method has not seen (on <span class="math inline">\(S\)</span> itself a method can be perfect); reading it as “all methods are equally good on the problems we meet”, which it does not say, because those problems are not uniformly random labelings.</p>
+<p>Where each assumption is used: the independence of <span class="math inline">\(\varepsilon_T\)</span> from <span class="math inline">\((Z, \varepsilon_Y)\)</span> in <span class="math inline">\(\mathbb E[T \mid Z, \varepsilon_Y] = \pi(Z)\)</span> (a common cause of <span class="math inline">\(T\)</span> and <span class="math inline">\(Y\)</span> left out of <span class="math inline">\(Z\)</span> would sit in both noises, and then <span class="math inline">\(\varepsilon_Y\)</span> would carry information about <span class="math inline">\(T\)</span> beyond <span class="math inline">\(Z\)</span>); <span class="math inline">\(\pi(Z) &gt; 0\)</span> to divide; <span class="math inline">\(Z\)</span> not a consequence of <span class="math inline">\(T\)</span> in the last step (a <span class="math inline">\(Z\)</span> downstream of <span class="math inline">\(T\)</span> would change when <span class="math inline">\(T\)</span> is set).</p>
+<ol start="2" type="a">
+<li><p>The same lines with <span class="math inline">\(1 - T\)</span> in place of <span class="math inline">\(T\)</span>: <span class="math inline">\((1 - T)\,Y = (1 - T)\,g(0, Z, \varepsilon_Y)\)</span>, <span class="math inline">\(\mathbb E[1 - T \mid Z, \varepsilon_Y] = 1 - \pi(Z)\)</span>, and <span class="math inline">\(1 - \pi(Z) &gt; 0\)</span> lets us divide.</p></li>
+<li><p><span class="math inline">\(\mathbb E[T\,Y \mid Z] = \mathbb E\big[Y\,\mathbb 1[T = 1] \mid Z\big] = \pi(Z)\,\mathbb E[Y \mid T = 1, Z]\)</span>. Since <span class="math inline">\(1/\pi(Z)\)</span> is a function of <span class="math inline">\(Z\)</span>, the tower property gives <span class="math display">\[
+\mathbb E\Big[\frac{T\,Y}{\pi(Z)}\Big] = \mathbb E\Big[\frac{\mathbb E[T\,Y \mid Z]}{\pi(Z)}\Big] = \mathbb E_Z\Big[\,\mathbb E[Y \mid T = 1, Z]\,\Big].
+\]</span> This holds for any joint distribution with <span class="math inline">\(\pi(Z) &gt; 0\)</span>: the two theorems have the same right-hand side, written two ways, and the causal assumptions are what make it equal to <span class="math inline">\(\mathbb E[Y \mid do(T = 1)]\)</span>. In practice they differ in what you estimate: the adjustment theorem needs a model for <span class="math inline">\(\mathbb E[Y \mid T, Z]\)</span>, propensity weighting a model for <span class="math inline">\(\pi(Z)\)</span>.</p></li>
+</ol>
+<p>Common errors: writing <span class="math inline">\(\mathbb E[T \mid Z, \varepsilon_Y] = \pi(Z)\)</span> without saying why; weighting by <span class="math inline">\(\pi(Z)\)</span> instead of <span class="math inline">\(1/\pi(Z)\)</span>; dropping the <span class="math inline">\(T\)</span> in the numerator, which weights the untreated units too.</p>
 </div>
 </div>
 </div>
 </section>
 <section id="problems" class="level2">
 <h2 class="anchored" data-anchor-id="problems">Problems</h2>
-<!-- About 20 min: problems 1 and 2, pen and paper. Hints are revealed in order after a few minutes, the solution last. -->
+<!-- About 20 min: problems 1 to 3, pen and paper. Hints are revealed in order after a few minutes, the solution last. -->
 <p><strong>Problem 1 (costs 5 and 1).</strong> A conservation survey classifies penguins from a photograph. Labeling a Chinstrap as an Adelie (a miss) wastes a return visit, cost 5; labeling an Adelie as a Chinstrap (a false alarm) wastes a phone call, cost 1. Write <span class="math inline">\(p(x) = P(\text{Chinstrap} \mid x)\)</span>.</p>
 <ol type="a">
 <li><p>Find the threshold on <span class="math inline">\(p(x)\)</span> above which predicting Chinstrap has the smaller expected cost. What happens at the threshold itself?</p></li>
@@ -2847,7 +2857,6 @@ T = \alpha Z + \varepsilon_T, \qquad Y = \tau T + \gamma Z + \varepsilon_Y.
 <li><p>What is the effect on <span class="math inline">\(\mathbb E[Y]\)</span> of raising <span class="math inline">\(t\)</span> by one under <span class="math inline">\(do(T = t)\)</span>?</p></li>
 <li><p>Compute <span class="math inline">\(\mathrm{Var}(T)\)</span>, <span class="math inline">\(\mathrm{Cov}(T, Y)\)</span> and the population slope of the regression of <span class="math inline">\(Y\)</span> on <span class="math inline">\(T\)</span> alone. Write it as “effect plus gap” and identify the gap.</p></li>
 <li><p>Compute <span class="math inline">\(\mathbb E[Y \mid T = t, Z = z]\)</span>, average it over <span class="math inline">\(Z\)</span>, and check that you recover (a). Where did you use that the noises are independent?</p></li>
-<li><p>A world where the causation runs the other way: <span class="math inline">\(Y = \varepsilon_Y\)</span> with variance <span class="math inline">\(4\)</span>, and <span class="math inline">\(T = 0.4\,Y + \varepsilon_T\)</span>, with <span class="math inline">\(\varepsilon_T\)</span> of variance <span class="math inline">\(0.16\)</span>, independent of <span class="math inline">\(Y\)</span>. Find the population slope of <span class="math inline">\(Y\)</span> on <span class="math inline">\(T\)</span> and the effect of raising <span class="math inline">\(t\)</span> by one.</p></li>
 </ol>
 <div class="answer callout callout-style-default callout-note callout-titled" title="Hint 1">
 <div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-22-contents" aria-controls="callout-22" aria-expanded="false" aria-label="Toggle callout">
@@ -2880,7 +2889,7 @@ T = \alpha Z + \varepsilon_T, \qquad Y = \tau T + \gamma Z + \varepsilon_Y.
 <div id="callout-23" class="callout-23-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <ol start="3" type="a">
-<li>Take <span class="math inline">\(\mathbb E[\,\cdot \mid T = t, Z = z]\)</span> of <span class="math inline">\(Y\)</span>’s equation. (d) <span class="math inline">\(\mathrm{Var}(T) = 0.4^2\,\mathrm{Var}(Y) + \mathrm{Var}(\varepsilon_T)\)</span>.</li>
+<li>Take <span class="math inline">\(\mathbb E[\,\cdot \mid T = t, Z = z]\)</span> of <span class="math inline">\(Y\)</span>’s equation, then exercise 3.</li>
 </ol>
 </div>
 </div>
@@ -2901,17 +2910,19 @@ T = \alpha Z + \varepsilon_T, \qquad Y = \tau T + \gamma Z + \varepsilon_Y.
 <li><p>Under <span class="math inline">\(do(T = t)\)</span>, <span class="math inline">\(Y = t + 2Z + \varepsilon_Y\)</span>, so <span class="math inline">\(\mathbb E[Y \mid do(T = t)] = t\)</span> and raising <span class="math inline">\(t\)</span> by one raises it by <span class="math inline">\(1\)</span>.</p></li>
 <li><p><span class="math inline">\(\mathrm{Var}(T) = 1 + 1 = 2\)</span>. <span class="math inline">\(\mathrm{Cov}(T, Y) = \mathrm{Var}(T) + 2\,\mathrm{Cov}(T, Z) + \mathrm{Cov}(T, \varepsilon_Y) = 2 + 2 + 0 = 4\)</span>. Slope <span class="math inline">\(4/2 = 2 = 1 + 2 \cdot \tfrac12\)</span>: the effect <span class="math inline">\(\tau = 1\)</span> plus the gap <span class="math inline">\(\gamma\delta = 2 \cdot \tfrac12\)</span>, with <span class="math inline">\(\delta = \mathrm{Cov}(Z, T)/\mathrm{Var}(T) = \tfrac12\)</span>. The naive slope credits <span class="math inline">\(T\)</span> with what <span class="math inline">\(Z\)</span> contributes through selection, and here the gap is as large as the effect.</p></li>
 <li><p><span class="math inline">\(\mathbb E[Y \mid T = t, Z = z] = t + 2z + \mathbb E[\varepsilon_Y \mid T = t, Z = z] = t + 2z\)</span>, because <span class="math inline">\(\varepsilon_Y\)</span> is independent of <span class="math inline">\((Z, \varepsilon_T)\)</span> and so of <span class="math inline">\((T, Z)\)</span>. Averaging over <span class="math inline">\(Z\)</span>: <span class="math inline">\(\mathbb E_Z[t + 2Z] = t\)</span>, which is (a). The independence is what made <span class="math inline">\(\mathbb E[\varepsilon_Y \mid T = t, Z = z]\)</span> zero.</p></li>
-<li><p><span class="math inline">\(\mathrm{Var}(T) = 0.16 \cdot 4 + 0.16 = 0.8\)</span>, <span class="math inline">\(\mathrm{Cov}(T, Y) = 0.4 \cdot 4 = 1.6\)</span>, slope <span class="math inline">\(2\)</span>. The effect is <span class="math inline">\(0\)</span>: <span class="math inline">\(Y\)</span>’s equation has no <span class="math inline">\(T\)</span> in it, and setting <span class="math inline">\(T\)</span> changes nothing upstream. The same population slope as (b), and as a world with <span class="math inline">\(Y = 2T + \varepsilon\)</span>: the regression alone cannot tell the three apart.</p></li>
 </ol>
-<p>Common errors: in (a), letting <span class="math inline">\(Z\)</span> change when <span class="math inline">\(T\)</span> is set; in (b), <span class="math inline">\(\mathrm{Cov}(T, Z) = 0\)</span>; in (d), “the slope is 2, so the effect is 2”.</p>
+<p>Common errors: in (a), letting <span class="math inline">\(Z\)</span> change when <span class="math inline">\(T\)</span> is set; in (b), <span class="math inline">\(\mathrm{Cov}(T, Z) = 0\)</span>.</p>
 </div>
 </div>
 </div>
-<section id="optional-can-be-done-at-home" class="level3">
-<h3 class="anchored" data-anchor-id="optional-can-be-done-at-home">Optional, can be done at home</h3>
-<!-- Not in the seminar. Hints are in the student file. -->
-<p><strong>Problem 3 (what no free lunch says).</strong> Which of these claims does exercise 4 support? (a) “Nearest neighbors is a better method than linear regression.” (b) “On the gapminder data, nearest neighbors beat the line.” (c) “A method that makes no assumptions would beat all the others.”</p>
-<div class="callout callout-style-default callout-note callout-titled" title="Hint 1">
+<p><strong>Problem 3 (propensity weighting by hand).</strong> <span class="math inline">\(Z\)</span> is <span class="math inline">\(0\)</span> or <span class="math inline">\(1\)</span>, each with probability <span class="math inline">\(\tfrac12\)</span>. Treatment depends on <span class="math inline">\(Z\)</span>: <span class="math inline">\(T = h(Z, \varepsilon_T)\)</span> with <span class="math inline">\(\pi(0) = 0.2\)</span> and <span class="math inline">\(\pi(1) = 0.8\)</span>. The outcome is <span class="math inline">\(Y = 2T + 4Z + \varepsilon_Y\)</span>, with <span class="math inline">\(\varepsilon_Y\)</span> of mean <span class="math inline">\(0\)</span>, and <span class="math inline">\(Z\)</span>, <span class="math inline">\(\varepsilon_T\)</span>, <span class="math inline">\(\varepsilon_Y\)</span> independent.</p>
+<ol type="a">
+<li><p>What is <span class="math inline">\(\mathbb E[Y \mid do(T = 1)] - \mathbb E[Y \mid do(T = 0)]\)</span>?</p></li>
+<li><p>Picture 100 units in exactly these proportions. How many are treated with <span class="math inline">\(Z = 0\)</span>, treated with <span class="math inline">\(Z = 1\)</span>, untreated with <span class="math inline">\(Z = 0\)</span>, untreated with <span class="math inline">\(Z = 1\)</span>? Compute <span class="math inline">\(\mathbb E[Y \mid T = 1] - \mathbb E[Y \mid T = 0]\)</span> and write it as effect plus gap.</p></li>
+<li><p>Give each treated unit the weight <span class="math inline">\(1/\pi(Z)\)</span> and each untreated unit the weight <span class="math inline">\(1/(1 - \pi(Z))\)</span>, and multiply each count from (b) by its weight. What do the weighted treated units look like? Compute <span class="math inline">\(\mathbb E\big[T\,Y/\pi(Z)\big]\)</span> and <span class="math inline">\(\mathbb E\big[(1 - T)\,Y/(1 - \pi(Z))\big]\)</span> and compare with (a).</p></li>
+<li><p>Which units get the largest weights? What would happen to them if <span class="math inline">\(\pi(0)\)</span> were <span class="math inline">\(0.01\)</span>?</p></li>
+</ol>
+<div class="answer callout callout-style-default callout-note callout-titled" title="Hint 1">
 <div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-25-contents" aria-controls="callout-25" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
@@ -2923,12 +2934,32 @@ T = \alpha Z + \varepsilon_T, \qquad Y = \tau T + \gamma Z + \varepsilon_Y.
 </div>
 <div id="callout-25" class="callout-25-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<p>For each claim: is it about one distribution, every distribution, or the average over all labelings?</p>
+<ol type="a">
+<li>Under <span class="math inline">\(do(T = t)\)</span>, <span class="math inline">\(Z\)</span> keeps its distribution. (b) 50 units have <span class="math inline">\(Z = 0\)</span>, and 20 percent of them are treated. Among the treated, what fraction has <span class="math inline">\(Z = 1\)</span>?</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="answer callout callout-style-default callout-note callout-titled" title="Hint 2">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-26-contents" aria-controls="callout-26" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Hint 2
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-26" class="callout-26-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<ol start="3" type="a">
+<li>In the 100 units, <span class="math inline">\(\mathbb E\big[T\,Y/\pi(Z)\big]\)</span> is <span class="math inline">\(\tfrac{1}{100}\)</span> times the sum of <span class="math inline">\(Y/\pi(Z)\)</span> over the treated units. Group them by <span class="math inline">\(Z\)</span>: within a group, <span class="math inline">\(Y\)</span> averages <span class="math inline">\(\mathbb E[Y \mid T = 1, Z = z] = 2 + 4z\)</span>.</li>
+</ol>
 </div>
 </div>
 </div>
 <div class="answer callout callout-style-default callout-tip callout-titled" title="Reveal answer">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-26-contents" aria-controls="callout-26" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-27-contents" aria-controls="callout-27" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -2937,18 +2968,26 @@ T = \alpha Z + \varepsilon_T, \qquad Y = \tau T + \gamma Z + \varepsilon_Y.
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-26" class="callout-26-contents callout-collapse collapse">
+<div id="callout-27" class="callout-27-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <ol type="a">
-<li>Not supported as stated: “better” needs a distribution, and on some labelings each method does better than the other. (b) Fine, as a statement about one dataset and one split, with a standard error (week 1). (c) The opposite: on a finite domain a method that makes no assumption about how the labels hang together has error <span class="math inline">\(\tfrac12\)</span> on the unseen points, like every other method on average; a method does better only where its assumption holds. Choosing a method is the assumption.</li>
+<li><p>Under <span class="math inline">\(do(T = t)\)</span>, <span class="math inline">\(Y = 2t + 4Z + \varepsilon_Y\)</span>, so <span class="math inline">\(\mathbb E[Y \mid do(T = t)] = 2t + 4 \cdot \tfrac12 = 2t + 2\)</span>: <span class="math inline">\(4\)</span> and <span class="math inline">\(2\)</span>, effect <span class="math inline">\(2\)</span>.</p></li>
+<li><p>Of the 50 units with <span class="math inline">\(Z = 0\)</span>, 10 are treated and 40 are not; of the 50 with <span class="math inline">\(Z = 1\)</span>, 40 are treated and 10 are not. So <span class="math inline">\(\mathbb E[Z \mid T = 1] = 40/50 = 0.8\)</span> and <span class="math inline">\(\mathbb E[Z \mid T = 0] = 0.2\)</span>, and <span class="math inline">\(\mathbb E[Y \mid T = 1] = 2 + 4 \cdot 0.8 = 5.2\)</span>, <span class="math inline">\(\mathbb E[Y \mid T = 0] = 4 \cdot 0.2 = 0.8\)</span>. The naive difference is <span class="math inline">\(4.4 = 2 + 4\,(0.8 - 0.2)\)</span>: the effect <span class="math inline">\(2\)</span> plus a gap of <span class="math inline">\(2.4\)</span>. This is the lecture’s confounding gap; its derivation (exercise 2(b)) used only <span class="math inline">\(Y\)</span>’s equation and the independence of <span class="math inline">\(\varepsilon_Y\)</span>, not the linear equation for <span class="math inline">\(T\)</span>.</p></li>
+<li><p>Treated: 10 units with <span class="math inline">\(Z = 0\)</span> at weight <span class="math inline">\(1/0.2 = 5\)</span> count as 50; 40 units with <span class="math inline">\(Z = 1\)</span> at weight <span class="math inline">\(1/0.8 = 1.25\)</span> count as 50. The weighted treated units have the whole population’s <span class="math inline">\(Z\)</span>: half <span class="math inline">\(0\)</span>, half <span class="math inline">\(1\)</span>. The untreated are the same: <span class="math inline">\(40 \cdot 1.25 = 50\)</span> and <span class="math inline">\(10 \cdot 5 = 50\)</span>. Then <span class="math display">\[
+\mathbb E\Big[\frac{T\,Y}{\pi(Z)}\Big] = \frac{10 \cdot 5 \cdot 2 + 40 \cdot 1.25 \cdot 6}{100} = 4, \qquad \mathbb E\Big[\frac{(1 - T)\,Y}{1 - \pi(Z)}\Big] = \frac{40 \cdot 1.25 \cdot 0 + 10 \cdot 5 \cdot 4}{100} = 2,
+\]</span> which are <span class="math inline">\(\mathbb E[Y \mid do(T = 1)]\)</span> and <span class="math inline">\(\mathbb E[Y \mid do(T = 0)]\)</span> from (a). Difference <span class="math inline">\(2\)</span>.</p></li>
+<li><p>The treated units with <span class="math inline">\(Z = 0\)</span> and the untreated units with <span class="math inline">\(Z = 1\)</span>: the units whose treatment was unlikely given their <span class="math inline">\(Z\)</span>. Each stands in for the many units like it that went the other way. With <span class="math inline">\(\pi(0) = 0.01\)</span>, about one in a hundred units with <span class="math inline">\(Z = 0\)</span> is treated, and each gets weight <span class="math inline">\(100\)</span>. The condition <span class="math inline">\(\pi(Z) &gt; 0\)</span> still holds, but in a sample of a few hundred units one or two treated units with <span class="math inline">\(Z = 0\)</span> would carry the estimate for half the population, so it would be unstable.</p></li>
 </ol>
-<p>Common errors: reading no free lunch as “all methods are equally good” on the problems we actually meet.</p>
+<p>Common errors: weighting by <span class="math inline">\(\pi(Z)\)</span> instead of <span class="math inline">\(1/\pi(Z)\)</span>; weighting the untreated by <span class="math inline">\(1/\pi(Z)\)</span> instead of <span class="math inline">\(1/(1 - \pi(Z))\)</span>; dividing by the 50 treated units instead of all 100.</p>
 </div>
 </div>
 </div>
-<p><strong>Problem 4 (a model that predicts well).</strong> A hospital fits a model that predicts which patients will be readmitted within 30 days, and it predicts well on held-out patients. Management proposes to reduce readmissions by acting on the model’s strongest predictor. Draw the DAGs of three worlds consistent with that held-out score, say in which of them the plan works, and say what the score told you about which world you are in.</p>
+<section id="optional-can-be-done-at-home" class="level3">
+<h3 class="anchored" data-anchor-id="optional-can-be-done-at-home">Optional, can be done at home</h3>
+<!-- Not in the seminar. Hints are in the student file. -->
+<p><strong>Problem 4 (the causation runs the other way).</strong> <span class="math inline">\(Y = \varepsilon_Y\)</span> with variance <span class="math inline">\(4\)</span>, and <span class="math inline">\(T = 0.4\,Y + \varepsilon_T\)</span>, with <span class="math inline">\(\varepsilon_T\)</span> of variance <span class="math inline">\(0.16\)</span>, independent of <span class="math inline">\(Y\)</span>. Find the population slope of <span class="math inline">\(Y\)</span> on <span class="math inline">\(T\)</span> and the effect of raising <span class="math inline">\(t\)</span> by one. Compare with problem 2(b).</p>
 <div class="callout callout-style-default callout-note callout-titled" title="Hint 1">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-27-contents" aria-controls="callout-27" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-28-contents" aria-controls="callout-28" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -2957,14 +2996,14 @@ T = \alpha Z + \varepsilon_T, \qquad Y = \tau T + \gamma Z + \varepsilon_Y.
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-27" class="callout-27-contents callout-collapse collapse">
+<div id="callout-28" class="callout-28-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<p>The lecture’s three worlds: the predictor causes readmission, a common cause drives both, or readmission risk drives the predictor.</p>
+<p><span class="math inline">\(\mathrm{Var}(T) = 0.4^2\,\mathrm{Var}(Y) + \mathrm{Var}(\varepsilon_T)\)</span>.</p>
 </div>
 </div>
 </div>
 <div class="answer callout callout-style-default callout-tip callout-titled" title="Reveal answer">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-28-contents" aria-controls="callout-28" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-29-contents" aria-controls="callout-29" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -2973,7 +3012,41 @@ T = \alpha Z + \varepsilon_T, \qquad Y = \tau T + \gamma Z + \varepsilon_Y.
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-28" class="callout-28-contents callout-collapse collapse">
+<div id="callout-29" class="callout-29-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p><span class="math inline">\(\mathrm{Var}(T) = 0.16 \cdot 4 + 0.16 = 0.8\)</span>, <span class="math inline">\(\mathrm{Cov}(T, Y) = 0.4 \cdot 4 = 1.6\)</span>, slope <span class="math inline">\(2\)</span>. The effect is <span class="math inline">\(0\)</span>: <span class="math inline">\(Y\)</span>’s equation has no <span class="math inline">\(T\)</span> in it, and setting <span class="math inline">\(T\)</span> changes nothing upstream. The same population slope as problem 2(b), and as a world with <span class="math inline">\(Y = 2T + \varepsilon\)</span>: the regression alone cannot tell the three apart.</p>
+<p>Common errors: “the slope is 2, so the effect is 2”.</p>
+</div>
+</div>
+</div>
+<p><strong>Problem 5 (a model that predicts well).</strong> A hospital fits a model that predicts which patients will be readmitted within 30 days, and it predicts well on held-out patients. Management proposes to reduce readmissions by acting on the model’s strongest predictor. Draw the DAGs of three worlds consistent with that held-out score, say in which of them the plan works, and say what the score told you about which world you are in.</p>
+<div class="callout callout-style-default callout-note callout-titled" title="Hint 1">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-30-contents" aria-controls="callout-30" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Hint 1
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-30" class="callout-30-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>The lecture’s explanations of an observed correlation: the predictor causes readmission, a common cause drives both, or readmission risk drives the predictor.</p>
+</div>
+</div>
+</div>
+<div class="answer callout callout-style-default callout-tip callout-titled" title="Reveal answer">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-31-contents" aria-controls="callout-31" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Reveal answer
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-31" class="callout-31-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>A: the predictor causes readmission (for example, discharge before a test result is back); acting on it can work. B: a common cause such as severity drives both; acting on the predictor changes nothing. C: readmission risk drives the predictor (for example, patients at high risk are put on extra monitoring, and the monitoring is the predictor); acting on it changes nothing, and stopping the monitoring could do harm. The held-out score is the same in all three, so it told you nothing about which world you are in. Deciding needs knowledge of the mechanism, or an experiment.</p>
 <p>Common errors: “the model is accurate, so the predictor is a cause”; drawing world C with the arrow the wrong way round.</p>
@@ -2987,7 +3060,7 @@ T = \alpha Z + \varepsilon_T, \qquad Y = \tau T + \gamma Z + \varepsilon_Y.
 <!-- About 40 min: part 1 20, part 2 20. Skeleton lines in comments are scaffolds: the statistical operation is what you write. Everything headed "Optional, can be done at home" is outside the seminar. -->
 <section id="penguins-a-probability-and-a-threshold" class="level3">
 <h3 class="anchored" data-anchor-id="penguins-a-probability-and-a-threshold">1. Penguins: a probability and a threshold</h3>
-<!-- 20 min: steps 1 to 5, questions 1 to 3. -->
+<!-- 18 min: steps 1 to 5, questions 1 to 3. -->
 <p>Adelie against Chinstrap, from the bill. Keep the two species and the birds with complete measurements.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>pg <span class="ot">&lt;-</span> palmerpenguins<span class="sc">::</span>penguins <span class="sc">|&gt;</span>   <span class="co"># modeldata also has a penguins; be explicit</span></span>
@@ -3012,7 +3085,7 @@ T = \alpha Z + \varepsilon_T, \qquad Y = \tau T + \gamma Z + \varepsilon_Y.
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="co"># ...</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <div class="answer callout callout-style-default callout-tip callout-titled" title="Reveal solution">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-29-contents" aria-controls="callout-29" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-32-contents" aria-controls="callout-32" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -3021,7 +3094,7 @@ T = \alpha Z + \varepsilon_T, \qquad Y = \tau T + \gamma Z + \varepsilon_Y.
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-29" class="callout-29-contents callout-collapse collapse">
+<div id="callout-32" class="callout-32-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">nrow</span>(pg)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -3048,7 +3121,7 @@ T = \alpha Z + \varepsilon_T, \qquad Y = \tau T + \gamma Z + \varepsilon_Y.
 <span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="co"># ...</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <div class="answer callout callout-style-default callout-tip callout-titled" title="Reveal solution">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-30-contents" aria-controls="callout-30" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-33-contents" aria-controls="callout-33" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -3057,7 +3130,7 @@ T = \alpha Z + \varepsilon_T, \qquad Y = \tau T + \gamma Z + \varepsilon_Y.
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-30" class="callout-30-contents callout-collapse collapse">
+<div id="callout-33" class="callout-33-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>fit_bill <span class="ot">&lt;-</span> <span class="fu">glm</span>(chinstrap <span class="sc">~</span> bill_length_mm <span class="sc">+</span> bill_depth_mm, <span class="at">family =</span> binomial, <span class="at">data =</span> pg)</span>
@@ -3091,7 +3164,7 @@ T = \alpha Z + \varepsilon_T, \qquad Y = \tau T + \gamma Z + \varepsilon_Y.
 <p>You may have seen a warning that fitted probabilities are numerically 0 or 1: the two species are nearly separable on these two measurements (step 3 counts the errors). This is the lecture’s “Challenges” slide in real life; next week says what it does to the fitting.</p>
 <p><strong>Question 1.</strong> Read the exponentiated coefficient on <code>bill_length_mm</code>. What happens to the odds of Chinstrap when bill length increases by one millimeter and bill depth is held fixed? Is that the change in the probability? Is it what would happen to a bird whose bill grew by a millimeter?</p>
 <div class="answer callout callout-style-default callout-tip callout-titled" title="Reveal answer">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-31-contents" aria-controls="callout-31" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-34-contents" aria-controls="callout-34" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -3100,7 +3173,7 @@ T = \alpha Z + \varepsilon_T, \qquad Y = \tau T + \gamma Z + \varepsilon_Y.
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-31" class="callout-31-contents callout-collapse collapse">
+<div id="callout-34" class="callout-34-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>The odds of Chinstrap are multiplied by about <span class="math inline">\(e^{2.20} \approx 9.0\)</span> per millimeter, with bill depth held fixed. That is a multiplier on the odds <span class="math inline">\(p/(1 - p)\)</span>, not a change in <span class="math inline">\(p\)</span>: how much <span class="math inline">\(p\)</span> moves depends on where it starts (near <span class="math inline">\(0\)</span> or <span class="math inline">\(1\)</span> a ninefold change in the odds moves <span class="math inline">\(p\)</span> very little; near <span class="math inline">\(\tfrac12\)</span> it moves it a lot). The standard error is large (<span class="math inline">\(0.69\)</span> on the log-odds scale, so the interval for the multiplier runs from about <span class="math inline">\(2\)</span> to about <span class="math inline">\(35\)</span>), because the classes are nearly separable. And “holding depth fixed” is the lecture’s ceteris paribus: a comparison between birds in the fitted model, not what would happen to one bird if its bill grew. Nothing here is causal.</p>
 </div>
@@ -3116,7 +3189,7 @@ T = \alpha Z + \varepsilon_T, \qquad Y = \tau T + \gamma Z + \varepsilon_Y.
 <span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a><span class="co"># ...</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <div class="answer callout callout-style-default callout-tip callout-titled" title="Reveal solution">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-32-contents" aria-controls="callout-32" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-35-contents" aria-controls="callout-35" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -3125,7 +3198,7 @@ T = \alpha Z + \varepsilon_T, \qquad Y = \tau T + \gamma Z + \varepsilon_Y.
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-32" class="callout-32-contents callout-collapse collapse">
+<div id="callout-35" class="callout-35-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>p_hat <span class="ot">&lt;-</span> <span class="fu">fitted</span>(fit_bill)</span>
@@ -3169,7 +3242,7 @@ truth   0   1
 <span id="cb22-12"><a href="#cb22-12" aria-hidden="true" tabindex="-1"></a><span class="co"># ...</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <div class="answer callout callout-style-default callout-tip callout-titled" title="Reveal solution">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-33-contents" aria-controls="callout-33" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-36-contents" aria-controls="callout-36" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -3178,7 +3251,7 @@ truth   0   1
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-33" class="callout-33-contents callout-collapse collapse">
+<div id="callout-36" class="callout-36-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>fit_flipper <span class="ot">&lt;-</span> <span class="fu">glm</span>(chinstrap <span class="sc">~</span> flipper_length_mm, <span class="at">family =</span> binomial, <span class="at">data =</span> pg)</span>
@@ -3213,7 +3286,7 @@ truth   0   1
 </div>
 <p><strong>Question 2.</strong> The area under your curve equals the probability that a randomly chosen Chinstrap gets a higher fitted probability than a randomly chosen Adelie, with a tie counting half. Why does accumulating one point per threshold produce that probability? Why are ties certain to occur with this model?</p>
 <div class="answer callout callout-style-default callout-tip callout-titled" title="Reveal answer">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-34-contents" aria-controls="callout-34" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-37-contents" aria-controls="callout-37" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -3222,7 +3295,7 @@ truth   0   1
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-34" class="callout-34-contents callout-collapse collapse">
+<div id="callout-37" class="callout-37-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>Moving the threshold down past one bird’s score adds that bird to the predicted Chinstraps: a Chinstrap raises the TPR by <span class="math inline">\(1/n_1\)</span>, an Adelie raises the FPR by <span class="math inline">\(1/n_0\)</span>. The area under the path therefore adds up, for each Adelie step to the right, the height of the curve there, which is the fraction of Chinstraps already passed, those scoring above that Adelie. Summing over Adelies and dividing by <span class="math inline">\(n_0\)</span> gives the fraction of (Chinstrap, Adelie) pairs in which the Chinstrap scores higher; a tie is a diagonal step and contributes half. Ties are certain because <code>flipper_length_mm</code> is recorded in whole millimeters and <span class="math inline">\(\hat p\)</span> is a monotone function of it, so birds with the same flipper length have the same score; about 4 percent of the Chinstrap and Adelie pairs tie. By hand:</p>
 <div class="cell">
@@ -3247,7 +3320,7 @@ truth   0   1
 <span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a><span class="co"># ...</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <div class="answer callout callout-style-default callout-tip callout-titled" title="Reveal solution">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-35-contents" aria-controls="callout-35" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-38-contents" aria-controls="callout-38" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -3256,7 +3329,7 @@ truth   0   1
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-35" class="callout-35-contents callout-collapse collapse">
+<div id="callout-38" class="callout-38-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>costs <span class="ot">&lt;-</span> <span class="fu">map_dfr</span>(thresholds, <span class="cf">function</span>(t) {</span>
@@ -3296,7 +3369,7 @@ truth   0   1
 </div>
 <p><strong>Question 3.</strong> The cost-minimizing threshold is well below <span class="math inline">\(\tfrac12\)</span>, and the classifier now raises many false alarms. Who decided that, and in what sense is this classifier “better” than the one at <span class="math inline">\(\tfrac12\)</span>? Is the number you found the population optimum?</p>
 <div class="answer callout callout-style-default callout-tip callout-titled" title="Reveal answer">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-36-contents" aria-controls="callout-36" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-39-contents" aria-controls="callout-39" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -3305,7 +3378,7 @@ truth   0   1
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-36" class="callout-36-contents callout-collapse collapse">
+<div id="callout-39" class="callout-39-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>The survey did, by choosing costs 5 and 1; the model contributed only <span class="math inline">\(\hat p\)</span>. It is better in expected cost under those costs and worse in accuracy: “better” has no meaning until a loss is chosen. The formula gives the population optimum for the true <span class="math inline">\(p(x)\)</span>; the curve is an empirical cost on the birds the model was fitted to, with <span class="math inline">\(\hat p\)</span> plugged in, and its minimum is flat (several thresholds near <span class="math inline">\(1/6\)</span> tie). So the agreement is between an estimate and the formula, not a proof that the formula is right for new birds. That evaluating on the training rows flatters the model is the validation week’s subject.</p>
 </div>
@@ -3323,7 +3396,7 @@ truth   0   1
 <span id="cb34-6"><a href="#cb34-6" aria-hidden="true" tabindex="-1"></a><span class="co"># ...</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <div class="answer callout callout-style-default callout-tip callout-titled" title="Reveal solution">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-37-contents" aria-controls="callout-37" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-40-contents" aria-controls="callout-40" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -3332,7 +3405,7 @@ truth   0   1
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-37" class="callout-37-contents callout-collapse collapse">
+<div id="callout-40" class="callout-40-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>pg_y <span class="ot">&lt;-</span> pg <span class="sc">|&gt;</span> <span class="fu">mutate</span>(<span class="at">truth =</span> <span class="fu">factor</span>(chinstrap),</span>
@@ -3365,10 +3438,10 @@ Prediction   0   1
 </div>
 </section>
 </section>
-<section id="four-worlds-and-the-adjustment-theorem-in-code" class="level3">
-<h3 class="anchored" data-anchor-id="four-worlds-and-the-adjustment-theorem-in-code">2. Four worlds, and the adjustment theorem in code</h3>
-<!-- 20 min: steps 1 to 3, questions 4 to 6. -->
-<p>Four simulated worlds in which <span class="math inline">\(Y\)</span> is regressed on <span class="math inline">\(X\)</span>. In the lecture the target variable was called <span class="math inline">\(T\)</span>; here it is <code>X</code>, because <code>T</code> is <code>TRUE</code> in R. The function draws the noise once and keeps it, so that an intervention can be computed for the <em>same</em> units. World D is the lecture’s DAG with the confounder <span class="math inline">\(Z\)</span> observed: <span class="math inline">\(Z \to X\)</span>, <span class="math inline">\(Z \to Y\)</span>, <span class="math inline">\(X \to Y\)</span>.</p>
+<section id="simulated-worlds-adjustment-and-propensity-weighting" class="level3">
+<h3 class="anchored" data-anchor-id="simulated-worlds-adjustment-and-propensity-weighting">2. Simulated worlds: adjustment and propensity weighting</h3>
+<!-- 22 min: steps 1 to 4, questions 4 to 6. -->
+<p>Four simulated worlds in which <span class="math inline">\(Y\)</span> is regressed on <span class="math inline">\(X\)</span>. In the lecture the target variable was called <span class="math inline">\(T\)</span>; here it is <code>X</code>, because <code>T</code> is <code>TRUE</code> in R. The function draws the noise once and keeps it, so that an intervention can be computed for the <em>same</em> units. World D is the lecture’s DAG with the confounder <span class="math inline">\(Z\)</span> observed: <span class="math inline">\(Z \to X\)</span>, <span class="math inline">\(Z \to Y\)</span>, <span class="math inline">\(X \to Y\)</span>. Step 4 adds a fifth world, E, with the same DAG and a binary treatment.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a>simulate_world <span class="ot">&lt;-</span> <span class="cf">function</span>(world, <span class="at">n =</span> <span class="dv">500</span>) {</span>
 <span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a>  e_u <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(n)</span>
@@ -3404,7 +3477,7 @@ Prediction   0   1
 <span id="cb41-4"><a href="#cb41-4" aria-hidden="true" tabindex="-1"></a><span class="co"># ...</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <div class="answer callout callout-style-default callout-tip callout-titled" title="Reveal solution">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-38-contents" aria-controls="callout-38" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-41-contents" aria-controls="callout-41" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -3413,7 +3486,7 @@ Prediction   0   1
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-38" class="callout-38-contents callout-collapse collapse">
+<div id="callout-41" class="callout-41-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a>worlds <span class="sc">|&gt;</span></span>
@@ -3423,10 +3496,10 @@ Prediction   0   1
 <pre><code># A tibble: 4 × 2
   world slope
   &lt;chr&gt; &lt;dbl&gt;
-1 A      1.98
-2 B      2.05
-3 C      1.97
-4 D     -3.78</code></pre>
+1 A      2.08
+2 B      1.93
+3 C      1.99
+4 D     -3.82</code></pre>
 </div>
 </div>
 </div>
@@ -3434,7 +3507,7 @@ Prediction   0   1
 </div>
 <p><strong>Question 4.</strong> Before you intervene: for each world, write down what you expect to happen to <span class="math inline">\(Y\)</span> when <span class="math inline">\(X\)</span> is set to <span class="math inline">\(X + 1\)</span> for every unit with the same noise, and the average change. Use each world’s equations, and exercise 2 for world D.</p>
 <div class="answer callout callout-style-default callout-tip callout-titled" title="Reveal answer">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-39-contents" aria-controls="callout-39" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-42-contents" aria-controls="callout-42" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -3443,7 +3516,7 @@ Prediction   0   1
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-39" class="callout-39-contents callout-collapse collapse">
+<div id="callout-42" class="callout-42-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>A: <span class="math inline">\(Y\)</span> rises by exactly <span class="math inline">\(2\)</span> for every unit (its equation has <span class="math inline">\(2X\)</span>). B: nothing; <span class="math inline">\(Y\)</span> depends on <span class="math inline">\(U\)</span> and its own noise only. C: nothing; <span class="math inline">\(Y\)</span> is upstream of <span class="math inline">\(X\)</span>. D: <span class="math inline">\(Y\)</span> falls by exactly <span class="math inline">\(3\)</span> for every unit, the coefficient on <span class="math inline">\(X\)</span> in <span class="math inline">\(Y\)</span>’s equation, while the slope in step 1 is about <span class="math inline">\(-3.8\)</span>: <span class="math inline">\(\mathrm{Cov}(X, Y)/\mathrm{Var}(X) = (2 \cdot (-2) - 3 \cdot 5)/5 = -19/5\)</span>, the effect <span class="math inline">\(-3\)</span> plus the confounding gap <span class="math inline">\(2 \cdot (-2/5)\)</span>.</p>
 </div>
@@ -3470,7 +3543,7 @@ Prediction   0   1
 <span id="cb44-17"><a href="#cb44-17" aria-hidden="true" tabindex="-1"></a>            <span class="at">effect_of_intervention =</span> <span class="fu">mean</span>(Y_do <span class="sc">-</span> Y))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <div class="answer callout callout-style-default callout-tip callout-titled" title="Reveal solution">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-40-contents" aria-controls="callout-40" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-43-contents" aria-controls="callout-43" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -3479,7 +3552,7 @@ Prediction   0   1
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-40" class="callout-40-contents callout-collapse collapse">
+<div id="callout-43" class="callout-43-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a>intervene <span class="ot">&lt;-</span> <span class="cf">function</span>(d) {</span>
@@ -3502,10 +3575,10 @@ Prediction   0   1
 <pre><code># A tibble: 4 × 3
   world slope effect_of_intervention
   &lt;chr&gt; &lt;dbl&gt;                  &lt;dbl&gt;
-1 A      1.98                      2
-2 B      2.05                      0
-3 C      1.97                      0
-4 D     -3.78                     -3</code></pre>
+1 A      2.08                      2
+2 B      1.93                      0
+3 C      1.99                      0
+4 D     -3.82                     -3</code></pre>
 </div>
 </div>
 </div>
@@ -3526,7 +3599,7 @@ Prediction   0   1
 <span id="cb48-5"><a href="#cb48-5" aria-hidden="true" tabindex="-1"></a><span class="co"># ...</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <div class="answer callout callout-style-default callout-tip callout-titled" title="Reveal solution">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-41-contents" aria-controls="callout-41" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-44-contents" aria-controls="callout-44" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -3535,7 +3608,7 @@ Prediction   0   1
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-41" class="callout-41-contents callout-collapse collapse">
+<div id="callout-44" class="callout-44-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb49"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a>d <span class="ot">&lt;-</span> worlds <span class="sc">|&gt;</span> <span class="fu">filter</span>(world <span class="sc">==</span> <span class="st">&quot;D&quot;</span>)</span>
@@ -3545,13 +3618,13 @@ Prediction   0   1
 <pre><code># A tibble: 3 × 5
   term        estimate std.error statistic   p.value
   &lt;chr&gt;          &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;
-1 (Intercept)     3.92    0.217       18.1 1.41e- 56
-2 X              -2.99    0.0426     -70.1 9.44e-260
-3 Z               2.04    0.0981      20.8 1.43e- 69</code></pre>
+1 (Intercept)     4.15    0.223       18.6 4.90e- 59
+2 X              -3.04    0.0437     -69.4 5.48e-258
+3 Z               1.97    0.0983      20.1 3.40e- 66</code></pre>
 </div>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb51"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a><span class="fu">mean</span>(<span class="fu">predict</span>(fit_d, <span class="at">newdata =</span> <span class="fu">mutate</span>(d, <span class="at">X =</span> X <span class="sc">+</span> <span class="dv">1</span>))) <span class="sc">-</span> <span class="fu">mean</span>(<span class="fu">predict</span>(fit_d, <span class="at">newdata =</span> d))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] -2.985715</code></pre>
+<pre><code>[1] -3.035471</code></pre>
 </div>
 </div>
 </div>
@@ -3559,7 +3632,7 @@ Prediction   0   1
 </div>
 <p><strong>Question 5.</strong> The coefficient on <code>X</code> and the averaged difference are the same number, and both are near <span class="math inline">\(-3\)</span>. Which result says the coefficient estimates the effect, which says the averaged difference does, and what about world D made both work? What would go wrong in world B, where the confounder <code>e_u</code> is in the table but would not be observed in practice?</p>
 <div class="answer callout callout-style-default callout-tip callout-titled" title="Reveal answer">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-42-contents" aria-controls="callout-42" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-45-contents" aria-controls="callout-45" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -3568,15 +3641,81 @@ Prediction   0   1
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-42" class="callout-42-contents callout-collapse collapse">
+<div id="callout-45" class="callout-45-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>The coefficient: the partialling-out theorem (week 2) says the coefficient on <code>X</code> in the long regression is the slope of <code>Y</code> on what is left of <code>X</code> after <code>Z</code>; in world D what is left is <code>e_x</code>, which is independent of everything else in <code>Y</code>, so the population value is <span class="math inline">\(-3\)</span> and the sample coefficient estimates it. The averaged difference: the adjustment theorem, <span class="math inline">\(\mathbb E[Y \mid do(X = x)] = \mathbb E_Z[\mathbb E[Y \mid X = x, Z]]\)</span>, with the regression as the estimate of the inside. The two numbers coincide exactly because the fitted model is linear in <code>X</code>, so every unit’s difference is the coefficient. Both work because <code>Z</code> holds the only common cause of <code>X</code> and <code>Y</code>, is not a consequence of <code>X</code>, and the noises are independent. In world B the common cause is <code>U</code>, which you would not have: regress <code>Y</code> on <code>X</code> alone and you get the slope of about <span class="math inline">\(2\)</span> from step 1, while the effect is <span class="math inline">\(0\)</span>. With <code>e_u</code> in the regression the coefficient on <code>X</code> is about <span class="math inline">\(0\)</span>: the theorem working, on a variable you have only because you simulated the world.</p>
 </div>
 </div>
 </div>
-<p><strong>Question 6.</strong> Redraw the noise in <code>intervene()</code> (replace <code>e_y</code> by <code>rnorm(n())</code>) and look at <code>Y_do - Y</code> unit by unit in world A. What changes, and what does not? Which version is the counterfactual for a unit, and which is a new draw from the intervened world?</p>
+<p><strong>Step 4.</strong> World E: the same DAG, with a binary treatment. Each unit is treated (<code>X = 1</code>) with probability <span class="math inline">\(\pi(Z)\)</span>, where <span class="math inline">\(\pi(z) = 1/(1 + e^{-(-0.5 + 1.5 z)})\)</span>, and <span class="math inline">\(Y = 1 + 2X + 3Z + \varepsilon_Y\)</span>, so the effect of treatment is <span class="math inline">\(2\)</span>. Compute three estimates of it: the naive difference in means between treated and untreated; the propensity weighting estimate, with <span class="math inline">\(\hat\pi\)</span> from the logistic regression of <code>X</code> on <code>Z</code>; and the coefficient on <code>X</code> in <code>lm(Y ~ X + Z)</code>. Then look at the five units with the largest weights.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb53"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a>simulate_world_e <span class="ot">&lt;-</span> <span class="cf">function</span>(<span class="at">n =</span> <span class="dv">2000</span>) {</span>
+<span id="cb53-2"><a href="#cb53-2" aria-hidden="true" tabindex="-1"></a>  Z <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(n)</span>
+<span id="cb53-3"><a href="#cb53-3" aria-hidden="true" tabindex="-1"></a>  e_x <span class="ot">&lt;-</span> <span class="fu">runif</span>(n)</span>
+<span id="cb53-4"><a href="#cb53-4" aria-hidden="true" tabindex="-1"></a>  e_y <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(n)</span>
+<span id="cb53-5"><a href="#cb53-5" aria-hidden="true" tabindex="-1"></a>  X <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(e_x <span class="sc">&lt;</span> <span class="fu">plogis</span>(<span class="sc">-</span><span class="fl">0.5</span> <span class="sc">+</span> <span class="fl">1.5</span> <span class="sc">*</span> Z))   <span class="co"># treated with probability pi(Z)</span></span>
+<span id="cb53-6"><a href="#cb53-6" aria-hidden="true" tabindex="-1"></a>  Y <span class="ot">&lt;-</span> <span class="dv">1</span> <span class="sc">+</span> <span class="dv">2</span> <span class="sc">*</span> X <span class="sc">+</span> <span class="dv">3</span> <span class="sc">*</span> Z <span class="sc">+</span> e_y</span>
+<span id="cb53-7"><a href="#cb53-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tibble</span>(<span class="at">X =</span> X, <span class="at">Y =</span> Y, <span class="at">Z =</span> Z)</span>
+<span id="cb53-8"><a href="#cb53-8" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb53-9"><a href="#cb53-9" aria-hidden="true" tabindex="-1"></a>d_e <span class="ot">&lt;-</span> <span class="fu">simulate_world_e</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb54"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a><span class="co"># fit_pi &lt;- glm(____ ~ ____, family = binomial, data = d_e)</span></span>
+<span id="cb54-2"><a href="#cb54-2" aria-hidden="true" tabindex="-1"></a><span class="co"># d_e &lt;- d_e |&gt; mutate(pi_hat = fitted(fit_pi),</span></span>
+<span id="cb54-3"><a href="#cb54-3" aria-hidden="true" tabindex="-1"></a><span class="co">#                      w = ifelse(X == 1, ____, ____))</span></span>
+<span id="cb54-4"><a href="#cb54-4" aria-hidden="true" tabindex="-1"></a><span class="co"># c(naive = mean(d_e$Y[d_e$X == 1]) - mean(d_e$Y[d_e$X == 0]),</span></span>
+<span id="cb54-5"><a href="#cb54-5" aria-hidden="true" tabindex="-1"></a><span class="co">#   weighting = mean(d_e$X * d_e$Y / d_e$pi_hat) - mean(____),</span></span>
+<span id="cb54-6"><a href="#cb54-6" aria-hidden="true" tabindex="-1"></a><span class="co">#   regression = coef(lm(Y ~ X + Z, data = d_e))[[&quot;X&quot;]])</span></span>
+<span id="cb54-7"><a href="#cb54-7" aria-hidden="true" tabindex="-1"></a><span class="co"># d_e |&gt; slice_max(w, n = 5)</span></span>
+<span id="cb54-8"><a href="#cb54-8" aria-hidden="true" tabindex="-1"></a><span class="co"># ...</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div class="answer callout callout-style-default callout-tip callout-titled" title="Reveal solution">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-46-contents" aria-controls="callout-46" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Reveal solution
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-46" class="callout-46-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb55"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb55-1"><a href="#cb55-1" aria-hidden="true" tabindex="-1"></a>fit_pi <span class="ot">&lt;-</span> <span class="fu">glm</span>(X <span class="sc">~</span> Z, <span class="at">family =</span> binomial, <span class="at">data =</span> d_e)</span>
+<span id="cb55-2"><a href="#cb55-2" aria-hidden="true" tabindex="-1"></a>d_e <span class="ot">&lt;-</span> d_e <span class="sc">|&gt;</span> <span class="fu">mutate</span>(<span class="at">pi_hat =</span> <span class="fu">fitted</span>(fit_pi),</span>
+<span id="cb55-3"><a href="#cb55-3" aria-hidden="true" tabindex="-1"></a>                     <span class="at">w =</span> <span class="fu">ifelse</span>(X <span class="sc">==</span> <span class="dv">1</span>, <span class="dv">1</span> <span class="sc">/</span> pi_hat, <span class="dv">1</span> <span class="sc">/</span> (<span class="dv">1</span> <span class="sc">-</span> pi_hat)))</span>
+<span id="cb55-4"><a href="#cb55-4" aria-hidden="true" tabindex="-1"></a><span class="fu">c</span>(<span class="at">naive =</span> <span class="fu">mean</span>(d_e<span class="sc">$</span>Y[d_e<span class="sc">$</span>X <span class="sc">==</span> <span class="dv">1</span>]) <span class="sc">-</span> <span class="fu">mean</span>(d_e<span class="sc">$</span>Y[d_e<span class="sc">$</span>X <span class="sc">==</span> <span class="dv">0</span>]),</span>
+<span id="cb55-5"><a href="#cb55-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">weighting =</span> <span class="fu">mean</span>(d_e<span class="sc">$</span>X <span class="sc">*</span> d_e<span class="sc">$</span>Y <span class="sc">/</span> d_e<span class="sc">$</span>pi_hat) <span class="sc">-</span> <span class="fu">mean</span>((<span class="dv">1</span> <span class="sc">-</span> d_e<span class="sc">$</span>X) <span class="sc">*</span> d_e<span class="sc">$</span>Y <span class="sc">/</span> (<span class="dv">1</span> <span class="sc">-</span> d_e<span class="sc">$</span>pi_hat)),</span>
+<span id="cb55-6"><a href="#cb55-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">regression =</span> <span class="fu">coef</span>(<span class="fu">lm</span>(Y <span class="sc">~</span> X <span class="sc">+</span> Z, <span class="at">data =</span> d_e))[[<span class="st">&quot;X&quot;</span>]])</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>     naive  weighting regression 
+  4.939835   1.994155   1.914676 </code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb57"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb57-1"><a href="#cb57-1" aria-hidden="true" tabindex="-1"></a>d_e <span class="sc">|&gt;</span> <span class="fu">slice_max</span>(w, <span class="at">n =</span> <span class="dv">5</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 5 × 5
+      X      Y     Z pi_hat     w
+  &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt;
+1     1 -2.73  -2.04 0.0365  27.4
+2     0  8.85   2.39 0.946   18.5
+3     1 -0.612 -1.72 0.0556  18.0
+4     1 -3.05  -1.65 0.0610  16.4
+5     1 -0.296 -1.58 0.0669  15.0</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<p>Checkpoint (as in problem 3(c), the weighted treated units and the weighted untreated units should each count as about the whole sample):</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb59"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb59-1"><a href="#cb59-1" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">all</span>(d_e<span class="sc">$</span>pi_hat <span class="sc">&gt;</span> <span class="dv">0</span> <span class="sc">&amp;</span> d_e<span class="sc">$</span>pi_hat <span class="sc">&lt;</span> <span class="dv">1</span>), <span class="fu">all</span>(d_e<span class="sc">$</span>w <span class="sc">&gt;=</span> <span class="dv">1</span>),</span>
+<span id="cb59-2"><a href="#cb59-2" aria-hidden="true" tabindex="-1"></a>          <span class="fu">abs</span>(<span class="fu">sum</span>(d_e<span class="sc">$</span>w[d_e<span class="sc">$</span>X <span class="sc">==</span> <span class="dv">1</span>]) <span class="sc">/</span> <span class="fu">nrow</span>(d_e) <span class="sc">-</span> <span class="dv">1</span>) <span class="sc">&lt;</span> <span class="fl">0.25</span>,</span>
+<span id="cb59-3"><a href="#cb59-3" aria-hidden="true" tabindex="-1"></a>          <span class="fu">abs</span>(<span class="fu">sum</span>(d_e<span class="sc">$</span>w[d_e<span class="sc">$</span>X <span class="sc">==</span> <span class="dv">0</span>]) <span class="sc">/</span> <span class="fu">nrow</span>(d_e) <span class="sc">-</span> <span class="dv">1</span>) <span class="sc">&lt;</span> <span class="fl">0.25</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p><strong>Question 6.</strong> Which of the three estimates are near <span class="math inline">\(2\)</span>, and which result explains each one? Which units have the largest weights, and what is unusual about them? If the unit with the largest weight had not been in the sample, by how much would the weighting estimate move?</p>
 <div class="answer callout callout-style-default callout-tip callout-titled" title="Reveal answer">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-43-contents" aria-controls="callout-43" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-47-contents" aria-controls="callout-47" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -3585,23 +3724,90 @@ Prediction   0   1
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-43" class="callout-43-contents callout-collapse collapse">
+<div id="callout-47" class="callout-47-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>The naive difference is about <span class="math inline">\(5.2\)</span>: the treated have higher <span class="math inline">\(Z\)</span>, and the confounding gap is <span class="math inline">\(3\,(\mathbb E[Z \mid X = 1] - \mathbb E[Z \mid X = 0]) \approx 3 \cdot 1.07\)</span>. The weighting estimate is near <span class="math inline">\(2\)</span> by the propensity weighting theorem, with <span class="math inline">\(\hat\pi\)</span> in place of <span class="math inline">\(\pi\)</span>; the logistic model for <span class="math inline">\(\pi\)</span> is the right one here, because <code>X</code> was generated from a logistic function of <code>Z</code>. The regression coefficient is near <span class="math inline">\(2\)</span> by the adjustment theorem (or the partialling-out theorem), because <span class="math inline">\(\mathbb E[Y \mid X, Z]\)</span> is linear in <code>X</code> and <code>Z</code>. Weighting needs a correct model for the treatment; regression adjustment needs a correct model for the outcome; both need <code>Z</code> to hold the common causes. Of the three, the weighting estimate varies most from student to student.</p>
+<p>The largest weights belong to treated units with low <code>Z</code> or untreated units with high <code>Z</code>: units whose treatment was unlikely given their <code>Z</code>. Their <span class="math inline">\(\hat\pi\)</span> (or <span class="math inline">\(1 - \hat\pi\)</span>) is a few percent, so each stands in for tens of units. The largest weight is usually between about 15 and 100, and it changes a lot from run to run. A treated unit with weight <span class="math inline">\(w\)</span> and outcome <span class="math inline">\(Y\)</span> contributes <span class="math inline">\(wY/n\)</span> to the estimate, so leaving it out moves the estimate by about that much: with <span class="math inline">\(w = 50\)</span>, <span class="math inline">\(Y = -4\)</span> and <span class="math inline">\(n = 2000\)</span>, by <span class="math inline">\(0.1\)</span>, from one unit out of 2000.</p>
+</div>
+</div>
+</div>
+<section id="optional-can-be-done-at-home-same-noise-or-fresh-noise" class="level4">
+<h4 class="anchored" data-anchor-id="optional-can-be-done-at-home-same-noise-or-fresh-noise">Optional, can be done at home: same noise or fresh noise</h4>
+<p><strong>Question 7.</strong> Redraw the noise in <code>intervene()</code> (replace <code>e_y</code> by <code>rnorm(n())</code>) and look at <code>Y_do - Y</code> unit by unit in world A. What changes, and what does not? Which version is the counterfactual for a unit, and which is a new draw from the intervened world?</p>
+<div class="answer callout callout-style-default callout-tip callout-titled" title="Reveal answer">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-48-contents" aria-controls="callout-48" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Reveal answer
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-48" class="callout-48-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>With the same noise every unit’s change is exactly <span class="math inline">\(2\)</span> in world A; with fresh noise the unit-level differences scatter (variance <span class="math inline">\(2\)</span>) while the average stays about <span class="math inline">\(2\)</span>. The first is the unit’s counterfactual: what would have happened to <em>this</em> unit. The second is a draw from the distribution after the intervention. Both have the same average effect; only the first answers “what if” for an individual, and in real data it is never observed, which is one reason causal inference is hard.</p>
 </div>
 </div>
 </div>
 </section>
+<section id="optional-can-be-done-at-home-weighting-against-regression-many-times" class="level4">
+<h4 class="anchored" data-anchor-id="optional-can-be-done-at-home-weighting-against-regression-many-times">Optional, can be done at home: weighting against regression, many times</h4>
+<p><strong>Question 8.</strong> Simulate world E 200 times and compute the weighting estimate and the regression coefficient each time. Compare their means and their standard deviations. Why is one more variable than the other, and when would you use weighting anyway?</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb60"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb60-1"><a href="#cb60-1" aria-hidden="true" tabindex="-1"></a><span class="co"># one_run &lt;- function() {</span></span>
+<span id="cb60-2"><a href="#cb60-2" aria-hidden="true" tabindex="-1"></a><span class="co">#   d &lt;- simulate_world_e()</span></span>
+<span id="cb60-3"><a href="#cb60-3" aria-hidden="true" tabindex="-1"></a><span class="co">#   pi_hat &lt;- fitted(glm(X ~ Z, family = binomial, data = d))</span></span>
+<span id="cb60-4"><a href="#cb60-4" aria-hidden="true" tabindex="-1"></a><span class="co">#   tibble(weighting = ____, regression = ____)</span></span>
+<span id="cb60-5"><a href="#cb60-5" aria-hidden="true" tabindex="-1"></a><span class="co"># }</span></span>
+<span id="cb60-6"><a href="#cb60-6" aria-hidden="true" tabindex="-1"></a><span class="co"># runs &lt;- map_dfr(1:200, \(i) one_run())</span></span>
+<span id="cb60-7"><a href="#cb60-7" aria-hidden="true" tabindex="-1"></a><span class="co"># runs |&gt; summarise(across(everything(), list(mean = mean, sd = sd)))</span></span>
+<span id="cb60-8"><a href="#cb60-8" aria-hidden="true" tabindex="-1"></a><span class="co"># ...</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div class="answer callout callout-style-default callout-tip callout-titled" title="Reveal solution">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-49-contents" aria-controls="callout-49" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Reveal solution
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-49" class="callout-49-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb61"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb61-1"><a href="#cb61-1" aria-hidden="true" tabindex="-1"></a>one_run <span class="ot">&lt;-</span> <span class="cf">function</span>() {</span>
+<span id="cb61-2"><a href="#cb61-2" aria-hidden="true" tabindex="-1"></a>  d <span class="ot">&lt;-</span> <span class="fu">simulate_world_e</span>()</span>
+<span id="cb61-3"><a href="#cb61-3" aria-hidden="true" tabindex="-1"></a>  pi_hat <span class="ot">&lt;-</span> <span class="fu">fitted</span>(<span class="fu">glm</span>(X <span class="sc">~</span> Z, <span class="at">family =</span> binomial, <span class="at">data =</span> d))</span>
+<span id="cb61-4"><a href="#cb61-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tibble</span>(<span class="at">weighting =</span> <span class="fu">mean</span>(d<span class="sc">$</span>X <span class="sc">*</span> d<span class="sc">$</span>Y <span class="sc">/</span> pi_hat) <span class="sc">-</span> <span class="fu">mean</span>((<span class="dv">1</span> <span class="sc">-</span> d<span class="sc">$</span>X) <span class="sc">*</span> d<span class="sc">$</span>Y <span class="sc">/</span> (<span class="dv">1</span> <span class="sc">-</span> pi_hat)),</span>
+<span id="cb61-5"><a href="#cb61-5" aria-hidden="true" tabindex="-1"></a>         <span class="at">regression =</span> <span class="fu">coef</span>(<span class="fu">lm</span>(Y <span class="sc">~</span> X <span class="sc">+</span> Z, <span class="at">data =</span> d))[[<span class="st">&quot;X&quot;</span>]])</span>
+<span id="cb61-6"><a href="#cb61-6" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb61-7"><a href="#cb61-7" aria-hidden="true" tabindex="-1"></a>runs <span class="ot">&lt;-</span> <span class="fu">map_dfr</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">200</span>, \(i) <span class="fu">one_run</span>())</span>
+<span id="cb61-8"><a href="#cb61-8" aria-hidden="true" tabindex="-1"></a>runs <span class="sc">|&gt;</span> <span class="fu">summarise</span>(<span class="fu">across</span>(<span class="fu">everything</span>(), <span class="fu">list</span>(<span class="at">mean =</span> mean, <span class="at">sd =</span> sd)))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 1 × 4
+  weighting_mean weighting_sd regression_mean regression_sd
+           &lt;dbl&gt;        &lt;dbl&gt;           &lt;dbl&gt;         &lt;dbl&gt;
+1           2.01        0.214            2.00        0.0533</code></pre>
+</div>
+</div>
+<p>Both average close to <span class="math inline">\(2\)</span>. The weighting estimate’s standard deviation is three to four times the regression’s (about <span class="math inline">\(0.2\)</span> against <span class="math inline">\(0.05\)</span>). The regression uses a correct model for <span class="math inline">\(Y\)</span>, which here is linear with little noise; weighting ignores what is known about <span class="math inline">\(Y\)</span> and depends on the few units with large weights. Weighting is the choice when you trust a model for who gets treated more than a model for the outcome: for example, when the treatment was assigned by a rule you know.</p>
+</div>
+</div>
+</div>
+</section>
+</section>
 <section id="optional-can-be-done-at-home-another-dataset" class="level3">
 <h3 class="anchored" data-anchor-id="optional-can-be-done-at-home-another-dataset">Optional, can be done at home: another dataset</h3>
 <p><strong>Attrition</strong> (<code>modeldata::attrition</code>; <strong>fictional</strong>, made up by IBM data scientists, used only as an exercise): whether an employee leaves, with a threshold-and-costs story (a missed leaver costs a replacement, a false alarm costs a conversation). Leavers are 16 percent, so the accuracy-against-cost point is sharper: at threshold <span class="math inline">\(\tfrac12\)</span> almost nobody is predicted to leave.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb53"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(modeldata)</span>
-<span id="cb53-2"><a href="#cb53-2" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(attrition)</span>
-<span id="cb53-3"><a href="#cb53-3" aria-hidden="true" tabindex="-1"></a>att <span class="ot">&lt;-</span> attrition <span class="sc">|&gt;</span> <span class="fu">mutate</span>(<span class="at">left =</span> <span class="fu">as.numeric</span>(Attrition <span class="sc">==</span> <span class="st">&quot;Yes&quot;</span>))</span>
-<span id="cb53-4"><a href="#cb53-4" aria-hidden="true" tabindex="-1"></a>fit_att <span class="ot">&lt;-</span> <span class="fu">glm</span>(left <span class="sc">~</span> OverTime <span class="sc">+</span> MonthlyIncome <span class="sc">+</span> Age <span class="sc">+</span> JobSatisfaction, <span class="at">family =</span> binomial, <span class="at">data =</span> att)</span>
-<span id="cb53-5"><a href="#cb53-5" aria-hidden="true" tabindex="-1"></a><span class="co"># then steps 3, 4 and 5 with p = fitted(fit_att), costs 10 (a missed leaver) and 1 (a false alarm)</span></span>
-<span id="cb53-6"><a href="#cb53-6" aria-hidden="true" tabindex="-1"></a><span class="co"># ...</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb63"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb63-1"><a href="#cb63-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(modeldata)</span>
+<span id="cb63-2"><a href="#cb63-2" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(attrition)</span>
+<span id="cb63-3"><a href="#cb63-3" aria-hidden="true" tabindex="-1"></a>att <span class="ot">&lt;-</span> attrition <span class="sc">|&gt;</span> <span class="fu">mutate</span>(<span class="at">left =</span> <span class="fu">as.numeric</span>(Attrition <span class="sc">==</span> <span class="st">&quot;Yes&quot;</span>))</span>
+<span id="cb63-4"><a href="#cb63-4" aria-hidden="true" tabindex="-1"></a>fit_att <span class="ot">&lt;-</span> <span class="fu">glm</span>(left <span class="sc">~</span> OverTime <span class="sc">+</span> MonthlyIncome <span class="sc">+</span> Age <span class="sc">+</span> JobSatisfaction, <span class="at">family =</span> binomial, <span class="at">data =</span> att)</span>
+<span id="cb63-5"><a href="#cb63-5" aria-hidden="true" tabindex="-1"></a><span class="co"># then steps 3, 4 and 5 with p = fitted(fit_att), costs 10 (a missed leaver) and 1 (a false alarm)</span></span>
+<span id="cb63-6"><a href="#cb63-6" aria-hidden="true" tabindex="-1"></a><span class="co"># ...</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
 </section>

@@ -29,10 +29,10 @@ theme_set(theme_minimal())
 
 <!-- At home, before the seminar. -->
 
-The lecture proved one result, the adjustment theorem, which you prove again with the slides closed (exercise 3). It stated the optimal threshold theorem and no free lunch and left proofs to you (exercises 1 and 4), and it stated the confounding gap without deriving it (exercise 2). Do all four on paper before the seminar; the seminar's problems are variations on exercises 1 to 3. You may use, without proof, two facts from ST102: the tower property, $\mathbb E[W] = \mathbb E\big[\mathbb E[W \mid X]\big]$, and that if $V$ is independent of $X$, then $\mathbb E[k(X, V) \mid X = x] = \mathbb E[k(x, V)]$ for any function $k$ (freeze $X$ at $x$; the distribution of $V$ does not move).
+The lecture proved one result, the propensity weighting theorem, which you prove again with the slides closed (exercise 4). It stated the optimal threshold theorem and the adjustment theorem and left their proofs to you (exercises 1 and 3), and it stated the confounding gap without deriving it (exercise 2). Do all four on paper before the seminar; the seminar's problems are variations on them. You may use, without proof, two facts from ST102: the tower property, $\mathbb E[W] = \mathbb E\big[\mathbb E[W \mid X]\big]$, and that if $V$ is independent of $X$, then $\mathbb E[k(X, V) \mid X = x] = \mathbb E[k(x, V)]$ for any function $k$ (freeze $X$ at $x$; the distribution of $V$ does not move).
 
 ::: {.callout-warning title="Hints"}
-Each exercise has hints, collapsed below it. Do not open a hint unless you have been stuck for at least a few minutes, and open them in order. Exercise 3's proof is on the lecture slides. Solutions to exercises 1, 2 and 4 are shown in the seminar if you ask.
+Each exercise has hints, collapsed below it. Do not open a hint unless you have been stuck for at least a few minutes, and open them in order. Exercise 4's proof is on the lecture slides. Solutions to exercises 1 to 3 are shown in the seminar if you ask.
 :::
 
 **Exercise 1 (optimal threshold theorem).** Let $p(x) = P(Y = 1 \mid X = x)$. A false positive (predict $1$, truth $0$) costs $c_{FP} \ge 0$, a false negative (predict $0$, truth $1$) costs $c_{FN} \ge 0$, not both are $0$, and a correct prediction costs nothing. A rule $\delta$ assigns a prediction $\delta(x) \in \{0, 1\}$ to every $x$.
@@ -86,7 +86,7 @@ Where did you use independence?
 (c) Expand $\mathrm{Cov}(T, Y)$ using $Y$'s equation. $\mathrm{Cov}(T, \varepsilon_Y) = 0$ for the reason you found in (b).
 :::
 
-**Exercise 3 (adjustment theorem).** The lecture proved this one. Close the slides and prove it again. Structural model: $Z$, $\varepsilon_T$ and $\varepsilon_Y$ independent, $T = h(Z, \varepsilon_T)$, $Y = g(T, Z, \varepsilon_Y)$; under $do(T = t)$ the equation for $T$ is deleted, $T$ is set to $t$, and everything else keeps its equation and its noise. Show that, wherever $P(T = t \mid Z) > 0$,
+**Exercise 3 (adjustment theorem).** The lecture stated this one; prove it. Structural model: $Z$, $\varepsilon_T$ and $\varepsilon_Y$ independent, $T = h(Z, \varepsilon_T)$, $Y = g(T, Z, \varepsilon_Y)$; under $do(T = t)$ the equation for $T$ is deleted, $T$ is set to $t$, and everything else keeps its equation and its noise. Show that, wherever $P(T = t \mid Z) > 0$,
 $$
 \mathbb E[Y \mid do(T = t)] = \mathbb E_Z\Big[\,\mathbb E[Y \mid T = t, Z]\,\Big],
 $$
@@ -108,32 +108,29 @@ Now the observed world: on $\{T = t, Z = z\}$, $Y = g(t, z, \varepsilon_Y)$. Why
 Why is the distribution of $Z$ the same in the observed and the intervened worlds?
 :::
 
-**Exercise 4 (no free lunch on a finite domain).** A finite set $\mathcal X$ has $N$ points. A **labeling** is a function $f: \mathcal X \to \{0, 1\}$. A method sees the labels on a fixed training set $S \subset \mathcal X$ of $m < N$ points and returns a classifier $\hat h$, which may be any function of those $m$ labels. Its error on the points it has not seen is
-$$
-\mathrm{err}(\hat h, f) = \frac{1}{N - m} \sum_{x \notin S} \mathbb 1\big[\hat h(x) \ne f(x)\big].
-$$
+**Exercise 4 (propensity weighting theorem).** The lecture proved this one. Close the slides and prove it again. The structural model of exercise 3, with $T \in \{0, 1\}$ and the propensity score $\pi(z) = P(T = 1 \mid Z = z)$, where $0 < \pi(Z) < 1$ with probability one.
 
-(a) Draw $f$ uniformly at random from all $2^N$ labelings. Show that $\mathbb E\big[\mathrm{err}(\hat h, f)\big] = \tfrac12$ for every method.
+(a) Show that $\mathbb E[Y \mid do(T = 1)] = \mathbb E\big[T\,Y/\pi(Z)\big]$, and say where you used the independence of the noises, $Z$ not being a consequence of $T$, and $\pi(Z) > 0$.
 
-(b) Two methods, $A$ and $B$. Suppose $A$'s error on the unseen points is smaller than $B$'s for some labeling. Show that $B$'s is smaller than $A$'s for another labeling.
+(b) Show that $\mathbb E[Y \mid do(T = 0)] = \mathbb E\big[(1 - T)\,Y/(1 - \pi(Z))\big]$.
 
-(c) What would have to be true of the world for some method to do better than $\tfrac12$ on average?
+(c) Without the structural model, show by conditioning on $Z$ that $\mathbb E\big[T\,Y/\pi(Z)\big] = \mathbb E_Z\big[\,\mathbb E[Y \mid T = 1, Z]\,\big]$. What does that say about the two theorems?
 
 ::: {.callout-note collapse="true" title="Hint 1"}
-Uniform over all $2^N$ labelings means that the $N$ labels $f(x)$ are independent fair coin flips.
+(a) $T$ is $0$ or $1$. Check that $T\,Y = T\,g(1, Z, \varepsilon_Y)$ in both cases.
 :::
 
 ::: {.callout-note collapse="true" title="Hint 2"}
-Fix $x \notin S$. $\hat h(x)$ depends only on the labels on $S$, and $f(x)$ is independent of them. Condition on the labels on $S$: what is $P\big(\hat h(x) \ne f(x)\big)$?
+(a) Use the second ST102 fact with $V = \varepsilon_T$ and $(Z, \varepsilon_Y)$ in the role of $X$: what is $\mathbb E[T \mid Z, \varepsilon_Y]$? Then condition on $(Z, \varepsilon_Y)$ with the tower property.
 :::
 
 ::: {.callout-note collapse="true" title="Hint 3"}
-(b) Average $\mathrm{err}(\hat h_A, f) - \mathrm{err}(\hat h_B, f)$ over all $2^N$ labelings.
+(c) $T\,Y = Y\,\mathbb 1[T = 1]$, so $\mathbb E[T\,Y \mid Z] = P(T = 1 \mid Z)\, \mathbb E[Y \mid T = 1, Z]$.
 :::
 
 ## Problems
 
-<!-- About 20 min: problems 1 and 2, pen and paper. Hints are revealed in order after a few minutes, the solution last. -->
+<!-- About 20 min: problems 1 to 3, pen and paper. Hints are revealed in order after a few minutes, the solution last. -->
 
 **Problem 1 (costs 5 and 1).** A conservation survey classifies penguins from a photograph. Labeling a Chinstrap as an Adelie (a miss) wastes a return visit, cost 5; labeling an Adelie as a Chinstrap (a false alarm) wastes a phone call, cost 1. Write $p(x) = P(\text{Chinstrap} \mid x)$.
 
@@ -153,22 +150,30 @@ Fix $x \notin S$. $\hat h(x)$ depends only on the labels on $S$, and $f(x)$ is i
 
 (c) Compute $\mathbb E[Y \mid T = t, Z = z]$, average it over $Z$, and check that you recover (a). Where did you use that the noises are independent?
 
-(d) A world where the causation runs the other way: $Y = \varepsilon_Y$ with variance $4$, and $T = 0.4\,Y + \varepsilon_T$, with $\varepsilon_T$ of variance $0.16$, independent of $Y$. Find the population slope of $Y$ on $T$ and the effect of raising $t$ by one.
+**Problem 3 (propensity weighting by hand).** $Z$ is $0$ or $1$, each with probability $\tfrac12$. Treatment depends on $Z$: $T = h(Z, \varepsilon_T)$ with $\pi(0) = 0.2$ and $\pi(1) = 0.8$. The outcome is $Y = 2T + 4Z + \varepsilon_Y$, with $\varepsilon_Y$ of mean $0$, and $Z$, $\varepsilon_T$, $\varepsilon_Y$ independent.
+
+(a) What is $\mathbb E[Y \mid do(T = 1)] - \mathbb E[Y \mid do(T = 0)]$?
+
+(b) Picture 100 units in exactly these proportions. How many are treated with $Z = 0$, treated with $Z = 1$, untreated with $Z = 0$, untreated with $Z = 1$? Compute $\mathbb E[Y \mid T = 1] - \mathbb E[Y \mid T = 0]$ and write it as effect plus gap.
+
+(c) Give each treated unit the weight $1/\pi(Z)$ and each untreated unit the weight $1/(1 - \pi(Z))$, and multiply each count from (b) by its weight. What do the weighted treated units look like? Compute $\mathbb E\big[T\,Y/\pi(Z)\big]$ and $\mathbb E\big[(1 - T)\,Y/(1 - \pi(Z))\big]$ and compare with (a).
+
+(d) Which units get the largest weights? What would happen to them if $\pi(0)$ were $0.01$?
 
 ### Optional, can be done at home
 
 <!-- Not in the seminar. Hints are in the student file. -->
 
-**Problem 3 (what no free lunch says).** Which of these claims does exercise 4 support? (a) "Nearest neighbors is a better method than linear regression." (b) "On the gapminder data, nearest neighbors beat the line." (c) "A method that makes no assumptions would beat all the others."
+**Problem 4 (the causation runs the other way).** $Y = \varepsilon_Y$ with variance $4$, and $T = 0.4\,Y + \varepsilon_T$, with $\varepsilon_T$ of variance $0.16$, independent of $Y$. Find the population slope of $Y$ on $T$ and the effect of raising $t$ by one. Compare with problem 2(b).
 
 ::: {.callout-note collapse="true" title="Hint 1"}
-For each claim: is it about one distribution, every distribution, or the average over all labelings?
+$\mathrm{Var}(T) = 0.4^2\,\mathrm{Var}(Y) + \mathrm{Var}(\varepsilon_T)$.
 :::
 
-**Problem 4 (a model that predicts well).** A hospital fits a model that predicts which patients will be readmitted within 30 days, and it predicts well on held-out patients. Management proposes to reduce readmissions by acting on the model's strongest predictor. Draw the DAGs of three worlds consistent with that held-out score, say in which of them the plan works, and say what the score told you about which world you are in.
+**Problem 5 (a model that predicts well).** A hospital fits a model that predicts which patients will be readmitted within 30 days, and it predicts well on held-out patients. Management proposes to reduce readmissions by acting on the model's strongest predictor. Draw the DAGs of three worlds consistent with that held-out score, say in which of them the plan works, and say what the score told you about which world you are in.
 
 ::: {.callout-note collapse="true" title="Hint 1"}
-The lecture's three worlds: the predictor causes readmission, a common cause drives both, or readmission risk drives the predictor.
+The lecture's explanations of an observed correlation: the predictor causes readmission, a common cause drives both, or readmission risk drives the predictor.
 :::
 
 ## Coding
@@ -177,7 +182,7 @@ The lecture's three worlds: the predictor causes readmission, a common cause dri
 
 ### 1. Penguins: a probability and a threshold
 
-<!-- 20 min: steps 1 to 5, questions 1 to 3. -->
+<!-- 18 min: steps 1 to 5, questions 1 to 3. -->
 
 Adelie against Chinstrap, from the bill. Keep the two species and the birds with complete measurements.
 
@@ -306,11 +311,11 @@ stopifnot(nrow(costs) == length(thresholds), all(costs$cost >= 0))
 # ...
 ```
 
-### 2. Four worlds, and the adjustment theorem in code
+### 2. Simulated worlds: adjustment and propensity weighting
 
-<!-- 20 min: steps 1 to 3, questions 4 to 6. -->
+<!-- 22 min: steps 1 to 4, questions 4 to 6. -->
 
-Four simulated worlds in which $Y$ is regressed on $X$. In the lecture the target variable was called $T$; here it is `X`, because `T` is `TRUE` in R. The function draws the noise once and keeps it, so that an intervention can be computed for the *same* units. World D is the lecture's DAG with the confounder $Z$ observed: $Z \to X$, $Z \to Y$, $X \to Y$.
+Four simulated worlds in which $Y$ is regressed on $X$. In the lecture the target variable was called $T$; here it is `X`, because `T` is `TRUE` in R. The function draws the noise once and keeps it, so that an intervention can be computed for the *same* units. World D is the lecture's DAG with the confounder $Z$ observed: $Z \to X$, $Z \to Y$, $X \to Y$. Step 4 adds a fifth world, E, with the same DAG and a binary treatment.
 
 ```{r}
 simulate_world <- function(world, n = 500) {
@@ -398,7 +403,62 @@ d <- worlds |> filter(world == "D")
 
 **Question 5.** The coefficient on `X` and the averaged difference are the same number, and both are near $-3$. Which result says the coefficient estimates the effect, which says the averaged difference does, and what about world D made both work? What would go wrong in world B, where the confounder `e_u` is in the table but would not be observed in practice?
 
-**Question 6.** Redraw the noise in `intervene()` (replace `e_y` by `rnorm(n())`) and look at `Y_do - Y` unit by unit in world A. What changes, and what does not? Which version is the counterfactual for a unit, and which is a new draw from the intervened world?
+**Step 4.** World E: the same DAG, with a binary treatment. Each unit is treated (`X = 1`) with probability $\pi(Z)$, where $\pi(z) = 1/(1 + e^{-(-0.5 + 1.5 z)})$, and $Y = 1 + 2X + 3Z + \varepsilon_Y$, so the effect of treatment is $2$. Compute three estimates of it: the naive difference in means between treated and untreated; the propensity weighting estimate, with $\hat\pi$ from the logistic regression of `X` on `Z`; and the coefficient on `X` in `lm(Y ~ X + Z)`. Then look at the five units with the largest weights.
+
+```{r}
+simulate_world_e <- function(n = 2000) {
+  Z <- rnorm(n)
+  e_x <- runif(n)
+  e_y <- rnorm(n)
+  X <- as.numeric(e_x < plogis(-0.5 + 1.5 * Z))   # treated with probability pi(Z)
+  Y <- 1 + 2 * X + 3 * Z + e_y
+  tibble(X = X, Y = Y, Z = Z)
+}
+d_e <- simulate_world_e()
+```
+
+```{r}
+#| eval: false
+# fit_pi <- glm(____ ~ ____, family = binomial, data = d_e)
+# d_e <- d_e |> mutate(pi_hat = fitted(fit_pi),
+#                      w = ifelse(X == 1, ____, ____))
+# c(naive = mean(d_e$Y[d_e$X == 1]) - mean(d_e$Y[d_e$X == 0]),
+#   weighting = mean(d_e$X * d_e$Y / d_e$pi_hat) - mean(____),
+#   regression = coef(lm(Y ~ X + Z, data = d_e))[["X"]])
+# d_e |> slice_max(w, n = 5)
+# ...
+```
+
+Checkpoint (as in problem 3(c), the weighted treated units and the weighted untreated units should each count as about the whole sample):
+
+```{r}
+#| eval: !expr exists("fit_pi")
+stopifnot(all(d_e$pi_hat > 0 & d_e$pi_hat < 1), all(d_e$w >= 1),
+          abs(sum(d_e$w[d_e$X == 1]) / nrow(d_e) - 1) < 0.25,
+          abs(sum(d_e$w[d_e$X == 0]) / nrow(d_e) - 1) < 0.25)
+```
+
+**Question 6.** Which of the three estimates are near $2$, and which result explains each one? Which units have the largest weights, and what is unusual about them? If the unit with the largest weight had not been in the sample, by how much would the weighting estimate move?
+
+#### Optional, can be done at home: same noise or fresh noise
+
+**Question 7.** Redraw the noise in `intervene()` (replace `e_y` by `rnorm(n())`) and look at `Y_do - Y` unit by unit in world A. What changes, and what does not? Which version is the counterfactual for a unit, and which is a new draw from the intervened world?
+
+#### Optional, can be done at home: weighting against regression, many times
+
+**Question 8.** Simulate world E 200 times and compute the weighting estimate and the regression coefficient each time. Compare their means and their standard deviations. Why is one more variable than the other, and when would you use weighting anyway?
+
+```{r}
+#| eval: false
+# one_run <- function() {
+#   d <- simulate_world_e()
+#   pi_hat <- fitted(glm(X ~ Z, family = binomial, data = d))
+#   tibble(weighting = ____, regression = ____)
+# }
+# runs <- map_dfr(1:200, \(i) one_run())
+# runs |> summarise(across(everything(), list(mean = mean, sd = sd)))
+# ...
+```
 
 ### Optional, can be done at home: another dataset
 
