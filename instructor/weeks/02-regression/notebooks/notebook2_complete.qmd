@@ -76,7 +76,7 @@ $$
 $$
 by the tower property, then taking out what is known, then $\mathbb E[Y \mid X] = f^\star(X)$, the definition of $f^\star$. (Square-integrability makes every expectation finite; Cauchy-Schwarz for the cross term.) Hence $R(f) - R(f^\star) = \mathbb E[(f^\star(X) - f(X))^2] \ge 0$, with equality only when $f(X) = f^\star(X)$ with probability one. $\blacksquare$
 
-The fact that does the work: a residual against the conditional mean, $Y - f^\star(X)$, is orthogonal to every function of $X$. It is the same first move as week 1's bias-variance decomposition, and the cross term dies for the same reason.
+The key fact is that a residual against the conditional mean, $Y - f^\star(X)$, is orthogonal to every function of $X$. It is the same first move as week 1's bias-variance decomposition, and the cross term dies for the same reason.
 
 Common errors: taking $f^\star(X)$ outside an expectation without conditioning first; writing $\mathbb E[Y - f^\star(X)] = 0$, which is true but not enough (the cross term needs the conditional version, $\mathbb E[Y - f^\star(X) \mid X] = 0$, because $g(X)$ is random); assuming $f$ is linear. The theorem needs no linearity, which is the point of it.
 :::
