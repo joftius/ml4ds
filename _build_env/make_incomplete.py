@@ -3,6 +3,7 @@
 
 Usage:  make_incomplete.py <complete.qmd> <student.qmd>
         make_incomplete.py --solutions <complete.qmd> <solutions.qmd>
+        make_incomplete.py --solutions-hash <complete.qmd>   (prints the sha256 of what --solutions would write)
         make_incomplete.py --check <complete.qmd>      (marker balance only)
 
 Three documents come from the one source (convenor, 8 October 2026). The
@@ -116,6 +117,13 @@ if __name__ == "__main__":
         for p in problems:
             print(p, file=sys.stderr)
         sys.exit(1 if problems else 0)
+    if args and args[0] == "--solutions-hash":
+        # The build stores each rendered notebook with solutions next to this hash of its source,
+        # and check compares the two: a stored page whose hash differs is older than the complete
+        # notebook it was made from.
+        import hashlib
+        print(hashlib.sha256(derive_solutions(open(args[1]).read()).encode("utf-8")).hexdigest())
+        sys.exit(0)
     if args and args[0] == "--solutions":
         src, dst = args[1], args[2]
         txt = open(src).read()
