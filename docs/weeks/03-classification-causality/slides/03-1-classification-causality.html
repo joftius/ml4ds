@@ -266,7 +266,7 @@ p(x) = P(Y = 1 \mid X = x) = \mathbb E[Y \mid X = x]
 <li><a href="https://en.wikipedia.org/wiki/Generalized_linear_model#General_linear_models">Various</a> “link” functions <span class="math inline">\(g\)</span></li>
 <li>Linear regression is a special case with <span class="math inline">\(g = \text{id}\)</span></li>
 <li>Logistic in <code>R</code>: <code>glm(..., family = binomial())</code></li>
-<li>Others: Poisson, multinomial, …, see <code>?family</code> in <code>R</code></li>
+<li>Others: Poisson, Gamma, …, see <code>?family</code> in <code>R</code></li>
 </ul>
 </section>
 <section id="one-predictor-s-curve" class="slide level2">
@@ -330,7 +330,7 @@ p(x) = P(Y = 1 \mid X = x) = \mathbb E[Y \mid X = x]
 3 x2              1.53     0.499      3.07 0.00215 </code></pre>
 </div>
 </div>
-<p>Coefficient scale: log-odds? Exponentiate <span class="math inline">\(\to\)</span> odds</p>
+<p>Coefficient scale: log-odds? Exponentiate <span class="math inline">\(\to\)</span> odds ratios (intercept: baseline odds)</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a aria-hidden="true" tabindex="-1"></a>broom<span class="sc">::</span><span class="fu">tidy</span>(model_fit, <span class="at">exponentiate =</span> <span class="cn">TRUE</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
@@ -368,11 +368,11 @@ p(x) = P(Y = 1 \mid X = x) = \mathbb E[Y \mid X = x]
 </section>
 <section id="challenges" class="slide level2">
 <h2>Challenges</h2>
-<h4 id="separable-case-guaranteed-if-p-n">Separable case (guaranteed if <span class="math inline">\(p &gt; n\)</span>)</h4>
-<p>If classes can be perfectly separated, the MLE is undefined, fitting algorithm diverges as <span class="math inline">\(\hat \beta\)</span> coordinates <span class="math inline">\(\to \pm \infty\)</span></p>
+<h4 id="separable-case-guaranteed-if-p-ge-n-and-the-rows-of-mathbf-x-are-linearly-independent">Separable case (guaranteed if <span class="math inline">\(p \ge n\)</span> and the rows of <span class="math inline">\(\mathbf X\)</span> are linearly independent)</h4>
+<p>If classes can be perfectly separated, there is no finite MLE: the likelihood keeps increasing as <span class="math inline">\(\hat \beta\)</span> runs off to infinity along a separating direction</p>
 <p>Awkwardly, classification is <em>too easy</em>(!?) for this probabilistic approach</p>
 <h4 id="curse-of-dimensionality">Curse of dimensionality</h4>
-<p>Biased MLE and wrong variance/asymp. dist. if <span class="math inline">\(n/p \to \text{const}\)</span>, even if <span class="math inline">\(&gt; 1\)</span></p>
+<p>With Gaussian inputs: biased MLE and wrong variance/asymp. dist. if <span class="math inline">\(n/p \to \text{const}\)</span>, even if <span class="math inline">\(&gt; 1\)</span></p>
 <p><span class="source">See <a href="https://www.pnas.org/content/116/29/14516">Sur and Candès, (2019)</a></span></p>
 </section>
 <section id="classification-summary" class="slide level2 inverse">
@@ -573,7 +573,7 @@ p(x) &gt; c^\star = \frac{c_{FP}}{c_{FP} + c_{FN}},
 </section>
 <section id="interpreting-causality" class="slide level2">
 <h2>Interpreting causality</h2>
-<p>Back to Yule. What does <span class="math inline">\(\hat \beta_\text{welfare}\)</span> mean?</p>
+<p>Back to Yule. What does <span class="math inline">\(\hat \beta_\text{welfare}\)</span> mean? (Simulated data below, not Yule’s.)</p>
 <div class="panel-tabset">
 <ul id="tabset-1" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-1-1">Poverty</a></li><li><a href="#tabset-1-2">Welfare</a></li></ul>
 <div class="tab-content">
@@ -757,7 +757,7 @@ p(x) &gt; c^\star = \frac{c_{FP}}{c_{FP} + c_{FN}},
 <ul>
 <li><p>Forget about the arrows pointing into <span class="math inline">\(T\)</span> (intervention makes them irrelevant)</p></li>
 <li><p>Change <span class="math inline">\(T\)</span>, e.g.&nbsp;setting it to some arbitrary new value <span class="math inline">\(T = t\)</span></p></li>
-<li><p>This change propagates along directed paths out of <span class="math inline">\(T\)</span> to all descendant variables of <span class="math inline">\(T\)</span> in the graph, causing their values to change</p></li>
+<li><p>This change propagates along directed paths out of <span class="math inline">\(T\)</span> to all descendant variables of <span class="math inline">\(T\)</span> in the graph, which can change their values</p></li>
 </ul>
 <p>(All of these changes could be deterministic, but most likely in our usage they are probabilistic)</p>
 </section>
@@ -815,7 +815,7 @@ p(x) &gt; c^\star = \frac{c_{FP}}{c_{FP} + c_{FN}},
 <li><span class="math inline">\(Y\)</span> causes <span class="math inline">\(X\)</span></li>
 <li>Both have common cause <span class="math inline">\(U\)</span> [possibly unobserved]</li>
 </ol>
-<p>Statistically indistinguishable cases (without “experimental” data)</p>
+<p>Cases 2 to 4 are statistically indistinguishable (without “experimental” data)</p>
 <p>Importantly different consequences!</p>
 </section>
 <section id="writing-an-intervention-down" class="slide level2">
@@ -850,7 +850,7 @@ T = h(Z, \varepsilon_T), \qquad Y = g(T, Z, \varepsilon_Y), \qquad Z,\ \varepsil
 \mathbb E[Y \mid T = 1] - \mathbb E[Y \mid T = 0] = \tau + \gamma\,\big(\mathbb E[Z \mid T = 1] - \mathbb E[Z \mid T = 0]\big)
 \]</span></p>
 <div class="retrieval">
-<p>Week 2, omitted-variable bias: regressing on <span class="math inline">\(\mathbf x_1\)</span> alone gives <span class="math inline">\(\mathbb E\hat\beta_{\text{short}} = \beta_1 + \beta_2\hat\delta\)</span>, with <span class="math inline">\(\hat\delta\)</span> the slope of <span class="math inline">\(\mathbf x_2\)</span> on <span class="math inline">\(\mathbf x_1\)</span>.</p>
+<p>Week 2, omitted-variable bias, inputs fixed: regressing on <span class="math inline">\(\mathbf x_1\)</span> alone gives <span class="math inline">\(\mathbb E\hat\beta_{\text{short}} = \beta_1 + \beta_2\hat\delta\)</span>, with <span class="math inline">\(\hat\delta\)</span> the slope of <span class="math inline">\(\mathbf x_2\)</span> on <span class="math inline">\(\mathbf x_1\)</span>.</p>
 </div>
 <div class="leave">
 <p>The naive difference is the effect plus what <span class="math inline">\(Z\)</span> contributes through selection: omitted-variable bias, read causally. Derivation: exercise 2.</p>
@@ -859,23 +859,24 @@ T = h(Z, \varepsilon_T), \qquad Y = g(T, Z, \varepsilon_Y), \qquad Z,\ \varepsil
 <section id="adjustment-theorem" class="slide level2">
 <h2>Adjustment theorem</h2>
 <div class="columns">
-<div class="column" style="width:62%;">
-<p><strong>Adjustment theorem.</strong> Structural model with independent noises, <span class="math inline">\(Z\)</span> observed: <span class="math inline">\(T = h(Z, \varepsilon_T)\)</span>, <span class="math inline">\(Y = g(T, Z, \varepsilon_Y)\)</span>. Wherever <span class="math inline">\(P(T = t \mid Z) &gt; 0\)</span>, <span class="math display">\[
+<div class="column" style="width:66%;">
+<p><strong>Adjustment theorem.</strong> Structural model with independent noises, <span class="math inline">\(Z\)</span> observed: <span class="math inline">\(T = h(Z, \varepsilon_T)\)</span>, <span class="math inline">\(Y = g(T, Z, \varepsilon_Y)\)</span>. If <span class="math inline">\(P(T = t \mid Z) &gt; 0\)</span> with probability one (continuous <span class="math inline">\(T\)</span>: positive density at <span class="math inline">\(t\)</span>), <span class="math display">\[
 \mathbb E[Y \mid do(T = t)] = \mathbb E_Z\Big[\, \mathbb E[Y \mid T = t, Z]\, \Big]
-\]</span> <strong>Corollary</strong> (<span class="math inline">\(Z\)</span> empty, <span class="math inline">\(T\)</span> randomized): <span class="math inline">\(\mathbb E[Y \mid do(T = t)] = \mathbb E[Y \mid T = t]\)</span>.</p>
-</div><div class="column" style="width:38%;">
+\]</span></p>
+</div><div class="column" style="width:34%;">
 <div class="cell" data-layout-align="center">
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
-<p><img data-src="03-1-classification-causality_files/figure-revealjs/dag-theorem-1.png" class="quarto-figure quarto-figure-center" style="width:88.0%"></p>
+<p><img data-src="03-1-classification-causality_files/figure-revealjs/dag-theorem-1.png" class="quarto-figure quarto-figure-center" style="width:100.0%"></p>
 </figure>
 </div>
 </div>
 </div>
 </div></div>
+<p><strong>Corollary</strong> (<span class="math inline">\(Z\)</span> empty, <span class="math inline">\(T\)</span> randomized): <span class="math inline">\(\mathbb E[Y \mid do(T = t)] = \mathbb E[Y \mid T = t]\)</span>.</p>
 <div class="leave">
-<p>Fix <span class="math inline">\(T\)</span> at <span class="math inline">\(t\)</span>, average the conditional mean over the population’s <span class="math inline">\(Z\)</span>. Condition, in words: <span class="math inline">\(Z\)</span> holds every common cause of <span class="math inline">\(T\)</span> and <span class="math inline">\(Y\)</span> and no consequence of <span class="math inline">\(T\)</span>.</p>
+<p>Fix <span class="math inline">\(T\)</span> at <span class="math inline">\(t\)</span>, average the conditional mean over the population’s <span class="math inline">\(Z\)</span>. In this model the condition, in words: <span class="math inline">\(Z\)</span> holds every common cause of <span class="math inline">\(T\)</span> and <span class="math inline">\(Y\)</span> and no consequence of <span class="math inline">\(T\)</span>.</p>
 </div>
 <p><strong>Proof</strong>: exercise 3 in the notebook, before the seminar.</p>
 </section>

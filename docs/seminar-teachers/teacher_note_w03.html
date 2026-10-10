@@ -2334,7 +2334,7 @@ window.Quarto = {
 
 <section id="keep-or-rush" class="level2">
 <h2 class="anchored" data-anchor-id="keep-or-rush">Keep or rush</h2>
-<p>In seminar order. Planned total about 60 minutes.</p>
+<p>In seminar order. Planned total 57 minutes, which leaves about 3 for transitions and questions.</p>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 32%">
@@ -2355,7 +2355,7 @@ window.Quarto = {
 <td>Problem 1(a, b): threshold <span class="math inline">\(1/6\)</span>, the tie, <span class="math inline">\(\hat p = 0.25\)</span></td>
 <td style="text-align: right;">4</td>
 <td>Keep</td>
-<td>The rule is about the true <span class="math inline">\(p\)</span>; with <span class="math inline">\(\hat p\)</span> it is only as good as the estimate</td>
+<td>The call is right when <span class="math inline">\(\hat p\)</span> and the true <span class="math inline">\(p\)</span> are on the same side of <span class="math inline">\(1/6\)</span></td>
 </tr>
 <tr class="even">
 <td>Problem 1(c, d): two teams, what the survey decided</td>
@@ -2401,8 +2401,8 @@ window.Quarto = {
 </tr>
 <tr class="odd">
 <td>Coding 1, step 4 and question 2: ROC by hand</td>
-<td style="text-align: right;">6</td>
-<td>Rush; cut second</td>
+<td style="text-align: right;">3</td>
+<td>Rush from the start; cut second</td>
 <td>Reveal the loop; keep “AUC is a ranking probability”</td>
 </tr>
 <tr class="even">
@@ -2451,7 +2451,7 @@ window.Quarto = {
 <ul>
 <li>219 birds, 68 Chinstraps (0.31); always predicting Adelie scores 0.69.</li>
 <li>Bill model: odds of Chinstrap times about 9 per millimeter of bill length; six errors at <span class="math inline">\(\tfrac12\)</span> (3 misses, 3 false alarms); <code>glm</code> warns that fitted probabilities are numerically 0 or 1.</li>
-<li>Flipper model: AUC 0.734; with costs 5 and 1 the cost per bird is lowest, 0.58, at thresholds 0.16 and 0.17, against <span class="math inline">\(1/6\)</span>; at <span class="math inline">\(\tfrac12\)</span> it is 1.11.</li>
+<li>Flipper model: AUC 0.734, and the area under the hand-built curve is the same number; with costs 5 and 1 the cost per bird is lowest, 0.58, at thresholds 0.16 and 0.17, against <span class="math inline">\(1/6\)</span>; at <span class="math inline">\(\tfrac12\)</span> it is 1.11.</li>
 <li>Four worlds: slopes near 2 in A, B and C and near <span class="math inline">\(-3.8\)</span> in D (they vary by student, no seed); intervention effects exactly 2, 0, 0 and <span class="math inline">\(-3\)</span>; in D the coefficient on <code>X</code> with <code>Z</code> included is within about 0.1 of <span class="math inline">\(-3\)</span> and equals the averaged difference.</li>
 <li>World E (2000 units, no seed): naive difference about 5.2 (the gap is <span class="math inline">\(3 \times 1.07\)</span>); regression coefficient between about 1.93 and 2.09; weighting estimate near 2 but the most variable, between about 1.7 and 2.3 in nine runs out of ten. The largest weight is usually 15 to 100, on a treated unit with <code>Z</code> below about <span class="math inline">\(-1.4\)</span> or an untreated one with <code>Z</code> above about 2. Over 200 runs (question 8) the standard deviations are about 0.2 for weighting and 0.05 for regression.</li>
 </ul>
@@ -2461,7 +2461,7 @@ window.Quarto = {
 <li>Redrawing the noise inside <code>intervene()</code>, then finding that the intervention “does something” in world C.</li>
 <li>Writing world B’s <code>Y_do</code> with <code>X_do</code> in it: in world B, <code>Y</code> does not depend on <code>X</code>.</li>
 <li>In step 3 of part 2, <code>newdata = d</code> for both predictions (difference zero), or leaving <code>Z</code> out (the naive <span class="math inline">\(-3.8\)</span> comes back).</li>
-<li>In step 4 of part 2, <code>1 / pi_hat</code> for the untreated as well (the checkpoint stops it), or <code>(1 - X) * Y / pi_hat</code> in the estimate: the untreated half divides by <code>1 - pi_hat</code>.</li>
+<li>In step 4 of part 2, <code>1 / pi_hat</code> for the untreated as well (the untreated count in the diagnostic then comes out far above 1), or <code>(1 - X) * Y / pi_hat</code> in the estimate: the untreated half divides by <code>1 - pi_hat</code>.</li>
 <li>In the student file, a chunk with a blank starts with <code>#| eval: false</code>; they delete that line once the blank is filled. The <code># ...</code> line can stay.</li>
 </ul>
 </section>
