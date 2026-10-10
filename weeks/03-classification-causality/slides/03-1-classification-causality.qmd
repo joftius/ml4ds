@@ -82,11 +82,11 @@ dag_adjust <- function(intervened = FALSE, title = NULL) {
 ## {.inverse}
 
 ::: {.notes}
-Plan 75 of 90, rough (week 2's pace: about 2 min a light slide, 1 a dark one). Dark = rush or skip; each dark slide's note says skip or gives the compressed phrase. About 69 with the dark slides compressed.
+Plan about 85 of 90 at week 2's rough pace (2 min a light slide, 1 a dark one; 35 light, 15 dark): over the 76 budget. Cuts 1 to 4 below bring it to about 76. Dark = rush or skip; each dark slide's note says skip or gives the compressed phrase.
 
 Cut order: (1) ROC in one sentence, (2) Yule history in one line, (3) contours and boundaries narrated, (4) the confounding gap in one sentence (exercise 2 derives it).
 
-Pace: 0:20 classification summary, 0:28 threshold theorem, 0:41 Yule's regressions, 0:56 the adjustment question, 1:04 the propensity question, 1:12 proof done.
+Pace, no cuts: 0:23 classification summary, 0:31 threshold theorem, 0:46 Yule's regressions, 1:08 the adjustment question, 1:14 the propensity question, 1:18 proof done.
 
 In the notebook: threshold proof (ex. 1), confounding gap (ex. 2), adjustment proof (ex. 3), this proof redone (ex. 4).
 :::
@@ -166,7 +166,7 @@ $$g(p) = \log{\left(\frac{p}{1-p}\right)}$$
 - [Various](https://en.wikipedia.org/wiki/Generalized_linear_model#General_linear_models) "link" functions $g$
 - Linear regression is a special case with $g = \text{id}$
 - Logistic in `R`: `glm(..., family = binomial())`
-- Others: Poisson, multinomial, ..., see `?family` in `R`
+- Others: Poisson, Gamma, ..., see `?family` in `R`
 
 ## One predictor, "S curve"
 
@@ -254,7 +254,7 @@ ggplot(
     alpha = .3,
     ) +
   geom_abline(slope = -coef(logit_model)[2]/coef(logit_model)[3],
-              intercept = 1.45, linetype = "dashed", linewidth = 1, color = v_blue) +
+              intercept = -coef(logit_model)[1]/coef(logit_model)[3], linetype = "dashed", linewidth = 1, color = v_blue) +
   geom_point(
     data = train,
              aes(shape = y, color = y),
@@ -299,7 +299,7 @@ model_fit <- glm(y ~ x1 + x2, family = "binomial", data = train)
 broom::tidy(model_fit)
 ```
 
-Coefficient scale: log-odds? Exponentiate $\to$ odds
+Coefficient scale: log-odds? Exponentiate $\to$ odds ratios (intercept: baseline odds)
 
 ```{r}
 #| echo: true
@@ -330,12 +330,12 @@ broom::glance(model_fit)
 ## Challenges
 
 ::: {.notes}
-"Guaranteed if p > n": inputs in general position. Why the MLE does not exist when separable: week 4.
+Why there is no finite MLE when the classes separate: week 4.
 :::
 
-#### Separable case (guaranteed if $p > n$)
+#### Separable case (guaranteed if $p \ge n$ and the rows of $\mathbf X$ are linearly independent)
 
-If classes can be perfectly separated, the MLE is undefined, fitting algorithm diverges as $\hat \beta$ coordinates $\to \pm \infty$
+If classes can be perfectly separated, there is no finite MLE: the likelihood keeps increasing as $\hat \beta$ runs off to infinity along a separating direction
 
 Awkwardly, classification is *too easy*(!?) for this probabilistic approach
 
@@ -343,7 +343,7 @@ Awkwardly, classification is *too easy*(!?) for this probabilistic approach
 
 #### Curse of dimensionality
 
-Biased MLE and wrong variance/asymp. dist. if $n/p \to \text{const}$, even if $> 1$
+With Gaussian inputs: biased MLE and wrong variance/asymp. dist. if $n/p \to \text{const}$, even if $> 1$
 
 [See [Sur and Candès, (2019)](https://www.pnas.org/content/116/29/14516)]{.source}
 
@@ -419,7 +419,8 @@ Second on the cut order: say "one point per threshold" and move on. The seminar 
 fit1 <- glm(y ~ x1, family = "binomial", data = train)
 p1 <- fitted(fit1)
 y01 <- as.numeric(as.character(train$y))
-thresholds <- seq(0, 1, by = 0.01)
+# every distinct fitted score is a threshold (exact empirical ROC); the 0.01 grid adds points for the cost curve
+thresholds <- sort(unique(c(seq(0, 1, by = 0.01), p1)))
 roc1 <- map_dfr(thresholds, function(t) {
   yhat <- as.numeric(p1 > t)
   tibble(t = t,
@@ -653,7 +654,7 @@ Reasons we'll highlight: **causality** (today) and **nonlinearity** (the additiv
 
 ## Interpreting causality
 
-Back to Yule. What does $\hat \beta_\text{welfare}$ mean?
+Back to Yule. What does $\hat \beta_\text{welfare}$ mean? (Simulated data below, not Yule's.)
 
 ```{r}
 #| label: yule-sim
@@ -826,7 +827,7 @@ Think about **interventions** that change some target variable $T$
 
 - Change $T$, e.g. setting it to some arbitrary new value $T = t$
 
-- This change propagates along directed paths out of $T$ to all descendant variables of $T$ in the graph, causing their values to change
+- This change propagates along directed paths out of $T$ to all descendant variables of $T$ in the graph, which can change their values
 
 (All of these changes could be deterministic, but most likely in our usage they are probabilistic)
 
@@ -849,7 +850,6 @@ X -> Y
   ggplot(aes(x = x, y = y, xend = xend, yend = yend)) +
     geom_dag_point(size = 18, show.legend = FALSE) +
     geom_dag_text(size = 10) +
-    geom_dag_edges(edge_width = 0) +
   scale_color_grey() +
   theme_dag_blank()
 ```
@@ -918,6 +918,7 @@ U -> Y
     geom_dag_point(size = 18, aes(color = color), show.legend = FALSE) +
     geom_dag_text(size = 10) +
     geom_dag_edges(aes(edge_linetype = linetype), edge_width = 1.5) +
+  expand_limits(y = c(-0.15, 0.65)) +   # room for the node circles
   scale_color_grey() +
   theme_dag_blank()
 ```
@@ -936,7 +937,7 @@ What does it mean?
 3. $Y$ causes $X$
 4. Both have common cause $U$ [possibly unobserved]
 
-Statistically indistinguishable cases (without "experimental" data)
+Cases 2 to 4 are statistically indistinguishable (without "experimental" data)
 
 Importantly different consequences!
 
@@ -979,7 +980,7 @@ Write down what you would compute from the observed data to get $\mathbb E[Y \mi
 ## The confounding gap
 
 ::: {.notes}
-State, do not derive: exercise 2. The seminar's world B is this with tau = 0.
+State, do not derive: exercise 2.
 :::
 
 The same DAG, made linear: $T = \alpha Z + \varepsilon_T$, $\;Y = \tau T + \gamma Z + \varepsilon_Y$, noises independent with mean $0$
@@ -991,7 +992,7 @@ $$
 $$
 
 ::: {.retrieval}
-Week 2, omitted-variable bias: regressing on $\mathbf x_1$ alone gives $\mathbb E\hat\beta_{\text{short}} = \beta_1 + \beta_2\hat\delta$, with $\hat\delta$ the slope of $\mathbf x_2$ on $\mathbf x_1$.
+Week 2, omitted-variable bias, inputs fixed: regressing on $\mathbf x_1$ alone gives $\mathbb E\hat\beta_{\text{short}} = \beta_1 + \beta_2\hat\delta$, with $\hat\delta$ the slope of $\mathbf x_2$ on $\mathbf x_1$.
 :::
 
 ::: {.leave}
@@ -1005,27 +1006,28 @@ Stated; proof is exercise 3. The condition in words is the point. Same DAG in we
 :::
 
 ::: {.columns}
-::: {.column width="62%"}
-**Adjustment theorem.** Structural model with independent noises, $Z$ observed: $T = h(Z, \varepsilon_T)$, $Y = g(T, Z, \varepsilon_Y)$. Wherever $P(T = t \mid Z) > 0$,
+::: {.column width="66%"}
+**Adjustment theorem.** Structural model with independent noises, $Z$ observed: $T = h(Z, \varepsilon_T)$, $Y = g(T, Z, \varepsilon_Y)$. If $P(T = t \mid Z) > 0$ with probability one (continuous $T$: positive density at $t$),
 $$
 \mathbb E[Y \mid do(T = t)] = \mathbb E_Z\Big[\, \mathbb E[Y \mid T = t, Z]\, \Big]
 $$
-**Corollary** ($Z$ empty, $T$ randomized): $\mathbb E[Y \mid do(T = t)] = \mathbb E[Y \mid T = t]$.
 :::
-::: {.column width="38%"}
+::: {.column width="34%"}
 ```{r}
 #| label: dag-theorem
-#| fig-height: 3.6
+#| fig-height: 3.2
 #| fig-width: 4.2
-#| out-width: "88%"
+#| out-width: "100%"
 #| fig-align: center
 dag_adjust(FALSE, "as observed") / dag_adjust(TRUE, "under do(T = t)")
 ```
 :::
 :::
 
+**Corollary** ($Z$ empty, $T$ randomized): $\mathbb E[Y \mid do(T = t)] = \mathbb E[Y \mid T = t]$.
+
 ::: {.leave}
-Fix $T$ at $t$, average the conditional mean over the population's $Z$. Condition, in words: $Z$ holds every common cause of $T$ and $Y$ and no consequence of $T$.
+Fix $T$ at $t$, average the conditional mean over the population's $Z$. In this model the condition, in words: $Z$ holds every common cause of $T$ and $Y$ and no consequence of $T$.
 :::
 
 **Proof**: exercise 3 in the notebook, before the seminar.
