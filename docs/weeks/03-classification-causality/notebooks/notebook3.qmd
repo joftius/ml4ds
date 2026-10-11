@@ -29,7 +29,7 @@ theme_set(theme_minimal())
 
 <!-- At home, before the seminar. -->
 
-The lecture proved one result, the propensity weighting theorem, which you prove again with the slides closed (exercise 4). It stated the optimal threshold theorem and the adjustment theorem and left their proofs to you (exercises 1 and 3), and it stated the confounding gap without deriving it (exercise 2). Do all four on paper before the seminar; the seminar's problems are variations on them. You may use, without proof, two facts from ST102: the tower property, $\mathbb E[W] = \mathbb E\big[\mathbb E[W \mid X]\big]$, and that if $V$ is independent of $X$, then $\mathbb E[k(X, V) \mid X = x] = \mathbb E[k(x, V)]$ for any function $k$ (freeze $X$ at $x$; the distribution of $V$ does not move). Throughout, assume that every expectation that appears exists: finite means, and finite variances wherever a variance or covariance appears.
+The lecture proved one result, the inverse propensity weighting theorem, which you prove again with the slides closed (exercise 4). It stated the optimal threshold theorem and the adjustment theorem and left their proofs to you (exercises 1 and 3), and it stated the confounding gap without deriving it (exercise 2). Do all four on paper before the seminar; the seminar's problems are variations on them. You may use, without proof, two facts from ST102: the tower property, $\mathbb E[W] = \mathbb E\big[\mathbb E[W \mid X]\big]$, and that if $V$ is independent of $X$, then $\mathbb E[k(X, V) \mid X = x] = \mathbb E[k(x, V)]$ for any function $k$ (freeze $X$ at $x$; the distribution of $V$ does not move). A third fact, taking out what is known: $\mathbb E[f(X)\,W \mid X] = f(X)\,\mathbb E[W \mid X]$. Throughout, assume that every expectation that appears exists: finite means, and finite variances wherever a variance or covariance appears.
 
 ::: {.callout-warning title="Hints"}
 Each exercise has hints, collapsed below it. Do not open a hint unless you have been stuck for at least a few minutes, and open them in order. Exercise 4's proof is on the lecture slides. Solutions to exercises 1 to 3 are shown in the seminar if you ask.
@@ -57,20 +57,20 @@ Given $X = x$, $Y$ is $1$ with probability $p(x)$. If you predict $1$, when is t
 (c) Condition on $X$ first (the tower property), as in week 2's exercise 1. What do you know about the inner expectation, at every $x$?
 :::
 
-**Exercise 2 (confounding gap).** The lecture's DAG made linear. $Z$, $\varepsilon_T$ and $\varepsilon_Y$ are independent, $\varepsilon_T$ and $\varepsilon_Y$ have mean $0$, $\mathrm{Var}(T) > 0$, and
+**Exercise 2 (confounding gap).** The lecture's DAG made linear. $Z$, $\varepsilon_T$ and $\varepsilon_Y$ are independent and normal (so that conditioning on $T = 0$ and on $T = 1$ makes sense), $\varepsilon_T$ and $\varepsilon_Y$ have mean $0$, $\mathrm{Var}(T) > 0$, and
 $$
-T = \alpha Z + \varepsilon_T, \qquad Y = \tau T + \gamma Z + \varepsilon_Y.
+T = \alpha Z + \varepsilon_T, \qquad Y = \tau T + \beta Z + \varepsilon_Y.
 $$
 
-(a) Under $do(T = t)$, which variables keep their values? Show that $\mathbb E[Y \mid do(T = t)] = \tau t + \gamma\, \mathbb E Z$, so that moving $t$ from $0$ to $1$ changes the mean of $Y$ by $\tau$.
+(a) Under $do(T = t)$, which variables keep their distributions? Show that $\mathbb E[Y \mid do(T = t)] = \tau t + \beta\, \mathbb E Z$, so that moving $t$ from $0$ to $1$ changes the mean of $Y$ by $\tau$.
 
-(b) As observed, show that $\mathbb E[Y \mid T = t] = \tau t + \gamma\, \mathbb E[Z \mid T = t]$, and hence
+(b) As observed, show that $\mathbb E[Y \mid T = t] = \tau t + \beta\, \mathbb E[Z \mid T = t]$, and hence
 $$
-\mathbb E[Y \mid T = 1] - \mathbb E[Y \mid T = 0] = \tau + \gamma\,\big(\mathbb E[Z \mid T = 1] - \mathbb E[Z \mid T = 0]\big).
+\mathbb E[Y \mid T = 1] - \mathbb E[Y \mid T = 0] = \tau + \beta\,\big(\mathbb E[Z \mid T = 1] - \mathbb E[Z \mid T = 0]\big).
 $$
 Where did you use independence?
 
-(c) Show that the population slope of the least-squares line of $Y$ on $T$ alone, $\mathrm{Cov}(T, Y)/\mathrm{Var}(T)$, is $\tau + \gamma\,\delta$ with $\delta = \mathrm{Cov}(Z, T)/\mathrm{Var}(T)$. Which quantity in week 2's omitted-variable bias plays the role of $\delta$?
+(c) Show that the population slope of the least-squares line of $Y$ on $T$ alone, $\mathrm{Cov}(T, Y)/\mathrm{Var}(T)$, is $\tau + \beta\,\delta$ with $\delta = \mathrm{Cov}(Z, T)/\mathrm{Var}(T)$. Which quantity in week 2's omitted-variable bias plays the role of $\delta$?
 
 (d) When is the gap zero?
 
@@ -86,14 +86,21 @@ Where did you use independence?
 (c) Expand $\mathrm{Cov}(T, Y)$ using $Y$'s equation. $\mathrm{Cov}(T, \varepsilon_Y) = 0$ for the reason you found in (b).
 :::
 
-**Exercise 3 (adjustment theorem).** The lecture stated this one; prove it. Structural model: $Z$, $\varepsilon_T$ and $\varepsilon_Y$ independent, $T = h(Z, \varepsilon_T)$, $Y = g(T, Z, \varepsilon_Y)$; under $do(T = t)$ the equation for $T$ is deleted, $T$ is set to $t$, and everything else keeps its equation and its noise. Suppose $P(T = t \mid Z) > 0$ with probability one (for a continuous $T$: the conditional density of $T$ at $t$ given $Z$ is positive with probability one). Show that
+**Exercise 3 (adjustment theorem).** The lecture stated this one; prove it. Structural model: $Z$, $\varepsilon_T$ and $\varepsilon_Y$ independent, $T = h(Z, \varepsilon_T)$, $Y = g(T, Z, \varepsilon_Y)$; under $do(T = t)$ the equation for $T$ is deleted, $T$ is set to $t$, every other equation stays, and the noises keep their distribution. Suppose $T$ takes finitely many values and $P(T = t \mid Z) > 0$ with probability one. Show that
 $$
 \mathbb E[Y \mid do(T = t)] = \mathbb E_Z\Big[\,\mathbb E[Y \mid T = t, Z]\,\Big],
 $$
 and say where each assumption is used: the independence of the noises, $Z$ not being a consequence of $T$, and the condition on $P(T = t \mid Z)$.
 
+When $Z$ takes finitely many values, the formula is commonly written as a sum. The reading writes it this way, for probabilities of $Y$ rather than its mean, and calls it the adjustment formula. It is the same formula:
+$$
+\mathbb E[Y \mid do(T = t)] = \sum_z \mathbb E[Y \mid T = t, Z = z]\, P(Z = z).
+$$
+
+For a continuous $T$ (as in problem 2 and world D), $T = t$ exactly has probability $0$, and the theorem needs two more conditions: $(T, Z)$ has a continuous joint density that is positive everywhere, and $m_t(z) = \mathbb E[g(t, z, \varepsilon_Y)]$ is continuous in $t$ and $z$. Then $\mathbb E[Y \mid T = t, Z = z]$ is the limit of the average $Y$ over units with $(T, Z)$ near $(t, z)$, that limit is $m_t(z)$, and the same proof goes through. The linear normal models in this notebook satisfy both conditions.
+
 ::: {.callout-note collapse="true" title="Hint 1"}
-Start from the intervened world. What is $Y$ under $do(T = t)$, and which variables keep their values? Give the average over the noise with $Z$ frozen a name: $m_t(z) = \mathbb E\big[g(t, z, \varepsilon_Y)\big]$.
+Start from the intervened world. What is $Y$ under $do(T = t)$, and which variables keep their distributions? Give the average over the noise with $Z$ frozen a name: $m_t(z) = \mathbb E\big[g(t, z, \varepsilon_Y)\big]$.
 :::
 
 ::: {.callout-note collapse="true" title="Hint 2"}
@@ -108,7 +115,7 @@ Now the observed world: on $\{T = t, Z = z\}$, $Y = g(t, z, \varepsilon_Y)$. Why
 Why is the distribution of $Z$ the same in the observed and the intervened worlds?
 :::
 
-**Exercise 4 (propensity weighting theorem).** The lecture proved this one. Close the slides and prove it again. The structural model of exercise 3, with $T \in \{0, 1\}$ and the propensity score $\pi(z) = P(T = 1 \mid Z = z)$, where $0 < \pi(Z) < 1$ with probability one.
+**Exercise 4 (inverse propensity weighting theorem).** The lecture proved this one. Close the slides and prove it again. The structural model of exercise 3, with $T \in \{0, 1\}$ and the propensity score $\pi(z) = P(T = 1 \mid Z = z)$, where $0 < \pi(Z) < 1$ with probability one.
 
 (a) Show that $\mathbb E[Y \mid do(T = 1)] = \mathbb E\big[T\,Y/\pi(Z)\big]$, and say where you used the independence of the noises, $Z$ not being a consequence of $T$, and $\pi(Z) > 0$.
 
@@ -117,14 +124,18 @@ Why is the distribution of $Z$ the same in the observed and the intervened world
 (c) Without the structural model, show by conditioning on $Z$ that $\mathbb E\big[T\,Y/\pi(Z)\big] = \mathbb E_Z\big[\,\mathbb E[Y \mid T = 1, Z]\,\big]$. What does that say about the two theorems?
 
 ::: {.callout-note collapse="true" title="Hint 1"}
-(a) $T$ is $0$ or $1$. Check that $T\,Y = T\,g(1, Z, \varepsilon_Y)$ in both cases.
+(a) Start from what you want. Under $do(T = 1)$, what is $Y$, and what is random? To bring $T$ in, multiply and divide by $\pi(Z)$.
 :::
 
 ::: {.callout-note collapse="true" title="Hint 2"}
-(a) Use the second ST102 fact with $V = \varepsilon_T$ and $(Z, \varepsilon_Y)$ in the role of $X$: what is $\mathbb E[T \mid Z, \varepsilon_Y]$? Then condition on $(Z, \varepsilon_Y)$ with the tower property.
+(a) Replace the $\pi(Z)$ on top by $\mathbb E_{\varepsilon_T}[T \mid Z, \varepsilon_Y]$. Why are they equal? (The second fact, with $V = \varepsilon_T$.) Then take the fixed factor inside and use the tower property.
 :::
 
 ::: {.callout-note collapse="true" title="Hint 3"}
+(a) At the end, check that $T\,g(1, Z, \varepsilon_Y) = T\,Y$ when $T = 0$ and when $T = 1$.
+:::
+
+::: {.callout-note collapse="true" title="Hint 4"}
 (c) $T\,Y = Y\,\mathbb 1[T = 1]$, so $\mathbb E[T\,Y \mid Z] = P(T = 1 \mid Z)\, \mathbb E[Y \mid T = 1, Z]$.
 :::
 
@@ -150,7 +161,7 @@ Why is the distribution of $Z$ the same in the observed and the intervened world
 
 (c) Compute $\mathbb E[Y \mid T = t, Z = z]$, average it over $Z$, and check that you recover (a). Where did you use that the noises are independent?
 
-**Problem 3 (propensity weighting by hand).** $Z$ is $0$ or $1$, each with probability $\tfrac12$. Treatment depends on $Z$: $T = h(Z, \varepsilon_T)$ with $\pi(0) = 0.2$ and $\pi(1) = 0.8$. The outcome is $Y = 2T + 4Z + \varepsilon_Y$, with $\varepsilon_Y$ of mean $0$, and $Z$, $\varepsilon_T$, $\varepsilon_Y$ independent.
+**Problem 3 (inverse propensity weighting by hand).** $Z$ is $0$ or $1$, each with probability $\tfrac12$. Treatment depends on $Z$: $T = h(Z, \varepsilon_T)$ with $\pi(0) = 0.2$ and $\pi(1) = 0.8$. The outcome is $Y = 2T + 4Z + \varepsilon_Y$, with $\varepsilon_Y$ of mean $0$, and $Z$, $\varepsilon_T$, $\varepsilon_Y$ independent.
 
 (a) What is $\mathbb E[Y \mid do(T = 1)] - \mathbb E[Y \mid do(T = 0)]$?
 
@@ -159,22 +170,6 @@ Why is the distribution of $Z$ the same in the observed and the intervened world
 (c) Give each treated unit the weight $1/\pi(Z)$ and each untreated unit the weight $1/(1 - \pi(Z))$, and multiply each count from (b) by its weight. What do the weighted treated units look like? Compute $\mathbb E\big[T\,Y/\pi(Z)\big]$ and $\mathbb E\big[(1 - T)\,Y/(1 - \pi(Z))\big]$ and compare with (a).
 
 (d) Which units get the largest weights? What would happen to them if $\pi(0)$ were $0.01$?
-
-### Optional, can be done at home
-
-<!-- Not in the seminar. Hints are in the student file. -->
-
-**Problem 4 (the causation runs the other way).** $Y = \varepsilon_Y$ with variance $4$, and $T = 0.4\,Y + \varepsilon_T$, with $\varepsilon_T$ of variance $0.16$, independent of $Y$. Find the population slope of $Y$ on $T$ and the effect of raising $t$ by one. Compare with problem 2(b).
-
-::: {.callout-note collapse="true" title="Hint 1"}
-$\mathrm{Var}(T) = 0.4^2\,\mathrm{Var}(Y) + \mathrm{Var}(\varepsilon_T)$.
-:::
-
-**Problem 5 (a model that predicts well).** A hospital fits a model that predicts which patients will be readmitted within 30 days, and it predicts well on held-out patients. Management proposes to reduce readmissions by acting on the model's strongest predictor. Draw the DAGs of three worlds consistent with that held-out score, say in which of them the plan works, and say what the score told you about which world you are in.
-
-::: {.callout-note collapse="true" title="Hint 1"}
-The lecture's explanations of an observed correlation: the predictor causes readmission, a common cause drives both, or readmission risk drives the predictor.
-:::
 
 ## Coding
 
@@ -312,11 +307,18 @@ stopifnot(nrow(costs) == length(grid), all(costs$cost >= 0))
 # ...
 ```
 
-### 2. Simulated worlds: adjustment and propensity weighting
+### 2. Simulated worlds: adjustment and inverse propensity weighting
 
 <!-- 22 min: steps 1 to 4, questions 4 to 6. -->
 
-Four simulated worlds in which $Y$ is regressed on $X$. In the lecture the target variable was called $T$; here it is `X`, because `T` is `TRUE` in R. The function draws the noise once and keeps it, so that an intervention can be computed for the *same* units. World D is the lecture's DAG with the confounder $Z$ observed: $Z \to X$, $Z \to Y$, $X \to Y$. Step 4 adds a fifth world, E, with the same DAG and a binary treatment.
+Suppose we find a statistically significant correlation between $X$ and $Y$. What does it mean?
+
+1. A false positive (a spurious correlation)
+2. $X$ causes $Y$
+3. $Y$ causes $X$
+4. Both have a common cause $U$, possibly unobserved
+
+Without experimental data, explanations 2 to 4 can be statistically indistinguishable, and they have importantly different consequences. Worlds A, C and B below are explanations 2, 3 and 4, built so that the slope of $Y$ on $X$ is about the same in all three. In the lecture the target variable was called $T$; here it is `X`, because `T` is `TRUE` in R. The function draws the noise once and keeps it, so that step 2 can reuse it. World D is the lecture's DAG with the confounder $Z$ observed: $Z \to X$, $Z \to Y$, $X \to Y$. Step 4 adds a fifth world, E, with the same DAG and a binary treatment.
 
 ```{r}
 simulate_world <- function(world, n = 500) {
@@ -356,9 +358,11 @@ worlds <- bind_rows(simulate_world("A"), simulate_world("B"), simulate_world("C"
 # ...
 ```
 
-**Question 4.** Before you intervene: for each world, write down what you expect to happen to $Y$ when $X$ is set to $X + 1$ for every unit with the same noise, and the average change. Use each world's equations, and exercise 2 for world D.
+**Question 4.** Before you intervene: for each world, write down what you expect to happen to the average of $Y$ when $X$ is set to $X + 1$ for every unit. Use each world's equations, and exercise 2 for world D.
 
 **Step 2.** Now intervene: set $X$ to $X + 1$ for every unit and recompute $Y$ **with the same noise**, following each world's equations. Write the four `Y_do` lines and compute the average change in $Y$ in each world.
+
+Note: recomputing each unit's $Y$ with its own noise is different from the intervention calculations in the lecture, which use only the distribution of the noise. We will learn more about it later in the course. Here it makes the average change exact, with no simulation noise.
 
 ```{r}
 #| eval: false
@@ -403,7 +407,7 @@ d <- worlds |> filter(world == "D")
 
 **Question 5.** Compare the coefficient on `X` with the averaged difference, and both with the effect you found in step 2. Which result says the coefficient estimates the effect, which says the averaged difference does, and what about world D made both work? What would go wrong in world B, where the confounder `e_u` is in the table but would not be observed in practice?
 
-**Step 4.** World E: the same DAG, with a binary treatment. Each unit is treated (`X = 1`) with probability $\pi(Z)$, where $\pi(z) = 1/(1 + e^{-(-0.5 + 1.5 z)})$, and $Y = 1 + 2X + 3Z + \varepsilon_Y$, so the effect of treatment is $2$. Compute three estimates of it: the naive difference in means between treated and untreated; the propensity weighting estimate, with $\hat\pi$ from the logistic regression of `X` on `Z`; and the coefficient on `X` in `lm(Y ~ X + Z)`. Then look at the five units with the largest weights.
+**Step 4.** World E: the same DAG, with a binary treatment. Each unit is treated (`X = 1`) with probability $\pi(Z)$, where $\pi(z) = 1/(1 + e^{-(-0.5 + 1.5 z)})$, and $Y = 1 + 2X + 3Z + \varepsilon_Y$, so the effect of treatment is $2$. Compute three estimates of it: the naive difference in means between treated and untreated; the inverse propensity weighting estimate, with $\hat\pi$ from the logistic regression of `X` on `Z`; and the coefficient on `X` in `lm(Y ~ X + Z)`. Then look at the five units with the largest weights.
 
 ```{r}
 simulate_world_e <- function(n = 2000) {
@@ -438,26 +442,6 @@ c(treated = sum(d_e$w[d_e$X == 1]), untreated = sum(d_e$w[d_e$X == 0])) / nrow(d
 ```
 
 **Question 6.** Which of the three estimates are near $2$, and which result explains each one? Which units have the largest weights, and what is unusual about them? If the unit with the largest weight had not been in the sample, and the other weights stayed as they are, by how much would the weighting estimate move?
-
-#### Optional, can be done at home: same noise or fresh noise
-
-**Question 7.** Redraw the noise in `intervene()` (replace `e_y` by `rnorm(n())`) and look at `Y_do - Y` unit by unit in world A. What changes, and what does not? Which version is the counterfactual for a unit, and which is a new draw from the intervened world?
-
-#### Optional, can be done at home: weighting against regression, many times
-
-**Question 8.** Simulate world E 200 times and compute the weighting estimate and the regression coefficient each time. Compare their means and their standard deviations. Why is one more variable than the other, and when would you use weighting anyway?
-
-```{r}
-#| eval: false
-# one_run <- function() {
-#   d <- simulate_world_e()
-#   pi_hat <- fitted(glm(X ~ Z, family = binomial, data = d))
-#   tibble(weighting = ____, regression = ____)
-# }
-# runs <- map_dfr(1:200, \(i) one_run())
-# runs |> summarise(across(everything(), list(mean = mean, sd = sd)))
-# ...
-```
 
 ### Optional, can be done at home: another dataset
 

@@ -214,11 +214,9 @@ Joshua Loftus
 </div>
 
 </section>
-<section id="section" class="slide level2 inverse">
+<section id="section" class="slide level2 inverse center">
 <h2></h2>
-<h3 id="week-3-classification-and-causality-part-1">Week 3: classification, and causality (part 1)</h3>
-<p>Part 1: classification, and what a mistake costs</p>
-<p>Part 2: causality and interventions</p>
+<h3 id="part-1-classification-logistic-regression-and-asymmetric-costs">Part 1: classification, logistic regression, and asymmetric costs</h3>
 </section>
 <section id="where-week-2-left-the-target" class="slide level2">
 <h2>Where week 2 left the target</h2>
@@ -332,14 +330,14 @@ p(x) = P(Y = 1 \mid X = x) = \mathbb E[Y \mid X = x]
 </div>
 <p>Coefficient scale: log-odds? Exponentiate <span class="math inline">\(\to\)</span> odds ratios (intercept: baseline odds)</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a aria-hidden="true" tabindex="-1"></a>broom<span class="sc">::</span><span class="fu">tidy</span>(model_fit, <span class="at">exponentiate =</span> <span class="cn">TRUE</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a aria-hidden="true" tabindex="-1"></a>broom<span class="sc">::</span><span class="fu">tidy</span>(model_fit, <span class="at">exponentiate =</span> <span class="cn">TRUE</span>) <span class="sc">|&gt;</span> <span class="fu">select</span>(term, estimate)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 3 × 5
-  term        estimate std.error statistic  p.value
-  &lt;chr&gt;          &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;
-1 (Intercept)    0.106     0.656     -3.42 0.000635
-2 x1             8.78      0.584      3.72 0.000198
-3 x2             4.62      0.499      3.07 0.00215 </code></pre>
+<pre><code># A tibble: 3 × 2
+  term        estimate
+  &lt;chr&gt;          &lt;dbl&gt;
+1 (Intercept)    0.106
+2 x1             8.78 
+3 x2             4.62 </code></pre>
 </div>
 </div>
 </section>
@@ -347,7 +345,7 @@ p(x) = P(Y = 1 \mid X = x) = \mathbb E[Y \mid X = x]
 <h2>Interpretation: inference and diagnostics</h2>
 <ul>
 <li><p>Fitted by maximum likelihood; how <code>glm</code> does it: next week</p></li>
-<li><p>MLEs <span class="math inline">\(\to\)</span> asymptotic normality for intervals/tests</p></li>
+<li><p>MLEs <span class="math inline">\(\to\)</span> asymptotic normality for intervals/tests (fixed <span class="math inline">\(p\)</span>, regularity conditions)</p></li>
 </ul>
 <p><code>summary()</code>, <code>coef()</code>, <code>confint()</code>, <code>anova()</code>, etc in <code>R</code></p>
 <ul>
@@ -374,24 +372,6 @@ p(x) = P(Y = 1 \mid X = x) = \mathbb E[Y \mid X = x]
 <h4 id="curse-of-dimensionality">Curse of dimensionality</h4>
 <p>With Gaussian inputs: biased MLE and wrong variance/asymp. dist. if <span class="math inline">\(n/p \to \text{const}\)</span>, even if <span class="math inline">\(&gt; 1\)</span></p>
 <p><span class="source">See <a href="https://www.pnas.org/content/116/29/14516">Sur and Candès, (2019)</a></span></p>
-</section>
-<section id="classification-summary" class="slide level2 inverse">
-<h2>Classification summary</h2>
-<div class="columns">
-<div class="column" style="width:48%;">
-<ul>
-<li>Numeric prediction <span class="math inline">\(\to\)</span> classification</li>
-</ul>
-<p><span class="math display">\[\hat y = \mathbb I(\hat p &gt; c) = \begin{cases} 0 &amp; \text{ if } \hat p \leq c \\  1 &amp; \text{ if } \hat p &gt; c \end{cases}\]</span></p>
-<p>Log-odds function is monotonic, so (hyperplanes)</p>
-<p><span class="math display">\[\hat p &gt; c \leftrightarrow x^T \beta &gt; c'\]</span></p>
-</div><div class="column" style="width:52%;">
-<ul>
-<li>More classes: transform to binary, predict using largest <span class="math inline">\(\hat p_k\)</span></li>
-<li>Non-linear boundaries: transformation of predictors, or use methods other than GLMs (we’ll learn more soon)</li>
-<li>Some classification methods output categorical classes, not probabilities (or other numeric scores)</li>
-</ul>
-</div></div>
 </section>
 <section id="two-kinds-of-mistake" class="slide level2">
 <h2>Two kinds of mistake</h2>
@@ -451,7 +431,25 @@ p(x) &gt; c^\star = \frac{c_{FP}}{c_{FP} + c_{FN}},
 <div class="leave">
 <p>The model gives <span class="math inline">\(p\)</span>. The costs give <span class="math inline">\(c^\star\)</span>, and somebody chose the costs. With <span class="math inline">\(\hat p\)</span> in place of <span class="math inline">\(p\)</span>, the rule is only as good as the estimate.</p>
 </div>
-<p><strong>Proof</strong>: exercise 1 in the notebook, before the seminar. The same argument as week 2’s optimal model theorem: minimize the expected loss one <span class="math inline">\(x\)</span> at a time.</p>
+<p><strong>Proof</strong>: exercise 1 in the notebook, before the seminar.</p>
+</section>
+<section id="classification-summary" class="slide level2 inverse">
+<h2>Classification summary</h2>
+<div class="columns">
+<div class="column" style="width:48%;">
+<ul>
+<li>Numeric prediction <span class="math inline">\(\to\)</span> classification</li>
+</ul>
+<p><span class="math display">\[\hat y = \mathbb I(\hat p &gt; c) = \begin{cases} 0 &amp; \text{ if } \hat p \leq c \\  1 &amp; \text{ if } \hat p &gt; c \end{cases}\]</span></p>
+<p>Log-odds function is monotonic, so (hyperplanes)</p>
+<p><span class="math display">\[\hat p &gt; c \leftrightarrow x^T \hat\beta &gt; c' = \log\frac{c}{1 - c}, \quad 0 &lt; c &lt; 1\]</span></p>
+</div><div class="column" style="width:52%;">
+<ul>
+<li>More classes: transform to binary, predict using largest <span class="math inline">\(\hat p_k\)</span></li>
+<li>Non-linear boundaries: transformation of predictors, or use methods other than GLMs (we’ll learn more soon)</li>
+<li>Some classification methods output categorical classes, not probabilities (or other numeric scores)</li>
+</ul>
+</div></div>
 </section>
 <section id="causality-part-1" class="slide level2 center">
 <h2>Causality, part 1</h2>
@@ -481,15 +479,15 @@ p(x) &gt; c^\star = \frac{c_{FP}}{c_{FP} + c_{FN}},
 <ul>
 <li><p>Udny Yule (1871-1951)</p></li>
 <li><p>Studied this poverty question</p></li>
-<li><p>First paper using multiple regression in 1897</p></li>
+<li><p>Multiple regression developed in 1897, applied to poverty, welfare and age in 1899</p></li>
 <li><p>Association between poverty and welfare while “controlling for” age</p></li>
 </ul>
 </div><div class="column" style="width:45%;">
 <p><img data-src="https://upload.wikimedia.org/wikipedia/en/4/4a/George_Udny_Yule.jpg" height="380"></p>
 </div></div>
 </section>
-<section id="history-yule-in-1897" class="slide level2 inverse">
-<h2>History: Yule, in 1897</h2>
+<section id="history-yule-1897-and-1899" class="slide level2 inverse">
+<h2>History: Yule, 1897 and 1899</h2>
 <blockquote>
 <p>Instead of speaking of “causal relation,” … we will use the terms “correlation,” …</p>
 </blockquote>
@@ -515,7 +513,7 @@ p(x) &gt; c^\star = \frac{c_{FP}}{c_{FP} + c_{FN}},
 <p>Do more people enter/stay in poverty if welfare is more generous?</p>
 <p>Or is this association “due to” age?</p>
 </section>
-<section id="history-yule-in-1897-1" class="slide level2 inverse">
+<section id="history-yule-in-1897" class="slide level2 inverse">
 <h2>History: Yule, in 1897</h2>
 <blockquote>
 <p>The investigation of <strong>causal relations</strong> between economic phenomena presents many problems of peculiar difficulty, and offers many opportunities for fallacious conclusions.</p>
@@ -537,14 +535,8 @@ p(x) &gt; c^\star = \frac{c_{FP}}{c_{FP} + c_{FN}},
 <p>(yes! and they are wrong!!!!)</p>
 </div>
 </section>
-<section id="section-2" class="slide level2 inverse center">
-<h2></h2>
-<p>Warning: don’t go this way</p>
-<p>the next slide is about some common mistakes people make when interpreting regression coefficients</p>
-<p>(don’t try to memorize the formulas)</p>
-</section>
-<section id="interpreting-regression-coefficients" class="slide level2">
-<h2>Interpreting regression coefficients</h2>
+<section id="misinterpreting-regression-coefficients" class="slide level2">
+<h2>Misinterpreting regression coefficients</h2>
 <p>People <em>want</em> these things to be true:</p>
 <ul>
 <li>“The linear <strong>model</strong> and our <strong>estimates</strong> are both good”</li>
@@ -556,7 +548,7 @@ p(x) &gt; c^\star = \frac{c_{FP}}{c_{FP} + c_{FN}},
 <p><span class="math display">\[
 \text{If } (x_j \mapsto x_j + 1) \text{ then } (\mathbb E[y] \mapsto \mathbb E[\mathbf y | \mathbf X] + \hat \beta_j)
 \]</span></p>
-<h3 id="but-this-almost-never-works">But this <em>almost never</em> works!</h3>
+<h3 id="this-is-not-guaranteed-to-work-and-usually-its-wrong">This is not guaranteed to work, and usually it’s wrong</h3>
 </section>
 <section id="ceteris-paribus" class="slide level2">
 <h2>Ceteris paribus</h2>
@@ -679,7 +671,7 @@ p(x) &gt; c^\star = \frac{c_{FP}}{c_{FP} + c_{FN}},
 <p>(don’t smoke)</p>
 </div></div>
 </section>
-<section id="section-3" class="slide level2 inverse">
+<section id="section-2" class="slide level2 inverse">
 <h2></h2>
 <p><a href="https://www.newstatesman.com/international/science-tech/2020/07/ra-fisher-and-science-hatred">R. A. Fisher</a> on <a href="https://www.york.ac.uk/depts/maths/histstat/smoking.htm">smoking</a> and lung cancer (in 1957)</p>
 <blockquote>
@@ -705,7 +697,7 @@ p(x) &gt; c^\star = \frac{c_{FP}}{c_{FP} + c_{FN}},
 <h2>Two of Fisher’s theories</h2>
 <div class="columns">
 <div class="column" style="width:50%;">
-<p>Smoking causes cancer?</p>
+<p>Cancer causes smoking?</p>
 <div class="cell" data-layout-align="center">
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
@@ -728,9 +720,11 @@ p(x) &gt; c^\star = \frac{c_{FP}}{c_{FP} + c_{FN}},
 </div>
 </div></div>
 </section>
-<section id="fisher-association-is-not-causation" class="slide level2 inverse center">
-<h2>Fisher: association is not causation</h2>
-<p>(He did not use graphical notation like this)</p>
+<section id="section-3" class="slide level2 inverse center">
+<h2></h2>
+<h3 id="yule-speak-of-correlation-not-causal-relations">Yule: speak of correlation, not causal relations</h3>
+<h3 id="fisher-association-is-not-causation">Fisher: association is not causation</h3>
+<h3 id="so-what-can-we-say-about-causation">So what <em>can</em> we say about causation?</h3>
 </section>
 <section id="idea-adjusting-for-confounders" class="slide level2">
 <h2>Idea: adjusting for confounders</h2>
@@ -749,81 +743,26 @@ p(x) &gt; c^\star = \frac{c_{FP}}{c_{FP} + c_{FN}},
 <section id="section-4" class="slide level2 center">
 <h2></h2>
 <p><em>Confounder adjustment</em> is why some people think <strong>multiple</strong> regression is One Weird Trick that lets us make causal conclusions</p>
-<p>It’s not that simple, and DAGs can help us understand why!</p>
+<p>It’s not that simple (as Yule already knew in 1897)</p>
+<div class="ask">
+<p>Use a simple argument with two DAGs to explain why this might not work.</p>
+</div>
 </section>
 <section id="simple-models-for-causality" class="slide level2">
 <h2>Simple models for causality</h2>
-<p>Think about <strong>interventions</strong> that change some target variable <span class="math inline">\(T\)</span></p>
+<p><strong>Interventions</strong> are a new type of operation we may use in probability models. Consider an intervention that changes some target variable <span class="math inline">\(T\)</span></p>
 <ul>
 <li><p>Forget about the arrows pointing into <span class="math inline">\(T\)</span> (intervention makes them irrelevant)</p></li>
 <li><p>Change <span class="math inline">\(T\)</span>, e.g.&nbsp;setting it to some arbitrary new value <span class="math inline">\(T = t\)</span></p></li>
 <li><p>This change propagates along directed paths out of <span class="math inline">\(T\)</span> to all descendant variables of <span class="math inline">\(T\)</span> in the graph, which can change their values</p></li>
 </ul>
-<p>(All of these changes could be deterministic, but most likely in our usage they are probabilistic)</p>
-</section>
-<section id="which-variables-change" class="slide level2">
-<h2>Which variables change?</h2>
-<div class="columns">
-<div class="column" style="width:50%;">
-<div class="cell" data-layout-align="center">
-<div class="cell-output-display">
-<div class="quarto-figure quarto-figure-center">
-<figure>
-<p><img data-src="03-1-classification-causality_files/figure-revealjs/dag-ex1-1.png" class="quarto-figure quarto-figure-center" style="width:72.0%"></p>
-</figure>
-</div>
-</div>
-</div>
-<div class="cell" data-layout-align="center">
-<div class="cell-output-display">
-<div class="quarto-figure quarto-figure-center">
-<figure>
-<p><img data-src="03-1-classification-causality_files/figure-revealjs/dag-ex2-1.png" class="quarto-figure quarto-figure-center" style="width:72.0%"></p>
-</figure>
-</div>
-</div>
-</div>
-<div class="cell" data-layout-align="center">
-<div class="cell-output-display">
-<div class="quarto-figure quarto-figure-center">
-<figure>
-<p><img data-src="03-1-classification-causality_files/figure-revealjs/dag-ex3-1.png" class="quarto-figure quarto-figure-center" style="width:72.0%"></p>
-</figure>
-</div>
-</div>
-</div>
-</div><div class="column" style="width:50%;">
-<p><strong>Exercise</strong>: in each of these cases, if we intervene on <span class="math inline">\(X\)</span> which other variable(s) are changed as a result?</p>
-<div class="cell" data-layout-align="center">
-<div class="cell-output-display">
-<div class="quarto-figure quarto-figure-center">
-<figure>
-<p><img data-src="03-1-classification-causality_files/figure-revealjs/dag-ex4-1.png" class="quarto-figure quarto-figure-center" style="width:72.0%"></p>
-</figure>
-</div>
-</div>
-</div>
-</div></div>
-</section>
-<section id="explaining-an-observed-correlation" class="slide level2">
-<h2>Explaining an observed correlation</h2>
-<p>We find a statistically significant correlation between <span class="math inline">\(X\)</span> and <span class="math inline">\(Y\)</span></p>
-<p>What does it mean?</p>
-<ol type="1">
-<li>False positive (spurious correlation)</li>
-<li><span class="math inline">\(X\)</span> causes <span class="math inline">\(Y\)</span></li>
-<li><span class="math inline">\(Y\)</span> causes <span class="math inline">\(X\)</span></li>
-<li>Both have common cause <span class="math inline">\(U\)</span> [possibly unobserved]</li>
-</ol>
-<p>Cases 2 to 4 are statistically indistinguishable (without “experimental” data)</p>
-<p>Importantly different consequences!</p>
 </section>
 <section id="writing-an-intervention-down" class="slide level2">
 <h2>Writing an intervention down</h2>
 <p>Behind a DAG is a <strong>structural model</strong>: one equation per variable, from its parents and its own noise. With <span class="math inline">\(T\)</span> the target, <span class="math inline">\(Y\)</span> the outcome and <span class="math inline">\(Z\)</span> the other variables that matter: <span class="math display">\[
 T = h(Z, \varepsilon_T), \qquad Y = g(T, Z, \varepsilon_Y), \qquad Z,\ \varepsilon_T,\ \varepsilon_Y \text{ independent}
 \]</span></p>
-<p><strong>Intervene</strong> on <span class="math inline">\(T\)</span>, written <span class="math inline">\(do(T = t)\)</span>: delete <span class="math inline">\(T\)</span>’s equation, set <span class="math inline">\(T = t\)</span>, recompute everything downstream with the <em>same</em> noise. <span class="math inline">\(Z\)</span> keeps its value</p>
+<p><strong>Intervene</strong> on <span class="math inline">\(T\)</span>, written <span class="math inline">\(do(T = t)\)</span>: delete <span class="math inline">\(T\)</span>’s equation and set <span class="math inline">\(T = t\)</span>. Every other equation stays, and the noises keep their distribution. <span class="math inline">\(Z\)</span> keeps its distribution</p>
 <div class="cell" data-layout-align="center">
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
@@ -836,18 +775,26 @@ T = h(Z, \varepsilon_T), \qquad Y = g(T, Z, \varepsilon_Y), \qquad Z,\ \varepsil
 </section>
 <section id="recovering-the-effect-from-what-we-observe" class="slide level2">
 <h2>Recovering the effect from what we observe</h2>
-<p>Under <span class="math inline">\(do(T = t)\)</span> the outcome is <span class="math inline">\(g(t, Z, \varepsilon_Y)\)</span>, so <span class="math inline">\(\mathbb E[Y \mid do(T = t)] = \mathbb E\, g(t, Z, \varepsilon_Y)\)</span>. Compare <span class="math inline">\(\mathbb E[Y \mid T = t]\)</span>: the average <span class="math inline">\(Y\)</span> among the units that <em>happened</em> to have <span class="math inline">\(T = t\)</span></p>
-<p>From observed <span class="math inline">\((T, Z, Y)\)</span>, with <span class="math inline">\(Z\)</span> observed, we can estimate conditional means such as <span class="math inline">\(\mathbb E[Y \mid T = t, Z]\)</span></p>
+<p>Under <span class="math inline">\(do(T = t)\)</span>, <span class="math inline">\(Y = g(t, Z, \varepsilon_Y)\)</span> with <span class="math inline">\((Z, \varepsilon_Y)\)</span> distributed as before, so <span class="math inline">\(\mathbb E[Y \mid do(T = t)] = \mathbb E\, g(t, Z, \varepsilon_Y)\)</span>. Compare <span class="math inline">\(\mathbb E[Y \mid T = t]\)</span>, the average over the units that <em>happened</em> to have <span class="math inline">\(T = t\)</span></p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="03-1-classification-causality_files/figure-revealjs/condition-vs-do-1.png" class="quarto-figure quarto-figure-center" style="width:70.0%"></p>
+</figure>
+</div>
+</div>
+</div>
 <div class="ask">
-<p>Write down what you would compute from the observed data to get <span class="math inline">\(\mathbb E[Y \mid do(T = t)]\)</span>, and what has to be true of <span class="math inline">\(Z\)</span> for it to work.</p>
+<p>From observed <span class="math inline">\((T, Z, Y)\)</span>: write down what you would compute to get <span class="math inline">\(\mathbb E[Y \mid do(T = t)]\)</span>, and what has to be true of <span class="math inline">\(Z\)</span> for it to work.</p>
 </div>
 </section>
 <section id="the-confounding-gap" class="slide level2">
 <h2>The confounding gap</h2>
-<p>The same DAG, made linear: <span class="math inline">\(T = \alpha Z + \varepsilon_T\)</span>, <span class="math inline">\(\;Y = \tau T + \gamma Z + \varepsilon_Y\)</span>, noises independent with mean <span class="math inline">\(0\)</span> <span class="math display">\[
+<p>The same DAG, made linear: <span class="math inline">\(T = \alpha Z + \varepsilon_T\)</span>, <span class="math inline">\(\;Y = \tau T + \beta Z + \varepsilon_Y\)</span>, with <span class="math inline">\(Z\)</span>, <span class="math inline">\(\varepsilon_T\)</span>, <span class="math inline">\(\varepsilon_Y\)</span> independent normal and the noises mean <span class="math inline">\(0\)</span> <span class="math display">\[
 \mathbb E[Y \mid do(T = 1)] - \mathbb E[Y \mid do(T = 0)] = \tau
 \]</span> <span class="math display">\[
-\mathbb E[Y \mid T = 1] - \mathbb E[Y \mid T = 0] = \tau + \gamma\,\big(\mathbb E[Z \mid T = 1] - \mathbb E[Z \mid T = 0]\big)
+\mathbb E[Y \mid T = 1] - \mathbb E[Y \mid T = 0] = \tau + \beta\,\big(\mathbb E[Z \mid T = 1] - \mathbb E[Z \mid T = 0]\big)
 \]</span></p>
 <div class="retrieval">
 <p>Week 2, omitted-variable bias, inputs fixed: regressing on <span class="math inline">\(\mathbf x_1\)</span> alone gives <span class="math inline">\(\mathbb E\hat\beta_{\text{short}} = \beta_1 + \beta_2\hat\delta\)</span>, with <span class="math inline">\(\hat\delta\)</span> the slope of <span class="math inline">\(\mathbf x_2\)</span> on <span class="math inline">\(\mathbf x_1\)</span>.</p>
@@ -860,7 +807,7 @@ T = h(Z, \varepsilon_T), \qquad Y = g(T, Z, \varepsilon_Y), \qquad Z,\ \varepsil
 <h2>Adjustment theorem</h2>
 <div class="columns">
 <div class="column" style="width:66%;">
-<p><strong>Adjustment theorem.</strong> Structural model with independent noises, <span class="math inline">\(Z\)</span> observed: <span class="math inline">\(T = h(Z, \varepsilon_T)\)</span>, <span class="math inline">\(Y = g(T, Z, \varepsilon_Y)\)</span>. If <span class="math inline">\(P(T = t \mid Z) &gt; 0\)</span> with probability one (continuous <span class="math inline">\(T\)</span>: positive density at <span class="math inline">\(t\)</span>), <span class="math display">\[
+<p><strong>Adjustment theorem.</strong> Structural model with independent noises, <span class="math inline">\(Z\)</span> observed, <span class="math inline">\(T\)</span> taking finitely many values: <span class="math inline">\(T = h(Z, \varepsilon_T)\)</span>, <span class="math inline">\(Y = g(T, Z, \varepsilon_Y)\)</span>. If <span class="math inline">\(P(T = t \mid Z) &gt; 0\)</span> with probability one, <span class="math display">\[
 \mathbb E[Y \mid do(T = t)] = \mathbb E_Z\Big[\, \mathbb E[Y \mid T = t, Z]\, \Big]
 \]</span></p>
 </div><div class="column" style="width:34%;">
@@ -887,48 +834,61 @@ T = h(Z, \varepsilon_T), \qquad Y = g(T, Z, \varepsilon_Y), \qquad Z,\ \varepsil
 \]</span></p>
 <p>Logistic regression of <span class="math inline">\(T\)</span> on <span class="math inline">\(Z\)</span> estimates it: <code>glm(T ~ Z, family = binomial())</code></p>
 <div class="ask">
-<p>Suppose you can estimate <span class="math inline">\(\pi(z)\)</span> well, but you have no model for <span class="math inline">\(\mathbb E[Y \mid T, Z]\)</span>. How would you use <span class="math inline">\(\hat\pi\)</span> to estimate <span class="math inline">\(\mathbb E[Y \mid do(T = 1)]\)</span>?</p>
+<p>Suppose you can estimate <span class="math inline">\(\pi(z)\)</span> well, but you have no regression model for <span class="math inline">\(\mathbb E[Y \mid T, Z]\)</span>. How would you use <span class="math inline">\(\hat\pi\)</span> to estimate <span class="math inline">\(\mathbb E[Y \mid do(T = 1)]\)</span>?</p>
+</div>
+<div class="fragment">
+<p>Hint: make the data look as if <span class="math inline">\(T\)</span> had been assigned by a coin flip, not by the confounders</p>
 </div>
 </section>
-<section id="propensity-weighting-theorem" class="slide level2">
-<h2>Propensity weighting theorem</h2>
-<p><strong>Propensity weighting theorem.</strong> Structural model with independent noises, <span class="math inline">\(Z\)</span> observed, <span class="math inline">\(T \in \{0, 1\}\)</span>: <span class="math inline">\(T = h(Z, \varepsilon_T)\)</span>, <span class="math inline">\(Y = g(T, Z, \varepsilon_Y)\)</span>, <span class="math inline">\(\pi(z) = P(T = 1 \mid Z = z)\)</span>. If <span class="math inline">\(0 &lt; \pi(Z) &lt; 1\)</span> with probability one, <span class="math display">\[
+<section id="inverse-propensity-weighting-theorem" class="slide level2">
+<h2>Inverse propensity weighting theorem</h2>
+<p><strong>Inverse propensity weighting (IPW) theorem.</strong> Structural model with independent noises, <span class="math inline">\(Z\)</span> observed, <span class="math inline">\(T \in \{0, 1\}\)</span>: <span class="math inline">\(T = h(Z, \varepsilon_T)\)</span>, <span class="math inline">\(Y = g(T, Z, \varepsilon_Y)\)</span>, <span class="math inline">\(\pi(z) = P(T = 1 \mid Z = z)\)</span>. If <span class="math inline">\(0 &lt; \pi(Z) &lt; 1\)</span> with probability one, <span class="math display">\[
 \mathbb E[Y \mid do(T = 1)] = \mathbb E\Big[\frac{T\,Y}{\pi(Z)}\Big], \qquad \mathbb E[Y \mid do(T = 0)] = \mathbb E\Big[\frac{(1 - T)\,Y}{1 - \pi(Z)}\Big]
 \]</span></p>
 <div class="leave">
-<p>Weight each treated unit by <span class="math inline">\(1/\pi(Z)\)</span>: it stands in for <span class="math inline">\(1/\pi(Z)\)</span> units with the same <span class="math inline">\(Z\)</span>. The adjustment theorem needs a model for <span class="math inline">\(Y\)</span>. This one needs a model for <span class="math inline">\(T\)</span>, and logistic regression gives one.</p>
+<p>Weight each treated unit by <span class="math inline">\(1/\pi(Z)\)</span>: it stands in for <span class="math inline">\(1/\pi(Z)\)</span> units with the same <span class="math inline">\(Z\)</span>. The adjustment theorem needs a regression model for <span class="math inline">\(Y\)</span>. This one needs a regression model for <span class="math inline">\(T\)</span>, and logistic regression gives one.</p>
 </div>
 </section>
-<section id="propensity-weighting-theorem-proof" class="slide level2">
-<h2>Propensity weighting theorem, proof</h2>
-<p><span class="math inline">\(T\)</span> is <span class="math inline">\(0\)</span> or <span class="math inline">\(1\)</span>, and when <span class="math inline">\(T = 1\)</span> the outcome is <span class="math inline">\(g(1, Z, \varepsilon_Y)\)</span>, so <span class="math inline">\(T\,Y = T\,g(1, Z, \varepsilon_Y)\)</span></p>
-<div class="fragment">
-<p><span class="math inline">\(T = h(Z, \varepsilon_T)\)</span> and <span class="math inline">\(\varepsilon_T\)</span> is independent of <span class="math inline">\((Z, \varepsilon_Y)\)</span>, so given <span class="math inline">\((Z, \varepsilon_Y)\)</span> the chance that <span class="math inline">\(T = 1\)</span> is <span class="math inline">\(\pi(Z)\)</span>: <span class="math display">\[
-\mathbb E[T \mid Z, \varepsilon_Y] = \pi(Z)
+<section id="inverse-propensity-weighting-theorem-proof-1-of-2" class="slide level2">
+<h2>Inverse propensity weighting theorem, proof (1 of 2)</h2>
+<p>Start from what we want, and change one term at a time</p>
+<p><span class="math display">\[
+\begin{alignedat}{2}
+\mathbb E[Y \mid do(T = 1)]
+&amp;= \mathbb E_{Z, \varepsilon_Y}\big[\,\underbrace{g(1, Z, \varepsilon_Y)}_{\text{(a)}}\,\big]
+&amp;\quad&amp; \class{fragment}{\color{gray}\small\text{(a) } Y \text{ under } do(T = 1)} \\[4pt]
+&amp;\class{fragment}{{}= \mathbb E_{Z, \varepsilon_Y}\Big[\,\underbrace{\frac{\pi(Z)}{\pi(Z)}}_{\text{(b)}}\, g(1, Z, \varepsilon_Y)\Big]}
+&amp;&amp; \class{fragment}{\color{gray}\small\text{(b) } {=}\ 1\text{, as } \pi(Z) &gt; 0} \\[4pt]
+&amp;\class{fragment}{{}= \mathbb E_{Z, \varepsilon_Y}\Big[\,\frac{\overbrace{\mathbb E_{\varepsilon_T}[T \mid Z, \varepsilon_Y]}^{\text{(c)}}}{\pi(Z)}\, g(1, Z, \varepsilon_Y)\Big]}
+&amp;&amp; \class{fragment}{\color{gray}\small\text{(c) } {=}\ \pi(Z)\text{: independence}}
+\end{alignedat}
 \]</span></p>
-</div>
-<div class="fragment">
-<p>Condition on <span class="math inline">\((Z, \varepsilon_Y)\)</span>, by the tower property: <span class="math display">\[
-\mathbb E\Big[\frac{T\,Y}{\pi(Z)}\Big] = \mathbb E\Big[\frac{\pi(Z)\, g(1, Z, \varepsilon_Y)}{\pi(Z)}\Big] = \mathbb E\big[g(1, Z, \varepsilon_Y)\big] = \mathbb E[Y \mid do(T = 1)] \qquad\blacksquare
-\]</span> The last step: under <span class="math inline">\(do(T = 1)\)</span>, <span class="math inline">\(Y = g(1, Z, \varepsilon_Y)\)</span> with <span class="math inline">\(Z\)</span> and <span class="math inline">\(\varepsilon_Y\)</span> unchanged. For <span class="math inline">\(T = 0\)</span>, the same with <span class="math inline">\(1 - T\)</span> and <span class="math inline">\(1 - \pi(Z)\)</span></p>
-</div>
 </section>
-<section id="where-propensity-weighting-fails" class="slide level2">
-<h2>Where propensity weighting fails</h2>
+<section id="inverse-propensity-weighting-theorem-proof-2-of-2" class="slide level2">
+<h2>Inverse propensity weighting theorem, proof (2 of 2)</h2>
+<p><span class="math display">\[
+\begin{alignedat}{2}
+\mathbb E[Y \mid do(T = 1)]
+&amp;= \mathbb E_{Z, \varepsilon_Y}\Big[\,\frac{\mathbb E_{\varepsilon_T}[T \mid Z, \varepsilon_Y]}{\pi(Z)}\, g(1, Z, \varepsilon_Y)\Big]
+&amp;\quad&amp; \\[4pt]
+&amp;\class{fragment}{{}= \mathbb E_{Z, \varepsilon_Y}\Big[\,\underbrace{\mathbb E_{\varepsilon_T}\Big[\frac{T\, g(1, Z, \varepsilon_Y)}{\pi(Z)} \;\Big|\; Z, \varepsilon_Y\Big]}_{\text{(d)}}\Big]}
+&amp;&amp; \class{fragment}{\color{gray}\small\text{(d) factor moved inside}} \\[4pt]
+&amp;\class{fragment}{{}= \mathbb E_{Z, \varepsilon_T, \varepsilon_Y}\Big[\frac{T\, g(1, Z, \varepsilon_Y)}{\pi(Z)}\Big]}
+&amp;&amp; \class{fragment}{\color{gray}\small\text{(e) tower property}} \\[4pt]
+&amp;\class{fragment}{{}= \mathbb E_{T, Z, Y}\Big[\frac{T\,Y}{\pi(Z)}\Big] \quad \blacksquare}
+&amp;&amp; \class{fragment}{\color{gray}\small\text{(f) } T\,g(1, Z, \varepsilon_Y) = T\,Y}
+\end{alignedat}
+\]</span></p>
+<p>For <span class="math inline">\(T = 0\)</span>: the same steps with <span class="math inline">\(1 - T\)</span> and <span class="math inline">\(1 - \pi(Z)\)</span></p>
+</section>
+<section id="where-inverse-propensity-weighting-fails" class="slide level2">
+<h2>Where inverse propensity weighting fails</h2>
 <ul>
 <li><p><span class="math inline">\(\pi(Z)\)</span> near <span class="math inline">\(0\)</span> or <span class="math inline">\(1\)</span>: a few units get huge weights, and the estimate is unstable. The condition <span class="math inline">\(0 &lt; \pi(Z) &lt; 1\)</span> is about the population; in a sample it shows up as extreme weights</p></li>
-<li><p>A common cause left out of <span class="math inline">\(Z\)</span>: <span class="math inline">\(\varepsilon_T\)</span> and <span class="math inline">\(\varepsilon_Y\)</span> are dependent, and the second line of the proof breaks</p></li>
+<li><p>Causal machine learning replaces logistic regression with more flexible models. If these models achieve high accuracy, they can output probabilities close to <span class="math inline">\(0\)</span> or <span class="math inline">\(1\)</span>, and the weights explode: a better classifier can make a worse weighting estimate</p></li>
+<li><p>A common cause left out of <span class="math inline">\(Z\)</span>: <span class="math inline">\(\varepsilon_T\)</span> and <span class="math inline">\(\varepsilon_Y\)</span> are dependent, and step (c) of the proof breaks</p></li>
 <li><p><span class="math inline">\(\hat\pi\)</span> in place of <span class="math inline">\(\pi\)</span>: the weights are only as good as the logistic regression that produced them</p></li>
 </ul>
-</section>
-<section id="conclusions" class="slide level2 inverse">
-<h2>Conclusions</h2>
-<p>Wisdom from one of the great early statistical explorers</p>
-<p><a href="https://mathshistory.st-andrews.ac.uk/Biographies/Yule/quotations/">Udny Yule</a>:</p>
-<blockquote>
-<p><strong>Measurement does not necessarily mean progress</strong>. Failing the possibility of measuring that which you desire, the lust for measurement may, for example, merely result in your measuring something else - and perhaps forgetting the difference - or in your ignoring some things because they cannot be measured.</p>
-</blockquote>
-<p>Remember: regression coefficients do not necessarily mean causal relationships</p>
 </section>
 <section id="section-5" class="slide level2 inverse center">
 <h2></h2>
@@ -942,13 +902,16 @@ T = h(Z, \varepsilon_T), \qquad Y = g(T, Z, \varepsilon_Y), \qquad Z,\ \varepsil
 <section id="before-the-seminar" class="slide level2">
 <h2>Before the seminar</h2>
 <ul>
-<li>This week: exercises 1 to 4 at the top of the notebook. The proof of the optimal threshold theorem; the confounding gap; the proof of the adjustment theorem; and today’s propensity weighting proof again, with the slides closed</li>
+<li>This week: exercises 1 to 4 at the top of the notebook. The proof of the optimal threshold theorem; the confounding gap; the proof of the adjustment theorem; and today’s inverse propensity weighting proof again, with the slides closed</li>
 </ul>
 </section>
-<section id="causal-inference" class="slide level2 inverse center">
-<h2>Causal inference</h2>
-<h3 id="an-exciting-interdisciplinary-field">An exciting interdisciplinary field</h3>
-<h4 id="practically-important-connections-to-ml">Practically important, connections to ML</h4>
+<section id="conclusions" class="slide level2 inverse">
+<h2>Conclusions</h2>
+<p>Wisdom from one of the great early statistical explorers, <a href="https://mathshistory.st-andrews.ac.uk/Biographies/Yule/quotations/">Udny Yule</a>:</p>
+<blockquote>
+<p><strong>Measurement does not necessarily mean progress</strong>. Failing the possibility of measuring that which you desire, the lust for measurement may, for example, merely result in your measuring something else - and perhaps forgetting the difference - or in your ignoring some things because they cannot be measured.</p>
+</blockquote>
+<p>Remember: regression coefficients do not necessarily mean causal relationships. Causal inference: an exciting interdisciplinary field, practically important, with connections to ML</p>
 <blockquote>
 <p>“Data scientists have hitherto only predicted the world in various ways; the point is to change it” - Joshua Loftus</p>
 </blockquote>

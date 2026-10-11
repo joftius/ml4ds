@@ -47,19 +47,24 @@ set.seed(1)
 # Palette: viridis for the primary scale, magma for the second one.
 v_dark <- "#440154"; v_blue <- "#31688e"; v_teal <- "#21918c"; v_green <- "#5ec962"
 m_pink <- "#b73779"; m_purple <- "#8c2981"; m_orange <- "#fc8961"
-# DAG helper from the legacy causality deck: an unobserved node named G (or U)
-# is drawn grey with dashed edges.
+# DAG helper, in the same style as dag_adjust() below: pale nodes, purple letters.
+# An unobserved node named G (or U) is shaded grey, with dashed edges out of it.
 DAGtoplot <- function(DAG, unobserved = c("G", "U")) {
-  DAG %>%
-  tidy_dagitty() %>%
-  mutate(color = ifelse(name %in% unobserved, "gray", "black"),
-         linetype = ifelse(name %in% unobserved, "dashed", "solid")) %>%
-  ggplot(aes(x = x, y = y, xend = xend, yend = yend)) +
-    geom_dag_point(size = 18, aes(color = color), show.legend = FALSE) +
-    geom_dag_text(size = 10) +
+  d <- DAG %>%
+    tidy_dagitty() %>%
+    mutate(observed = !(name %in% unobserved),
+           linetype = ifelse(name %in% unobserved, "dashed", "solid"))
+  xr <- range(d$data$x); yr <- range(d$data$y)
+  d %>%
+    ggplot(aes(x = x, y = y, xend = xend, yend = yend)) +
+    geom_dag_point(aes(colour = observed), size = 18, show.legend = FALSE) +
+    geom_dag_text(data = function(x) filter(x, observed), colour = v_dark, size = 9) +
+    geom_dag_text(data = function(x) filter(x, !observed), colour = "white", size = 9) +
     geom_dag_edges(aes(edge_linetype = linetype), edge_width = 1.5) +
-  scale_color_grey() +
-  theme_dag_blank()
+    scale_colour_manual(values = c("TRUE" = "#e5ecf6", "FALSE" = "grey70")) +
+    expand_limits(x = xr + c(-0.35, 0.35), y = yr + c(-0.3, 0.3)) +
+    coord_cartesian(clip = "off") +
+    theme_dag_blank()
 }
 # The adjustment theorem's DAG (Z -> T, Z -> Y, T -> Y) and its intervened
 # version (the arrow into T removed).
@@ -79,23 +84,19 @@ dag_adjust <- function(intervened = FALSE, title = NULL) {
 }
 ```
 
-## {.inverse}
+## {.inverse .center}
 
 ::: {.notes}
-Plan about 85 of 90 at week 2's rough pace (2 min a light slide, 1 a dark one; 35 light, 15 dark): over the 76 budget. Cuts 1 to 4 below bring it to about 76. Dark = rush or skip; each dark slide's note says skip or gives the compressed phrase.
+Plan about 76 of 90 with cuts 1 and 2 made from the start; about 81 without them, at week 2's rough pace (2 min a light slide, 1 a dark one; 34 light, 13 dark). Dark = rush or skip; each dark slide's note says skip or gives the compressed phrase.
 
-Cut order: (1) ROC in one sentence, (2) Yule history in one line, (3) contours and boundaries narrated, (4) the confounding gap in one sentence (exercise 2 derives it).
+Cut order: (1) ROC in one sentence, (2) Yule history in one line (both planned), (3) contours and boundaries narrated, (4) the confounding gap in one sentence (exercise 2 derives it).
 
-Pace, no cuts: 0:23 classification summary, 0:31 threshold theorem, 0:46 Yule's regressions, 1:08 the adjustment question, 1:14 the propensity question, 1:18 proof done.
+Pace, with cuts 1 and 2: 0:28 threshold theorem, 0:30 end of part 1, 0:40 Yule's regressions, 0:58 the adjustment question, 1:04 the propensity question, 1:10 proof done.
 
 In the notebook: threshold proof (ex. 1), confounding gap (ex. 2), adjustment proof (ex. 3), this proof redone (ex. 4).
 :::
 
-### Week 3: classification, and causality (part 1)
-
-Part 1: classification, and what a mistake costs
-
-Part 2: causality and interventions
+### Part 1: classification, logistic regression, and asymmetric costs
 
 ## Where week 2 left the target
 
@@ -212,8 +213,10 @@ eg1
 #| fig-width: 8
 #| fig-height: 4.6
 #| out-width: "71%"
+fit_1d <- glm(y ~ x1, family = "binomial", data = train)
+x_half <- -coef(fit_1d)[[1]] / coef(fit_1d)[[2]]   # where the fitted probability crosses 1/2
 eg1 +
-  annotate("segment", x = .9, xend = .9, y = .8, yend  = 2.2, linetype = "dashed", linewidth = 1, color = v_blue) +
+  annotate("segment", x = x_half, xend = x_half, y = .8, yend  = 2.2, linetype = "dashed", linewidth = 1, color = v_blue) +
   geom_point(data =  train,
              aes(color =  y), alpha =  .4,
              show.legend = FALSE) +
@@ -258,10 +261,11 @@ ggplot(
   geom_point(
     data = train,
              aes(shape = y, color = y),
-             size = 2, stroke = 1, alpha = .9,
-             show.legend = FALSE) +
+             size = 2, stroke = 1, alpha = .9) +
   scale_shape_manual(values=c(21, 22)) +
-  scale_color_viridis_d(option = "viridis", direction = -1, end = .8) +
+  scale_color_viridis_d(option = "viridis", end = .8) +
+  labs(shape = "class", colour = "class",
+       caption = "shading: fitted P(class 1); dashed: 1/2; pink: misclassified") +
   scale_fill_viridis_d(option = "viridis", end = .8) +
   geom_point(
     data = augment(logit_model,
@@ -303,7 +307,7 @@ Coefficient scale: log-odds? Exponentiate $\to$ odds ratios (intercept: baseline
 
 ```{r}
 #| echo: true
-broom::tidy(model_fit, exponentiate = TRUE)
+broom::tidy(model_fit, exponentiate = TRUE) |> select(term, estimate)
 ```
 
 ## Interpretation: inference and diagnostics
@@ -314,7 +318,7 @@ How glm finds the MLE (likelihood, score equations) is week 4's opener.
 
 - Fitted by maximum likelihood; how `glm` does it: next week
 
-- MLEs $\to$ asymptotic normality for intervals/tests
+- MLEs $\to$ asymptotic normality for intervals/tests (fixed $p$, regularity conditions)
 
 `summary()`, `coef()`, `confint()`, `anova()`, etc in `R`
 
@@ -346,29 +350,6 @@ Awkwardly, classification is *too easy*(!?) for this probabilistic approach
 With Gaussian inputs: biased MLE and wrong variance/asymp. dist. if $n/p \to \text{const}$, even if $> 1$
 
 [See [Sur and Candès, (2019)](https://www.pnas.org/content/116/29/14516)]{.source}
-
-## Classification summary {.inverse}
-
-::: {.notes}
-Compress: threshold p-hat at c; which c is the next five minutes.
-:::
-
-::: {.columns}
-::: {.column width="48%"}
-- Numeric prediction $\to$ classification
-
-$$\hat y = \mathbb I(\hat p > c) = \begin{cases} 0 & \text{ if } \hat p \leq c \\  1 & \text{ if } \hat p > c \end{cases}$$
-
-Log-odds function is monotonic, so (hyperplanes)
-
-$$\hat p > c \leftrightarrow x^T \beta > c'$$
-:::
-::: {.column width="52%"}
-- More classes: transform to binary, predict using largest $\hat p_k$
-- Non-linear boundaries: transformation of predictors, or use methods other than GLMs (we'll learn more soon)
-- Some classification methods output categorical classes, not probabilities (or other numeric scores)
-:::
-:::
 
 ## Two kinds of mistake
 
@@ -406,7 +387,7 @@ Accuracy $= (\text{TP} + \text{TN})/n$ hides the split. With 95% zeros, predicti
 ## ROC: the curve invented for radar
 
 ::: {.notes}
-Second on the cut order: say "one point per threshold" and move on. The seminar builds this curve with a loop.
+First on the cut order: say "one point per threshold" and move on. The seminar builds this curve with a loop.
 :::
 
 ::: {.columns}
@@ -501,7 +482,30 @@ and at $p(x) = c^\star$ either prediction is optimal. Equal costs give $c^\star 
 The model gives $p$. The costs give $c^\star$, and somebody chose the costs. With $\hat p$ in place of $p$, the rule is only as good as the estimate.
 :::
 
-**Proof**: exercise 1 in the notebook, before the seminar. The same argument as week 2's optimal model theorem: minimize the expected loss one $x$ at a time.
+**Proof**: exercise 1 in the notebook, before the seminar.
+
+## Classification summary {.inverse}
+
+::: {.notes}
+Compress: threshold p-hat at c, with c from the costs; more classes, curved boundaries.
+:::
+
+::: {.columns}
+::: {.column width="48%"}
+- Numeric prediction $\to$ classification
+
+$$\hat y = \mathbb I(\hat p > c) = \begin{cases} 0 & \text{ if } \hat p \leq c \\  1 & \text{ if } \hat p > c \end{cases}$$
+
+Log-odds function is monotonic, so (hyperplanes)
+
+$$\hat p > c \leftrightarrow x^T \hat\beta > c' = \log\frac{c}{1 - c}, \quad 0 < c < 1$$
+:::
+::: {.column width="52%"}
+- More classes: transform to binary, predict using largest $\hat p_k$
+- Non-linear boundaries: transformation of predictors, or use methods other than GLMs (we'll learn more soon)
+- Some classification methods output categorical classes, not probabilities (or other numeric scores)
+:::
+:::
 
 ## Causality, part 1 {.center}
 
@@ -538,7 +542,7 @@ But *why*? "[Welfare](http://economistjourney.blogspot.com/2014/08/the-crazy-dre
 ## History: origin of multiple regression {.inverse}
 
 ::: {.notes}
-Compress: Yule, 1897, the first multiple regression, "controlling for" age.
+Compress: Yule, 1897 and 1899, multiple regression "controlling for" age.
 :::
 
 ::: {.columns}
@@ -547,7 +551,7 @@ Compress: Yule, 1897, the first multiple regression, "controlling for" age.
 
 - Studied this poverty question
 
-- First paper using multiple regression in 1897
+- Multiple regression developed in 1897, applied to poverty, welfare and age in 1899
 
 - Association between poverty and welfare while "controlling for" age
 :::
@@ -556,7 +560,7 @@ Compress: Yule, 1897, the first multiple regression, "controlling for" age.
 :::
 :::
 
-## History: Yule, in 1897 {.inverse}
+## History: Yule, 1897 and 1899 {.inverse}
 
 ::: {.notes}
 Compress: welfare, poverty, age; is the association "due to" age?
@@ -608,19 +612,7 @@ but... isn't this how *almost everyone* interprets regression coefficients?...
 
 (yes! and they are wrong!!!!)
 
-## {.inverse .center}
-
-::: {.notes}
-Skip if behind.
-:::
-
-Warning: don't go this way
-
-the next slide is about some common mistakes people make when interpreting regression coefficients
-
-(don't try to memorize the formulas)
-
-## Interpreting regression coefficients
+## Misinterpreting regression coefficients
 
 People *want* these things to be true:
 
@@ -634,7 +626,7 @@ $$
 \text{If } (x_j \mapsto x_j + 1) \text{ then } (\mathbb E[y] \mapsto \mathbb E[\mathbf y | \mathbf X] + \hat \beta_j)
 $$
 
-### But this *almost never* works!
+### This is not guaranteed to work, and usually it's wrong
 
 ## Ceteris paribus
 
@@ -754,7 +746,7 @@ Shaded node / dashed edges: unobserved variable
 
 ::: {.columns}
 ::: {.column width="50%"}
-Smoking causes cancer?
+Cancer causes smoking?
 
 ```{r}
 #| label: dag-sc
@@ -764,10 +756,9 @@ Smoking causes cancer?
 dag('{
 S [exposure, pos="0,0"]
 C [outcome, pos="1,0"]
-S -> C
+C -> S
 }') %>%
-  ggdag(node_size = 18, text_size = 10) +
-  theme_dag_blank()
+  DAGtoplot()
 ```
 :::
 ::: {.column width="50%"}
@@ -789,13 +780,17 @@ G -> C
 :::
 :::
 
-## Fisher: association is not causation {.inverse .center}
+## {.inverse .center}
 
 ::: {.notes}
-Skip if behind.
+Compress: neither would say "causes"; so what can we say? (Fisher did not use graphs like these.)
 :::
 
-(He did not use graphical notation like this)
+### Yule: speak of correlation, not causal relations
+
+### Fisher: association is not causation
+
+### So what *can* we say about causation?
 
 ## Idea: adjusting for confounders
 
@@ -815,13 +810,21 @@ Including (measured) confounders in the regression model may give us a more accu
 
 ## {.center}
 
+::: {.notes}
+Expected: the same association, with Z a common cause in one DAG and a consequence of X in the other; adjusting helps in the first and hurts in the second.
+:::
+
 *Confounder adjustment* is why some people think **multiple** regression is One Weird Trick that lets us make causal conclusions
 
-It's not that simple, and DAGs can help us understand why!
+It's not that simple (as Yule already knew in 1897)
+
+::: {.ask}
+Use a simple argument with two DAGs to explain why this might not work.
+:::
 
 ## Simple models for causality
 
-Think about **interventions** that change some target variable $T$
+**Interventions** are a new type of operation we may use in probability models. Consider an intervention that changes some target variable $T$
 
 - Forget about the arrows pointing into $T$ (intervention makes them irrelevant)
 
@@ -829,122 +832,10 @@ Think about **interventions** that change some target variable $T$
 
 - This change propagates along directed paths out of $T$ to all descendant variables of $T$ in the graph, which can change their values
 
-(All of these changes could be deterministic, but most likely in our usage they are probabilistic)
-
-## Which variables change?
-
-::: {.columns}
-::: {.column width="50%"}
-```{r}
-#| label: dag-ex1
-#| fig-height: 1.25
-#| fig-width: 5
-#| out-width: "72%"
-#| fig-align: center
-dag('{
-X [exposure, pos="0,0"]
-Y [outcome, pos="1,0"]
-X -> Y
-}') %>%
-  tidy_dagitty() %>%
-  ggplot(aes(x = x, y = y, xend = xend, yend = yend)) +
-    geom_dag_point(size = 18, show.legend = FALSE) +
-    geom_dag_text(size = 10) +
-  scale_color_grey() +
-  theme_dag_blank()
-```
-
-```{r}
-#| label: dag-ex2
-#| fig-height: 1.25
-#| fig-width: 5
-#| out-width: "72%"
-#| fig-align: center
-dag('{
-X [exposure, pos="0,0"]
-Y [outcome, pos="1,0"]
-X -> Y
-}') %>%
-  tidy_dagitty() %>%
-  ggplot(aes(x = x, y = y, xend = xend, yend = yend)) +
-    geom_dag_point(size = 18, show.legend = FALSE) +
-    geom_dag_text(size = 10) +
-    geom_dag_edges(edge_width = 1.5) +
-  scale_color_grey() +
-  theme_dag_blank()
-```
-
-```{r}
-#| label: dag-ex3
-#| fig-height: 1.25
-#| fig-width: 5
-#| out-width: "72%"
-#| fig-align: center
-dag('{
-X [exposure, pos="0,0"]
-Y [outcome, pos="1,0"]
-Y -> X
-}') %>%
-  tidy_dagitty() %>%
-  ggplot(aes(x = x, y = y, xend = xend, yend = yend)) +
-    geom_dag_point(size = 18, show.legend = FALSE) +
-    geom_dag_text(size = 10) +
-    geom_dag_edges(edge_width = 1.5) +
-  scale_color_grey() +
-  theme_dag_blank()
-```
-:::
-::: {.column width="50%"}
-
-**Exercise**: in each of these cases, if we intervene on $X$ which other variable(s) are changed as a result?
-
-```{r}
-#| label: dag-ex4
-#| fig-height: 2.6
-#| fig-width: 5
-#| out-width: "72%"
-#| fig-align: center
-dag('{
-X [exposure,pos="0,0"]
-Y [outcome,pos="2,0"]
-U [pos="1,.5"]
-U -> X
-U -> Y
-}') %>%
-  tidy_dagitty() %>%
-  mutate(color = ifelse(name == "U", "gray", "black"),
-         linetype = ifelse(name == "U", "dashed", "solid")) %>%
-  ggplot(aes(x = x, y = y, xend = xend, yend = yend)) +
-    geom_dag_point(size = 18, aes(color = color), show.legend = FALSE) +
-    geom_dag_text(size = 10) +
-    geom_dag_edges(aes(edge_linetype = linetype), edge_width = 1.5) +
-  expand_limits(y = c(-0.15, 0.65)) +   # room for the node circles
-  scale_color_grey() +
-  theme_dag_blank()
-```
-
-:::
-:::
-
-## Explaining an observed correlation
-
-We find a statistically significant correlation between $X$ and $Y$
-
-What does it mean?
-
-1. False positive (spurious correlation)
-2. $X$ causes $Y$
-3. $Y$ causes $X$
-4. Both have common cause $U$ [possibly unobserved]
-
-Cases 2 to 4 are statistically indistinguishable (without "experimental" data)
-
-Importantly different consequences!
-
 ## Writing an intervention down
 
 ::: {.notes}
-Same noise: the counterfactual for each unit. The seminar keeps the noise and recomputes.
+Only the distribution of the noise matters here; nothing upstream of T changes.
 :::
 
 Behind a DAG is a **structural model**: one equation per variable, from its parents and its own noise. With $T$ the target, $Y$ the outcome and $Z$ the other variables that matter:
@@ -952,7 +843,7 @@ $$
 T = h(Z, \varepsilon_T), \qquad Y = g(T, Z, \varepsilon_Y), \qquad Z,\ \varepsilon_T,\ \varepsilon_Y \text{ independent}
 $$
 
-**Intervene** on $T$, written $do(T = t)$: delete $T$'s equation, set $T = t$, recompute everything downstream with the *same* noise. $Z$ keeps its value
+**Intervene** on $T$, written $do(T = t)$: delete $T$'s equation and set $T = t$. Every other equation stays, and the noises keep their distribution. $Z$ keeps its distribution
 
 ```{r}
 #| label: dag-do
@@ -969,12 +860,39 @@ dag_adjust(FALSE, "as observed") + dag_adjust(TRUE, "under do(T = t)")
 Collect two or three answers; most say "regress Y on T and Z", some "average over Z". Both are half of it.
 :::
 
-Under $do(T = t)$ the outcome is $g(t, Z, \varepsilon_Y)$, so $\mathbb E[Y \mid do(T = t)] = \mathbb E\, g(t, Z, \varepsilon_Y)$. Compare $\mathbb E[Y \mid T = t]$: the average $Y$ among the units that *happened* to have $T = t$
+Under $do(T = t)$, $Y = g(t, Z, \varepsilon_Y)$ with $(Z, \varepsilon_Y)$ distributed as before, so $\mathbb E[Y \mid do(T = t)] = \mathbb E\, g(t, Z, \varepsilon_Y)$. Compare $\mathbb E[Y \mid T = t]$, the average over the units that *happened* to have $T = t$
 
-From observed $(T, Z, Y)$, with $Z$ observed, we can estimate conditional means such as $\mathbb E[Y \mid T = t, Z]$
+```{r}
+#| label: condition-vs-do
+#| fig-height: 1.9
+#| fig-width: 8.4
+#| out-width: "70%"
+#| fig-align: center
+# 40 units; Z raises the chance of T = 1. Left: the units that happened to have T = 1.
+# Right: every unit, all set to T = 1. Dashed: the average Z of the units averaged over.
+set.seed(3)
+units <- tibble(Z = qnorm(ppoints(40))) |>
+  mutate(T = as.numeric(runif(40) < plogis(2 * Z)), height = runif(40))
+panels <- c("conditioning: the units with T = 1", "intervening: do(T = 1) for every unit")
+both <- bind_rows(mutate(units, panel = panels[1], used = T == 1),
+                  mutate(units, panel = panels[2], used = TRUE)) |>
+  mutate(panel = factor(panel, levels = panels))
+centers <- both |> filter(used) |> group_by(panel) |> summarise(z = mean(Z))
+ggplot(both, aes(Z, height)) +
+  geom_vline(data = centers, aes(xintercept = z), colour = m_pink, linetype = "dashed", linewidth = 1) +
+  geom_point(aes(colour = used), size = 4, show.legend = FALSE) +
+  scale_colour_manual(values = c("TRUE" = v_dark, "FALSE" = "grey80")) +
+  facet_wrap(~ panel) +
+  scale_y_continuous(expand = expansion(add = 0.15)) +
+  labs(x = "Z", y = NULL) +
+  theme(axis.text.y = element_blank(), panel.grid.major.y = element_blank(),
+        panel.grid.minor.y = element_blank(), strip.text = element_text(size = 15),
+        axis.title.x = element_text(size = 14, margin = margin(t = 0)),
+        plot.margin = margin(0, 4, 0, 4))
+```
 
 ::: {.ask}
-Write down what you would compute from the observed data to get $\mathbb E[Y \mid do(T = t)]$, and what has to be true of $Z$ for it to work.
+From observed $(T, Z, Y)$: write down what you would compute to get $\mathbb E[Y \mid do(T = t)]$, and what has to be true of $Z$ for it to work.
 :::
 
 ## The confounding gap
@@ -983,12 +901,12 @@ Write down what you would compute from the observed data to get $\mathbb E[Y \mi
 State, do not derive: exercise 2.
 :::
 
-The same DAG, made linear: $T = \alpha Z + \varepsilon_T$, $\;Y = \tau T + \gamma Z + \varepsilon_Y$, noises independent with mean $0$
+The same DAG, made linear: $T = \alpha Z + \varepsilon_T$, $\;Y = \tau T + \beta Z + \varepsilon_Y$, with $Z$, $\varepsilon_T$, $\varepsilon_Y$ independent normal and the noises mean $0$
 $$
 \mathbb E[Y \mid do(T = 1)] - \mathbb E[Y \mid do(T = 0)] = \tau
 $$
 $$
-\mathbb E[Y \mid T = 1] - \mathbb E[Y \mid T = 0] = \tau + \gamma\,\big(\mathbb E[Z \mid T = 1] - \mathbb E[Z \mid T = 0]\big)
+\mathbb E[Y \mid T = 1] - \mathbb E[Y \mid T = 0] = \tau + \beta\,\big(\mathbb E[Z \mid T = 1] - \mathbb E[Z \mid T = 0]\big)
 $$
 
 ::: {.retrieval}
@@ -1002,12 +920,13 @@ The naive difference is the effect plus what $Z$ contributes through selection: 
 ## Adjustment theorem
 
 ::: {.notes}
-Stated; proof is exercise 3. The condition in words is the point. Same DAG in week 8 and week 10.
+Stated; proof is exercise 3. The condition in words is the point. Same DAG in weeks 8 and 10.
+Continuous T (exercise 3): also a positive continuous density of (T, Z), and E g(t, z, eps_Y) continuous in (t, z).
 :::
 
 ::: {.columns}
 ::: {.column width="66%"}
-**Adjustment theorem.** Structural model with independent noises, $Z$ observed: $T = h(Z, \varepsilon_T)$, $Y = g(T, Z, \varepsilon_Y)$. If $P(T = t \mid Z) > 0$ with probability one (continuous $T$: positive density at $t$),
+**Adjustment theorem.** Structural model with independent noises, $Z$ observed, $T$ taking finitely many values: $T = h(Z, \varepsilon_T)$, $Y = g(T, Z, \varepsilon_Y)$. If $P(T = t \mid Z) > 0$ with probability one,
 $$
 \mathbb E[Y \mid do(T = t)] = \mathbb E_Z\Big[\, \mathbb E[Y \mid T = t, Z]\, \Big]
 $$
@@ -1046,50 +965,75 @@ $$
 Logistic regression of $T$ on $Z$ estimates it: `glm(T ~ Z, family = binomial())`
 
 ::: {.ask}
-Suppose you can estimate $\pi(z)$ well, but you have no model for $\mathbb E[Y \mid T, Z]$. How would you use $\hat\pi$ to estimate $\mathbb E[Y \mid do(T = 1)]$?
+Suppose you can estimate $\pi(z)$ well, but you have no regression model for $\mathbb E[Y \mid T, Z]$. How would you use $\hat\pi$ to estimate $\mathbb E[Y \mid do(T = 1)]$?
 :::
 
-## Propensity weighting theorem
+. . .
+
+Hint: make the data look as if $T$ had been assigned by a coin flip, not by the confounders
+
+## Inverse propensity weighting theorem
 
 ::: {.notes}
 Proof on the next slide, the lecture's one proof.
 :::
 
-**Propensity weighting theorem.** Structural model with independent noises, $Z$ observed, $T \in \{0, 1\}$: $T = h(Z, \varepsilon_T)$, $Y = g(T, Z, \varepsilon_Y)$, $\pi(z) = P(T = 1 \mid Z = z)$. If $0 < \pi(Z) < 1$ with probability one,
+**Inverse propensity weighting (IPW) theorem.** Structural model with independent noises, $Z$ observed, $T \in \{0, 1\}$: $T = h(Z, \varepsilon_T)$, $Y = g(T, Z, \varepsilon_Y)$, $\pi(z) = P(T = 1 \mid Z = z)$. If $0 < \pi(Z) < 1$ with probability one,
 $$
 \mathbb E[Y \mid do(T = 1)] = \mathbb E\Big[\frac{T\,Y}{\pi(Z)}\Big], \qquad \mathbb E[Y \mid do(T = 0)] = \mathbb E\Big[\frac{(1 - T)\,Y}{1 - \pi(Z)}\Big]
 $$
 
 ::: {.leave}
-Weight each treated unit by $1/\pi(Z)$: it stands in for $1/\pi(Z)$ units with the same $Z$. The adjustment theorem needs a model for $Y$. This one needs a model for $T$, and logistic regression gives one.
+Weight each treated unit by $1/\pi(Z)$: it stands in for $1/\pi(Z)$ units with the same $Z$. The adjustment theorem needs a regression model for $Y$. This one needs a regression model for $T$, and logistic regression gives one.
 :::
 
-## Propensity weighting theorem, proof
+## Inverse propensity weighting theorem, proof (1 of 2)
 
 ::: {.notes}
-Q1 (before click 1): why is E[T | Z, eps_Y] = pi(Z)? (eps_T independent of Z and eps_Y)
-
-Q2 (before click 2): where is pi(Z) > 0 used? (to divide)
+(a) We have the intervened world, not observed for everyone. Its Y is g(1, Z, eps_Y); the average is over (Z, eps_Y), which keep their distribution.
+(b) We want T in it (the observed treatment h(Z, eps_T), not the 1 we set), but T enters only through its chance pi(Z): multiply and divide by pi(Z). Allowed because pi(Z) > 0.
+(c) We want T itself, not its chance. Given (Z, eps_Y), only eps_T is random in T = h(Z, eps_T), and it is independent of (Z, eps_Y): the chance is still pi(Z).
 :::
 
-$T$ is $0$ or $1$, and when $T = 1$ the outcome is $g(1, Z, \varepsilon_Y)$, so $T\,Y = T\,g(1, Z, \varepsilon_Y)$
+Start from what we want, and change one term at a time
 
-. . .
-
-$T = h(Z, \varepsilon_T)$ and $\varepsilon_T$ is independent of $(Z, \varepsilon_Y)$, so given $(Z, \varepsilon_Y)$ the chance that $T = 1$ is $\pi(Z)$:
 $$
-\mathbb E[T \mid Z, \varepsilon_Y] = \pi(Z)
+\begin{alignedat}{2}
+\mathbb E[Y \mid do(T = 1)]
+&= \mathbb E_{Z, \varepsilon_Y}\big[\,\underbrace{g(1, Z, \varepsilon_Y)}_{\text{(a)}}\,\big]
+&\quad& \class{fragment}{\color{gray}\small\text{(a) } Y \text{ under } do(T = 1)} \\[4pt]
+&\class{fragment}{{}= \mathbb E_{Z, \varepsilon_Y}\Big[\,\underbrace{\frac{\pi(Z)}{\pi(Z)}}_{\text{(b)}}\, g(1, Z, \varepsilon_Y)\Big]}
+&& \class{fragment}{\color{gray}\small\text{(b) } {=}\ 1\text{, as } \pi(Z) > 0} \\[4pt]
+&\class{fragment}{{}= \mathbb E_{Z, \varepsilon_Y}\Big[\,\frac{\overbrace{\mathbb E_{\varepsilon_T}[T \mid Z, \varepsilon_Y]}^{\text{(c)}}}{\pi(Z)}\, g(1, Z, \varepsilon_Y)\Big]}
+&& \class{fragment}{\color{gray}\small\text{(c) } {=}\ \pi(Z)\text{: independence}}
+\end{alignedat}
 $$
 
-. . .
+## Inverse propensity weighting theorem, proof (2 of 2)
 
-Condition on $(Z, \varepsilon_Y)$, by the tower property:
-$$
-\mathbb E\Big[\frac{T\,Y}{\pi(Z)}\Big] = \mathbb E\Big[\frac{\pi(Z)\, g(1, Z, \varepsilon_Y)}{\pi(Z)}\Big] = \mathbb E\big[g(1, Z, \varepsilon_Y)\big] = \mathbb E[Y \mid do(T = 1)] \qquad\blacksquare
-$$
-The last step: under $do(T = 1)$, $Y = g(1, Z, \varepsilon_Y)$ with $Z$ and $\varepsilon_Y$ unchanged. For $T = 0$, the same with $1 - T$ and $1 - \pi(Z)$
+::: {.notes}
+(d) We have a conditional expectation over eps_T times a factor fixed once (Z, eps_Y) is given, g(1, Z, eps_Y)/pi(Z); we want it next to T: take the fixed factor inside.
+(e) We have an average over eps_T inside an average over (Z, eps_Y); we want one average: the tower property, over Z and both noises.
+(f) We have g(1, Z, eps_Y), not observed for everyone; times T it is the observed TY (T = 1: Y = g(1, Z, eps_Y); T = 0: both 0). Left: observed variables and the true pi(Z); in practice, pi-hat.
+:::
 
-## Where propensity weighting fails
+$$
+\begin{alignedat}{2}
+\mathbb E[Y \mid do(T = 1)]
+&= \mathbb E_{Z, \varepsilon_Y}\Big[\,\frac{\mathbb E_{\varepsilon_T}[T \mid Z, \varepsilon_Y]}{\pi(Z)}\, g(1, Z, \varepsilon_Y)\Big]
+&\quad& \\[4pt]
+&\class{fragment}{{}= \mathbb E_{Z, \varepsilon_Y}\Big[\,\underbrace{\mathbb E_{\varepsilon_T}\Big[\frac{T\, g(1, Z, \varepsilon_Y)}{\pi(Z)} \;\Big|\; Z, \varepsilon_Y\Big]}_{\text{(d)}}\Big]}
+&& \class{fragment}{\color{gray}\small\text{(d) factor moved inside}} \\[4pt]
+&\class{fragment}{{}= \mathbb E_{Z, \varepsilon_T, \varepsilon_Y}\Big[\frac{T\, g(1, Z, \varepsilon_Y)}{\pi(Z)}\Big]}
+&& \class{fragment}{\color{gray}\small\text{(e) tower property}} \\[4pt]
+&\class{fragment}{{}= \mathbb E_{T, Z, Y}\Big[\frac{T\,Y}{\pi(Z)}\Big] \quad \blacksquare}
+&& \class{fragment}{\color{gray}\small\text{(f) } T\,g(1, Z, \varepsilon_Y) = T\,Y}
+\end{alignedat}
+$$
+
+For $T = 0$: the same steps with $1 - T$ and $1 - \pi(Z)$
+
+## Where inverse propensity weighting fails
 
 ::: {.notes}
 The seminar fits pi-hat with glm and looks at the largest weights.
@@ -1097,23 +1041,11 @@ The seminar fits pi-hat with glm and looks at the largest weights.
 
 - $\pi(Z)$ near $0$ or $1$: a few units get huge weights, and the estimate is unstable. The condition $0 < \pi(Z) < 1$ is about the population; in a sample it shows up as extreme weights
 
-- A common cause left out of $Z$: $\varepsilon_T$ and $\varepsilon_Y$ are dependent, and the second line of the proof breaks
+- Causal machine learning replaces logistic regression with more flexible models. If these models achieve high accuracy, they can output probabilities close to $0$ or $1$, and the weights explode: a better classifier can make a worse weighting estimate
+
+- A common cause left out of $Z$: $\varepsilon_T$ and $\varepsilon_Y$ are dependent, and step (c) of the proof breaks
 
 - $\hat\pi$ in place of $\pi$: the weights are only as good as the logistic regression that produced them
-
-## Conclusions {.inverse}
-
-::: {.notes}
-Compress: measuring something else and forgetting the difference.
-:::
-
-Wisdom from one of the great early statistical explorers
-
-[Udny Yule](https://mathshistory.st-andrews.ac.uk/Biographies/Yule/quotations/):
-
-> **Measurement does not necessarily mean progress**. Failing the possibility of measuring that which you desire, the lust for measurement may, for example, merely result in your measuring something else - and perhaps forgetting the difference - or in your ignoring some things because they cannot be measured.
-
-Remember: regression coefficients do not necessarily mean causal relationships
 
 ## {.inverse .center}
 
@@ -1139,16 +1071,18 @@ Scientific progress: be wrong in more interesting/specific ways
 Exercise 4 is today's proof with the slides closed; exercise 3 is the adjustment proof.
 :::
 
-- This week: exercises 1 to 4 at the top of the notebook. The proof of the optimal threshold theorem; the confounding gap; the proof of the adjustment theorem; and today's propensity weighting proof again, with the slides closed
+- This week: exercises 1 to 4 at the top of the notebook. The proof of the optimal threshold theorem; the confounding gap; the proof of the adjustment theorem; and today's inverse propensity weighting proof again, with the slides closed
 
-## Causal inference {.inverse .center}
+## Conclusions {.inverse}
 
 ::: {.notes}
-Skip if behind.
+Compress: measuring something else and forgetting the difference; the point is to change it.
 :::
 
-### An exciting interdisciplinary field
+Wisdom from one of the great early statistical explorers, [Udny Yule](https://mathshistory.st-andrews.ac.uk/Biographies/Yule/quotations/):
 
-#### Practically important, connections to ML
+> **Measurement does not necessarily mean progress**. Failing the possibility of measuring that which you desire, the lust for measurement may, for example, merely result in your measuring something else - and perhaps forgetting the difference - or in your ignoring some things because they cannot be measured.
+
+Remember: regression coefficients do not necessarily mean causal relationships. Causal inference: an exciting interdisciplinary field, practically important, with connections to ML
 
 > "Data scientists have hitherto only predicted the world in various ways; the point is to change it" - Joshua Loftus

@@ -2367,7 +2367,7 @@ window.Quarto = {
 <td>Problem 2(a, b): effect 1, naive slope 2</td>
 <td style="text-align: right;">5</td>
 <td>Keep</td>
-<td>The slope is the effect plus <span class="math inline">\(\gamma\delta = 2 \cdot \tfrac12\)</span></td>
+<td>The slope is the effect plus <span class="math inline">\(\beta\delta = 2 \cdot \tfrac12\)</span></td>
 </tr>
 <tr class="even">
 <td>Problem 2(c): adjustment by hand</td>
@@ -2425,13 +2425,13 @@ window.Quarto = {
 </tr>
 <tr class="odd">
 <td>Coding 2, step 3 and question 5: world D</td>
-<td style="text-align: right;">5</td>
+<td style="text-align: right;">3</td>
 <td>Rush</td>
 <td>The coefficient and the averaged difference agree; problem 2(c) did it by hand</td>
 </tr>
 <tr class="even">
 <td>Coding 2, step 4 and question 6: world E, three estimates</td>
-<td style="text-align: right;">8</td>
+<td style="text-align: right;">10</td>
 <td>Keep</td>
 <td>Naive about 5.2, the other two near 2; look at the five largest weights</td>
 </tr>
@@ -2445,7 +2445,7 @@ window.Quarto = {
 <ul>
 <li>Students did exercises 1 to 4 at home. Open the <a href="https://ml4ds.com/seminar-teachers/notebook3_complete.html">complete notebook</a> on screen: blue boxes are hints, opened in order after the room has had a few minutes; green boxes are answers.</li>
 <li>Show an exercise’s solution only if asked. Exercise 4’s is the lecture’s proof; exercise 3 proves the adjustment theorem, which the lecture only stated.</li>
-<li>Everything headed “Optional, can be done at home” is outside the seminar, including the <code>yardstick</code> checks, same noise against fresh noise (question 7) and world E repeated (question 8).</li>
+<li>Everything headed “Optional, can be done at home” is outside the seminar, that is, the <code>yardstick</code> checks and the attrition data.</li>
 </ul>
 <p>What students should see</p>
 <ul>
@@ -2453,7 +2453,7 @@ window.Quarto = {
 <li>Bill model: odds of Chinstrap times about 9 per millimeter of bill length; six errors at <span class="math inline">\(\tfrac12\)</span> (3 misses, 3 false alarms); <code>glm</code> warns that fitted probabilities are numerically 0 or 1.</li>
 <li>Flipper model: AUC 0.734, and the area under the hand-built curve is the same number; with costs 5 and 1 the cost per bird is lowest, 0.58, at thresholds 0.16 and 0.17, against <span class="math inline">\(1/6\)</span>; at <span class="math inline">\(\tfrac12\)</span> it is 1.11.</li>
 <li>Four worlds: slopes near 2 in A, B and C and near <span class="math inline">\(-3.8\)</span> in D (they vary by student, no seed); intervention effects exactly 2, 0, 0 and <span class="math inline">\(-3\)</span>; in D the coefficient on <code>X</code> with <code>Z</code> included is within about 0.1 of <span class="math inline">\(-3\)</span> and equals the averaged difference.</li>
-<li>World E (2000 units, no seed): naive difference about 5.2 (the gap is <span class="math inline">\(3 \times 1.07\)</span>); regression coefficient between about 1.93 and 2.09; weighting estimate near 2 but the most variable, between about 1.7 and 2.3 in nine runs out of ten. The largest weight is usually 15 to 100, on a treated unit with <code>Z</code> below about <span class="math inline">\(-1.4\)</span> or an untreated one with <code>Z</code> above about 2. Over 200 runs (question 8) the standard deviations are about 0.2 for weighting and 0.05 for regression.</li>
+<li>World E (2000 units, no seed): naive difference about 5.2 (the gap is <span class="math inline">\(3 \times 1.07\)</span>); regression coefficient between about 1.93 and 2.09; weighting estimate near 2 but the most variable, between about 1.7 and 2.3 in nine runs out of ten. The largest weight is usually 15 to 100, on a treated unit with <code>Z</code> below about <span class="math inline">\(-1.4\)</span> or an untreated one with <code>Z</code> above about 2. Over repeated runs the standard deviations are about 0.2 for weighting and 0.05 for regression.</li>
 </ul>
 <p>Where they get stuck</p>
 <ul>

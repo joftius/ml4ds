@@ -263,7 +263,7 @@ Note
 <section id="before-the-seminar" class="level2">
 <h2 class="anchored" data-anchor-id="before-the-seminar">Before the seminar</h2>
 <!-- At home, before the seminar. -->
-<p>The lecture proved one result, the propensity weighting theorem, which you prove again with the slides closed (exercise 4). It stated the optimal threshold theorem and the adjustment theorem and left their proofs to you (exercises 1 and 3), and it stated the confounding gap without deriving it (exercise 2). Do all four on paper before the seminar; the seminar’s problems are variations on them. You may use, without proof, two facts from ST102: the tower property, <span class="math inline">\(\mathbb E[W] = \mathbb E\big[\mathbb E[W \mid X]\big]\)</span>, and that if <span class="math inline">\(V\)</span> is independent of <span class="math inline">\(X\)</span>, then <span class="math inline">\(\mathbb E[k(X, V) \mid X = x] = \mathbb E[k(x, V)]\)</span> for any function <span class="math inline">\(k\)</span> (freeze <span class="math inline">\(X\)</span> at <span class="math inline">\(x\)</span>; the distribution of <span class="math inline">\(V\)</span> does not move). Throughout, assume that every expectation that appears exists: finite means, and finite variances wherever a variance or covariance appears.</p>
+<p>The lecture proved one result, the inverse propensity weighting theorem, which you prove again with the slides closed (exercise 4). It stated the optimal threshold theorem and the adjustment theorem and left their proofs to you (exercises 1 and 3), and it stated the confounding gap without deriving it (exercise 2). Do all four on paper before the seminar; the seminar’s problems are variations on them. You may use, without proof, two facts from ST102: the tower property, <span class="math inline">\(\mathbb E[W] = \mathbb E\big[\mathbb E[W \mid X]\big]\)</span>, and that if <span class="math inline">\(V\)</span> is independent of <span class="math inline">\(X\)</span>, then <span class="math inline">\(\mathbb E[k(X, V) \mid X = x] = \mathbb E[k(x, V)]\)</span> for any function <span class="math inline">\(k\)</span> (freeze <span class="math inline">\(X\)</span> at <span class="math inline">\(x\)</span>; the distribution of <span class="math inline">\(V\)</span> does not move). A third fact, taking out what is known: <span class="math inline">\(\mathbb E[f(X)\,W \mid X] = f(X)\,\mathbb E[W \mid X]\)</span>. Throughout, assume that every expectation that appears exists: finite means, and finite variances wherever a variance or covariance appears.</p>
 <div class="callout callout-style-default callout-warning callout-titled" title="Hints">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -336,15 +336,15 @@ Note
 </div>
 </div>
 </div>
-<p><strong>Exercise 2 (confounding gap).</strong> The lecture’s DAG made linear. <span class="math inline">\(Z\)</span>, <span class="math inline">\(\varepsilon_T\)</span> and <span class="math inline">\(\varepsilon_Y\)</span> are independent, <span class="math inline">\(\varepsilon_T\)</span> and <span class="math inline">\(\varepsilon_Y\)</span> have mean <span class="math inline">\(0\)</span>, <span class="math inline">\(\mathrm{Var}(T) &gt; 0\)</span>, and <span class="math display">\[
-T = \alpha Z + \varepsilon_T, \qquad Y = \tau T + \gamma Z + \varepsilon_Y.
+<p><strong>Exercise 2 (confounding gap).</strong> The lecture’s DAG made linear. <span class="math inline">\(Z\)</span>, <span class="math inline">\(\varepsilon_T\)</span> and <span class="math inline">\(\varepsilon_Y\)</span> are independent and normal (so that conditioning on <span class="math inline">\(T = 0\)</span> and on <span class="math inline">\(T = 1\)</span> makes sense), <span class="math inline">\(\varepsilon_T\)</span> and <span class="math inline">\(\varepsilon_Y\)</span> have mean <span class="math inline">\(0\)</span>, <span class="math inline">\(\mathrm{Var}(T) &gt; 0\)</span>, and <span class="math display">\[
+T = \alpha Z + \varepsilon_T, \qquad Y = \tau T + \beta Z + \varepsilon_Y.
 \]</span></p>
 <ol type="a">
-<li><p>Under <span class="math inline">\(do(T = t)\)</span>, which variables keep their values? Show that <span class="math inline">\(\mathbb E[Y \mid do(T = t)] = \tau t + \gamma\, \mathbb E Z\)</span>, so that moving <span class="math inline">\(t\)</span> from <span class="math inline">\(0\)</span> to <span class="math inline">\(1\)</span> changes the mean of <span class="math inline">\(Y\)</span> by <span class="math inline">\(\tau\)</span>.</p></li>
-<li><p>As observed, show that <span class="math inline">\(\mathbb E[Y \mid T = t] = \tau t + \gamma\, \mathbb E[Z \mid T = t]\)</span>, and hence <span class="math display">\[
-\mathbb E[Y \mid T = 1] - \mathbb E[Y \mid T = 0] = \tau + \gamma\,\big(\mathbb E[Z \mid T = 1] - \mathbb E[Z \mid T = 0]\big).
+<li><p>Under <span class="math inline">\(do(T = t)\)</span>, which variables keep their distributions? Show that <span class="math inline">\(\mathbb E[Y \mid do(T = t)] = \tau t + \beta\, \mathbb E Z\)</span>, so that moving <span class="math inline">\(t\)</span> from <span class="math inline">\(0\)</span> to <span class="math inline">\(1\)</span> changes the mean of <span class="math inline">\(Y\)</span> by <span class="math inline">\(\tau\)</span>.</p></li>
+<li><p>As observed, show that <span class="math inline">\(\mathbb E[Y \mid T = t] = \tau t + \beta\, \mathbb E[Z \mid T = t]\)</span>, and hence <span class="math display">\[
+\mathbb E[Y \mid T = 1] - \mathbb E[Y \mid T = 0] = \tau + \beta\,\big(\mathbb E[Z \mid T = 1] - \mathbb E[Z \mid T = 0]\big).
 \]</span> Where did you use independence?</p></li>
-<li><p>Show that the population slope of the least-squares line of <span class="math inline">\(Y\)</span> on <span class="math inline">\(T\)</span> alone, <span class="math inline">\(\mathrm{Cov}(T, Y)/\mathrm{Var}(T)\)</span>, is <span class="math inline">\(\tau + \gamma\,\delta\)</span> with <span class="math inline">\(\delta = \mathrm{Cov}(Z, T)/\mathrm{Var}(T)\)</span>. Which quantity in week 2’s omitted-variable bias plays the role of <span class="math inline">\(\delta\)</span>?</p></li>
+<li><p>Show that the population slope of the least-squares line of <span class="math inline">\(Y\)</span> on <span class="math inline">\(T\)</span> alone, <span class="math inline">\(\mathrm{Cov}(T, Y)/\mathrm{Var}(T)\)</span>, is <span class="math inline">\(\tau + \beta\,\delta\)</span> with <span class="math inline">\(\delta = \mathrm{Cov}(Z, T)/\mathrm{Var}(T)\)</span>. Which quantity in week 2’s omitted-variable bias plays the role of <span class="math inline">\(\delta\)</span>?</p></li>
 <li><p>When is the gap zero?</p></li>
 </ol>
 <div class="callout callout-style-default callout-note callout-titled" title="Hint 1">
@@ -401,9 +401,13 @@ T = \alpha Z + \varepsilon_T, \qquad Y = \tau T + \gamma Z + \varepsilon_Y.
 </div>
 </div>
 </div>
-<p><strong>Exercise 3 (adjustment theorem).</strong> The lecture stated this one; prove it. Structural model: <span class="math inline">\(Z\)</span>, <span class="math inline">\(\varepsilon_T\)</span> and <span class="math inline">\(\varepsilon_Y\)</span> independent, <span class="math inline">\(T = h(Z, \varepsilon_T)\)</span>, <span class="math inline">\(Y = g(T, Z, \varepsilon_Y)\)</span>; under <span class="math inline">\(do(T = t)\)</span> the equation for <span class="math inline">\(T\)</span> is deleted, <span class="math inline">\(T\)</span> is set to <span class="math inline">\(t\)</span>, and everything else keeps its equation and its noise. Suppose <span class="math inline">\(P(T = t \mid Z) &gt; 0\)</span> with probability one (for a continuous <span class="math inline">\(T\)</span>: the conditional density of <span class="math inline">\(T\)</span> at <span class="math inline">\(t\)</span> given <span class="math inline">\(Z\)</span> is positive with probability one). Show that <span class="math display">\[
+<p><strong>Exercise 3 (adjustment theorem).</strong> The lecture stated this one; prove it. Structural model: <span class="math inline">\(Z\)</span>, <span class="math inline">\(\varepsilon_T\)</span> and <span class="math inline">\(\varepsilon_Y\)</span> independent, <span class="math inline">\(T = h(Z, \varepsilon_T)\)</span>, <span class="math inline">\(Y = g(T, Z, \varepsilon_Y)\)</span>; under <span class="math inline">\(do(T = t)\)</span> the equation for <span class="math inline">\(T\)</span> is deleted, <span class="math inline">\(T\)</span> is set to <span class="math inline">\(t\)</span>, every other equation stays, and the noises keep their distribution. Suppose <span class="math inline">\(T\)</span> takes finitely many values and <span class="math inline">\(P(T = t \mid Z) &gt; 0\)</span> with probability one. Show that <span class="math display">\[
 \mathbb E[Y \mid do(T = t)] = \mathbb E_Z\Big[\,\mathbb E[Y \mid T = t, Z]\,\Big],
 \]</span> and say where each assumption is used: the independence of the noises, <span class="math inline">\(Z\)</span> not being a consequence of <span class="math inline">\(T\)</span>, and the condition on <span class="math inline">\(P(T = t \mid Z)\)</span>.</p>
+<p>When <span class="math inline">\(Z\)</span> takes finitely many values, the formula is commonly written as a sum. The reading writes it this way, for probabilities of <span class="math inline">\(Y\)</span> rather than its mean, and calls it the adjustment formula. It is the same formula: <span class="math display">\[
+\mathbb E[Y \mid do(T = t)] = \sum_z \mathbb E[Y \mid T = t, Z = z]\, P(Z = z).
+\]</span></p>
+<p>For a continuous <span class="math inline">\(T\)</span> (as in problem 2 and world D), <span class="math inline">\(T = t\)</span> exactly has probability <span class="math inline">\(0\)</span>, and the theorem needs two more conditions: <span class="math inline">\((T, Z)\)</span> has a continuous joint density that is positive everywhere, and <span class="math inline">\(m_t(z) = \mathbb E[g(t, z, \varepsilon_Y)]\)</span> is continuous in <span class="math inline">\(t\)</span> and <span class="math inline">\(z\)</span>. Then <span class="math inline">\(\mathbb E[Y \mid T = t, Z = z]\)</span> is the limit of the average <span class="math inline">\(Y\)</span> over units with <span class="math inline">\((T, Z)\)</span> near <span class="math inline">\((t, z)\)</span>, that limit is <span class="math inline">\(m_t(z)\)</span>, and the same proof goes through. The linear normal models in this notebook satisfy both conditions.</p>
 <div class="callout callout-style-default callout-note callout-titled" title="Hint 1">
 <div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-9-contents" aria-controls="callout-9" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
@@ -416,7 +420,7 @@ T = \alpha Z + \varepsilon_T, \qquad Y = \tau T + \gamma Z + \varepsilon_Y.
 </div>
 <div id="callout-9" class="callout-9-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<p>Start from the intervened world. What is <span class="math inline">\(Y\)</span> under <span class="math inline">\(do(T = t)\)</span>, and which variables keep their values? Give the average over the noise with <span class="math inline">\(Z\)</span> frozen a name: <span class="math inline">\(m_t(z) = \mathbb E\big[g(t, z, \varepsilon_Y)\big]\)</span>.</p>
+<p>Start from the intervened world. What is <span class="math inline">\(Y\)</span> under <span class="math inline">\(do(T = t)\)</span>, and which variables keep their distributions? Give the average over the noise with <span class="math inline">\(Z\)</span> frozen a name: <span class="math inline">\(m_t(z) = \mathbb E\big[g(t, z, \varepsilon_Y)\big]\)</span>.</p>
 </div>
 </div>
 </div>
@@ -468,7 +472,7 @@ T = \alpha Z + \varepsilon_T, \qquad Y = \tau T + \gamma Z + \varepsilon_Y.
 </div>
 </div>
 </div>
-<p><strong>Exercise 4 (propensity weighting theorem).</strong> The lecture proved this one. Close the slides and prove it again. The structural model of exercise 3, with <span class="math inline">\(T \in \{0, 1\}\)</span> and the propensity score <span class="math inline">\(\pi(z) = P(T = 1 \mid Z = z)\)</span>, where <span class="math inline">\(0 &lt; \pi(Z) &lt; 1\)</span> with probability one.</p>
+<p><strong>Exercise 4 (inverse propensity weighting theorem).</strong> The lecture proved this one. Close the slides and prove it again. The structural model of exercise 3, with <span class="math inline">\(T \in \{0, 1\}\)</span> and the propensity score <span class="math inline">\(\pi(z) = P(T = 1 \mid Z = z)\)</span>, where <span class="math inline">\(0 &lt; \pi(Z) &lt; 1\)</span> with probability one.</p>
 <ol type="a">
 <li><p>Show that <span class="math inline">\(\mathbb E[Y \mid do(T = 1)] = \mathbb E\big[T\,Y/\pi(Z)\big]\)</span>, and say where you used the independence of the noises, <span class="math inline">\(Z\)</span> not being a consequence of <span class="math inline">\(T\)</span>, and <span class="math inline">\(\pi(Z) &gt; 0\)</span>.</p></li>
 <li><p>Show that <span class="math inline">\(\mathbb E[Y \mid do(T = 0)] = \mathbb E\big[(1 - T)\,Y/(1 - \pi(Z))\big]\)</span>.</p></li>
@@ -487,7 +491,7 @@ T = \alpha Z + \varepsilon_T, \qquad Y = \tau T + \gamma Z + \varepsilon_Y.
 <div id="callout-13" class="callout-13-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <ol type="a">
-<li><span class="math inline">\(T\)</span> is <span class="math inline">\(0\)</span> or <span class="math inline">\(1\)</span>. Check that <span class="math inline">\(T\,Y = T\,g(1, Z, \varepsilon_Y)\)</span> in both cases.</li>
+<li>Start from what you want. Under <span class="math inline">\(do(T = 1)\)</span>, what is <span class="math inline">\(Y\)</span>, and what is random? To bring <span class="math inline">\(T\)</span> in, multiply and divide by <span class="math inline">\(\pi(Z)\)</span>.</li>
 </ol>
 </div>
 </div>
@@ -505,7 +509,7 @@ T = \alpha Z + \varepsilon_T, \qquad Y = \tau T + \gamma Z + \varepsilon_Y.
 <div id="callout-14" class="callout-14-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <ol type="a">
-<li>Use the second ST102 fact with <span class="math inline">\(V = \varepsilon_T\)</span> and <span class="math inline">\((Z, \varepsilon_Y)\)</span> in the role of <span class="math inline">\(X\)</span>: what is <span class="math inline">\(\mathbb E[T \mid Z, \varepsilon_Y]\)</span>? Then condition on <span class="math inline">\((Z, \varepsilon_Y)\)</span> with the tower property.</li>
+<li>Replace the <span class="math inline">\(\pi(Z)\)</span> on top by <span class="math inline">\(\mathbb E_{\varepsilon_T}[T \mid Z, \varepsilon_Y]\)</span>. Why are they equal? (The second fact, with <span class="math inline">\(V = \varepsilon_T\)</span>.) Then take the fixed factor inside and use the tower property.</li>
 </ol>
 </div>
 </div>
@@ -521,6 +525,24 @@ T = \alpha Z + \varepsilon_T, \qquad Y = \tau T + \gamma Z + \varepsilon_Y.
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
 <div id="callout-15" class="callout-15-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<ol type="a">
+<li>At the end, check that <span class="math inline">\(T\,g(1, Z, \varepsilon_Y) = T\,Y\)</span> when <span class="math inline">\(T = 0\)</span> and when <span class="math inline">\(T = 1\)</span>.</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled" title="Hint 4">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-16-contents" aria-controls="callout-16" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Hint 4
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-16" class="callout-16-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <ol start="3" type="a">
 <li><span class="math inline">\(T\,Y = Y\,\mathbb 1[T = 1]\)</span>, so <span class="math inline">\(\mathbb E[T\,Y \mid Z] = P(T = 1 \mid Z)\, \mathbb E[Y \mid T = 1, Z]\)</span>.</li>
@@ -545,51 +567,13 @@ T = \alpha Z + \varepsilon_T, \qquad Y = \tau T + \gamma Z + \varepsilon_Y.
 <li><p>Compute <span class="math inline">\(\mathrm{Var}(T)\)</span>, <span class="math inline">\(\mathrm{Cov}(T, Y)\)</span> and the population slope of the regression of <span class="math inline">\(Y\)</span> on <span class="math inline">\(T\)</span> alone. Write it as “effect plus gap” and identify the gap.</p></li>
 <li><p>Compute <span class="math inline">\(\mathbb E[Y \mid T = t, Z = z]\)</span>, average it over <span class="math inline">\(Z\)</span>, and check that you recover (a). Where did you use that the noises are independent?</p></li>
 </ol>
-<p><strong>Problem 3 (propensity weighting by hand).</strong> <span class="math inline">\(Z\)</span> is <span class="math inline">\(0\)</span> or <span class="math inline">\(1\)</span>, each with probability <span class="math inline">\(\tfrac12\)</span>. Treatment depends on <span class="math inline">\(Z\)</span>: <span class="math inline">\(T = h(Z, \varepsilon_T)\)</span> with <span class="math inline">\(\pi(0) = 0.2\)</span> and <span class="math inline">\(\pi(1) = 0.8\)</span>. The outcome is <span class="math inline">\(Y = 2T + 4Z + \varepsilon_Y\)</span>, with <span class="math inline">\(\varepsilon_Y\)</span> of mean <span class="math inline">\(0\)</span>, and <span class="math inline">\(Z\)</span>, <span class="math inline">\(\varepsilon_T\)</span>, <span class="math inline">\(\varepsilon_Y\)</span> independent.</p>
+<p><strong>Problem 3 (inverse propensity weighting by hand).</strong> <span class="math inline">\(Z\)</span> is <span class="math inline">\(0\)</span> or <span class="math inline">\(1\)</span>, each with probability <span class="math inline">\(\tfrac12\)</span>. Treatment depends on <span class="math inline">\(Z\)</span>: <span class="math inline">\(T = h(Z, \varepsilon_T)\)</span> with <span class="math inline">\(\pi(0) = 0.2\)</span> and <span class="math inline">\(\pi(1) = 0.8\)</span>. The outcome is <span class="math inline">\(Y = 2T + 4Z + \varepsilon_Y\)</span>, with <span class="math inline">\(\varepsilon_Y\)</span> of mean <span class="math inline">\(0\)</span>, and <span class="math inline">\(Z\)</span>, <span class="math inline">\(\varepsilon_T\)</span>, <span class="math inline">\(\varepsilon_Y\)</span> independent.</p>
 <ol type="a">
 <li><p>What is <span class="math inline">\(\mathbb E[Y \mid do(T = 1)] - \mathbb E[Y \mid do(T = 0)]\)</span>?</p></li>
 <li><p>Picture 100 units in exactly these proportions. How many are treated with <span class="math inline">\(Z = 0\)</span>, treated with <span class="math inline">\(Z = 1\)</span>, untreated with <span class="math inline">\(Z = 0\)</span>, untreated with <span class="math inline">\(Z = 1\)</span>? Compute <span class="math inline">\(\mathbb E[Y \mid T = 1] - \mathbb E[Y \mid T = 0]\)</span> and write it as effect plus gap.</p></li>
 <li><p>Give each treated unit the weight <span class="math inline">\(1/\pi(Z)\)</span> and each untreated unit the weight <span class="math inline">\(1/(1 - \pi(Z))\)</span>, and multiply each count from (b) by its weight. What do the weighted treated units look like? Compute <span class="math inline">\(\mathbb E\big[T\,Y/\pi(Z)\big]\)</span> and <span class="math inline">\(\mathbb E\big[(1 - T)\,Y/(1 - \pi(Z))\big]\)</span> and compare with (a).</p></li>
 <li><p>Which units get the largest weights? What would happen to them if <span class="math inline">\(\pi(0)\)</span> were <span class="math inline">\(0.01\)</span>?</p></li>
 </ol>
-<section id="optional-can-be-done-at-home" class="level3">
-<h3 class="anchored" data-anchor-id="optional-can-be-done-at-home">Optional, can be done at home</h3>
-<!-- Not in the seminar. Hints are in the student file. -->
-<p><strong>Problem 4 (the causation runs the other way).</strong> <span class="math inline">\(Y = \varepsilon_Y\)</span> with variance <span class="math inline">\(4\)</span>, and <span class="math inline">\(T = 0.4\,Y + \varepsilon_T\)</span>, with <span class="math inline">\(\varepsilon_T\)</span> of variance <span class="math inline">\(0.16\)</span>, independent of <span class="math inline">\(Y\)</span>. Find the population slope of <span class="math inline">\(Y\)</span> on <span class="math inline">\(T\)</span> and the effect of raising <span class="math inline">\(t\)</span> by one. Compare with problem 2(b).</p>
-<div class="callout callout-style-default callout-note callout-titled" title="Hint 1">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-16-contents" aria-controls="callout-16" aria-expanded="false" aria-label="Toggle callout">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Note</span>Hint 1
-</div>
-<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
-</div>
-<div id="callout-16" class="callout-16-contents callout-collapse collapse">
-<div class="callout-body-container callout-body">
-<p><span class="math inline">\(\mathrm{Var}(T) = 0.4^2\,\mathrm{Var}(Y) + \mathrm{Var}(\varepsilon_T)\)</span>.</p>
-</div>
-</div>
-</div>
-<p><strong>Problem 5 (a model that predicts well).</strong> A hospital fits a model that predicts which patients will be readmitted within 30 days, and it predicts well on held-out patients. Management proposes to reduce readmissions by acting on the model’s strongest predictor. Draw the DAGs of three worlds consistent with that held-out score, say in which of them the plan works, and say what the score told you about which world you are in.</p>
-<div class="callout callout-style-default callout-note callout-titled" title="Hint 1">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-17-contents" aria-controls="callout-17" aria-expanded="false" aria-label="Toggle callout">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Note</span>Hint 1
-</div>
-<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
-</div>
-<div id="callout-17" class="callout-17-contents callout-collapse collapse">
-<div class="callout-body-container callout-body">
-<p>The lecture’s explanations of an observed correlation: the predictor causes readmission, a common cause drives both, or readmission risk drives the predictor.</p>
-</div>
-</div>
-</div>
-</section>
 </section>
 <section id="coding" class="level2">
 <h2 class="anchored" data-anchor-id="coding">Coding</h2>
@@ -698,10 +682,17 @@ T = \alpha Z + \varepsilon_T, \qquad Y = \tau T + \gamma Z + \varepsilon_Y.
 </div>
 </section>
 </section>
-<section id="simulated-worlds-adjustment-and-propensity-weighting" class="level3">
-<h3 class="anchored" data-anchor-id="simulated-worlds-adjustment-and-propensity-weighting">2. Simulated worlds: adjustment and propensity weighting</h3>
+<section id="simulated-worlds-adjustment-and-inverse-propensity-weighting" class="level3">
+<h3 class="anchored" data-anchor-id="simulated-worlds-adjustment-and-inverse-propensity-weighting">2. Simulated worlds: adjustment and inverse propensity weighting</h3>
 <!-- 22 min: steps 1 to 4, questions 4 to 6. -->
-<p>Four simulated worlds in which <span class="math inline">\(Y\)</span> is regressed on <span class="math inline">\(X\)</span>. In the lecture the target variable was called <span class="math inline">\(T\)</span>; here it is <code>X</code>, because <code>T</code> is <code>TRUE</code> in R. The function draws the noise once and keeps it, so that an intervention can be computed for the <em>same</em> units. World D is the lecture’s DAG with the confounder <span class="math inline">\(Z\)</span> observed: <span class="math inline">\(Z \to X\)</span>, <span class="math inline">\(Z \to Y\)</span>, <span class="math inline">\(X \to Y\)</span>. Step 4 adds a fifth world, E, with the same DAG and a binary treatment.</p>
+<p>Suppose we find a statistically significant correlation between <span class="math inline">\(X\)</span> and <span class="math inline">\(Y\)</span>. What does it mean?</p>
+<ol type="1">
+<li>A false positive (a spurious correlation)</li>
+<li><span class="math inline">\(X\)</span> causes <span class="math inline">\(Y\)</span></li>
+<li><span class="math inline">\(Y\)</span> causes <span class="math inline">\(X\)</span></li>
+<li>Both have a common cause <span class="math inline">\(U\)</span>, possibly unobserved</li>
+</ol>
+<p>Without experimental data, explanations 2 to 4 can be statistically indistinguishable, and they have importantly different consequences. Worlds A, C and B below are explanations 2, 3 and 4, built so that the slope of <span class="math inline">\(Y\)</span> on <span class="math inline">\(X\)</span> is about the same in all three. In the lecture the target variable was called <span class="math inline">\(T\)</span>; here it is <code>X</code>, because <code>T</code> is <code>TRUE</code> in R. The function draws the noise once and keeps it, so that step 2 can reuse it. World D is the lecture’s DAG with the confounder <span class="math inline">\(Z\)</span> observed: <span class="math inline">\(Z \to X\)</span>, <span class="math inline">\(Z \to Y\)</span>, <span class="math inline">\(X \to Y\)</span>. Step 4 adds a fifth world, E, with the same DAG and a binary treatment.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>simulate_world <span class="ot">&lt;-</span> <span class="cf">function</span>(world, <span class="at">n =</span> <span class="dv">500</span>) {</span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>  e_u <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(n)</span>
@@ -736,8 +727,9 @@ T = \alpha Z + \varepsilon_T, \qquad Y = \tau T + \gamma Z + \varepsilon_Y.
 <span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="co">#   summarise(slope = coef(lm(____))[2])</span></span>
 <span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a><span class="co"># ...</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<p><strong>Question 4.</strong> Before you intervene: for each world, write down what you expect to happen to <span class="math inline">\(Y\)</span> when <span class="math inline">\(X\)</span> is set to <span class="math inline">\(X + 1\)</span> for every unit with the same noise, and the average change. Use each world’s equations, and exercise 2 for world D.</p>
+<p><strong>Question 4.</strong> Before you intervene: for each world, write down what you expect to happen to the average of <span class="math inline">\(Y\)</span> when <span class="math inline">\(X\)</span> is set to <span class="math inline">\(X + 1\)</span> for every unit. Use each world’s equations, and exercise 2 for world D.</p>
 <p><strong>Step 2.</strong> Now intervene: set <span class="math inline">\(X\)</span> to <span class="math inline">\(X + 1\)</span> for every unit and recompute <span class="math inline">\(Y\)</span> <strong>with the same noise</strong>, following each world’s equations. Write the four <code>Y_do</code> lines and compute the average change in <span class="math inline">\(Y\)</span> in each world.</p>
+<p>Note: recomputing each unit’s <span class="math inline">\(Y\)</span> with its own noise is different from the intervention calculations in the lecture, which use only the distribution of the noise. We will learn more about it later in the course. Here it makes the average change exact, with no simulation noise.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>intervene <span class="ot">&lt;-</span> <span class="cf">function</span>(d) {</span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>  d <span class="sc">|&gt;</span> <span class="fu">mutate</span>(</span>
@@ -771,7 +763,7 @@ T = \alpha Z + \varepsilon_T, \qquad Y = \tau T + \gamma Z + \varepsilon_Y.
 <span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a><span class="co"># ...</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p><strong>Question 5.</strong> Compare the coefficient on <code>X</code> with the averaged difference, and both with the effect you found in step 2. Which result says the coefficient estimates the effect, which says the averaged difference does, and what about world D made both work? What would go wrong in world B, where the confounder <code>e_u</code> is in the table but would not be observed in practice?</p>
-<p><strong>Step 4.</strong> World E: the same DAG, with a binary treatment. Each unit is treated (<code>X = 1</code>) with probability <span class="math inline">\(\pi(Z)\)</span>, where <span class="math inline">\(\pi(z) = 1/(1 + e^{-(-0.5 + 1.5 z)})\)</span>, and <span class="math inline">\(Y = 1 + 2X + 3Z + \varepsilon_Y\)</span>, so the effect of treatment is <span class="math inline">\(2\)</span>. Compute three estimates of it: the naive difference in means between treated and untreated; the propensity weighting estimate, with <span class="math inline">\(\hat\pi\)</span> from the logistic regression of <code>X</code> on <code>Z</code>; and the coefficient on <code>X</code> in <code>lm(Y ~ X + Z)</code>. Then look at the five units with the largest weights.</p>
+<p><strong>Step 4.</strong> World E: the same DAG, with a binary treatment. Each unit is treated (<code>X = 1</code>) with probability <span class="math inline">\(\pi(Z)\)</span>, where <span class="math inline">\(\pi(z) = 1/(1 + e^{-(-0.5 + 1.5 z)})\)</span>, and <span class="math inline">\(Y = 1 + 2X + 3Z + \varepsilon_Y\)</span>, so the effect of treatment is <span class="math inline">\(2\)</span>. Compute three estimates of it: the naive difference in means between treated and untreated; the inverse propensity weighting estimate, with <span class="math inline">\(\hat\pi\)</span> from the logistic regression of <code>X</code> on <code>Z</code>; and the coefficient on <code>X</code> in <code>lm(Y ~ X + Z)</code>. Then look at the five units with the largest weights.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>simulate_world_e <span class="ot">&lt;-</span> <span class="cf">function</span>(<span class="at">n =</span> <span class="dv">2000</span>) {</span>
 <span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>  Z <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(n)</span>
@@ -799,35 +791,17 @@ T = \alpha Z + \varepsilon_T, \qquad Y = \tau T + \gamma Z + \varepsilon_Y.
 <span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a><span class="fu">c</span>(<span class="at">treated =</span> <span class="fu">sum</span>(d_e<span class="sc">$</span>w[d_e<span class="sc">$</span>X <span class="sc">==</span> <span class="dv">1</span>]), <span class="at">untreated =</span> <span class="fu">sum</span>(d_e<span class="sc">$</span>w[d_e<span class="sc">$</span>X <span class="sc">==</span> <span class="dv">0</span>])) <span class="sc">/</span> <span class="fu">nrow</span>(d_e)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p><strong>Question 6.</strong> Which of the three estimates are near <span class="math inline">\(2\)</span>, and which result explains each one? Which units have the largest weights, and what is unusual about them? If the unit with the largest weight had not been in the sample, and the other weights stayed as they are, by how much would the weighting estimate move?</p>
-<section id="optional-can-be-done-at-home-same-noise-or-fresh-noise" class="level4">
-<h4 class="anchored" data-anchor-id="optional-can-be-done-at-home-same-noise-or-fresh-noise">Optional, can be done at home: same noise or fresh noise</h4>
-<p><strong>Question 7.</strong> Redraw the noise in <code>intervene()</code> (replace <code>e_y</code> by <code>rnorm(n())</code>) and look at <code>Y_do - Y</code> unit by unit in world A. What changes, and what does not? Which version is the counterfactual for a unit, and which is a new draw from the intervened world?</p>
-</section>
-<section id="optional-can-be-done-at-home-weighting-against-regression-many-times" class="level4">
-<h4 class="anchored" data-anchor-id="optional-can-be-done-at-home-weighting-against-regression-many-times">Optional, can be done at home: weighting against regression, many times</h4>
-<p><strong>Question 8.</strong> Simulate world E 200 times and compute the weighting estimate and the regression coefficient each time. Compare their means and their standard deviations. Why is one more variable than the other, and when would you use weighting anyway?</p>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co"># one_run &lt;- function() {</span></span>
-<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="co">#   d &lt;- simulate_world_e()</span></span>
-<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a><span class="co">#   pi_hat &lt;- fitted(glm(X ~ Z, family = binomial, data = d))</span></span>
-<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a><span class="co">#   tibble(weighting = ____, regression = ____)</span></span>
-<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a><span class="co"># }</span></span>
-<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a><span class="co"># runs &lt;- map_dfr(1:200, \(i) one_run())</span></span>
-<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a><span class="co"># runs |&gt; summarise(across(everything(), list(mean = mean, sd = sd)))</span></span>
-<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a><span class="co"># ...</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
-</section>
 </section>
 <section id="optional-can-be-done-at-home-another-dataset" class="level3">
 <h3 class="anchored" data-anchor-id="optional-can-be-done-at-home-another-dataset">Optional, can be done at home: another dataset</h3>
 <p><strong>Attrition</strong> (<code>modeldata::attrition</code>; <strong>fictional</strong>, made up by IBM data scientists, used only as an exercise): whether an employee leaves, with a threshold-and-costs story (a missed leaver costs a replacement, a false alarm costs a conversation). Leavers are 16 percent, so the accuracy-against-cost point is sharper: at threshold <span class="math inline">\(\tfrac12\)</span> almost nobody is predicted to leave.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(modeldata)</span>
-<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(attrition)</span>
-<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>att <span class="ot">&lt;-</span> attrition <span class="sc">|&gt;</span> <span class="fu">mutate</span>(<span class="at">left =</span> <span class="fu">as.numeric</span>(Attrition <span class="sc">==</span> <span class="st">"Yes"</span>))</span>
-<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>fit_att <span class="ot">&lt;-</span> <span class="fu">glm</span>(left <span class="sc">~</span> OverTime <span class="sc">+</span> MonthlyIncome <span class="sc">+</span> Age <span class="sc">+</span> JobSatisfaction, <span class="at">family =</span> binomial, <span class="at">data =</span> att)</span>
-<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a><span class="co"># then steps 3, 4 and 5 with p = fitted(fit_att), costs 10 (a missed leaver) and 1 (a false alarm)</span></span>
-<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a><span class="co"># ...</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(modeldata)</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(attrition)</span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>att <span class="ot">&lt;-</span> attrition <span class="sc">|&gt;</span> <span class="fu">mutate</span>(<span class="at">left =</span> <span class="fu">as.numeric</span>(Attrition <span class="sc">==</span> <span class="st">"Yes"</span>))</span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>fit_att <span class="ot">&lt;-</span> <span class="fu">glm</span>(left <span class="sc">~</span> OverTime <span class="sc">+</span> MonthlyIncome <span class="sc">+</span> Age <span class="sc">+</span> JobSatisfaction, <span class="at">family =</span> binomial, <span class="at">data =</span> att)</span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a><span class="co"># then steps 3, 4 and 5 with p = fitted(fit_att), costs 10 (a missed leaver) and 1 (a false alarm)</span></span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a><span class="co"># ...</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 
 
