@@ -87,11 +87,11 @@ dag_adjust <- function(intervened = FALSE, title = NULL) {
 ## {.inverse .center}
 
 ::: {.notes}
-Plan about 79 of 90 at week 2's rough pace (2 min a light slide, 1 a dark one; 33 light, 13 dark): over the 76 budget. Cuts 1 and 2 below bring it to about 75; all four, about 71. Dark = rush or skip; each dark slide's note says skip or gives the compressed phrase.
+Plan about 76 of 90 with cuts 1 and 2 made from the start; about 81 without them, at week 2's rough pace (2 min a light slide, 1 a dark one; 34 light, 13 dark). Dark = rush or skip; each dark slide's note says skip or gives the compressed phrase.
 
-Cut order: (1) ROC in one sentence, (2) Yule history in one line, (3) contours and boundaries narrated, (4) the confounding gap in one sentence (exercise 2 derives it).
+Cut order: (1) ROC in one sentence, (2) Yule history in one line (both planned), (3) contours and boundaries narrated, (4) the confounding gap in one sentence (exercise 2 derives it).
 
-Pace, no cuts: 0:30 threshold theorem, 0:31 end of part 1, 0:45 Yule's regressions, 1:03 the adjustment question, 1:09 the propensity question, 1:13 proof done.
+Pace, with cuts 1 and 2: 0:28 threshold theorem, 0:30 end of part 1, 0:40 Yule's regressions, 0:58 the adjustment question, 1:04 the propensity question, 1:10 proof done.
 
 In the notebook: threshold proof (ex. 1), confounding gap (ex. 2), adjustment proof (ex. 3), this proof redone (ex. 4).
 :::
@@ -213,8 +213,10 @@ eg1
 #| fig-width: 8
 #| fig-height: 4.6
 #| out-width: "71%"
+fit_1d <- glm(y ~ x1, family = "binomial", data = train)
+x_half <- -coef(fit_1d)[[1]] / coef(fit_1d)[[2]]   # where the fitted probability crosses 1/2
 eg1 +
-  annotate("segment", x = .9, xend = .9, y = .8, yend  = 2.2, linetype = "dashed", linewidth = 1, color = v_blue) +
+  annotate("segment", x = x_half, xend = x_half, y = .8, yend  = 2.2, linetype = "dashed", linewidth = 1, color = v_blue) +
   geom_point(data =  train,
              aes(color =  y), alpha =  .4,
              show.legend = FALSE) +
@@ -259,10 +261,11 @@ ggplot(
   geom_point(
     data = train,
              aes(shape = y, color = y),
-             size = 2, stroke = 1, alpha = .9,
-             show.legend = FALSE) +
+             size = 2, stroke = 1, alpha = .9) +
   scale_shape_manual(values=c(21, 22)) +
-  scale_color_viridis_d(option = "viridis", direction = -1, end = .8) +
+  scale_color_viridis_d(option = "viridis", end = .8) +
+  labs(shape = "class", colour = "class",
+       caption = "shading: fitted P(class 1); dashed: 1/2; pink: misclassified") +
   scale_fill_viridis_d(option = "viridis", end = .8) +
   geom_point(
     data = augment(logit_model,
@@ -304,7 +307,7 @@ Coefficient scale: log-odds? Exponentiate $\to$ odds ratios (intercept: baseline
 
 ```{r}
 #| echo: true
-broom::tidy(model_fit, exponentiate = TRUE)
+broom::tidy(model_fit, exponentiate = TRUE) |> select(term, estimate)
 ```
 
 ## Interpretation: inference and diagnostics
@@ -315,7 +318,7 @@ How glm finds the MLE (likelihood, score equations) is week 4's opener.
 
 - Fitted by maximum likelihood; how `glm` does it: next week
 
-- MLEs $\to$ asymptotic normality for intervals/tests
+- MLEs $\to$ asymptotic normality for intervals/tests (fixed $p$, regularity conditions)
 
 `summary()`, `coef()`, `confint()`, `anova()`, etc in `R`
 
@@ -384,7 +387,7 @@ Accuracy $= (\text{TP} + \text{TN})/n$ hides the split. With 95% zeros, predicti
 ## ROC: the curve invented for radar
 
 ::: {.notes}
-Second on the cut order: say "one point per threshold" and move on. The seminar builds this curve with a loop.
+First on the cut order: say "one point per threshold" and move on. The seminar builds this curve with a loop.
 :::
 
 ::: {.columns}
@@ -495,7 +498,7 @@ $$\hat y = \mathbb I(\hat p > c) = \begin{cases} 0 & \text{ if } \hat p \leq c \
 
 Log-odds function is monotonic, so (hyperplanes)
 
-$$\hat p > c \leftrightarrow x^T \beta > c'$$
+$$\hat p > c \leftrightarrow x^T \hat\beta > c' = \log\frac{c}{1 - c}, \quad 0 < c < 1$$
 :::
 ::: {.column width="52%"}
 - More classes: transform to binary, predict using largest $\hat p_k$
@@ -539,7 +542,7 @@ But *why*? "[Welfare](http://economistjourney.blogspot.com/2014/08/the-crazy-dre
 ## History: origin of multiple regression {.inverse}
 
 ::: {.notes}
-Compress: Yule, 1897, the first multiple regression, "controlling for" age.
+Compress: Yule, 1897 and 1899, multiple regression "controlling for" age.
 :::
 
 ::: {.columns}
@@ -548,7 +551,7 @@ Compress: Yule, 1897, the first multiple regression, "controlling for" age.
 
 - Studied this poverty question
 
-- First paper using multiple regression in 1897
+- Multiple regression developed in 1897, applied to poverty, welfare and age in 1899
 
 - Association between poverty and welfare while "controlling for" age
 :::
@@ -557,7 +560,7 @@ Compress: Yule, 1897, the first multiple regression, "controlling for" age.
 :::
 :::
 
-## History: Yule, in 1897 {.inverse}
+## History: Yule, 1897 and 1899 {.inverse}
 
 ::: {.notes}
 Compress: welfare, poverty, age; is the association "due to" age?
@@ -898,7 +901,7 @@ From observed $(T, Z, Y)$: write down what you would compute to get $\mathbb E[Y
 State, do not derive: exercise 2.
 :::
 
-The same DAG, made linear: $T = \alpha Z + \varepsilon_T$, $\;Y = \tau T + \beta Z + \varepsilon_Y$, noises independent with mean $0$
+The same DAG, made linear: $T = \alpha Z + \varepsilon_T$, $\;Y = \tau T + \beta Z + \varepsilon_Y$, with $Z$, $\varepsilon_T$, $\varepsilon_Y$ independent normal and the noises mean $0$
 $$
 \mathbb E[Y \mid do(T = 1)] - \mathbb E[Y \mid do(T = 0)] = \tau
 $$
@@ -917,12 +920,13 @@ The naive difference is the effect plus what $Z$ contributes through selection: 
 ## Adjustment theorem
 
 ::: {.notes}
-Stated; proof is exercise 3. The condition in words is the point. Same DAG in week 8 and week 10.
+Stated; proof is exercise 3. The condition in words is the point. Same DAG in weeks 8 and 10.
+Continuous T (exercise 3): also a positive continuous density of (T, Z), and E g(t, z, eps_Y) continuous in (t, z).
 :::
 
 ::: {.columns}
 ::: {.column width="66%"}
-**Adjustment theorem.** Structural model with independent noises, $Z$ observed: $T = h(Z, \varepsilon_T)$, $Y = g(T, Z, \varepsilon_Y)$. If $P(T = t \mid Z) > 0$ with probability one (continuous $T$: positive density at $t$),
+**Adjustment theorem.** Structural model with independent noises, $Z$ observed, $T$ taking finitely many values: $T = h(Z, \varepsilon_T)$, $Y = g(T, Z, \varepsilon_Y)$. If $P(T = t \mid Z) > 0$ with probability one,
 $$
 \mathbb E[Y \mid do(T = t)] = \mathbb E_Z\Big[\, \mathbb E[Y \mid T = t, Z]\, \Big]
 $$
@@ -983,30 +987,51 @@ $$
 Weight each treated unit by $1/\pi(Z)$: it stands in for $1/\pi(Z)$ units with the same $Z$. The adjustment theorem needs a regression model for $Y$. This one needs a regression model for $T$, and logistic regression gives one.
 :::
 
-## Inverse propensity weighting theorem, proof
+## Inverse propensity weighting theorem, proof (1 of 2)
 
 ::: {.notes}
-Q1 (before click 1): why is E[T | Z, eps_Y] = pi(Z)? (eps_T independent of Z and eps_Y)
-
-Q2 (before click 2): where is pi(Z) > 0 used? (to divide)
+(a) We have the intervened world, not observed for everyone. Its Y is g(1, Z, eps_Y); the average is over (Z, eps_Y), which keep their distribution.
+(b) We want T in it (the observed treatment h(Z, eps_T), not the 1 we set), but T enters only through its chance pi(Z): multiply and divide by pi(Z). Allowed because pi(Z) > 0.
+(c) We want T itself, not its chance. Given (Z, eps_Y), only eps_T is random in T = h(Z, eps_T), and it is independent of (Z, eps_Y): the chance is still pi(Z).
 :::
 
-$T$ is $0$ or $1$, and when $T = 1$ the outcome is $g(1, Z, \varepsilon_Y)$, so $T\,Y = T\,g(1, Z, \varepsilon_Y)$
+Start from what we want, and change one term at a time
 
-. . .
+$$
+\begin{alignedat}{2}
+\mathbb E[Y \mid do(T = 1)]
+&= \mathbb E_{Z, \varepsilon_Y}\big[\,\underbrace{g(1, Z, \varepsilon_Y)}_{\text{(a)}}\,\big]
+&\quad& \class{fragment}{\color{gray}\small\text{(a) } Y \text{ under } do(T = 1)} \\[4pt]
+&\class{fragment}{{}= \mathbb E_{Z, \varepsilon_Y}\Big[\,\underbrace{\frac{\pi(Z)}{\pi(Z)}}_{\text{(b)}}\, g(1, Z, \varepsilon_Y)\Big]}
+&& \class{fragment}{\color{gray}\small\text{(b) } {=}\ 1\text{, as } \pi(Z) > 0} \\[4pt]
+&\class{fragment}{{}= \mathbb E_{Z, \varepsilon_Y}\Big[\,\frac{\overbrace{\mathbb E_{\varepsilon_T}[T \mid Z, \varepsilon_Y]}^{\text{(c)}}}{\pi(Z)}\, g(1, Z, \varepsilon_Y)\Big]}
+&& \class{fragment}{\color{gray}\small\text{(c) } {=}\ \pi(Z)\text{: independence}}
+\end{alignedat}
+$$
 
-$T = h(Z, \varepsilon_T)$ and $\varepsilon_T$ is independent of $(Z, \varepsilon_Y)$, so given $(Z, \varepsilon_Y)$ the chance that $T = 1$ is $\pi(Z)$:
+## Inverse propensity weighting theorem, proof (2 of 2)
+
+::: {.notes}
+(d) We have a conditional expectation over eps_T times a factor fixed once (Z, eps_Y) is given, g(1, Z, eps_Y)/pi(Z); we want it next to T: take the fixed factor inside.
+(e) We have an average over eps_T inside an average over (Z, eps_Y); we want one average: the tower property, over Z and both noises.
+(f) We have g(1, Z, eps_Y), not observed for everyone; times T it is the observed TY (T = 1: Y = g(1, Z, eps_Y); T = 0: both 0). Left: observed variables and the true pi(Z); in practice, pi-hat.
+:::
+
 $$
-\mathbb E[T \mid Z, \varepsilon_Y] = \pi(Z)
+\begin{alignedat}{2}
+\mathbb E[Y \mid do(T = 1)]
+&= \mathbb E_{Z, \varepsilon_Y}\Big[\,\frac{\mathbb E_{\varepsilon_T}[T \mid Z, \varepsilon_Y]}{\pi(Z)}\, g(1, Z, \varepsilon_Y)\Big]
+&\quad& \\[4pt]
+&\class{fragment}{{}= \mathbb E_{Z, \varepsilon_Y}\Big[\,\underbrace{\mathbb E_{\varepsilon_T}\Big[\frac{T\, g(1, Z, \varepsilon_Y)}{\pi(Z)} \;\Big|\; Z, \varepsilon_Y\Big]}_{\text{(d)}}\Big]}
+&& \class{fragment}{\color{gray}\small\text{(d) factor moved inside}} \\[4pt]
+&\class{fragment}{{}= \mathbb E_{Z, \varepsilon_T, \varepsilon_Y}\Big[\frac{T\, g(1, Z, \varepsilon_Y)}{\pi(Z)}\Big]}
+&& \class{fragment}{\color{gray}\small\text{(e) tower property}} \\[4pt]
+&\class{fragment}{{}= \mathbb E_{T, Z, Y}\Big[\frac{T\,Y}{\pi(Z)}\Big] \quad \blacksquare}
+&& \class{fragment}{\color{gray}\small\text{(f) } T\,g(1, Z, \varepsilon_Y) = T\,Y}
+\end{alignedat}
 $$
 
-. . .
-
-Condition on $(Z, \varepsilon_Y)$, by the tower property:
-$$
-\mathbb E\Big[\frac{T\,Y}{\pi(Z)}\Big] = \mathbb E\Big[\frac{\pi(Z)\, g(1, Z, \varepsilon_Y)}{\pi(Z)}\Big] = \mathbb E\big[g(1, Z, \varepsilon_Y)\big] = \mathbb E[Y \mid do(T = 1)] \qquad\blacksquare
-$$
-The last step: under $do(T = 1)$, $Y = g(1, Z, \varepsilon_Y)$ with $(Z, \varepsilon_Y)$ distributed as before. For $T = 0$, the same with $1 - T$ and $1 - \pi(Z)$
+For $T = 0$: the same steps with $1 - T$ and $1 - \pi(Z)$
 
 ## Where inverse propensity weighting fails
 
@@ -1018,7 +1043,7 @@ The seminar fits pi-hat with glm and looks at the largest weights.
 
 - Causal machine learning replaces logistic regression with more flexible models. If these models achieve high accuracy, they can output probabilities close to $0$ or $1$, and the weights explode: a better classifier can make a worse weighting estimate
 
-- A common cause left out of $Z$: $\varepsilon_T$ and $\varepsilon_Y$ are dependent, and the second line of the proof breaks
+- A common cause left out of $Z$: $\varepsilon_T$ and $\varepsilon_Y$ are dependent, and step (c) of the proof breaks
 
 - $\hat\pi$ in place of $\pi$: the weights are only as good as the logistic regression that produced them
 

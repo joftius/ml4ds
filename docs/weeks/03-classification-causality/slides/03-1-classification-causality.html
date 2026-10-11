@@ -330,14 +330,14 @@ p(x) = P(Y = 1 \mid X = x) = \mathbb E[Y \mid X = x]
 </div>
 <p>Coefficient scale: log-odds? Exponentiate <span class="math inline">\(\to\)</span> odds ratios (intercept: baseline odds)</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a aria-hidden="true" tabindex="-1"></a>broom<span class="sc">::</span><span class="fu">tidy</span>(model_fit, <span class="at">exponentiate =</span> <span class="cn">TRUE</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a aria-hidden="true" tabindex="-1"></a>broom<span class="sc">::</span><span class="fu">tidy</span>(model_fit, <span class="at">exponentiate =</span> <span class="cn">TRUE</span>) <span class="sc">|&gt;</span> <span class="fu">select</span>(term, estimate)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 3 × 5
-  term        estimate std.error statistic  p.value
-  &lt;chr&gt;          &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;
-1 (Intercept)    0.106     0.656     -3.42 0.000635
-2 x1             8.78      0.584      3.72 0.000198
-3 x2             4.62      0.499      3.07 0.00215 </code></pre>
+<pre><code># A tibble: 3 × 2
+  term        estimate
+  &lt;chr&gt;          &lt;dbl&gt;
+1 (Intercept)    0.106
+2 x1             8.78 
+3 x2             4.62 </code></pre>
 </div>
 </div>
 </section>
@@ -345,7 +345,7 @@ p(x) = P(Y = 1 \mid X = x) = \mathbb E[Y \mid X = x]
 <h2>Interpretation: inference and diagnostics</h2>
 <ul>
 <li><p>Fitted by maximum likelihood; how <code>glm</code> does it: next week</p></li>
-<li><p>MLEs <span class="math inline">\(\to\)</span> asymptotic normality for intervals/tests</p></li>
+<li><p>MLEs <span class="math inline">\(\to\)</span> asymptotic normality for intervals/tests (fixed <span class="math inline">\(p\)</span>, regularity conditions)</p></li>
 </ul>
 <p><code>summary()</code>, <code>coef()</code>, <code>confint()</code>, <code>anova()</code>, etc in <code>R</code></p>
 <ul>
@@ -442,7 +442,7 @@ p(x) &gt; c^\star = \frac{c_{FP}}{c_{FP} + c_{FN}},
 </ul>
 <p><span class="math display">\[\hat y = \mathbb I(\hat p &gt; c) = \begin{cases} 0 &amp; \text{ if } \hat p \leq c \\  1 &amp; \text{ if } \hat p &gt; c \end{cases}\]</span></p>
 <p>Log-odds function is monotonic, so (hyperplanes)</p>
-<p><span class="math display">\[\hat p &gt; c \leftrightarrow x^T \beta &gt; c'\]</span></p>
+<p><span class="math display">\[\hat p &gt; c \leftrightarrow x^T \hat\beta &gt; c' = \log\frac{c}{1 - c}, \quad 0 &lt; c &lt; 1\]</span></p>
 </div><div class="column" style="width:52%;">
 <ul>
 <li>More classes: transform to binary, predict using largest <span class="math inline">\(\hat p_k\)</span></li>
@@ -479,15 +479,15 @@ p(x) &gt; c^\star = \frac{c_{FP}}{c_{FP} + c_{FN}},
 <ul>
 <li><p>Udny Yule (1871-1951)</p></li>
 <li><p>Studied this poverty question</p></li>
-<li><p>First paper using multiple regression in 1897</p></li>
+<li><p>Multiple regression developed in 1897, applied to poverty, welfare and age in 1899</p></li>
 <li><p>Association between poverty and welfare while “controlling for” age</p></li>
 </ul>
 </div><div class="column" style="width:45%;">
 <p><img data-src="https://upload.wikimedia.org/wikipedia/en/4/4a/George_Udny_Yule.jpg" height="380"></p>
 </div></div>
 </section>
-<section id="history-yule-in-1897" class="slide level2 inverse">
-<h2>History: Yule, in 1897</h2>
+<section id="history-yule-1897-and-1899" class="slide level2 inverse">
+<h2>History: Yule, 1897 and 1899</h2>
 <blockquote>
 <p>Instead of speaking of “causal relation,” … we will use the terms “correlation,” …</p>
 </blockquote>
@@ -513,7 +513,7 @@ p(x) &gt; c^\star = \frac{c_{FP}}{c_{FP} + c_{FN}},
 <p>Do more people enter/stay in poverty if welfare is more generous?</p>
 <p>Or is this association “due to” age?</p>
 </section>
-<section id="history-yule-in-1897-1" class="slide level2 inverse">
+<section id="history-yule-in-1897" class="slide level2 inverse">
 <h2>History: Yule, in 1897</h2>
 <blockquote>
 <p>The investigation of <strong>causal relations</strong> between economic phenomena presents many problems of peculiar difficulty, and offers many opportunities for fallacious conclusions.</p>
@@ -791,7 +791,7 @@ T = h(Z, \varepsilon_T), \qquad Y = g(T, Z, \varepsilon_Y), \qquad Z,\ \varepsil
 </section>
 <section id="the-confounding-gap" class="slide level2">
 <h2>The confounding gap</h2>
-<p>The same DAG, made linear: <span class="math inline">\(T = \alpha Z + \varepsilon_T\)</span>, <span class="math inline">\(\;Y = \tau T + \beta Z + \varepsilon_Y\)</span>, noises independent with mean <span class="math inline">\(0\)</span> <span class="math display">\[
+<p>The same DAG, made linear: <span class="math inline">\(T = \alpha Z + \varepsilon_T\)</span>, <span class="math inline">\(\;Y = \tau T + \beta Z + \varepsilon_Y\)</span>, with <span class="math inline">\(Z\)</span>, <span class="math inline">\(\varepsilon_T\)</span>, <span class="math inline">\(\varepsilon_Y\)</span> independent normal and the noises mean <span class="math inline">\(0\)</span> <span class="math display">\[
 \mathbb E[Y \mid do(T = 1)] - \mathbb E[Y \mid do(T = 0)] = \tau
 \]</span> <span class="math display">\[
 \mathbb E[Y \mid T = 1] - \mathbb E[Y \mid T = 0] = \tau + \beta\,\big(\mathbb E[Z \mid T = 1] - \mathbb E[Z \mid T = 0]\big)
@@ -807,7 +807,7 @@ T = h(Z, \varepsilon_T), \qquad Y = g(T, Z, \varepsilon_Y), \qquad Z,\ \varepsil
 <h2>Adjustment theorem</h2>
 <div class="columns">
 <div class="column" style="width:66%;">
-<p><strong>Adjustment theorem.</strong> Structural model with independent noises, <span class="math inline">\(Z\)</span> observed: <span class="math inline">\(T = h(Z, \varepsilon_T)\)</span>, <span class="math inline">\(Y = g(T, Z, \varepsilon_Y)\)</span>. If <span class="math inline">\(P(T = t \mid Z) &gt; 0\)</span> with probability one (continuous <span class="math inline">\(T\)</span>: positive density at <span class="math inline">\(t\)</span>), <span class="math display">\[
+<p><strong>Adjustment theorem.</strong> Structural model with independent noises, <span class="math inline">\(Z\)</span> observed, <span class="math inline">\(T\)</span> taking finitely many values: <span class="math inline">\(T = h(Z, \varepsilon_T)\)</span>, <span class="math inline">\(Y = g(T, Z, \varepsilon_Y)\)</span>. If <span class="math inline">\(P(T = t \mid Z) &gt; 0\)</span> with probability one, <span class="math display">\[
 \mathbb E[Y \mid do(T = t)] = \mathbb E_Z\Big[\, \mathbb E[Y \mid T = t, Z]\, \Big]
 \]</span></p>
 </div><div class="column" style="width:34%;">
@@ -849,26 +849,44 @@ T = h(Z, \varepsilon_T), \qquad Y = g(T, Z, \varepsilon_Y), \qquad Z,\ \varepsil
 <p>Weight each treated unit by <span class="math inline">\(1/\pi(Z)\)</span>: it stands in for <span class="math inline">\(1/\pi(Z)\)</span> units with the same <span class="math inline">\(Z\)</span>. The adjustment theorem needs a regression model for <span class="math inline">\(Y\)</span>. This one needs a regression model for <span class="math inline">\(T\)</span>, and logistic regression gives one.</p>
 </div>
 </section>
-<section id="inverse-propensity-weighting-theorem-proof" class="slide level2">
-<h2>Inverse propensity weighting theorem, proof</h2>
-<p><span class="math inline">\(T\)</span> is <span class="math inline">\(0\)</span> or <span class="math inline">\(1\)</span>, and when <span class="math inline">\(T = 1\)</span> the outcome is <span class="math inline">\(g(1, Z, \varepsilon_Y)\)</span>, so <span class="math inline">\(T\,Y = T\,g(1, Z, \varepsilon_Y)\)</span></p>
-<div class="fragment">
-<p><span class="math inline">\(T = h(Z, \varepsilon_T)\)</span> and <span class="math inline">\(\varepsilon_T\)</span> is independent of <span class="math inline">\((Z, \varepsilon_Y)\)</span>, so given <span class="math inline">\((Z, \varepsilon_Y)\)</span> the chance that <span class="math inline">\(T = 1\)</span> is <span class="math inline">\(\pi(Z)\)</span>: <span class="math display">\[
-\mathbb E[T \mid Z, \varepsilon_Y] = \pi(Z)
+<section id="inverse-propensity-weighting-theorem-proof-1-of-2" class="slide level2">
+<h2>Inverse propensity weighting theorem, proof (1 of 2)</h2>
+<p>Start from what we want, and change one term at a time</p>
+<p><span class="math display">\[
+\begin{alignedat}{2}
+\mathbb E[Y \mid do(T = 1)]
+&amp;= \mathbb E_{Z, \varepsilon_Y}\big[\,\underbrace{g(1, Z, \varepsilon_Y)}_{\text{(a)}}\,\big]
+&amp;\quad&amp; \class{fragment}{\color{gray}\small\text{(a) } Y \text{ under } do(T = 1)} \\[4pt]
+&amp;\class{fragment}{{}= \mathbb E_{Z, \varepsilon_Y}\Big[\,\underbrace{\frac{\pi(Z)}{\pi(Z)}}_{\text{(b)}}\, g(1, Z, \varepsilon_Y)\Big]}
+&amp;&amp; \class{fragment}{\color{gray}\small\text{(b) } {=}\ 1\text{, as } \pi(Z) &gt; 0} \\[4pt]
+&amp;\class{fragment}{{}= \mathbb E_{Z, \varepsilon_Y}\Big[\,\frac{\overbrace{\mathbb E_{\varepsilon_T}[T \mid Z, \varepsilon_Y]}^{\text{(c)}}}{\pi(Z)}\, g(1, Z, \varepsilon_Y)\Big]}
+&amp;&amp; \class{fragment}{\color{gray}\small\text{(c) } {=}\ \pi(Z)\text{: independence}}
+\end{alignedat}
 \]</span></p>
-</div>
-<div class="fragment">
-<p>Condition on <span class="math inline">\((Z, \varepsilon_Y)\)</span>, by the tower property: <span class="math display">\[
-\mathbb E\Big[\frac{T\,Y}{\pi(Z)}\Big] = \mathbb E\Big[\frac{\pi(Z)\, g(1, Z, \varepsilon_Y)}{\pi(Z)}\Big] = \mathbb E\big[g(1, Z, \varepsilon_Y)\big] = \mathbb E[Y \mid do(T = 1)] \qquad\blacksquare
-\]</span> The last step: under <span class="math inline">\(do(T = 1)\)</span>, <span class="math inline">\(Y = g(1, Z, \varepsilon_Y)\)</span> with <span class="math inline">\((Z, \varepsilon_Y)\)</span> distributed as before. For <span class="math inline">\(T = 0\)</span>, the same with <span class="math inline">\(1 - T\)</span> and <span class="math inline">\(1 - \pi(Z)\)</span></p>
-</div>
+</section>
+<section id="inverse-propensity-weighting-theorem-proof-2-of-2" class="slide level2">
+<h2>Inverse propensity weighting theorem, proof (2 of 2)</h2>
+<p><span class="math display">\[
+\begin{alignedat}{2}
+\mathbb E[Y \mid do(T = 1)]
+&amp;= \mathbb E_{Z, \varepsilon_Y}\Big[\,\frac{\mathbb E_{\varepsilon_T}[T \mid Z, \varepsilon_Y]}{\pi(Z)}\, g(1, Z, \varepsilon_Y)\Big]
+&amp;\quad&amp; \\[4pt]
+&amp;\class{fragment}{{}= \mathbb E_{Z, \varepsilon_Y}\Big[\,\underbrace{\mathbb E_{\varepsilon_T}\Big[\frac{T\, g(1, Z, \varepsilon_Y)}{\pi(Z)} \;\Big|\; Z, \varepsilon_Y\Big]}_{\text{(d)}}\Big]}
+&amp;&amp; \class{fragment}{\color{gray}\small\text{(d) factor moved inside}} \\[4pt]
+&amp;\class{fragment}{{}= \mathbb E_{Z, \varepsilon_T, \varepsilon_Y}\Big[\frac{T\, g(1, Z, \varepsilon_Y)}{\pi(Z)}\Big]}
+&amp;&amp; \class{fragment}{\color{gray}\small\text{(e) tower property}} \\[4pt]
+&amp;\class{fragment}{{}= \mathbb E_{T, Z, Y}\Big[\frac{T\,Y}{\pi(Z)}\Big] \quad \blacksquare}
+&amp;&amp; \class{fragment}{\color{gray}\small\text{(f) } T\,g(1, Z, \varepsilon_Y) = T\,Y}
+\end{alignedat}
+\]</span></p>
+<p>For <span class="math inline">\(T = 0\)</span>: the same steps with <span class="math inline">\(1 - T\)</span> and <span class="math inline">\(1 - \pi(Z)\)</span></p>
 </section>
 <section id="where-inverse-propensity-weighting-fails" class="slide level2">
 <h2>Where inverse propensity weighting fails</h2>
 <ul>
 <li><p><span class="math inline">\(\pi(Z)\)</span> near <span class="math inline">\(0\)</span> or <span class="math inline">\(1\)</span>: a few units get huge weights, and the estimate is unstable. The condition <span class="math inline">\(0 &lt; \pi(Z) &lt; 1\)</span> is about the population; in a sample it shows up as extreme weights</p></li>
 <li><p>Causal machine learning replaces logistic regression with more flexible models. If these models achieve high accuracy, they can output probabilities close to <span class="math inline">\(0\)</span> or <span class="math inline">\(1\)</span>, and the weights explode: a better classifier can make a worse weighting estimate</p></li>
-<li><p>A common cause left out of <span class="math inline">\(Z\)</span>: <span class="math inline">\(\varepsilon_T\)</span> and <span class="math inline">\(\varepsilon_Y\)</span> are dependent, and the second line of the proof breaks</p></li>
+<li><p>A common cause left out of <span class="math inline">\(Z\)</span>: <span class="math inline">\(\varepsilon_T\)</span> and <span class="math inline">\(\varepsilon_Y\)</span> are dependent, and step (c) of the proof breaks</p></li>
 <li><p><span class="math inline">\(\hat\pi\)</span> in place of <span class="math inline">\(\pi\)</span>: the weights are only as good as the logistic regression that produced them</p></li>
 </ul>
 </section>

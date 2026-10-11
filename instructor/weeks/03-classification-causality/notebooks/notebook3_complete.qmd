@@ -42,7 +42,7 @@ theme_set(theme_minimal())
 
 <!-- At home, before the seminar. -->
 
-The lecture proved one result, the inverse propensity weighting theorem, which you prove again with the slides closed (exercise 4). It stated the optimal threshold theorem and the adjustment theorem and left their proofs to you (exercises 1 and 3), and it stated the confounding gap without deriving it (exercise 2). Do all four on paper before the seminar; the seminar's problems are variations on them. You may use, without proof, two facts from ST102: the tower property, $\mathbb E[W] = \mathbb E\big[\mathbb E[W \mid X]\big]$, and that if $V$ is independent of $X$, then $\mathbb E[k(X, V) \mid X = x] = \mathbb E[k(x, V)]$ for any function $k$ (freeze $X$ at $x$; the distribution of $V$ does not move). Throughout, assume that every expectation that appears exists: finite means, and finite variances wherever a variance or covariance appears.
+The lecture proved one result, the inverse propensity weighting theorem, which you prove again with the slides closed (exercise 4). It stated the optimal threshold theorem and the adjustment theorem and left their proofs to you (exercises 1 and 3), and it stated the confounding gap without deriving it (exercise 2). Do all four on paper before the seminar; the seminar's problems are variations on them. You may use, without proof, two facts from ST102: the tower property, $\mathbb E[W] = \mathbb E\big[\mathbb E[W \mid X]\big]$, and that if $V$ is independent of $X$, then $\mathbb E[k(X, V) \mid X = x] = \mathbb E[k(x, V)]$ for any function $k$ (freeze $X$ at $x$; the distribution of $V$ does not move). A third fact, taking out what is known: $\mathbb E[f(X)\,W \mid X] = f(X)\,\mathbb E[W \mid X]$. Throughout, assume that every expectation that appears exists: finite means, and finite variances wherever a variance or covariance appears.
 
 ::: {.callout-warning title="Hints"}
 Each exercise has hints, collapsed below it. Do not open a hint unless you have been stuck for at least a few minutes, and open them in order. Exercise 4's proof is on the lecture slides. Solutions to exercises 1 to 3 are shown in the seminar if you ask.
@@ -93,7 +93,7 @@ At $X = x$ the inner expectation is the expected cost of the prediction $\delta(
 Common errors: the ratio upside down, $c_{FN}/(c_{FP} + c_{FN})$ (check an extreme: if a miss were infinitely costly the threshold must go to $0$, and only $c_{FP}/(c_{FP} + c_{FN})$ does that); choosing one threshold to minimize the overall cost directly, without the argument at each $x$; reading the theorem as a statement about $\hat p$. It is about the true $p(x)$; with $\hat p$ in its place the rule is a plug-in rule, only as good as the estimate.
 :::
 
-**Exercise 2 (confounding gap).** The lecture's DAG made linear. $Z$, $\varepsilon_T$ and $\varepsilon_Y$ are independent, $\varepsilon_T$ and $\varepsilon_Y$ have mean $0$, $\mathrm{Var}(T) > 0$, and
+**Exercise 2 (confounding gap).** The lecture's DAG made linear. $Z$, $\varepsilon_T$ and $\varepsilon_Y$ are independent and normal (so that conditioning on $T = 0$ and on $T = 1$ makes sense), $\varepsilon_T$ and $\varepsilon_Y$ have mean $0$, $\mathrm{Var}(T) > 0$, and
 $$
 T = \alpha Z + \varepsilon_T, \qquad Y = \tau T + \beta Z + \varepsilon_Y.
 $$
@@ -134,7 +134,7 @@ Where did you use independence?
 Common errors: letting $Z$ change under the intervention; writing $\mathbb E[\varepsilon_Y \mid T = t] = 0$ without saying why (it needs the independence, which an unobserved common cause of $T$ and $Y$ would break); writing the bias as $\beta\alpha$ instead of $\beta\delta$.
 :::
 
-**Exercise 3 (adjustment theorem).** The lecture stated this one; prove it. Structural model: $Z$, $\varepsilon_T$ and $\varepsilon_Y$ independent, $T = h(Z, \varepsilon_T)$, $Y = g(T, Z, \varepsilon_Y)$; under $do(T = t)$ the equation for $T$ is deleted, $T$ is set to $t$, every other equation stays, and the noises keep their distribution. Suppose $P(T = t \mid Z) > 0$ with probability one (for a continuous $T$: the conditional density of $T$ at $t$ given $Z$ is positive with probability one). Show that
+**Exercise 3 (adjustment theorem).** The lecture stated this one; prove it. Structural model: $Z$, $\varepsilon_T$ and $\varepsilon_Y$ independent, $T = h(Z, \varepsilon_T)$, $Y = g(T, Z, \varepsilon_Y)$; under $do(T = t)$ the equation for $T$ is deleted, $T$ is set to $t$, every other equation stays, and the noises keep their distribution. Suppose $T$ takes finitely many values and $P(T = t \mid Z) > 0$ with probability one. Show that
 $$
 \mathbb E[Y \mid do(T = t)] = \mathbb E_Z\Big[\,\mathbb E[Y \mid T = t, Z]\,\Big],
 $$
@@ -144,6 +144,8 @@ When $Z$ takes finitely many values, the formula is commonly written as a sum. T
 $$
 \mathbb E[Y \mid do(T = t)] = \sum_z \mathbb E[Y \mid T = t, Z = z]\, P(Z = z).
 $$
+
+For a continuous $T$ (as in problem 2 and world D), $T = t$ exactly has probability $0$, and the theorem needs two more conditions: $(T, Z)$ has a continuous joint density that is positive everywhere, and $m_t(z) = \mathbb E[g(t, z, \varepsilon_Y)]$ is continuous in $t$ and $z$. Then $\mathbb E[Y \mid T = t, Z = z]$ is the limit of the average $Y$ over units with $(T, Z)$ near $(t, z)$, that limit is $m_t(z)$, and the same proof goes through. The linear normal models in this notebook satisfy both conditions.
 
 ::: {.callout-note collapse="true" title="Hint 1"}
 Start from the intervened world. What is $Y$ under $do(T = t)$, and which variables keep their distributions? Give the average over the noise with $Z$ frozen a name: $m_t(z) = \mathbb E\big[g(t, z, \varepsilon_Y)\big]$.
@@ -174,7 +176,7 @@ Hint 4: $Z$ is upstream of $T$, so the intervention does not change it, and its 
 $$
 \mathbb E[Y \mid do(T = t)] = \mathbb E_Z\big[m_t(Z)\big] = \mathbb E_Z\Big[\,\mathbb E[Y \mid T = t, Z]\,\Big]. \qquad \blacksquare
 $$
-Where each assumption is used: the independence of the noises in the observed-world step (a common cause of $T$ and $Y$ left out of $Z$ would sit in both $\varepsilon_T$ and $\varepsilon_Y$, making them dependent); $Z$ not a consequence of $T$ in the intervened-world step (a $Z$ downstream of $T$ would change when $T$ is set, and its distribution would differ between the worlds); $P(T = t \mid Z) > 0$ with probability one, so that $\mathbb E[Y \mid T = t, Z = z]$ is defined for almost every $z$ the average runs over (if it failed on a set of $z$ with positive probability, the right-hand side would not be defined there; for a continuous $T$, read it as the conditional density). If $Z$ is empty, $T = h(\varepsilon_T)$ is independent of $\varepsilon_Y$ and the same lines give $\mathbb E[Y \mid do(T = t)] = \mathbb E[Y \mid T = t]$: randomization.
+Where each assumption is used: the independence of the noises in the observed-world step (a common cause of $T$ and $Y$ left out of $Z$ would sit in both $\varepsilon_T$ and $\varepsilon_Y$, making them dependent); $Z$ not a consequence of $T$ in the intervened-world step (a $Z$ downstream of $T$ would change when $T$ is set, and its distribution would differ between the worlds); $P(T = t \mid Z) > 0$ with probability one, so that for the values $z$ the average runs over there are units with $T = t$ and $Z = z$ to average (if a set of $z$ with positive probability had none, the right-hand side would not be defined there). For a continuous $T$, the note under the exercise replaces this step. If $Z$ is empty, $T = h(\varepsilon_T)$ is independent of $\varepsilon_Y$ and the same lines give $\mathbb E[Y \mid do(T = t)] = \mathbb E[Y \mid T = t]$: randomization.
 
 Common errors: letting $Z$ respond to the intervention; asserting $\mathbb E[Y \mid T = t, Z = z] = m_t(z)$ without the independence of $\varepsilon_Y$ from $(T, Z)$; reading the theorem as "regress $Y$ on $T$ and $Z$ and take the coefficient", which is one way to estimate the inside when the conditional mean is linear, not what the theorem says.
 :::
@@ -188,27 +190,39 @@ Common errors: letting $Z$ respond to the intervention; asserting $\mathbb E[Y \
 (c) Without the structural model, show by conditioning on $Z$ that $\mathbb E\big[T\,Y/\pi(Z)\big] = \mathbb E_Z\big[\,\mathbb E[Y \mid T = 1, Z]\,\big]$. What does that say about the two theorems?
 
 ::: {.callout-note collapse="true" title="Hint 1"}
-(a) $T$ is $0$ or $1$. Check that $T\,Y = T\,g(1, Z, \varepsilon_Y)$ in both cases.
+(a) Start from what you want. Under $do(T = 1)$, what is $Y$, and what is random? To bring $T$ in, multiply and divide by $\pi(Z)$.
 :::
 
 ::: {.callout-note collapse="true" title="Hint 2"}
-(a) Use the second ST102 fact with $V = \varepsilon_T$ and $(Z, \varepsilon_Y)$ in the role of $X$: what is $\mathbb E[T \mid Z, \varepsilon_Y]$? Then condition on $(Z, \varepsilon_Y)$ with the tower property.
+(a) Replace the $\pi(Z)$ on top by $\mathbb E_{\varepsilon_T}[T \mid Z, \varepsilon_Y]$. Why are they equal? (The second fact, with $V = \varepsilon_T$.) Then take the fixed factor inside and use the tower property.
 :::
 
 ::: {.callout-note collapse="true" title="Hint 3"}
+(a) At the end, check that $T\,g(1, Z, \varepsilon_Y) = T\,Y$ when $T = 0$ and when $T = 1$.
+:::
+
+::: {.callout-note collapse="true" title="Hint 4"}
 (c) $T\,Y = Y\,\mathbb 1[T = 1]$, so $\mathbb E[T\,Y \mid Z] = P(T = 1 \mid Z)\, \mathbb E[Y \mid T = 1, Z]$.
 :::
 
 ::: {.callout-tip .answer collapse="true" title="Reveal solution"}
-(a) If $T = 0$ both sides of $T\,Y = T\,g(1, Z, \varepsilon_Y)$ are $0$; if $T = 1$, $Y = g(1, Z, \varepsilon_Y)$. Next, $T = h(Z, \varepsilon_T)$ and $\varepsilon_T$ is independent of $(Z, \varepsilon_Y)$, so by the second ST102 fact $\mathbb E[T \mid Z = z, \varepsilon_Y = e] = P\big(h(z, \varepsilon_T) = 1\big)$. The same fact with $Z$ alone gives $\pi(z) = P\big(h(z, \varepsilon_T) = 1\big)$. So $\mathbb E[T \mid Z, \varepsilon_Y] = \pi(Z)$. Since $g(1, Z, \varepsilon_Y)/\pi(Z)$ is a function of $(Z, \varepsilon_Y)$, and $\pi(Z) > 0$ lets us divide, the tower property gives
+(a) The subscript on each $\mathbb E$ names what is averaged over. Start from what we want and change one term at a time:
 $$
-\mathbb E\Big[\frac{T\,Y}{\pi(Z)}\Big] = \mathbb E\Big[\,\mathbb E[T \mid Z, \varepsilon_Y]\,\frac{g(1, Z, \varepsilon_Y)}{\pi(Z)}\Big] = \mathbb E\big[g(1, Z, \varepsilon_Y)\big] = \mathbb E[Y \mid do(T = 1)].
+\begin{aligned}
+\mathbb E[Y \mid do(T = 1)]
+&= \mathbb E_{Z, \varepsilon_Y}\big[g(1, Z, \varepsilon_Y)\big] & \text{(a)} \\
+&= \mathbb E_{Z, \varepsilon_Y}\Big[\frac{\pi(Z)}{\pi(Z)}\, g(1, Z, \varepsilon_Y)\Big] & \text{(b)} \\
+&= \mathbb E_{Z, \varepsilon_Y}\Big[\frac{\mathbb E_{\varepsilon_T}[T \mid Z, \varepsilon_Y]}{\pi(Z)}\, g(1, Z, \varepsilon_Y)\Big] & \text{(c)} \\
+&= \mathbb E_{Z, \varepsilon_Y}\Big[\,\mathbb E_{\varepsilon_T}\Big[\frac{T\, g(1, Z, \varepsilon_Y)}{\pi(Z)} \;\Big|\; Z, \varepsilon_Y\Big]\Big] & \text{(d)} \\
+&= \mathbb E_{Z, \varepsilon_T, \varepsilon_Y}\Big[\frac{T\, g(1, Z, \varepsilon_Y)}{\pi(Z)}\Big] & \text{(e)} \\
+&= \mathbb E_{T, Z, Y}\Big[\frac{T\,Y}{\pi(Z)}\Big]. & \text{(f)}
+\end{aligned}
 $$
-The last step: under $do(T = 1)$, $Y = g(1, Z, \varepsilon_Y)$ with $(Z, \varepsilon_Y)$ distributed as before. $\blacksquare$
+(a) Under $do(T = 1)$, $Y = g(1, Z, \varepsilon_Y)$, with $(Z, \varepsilon_Y)$ distributed as before. (b) $\pi(Z)/\pi(Z) = 1$ because $\pi(Z) > 0$. (c) $T = h(Z, \varepsilon_T)$ and $\varepsilon_T$ is independent of $(Z, \varepsilon_Y)$, so by the second fact $\mathbb E[T \mid Z = z, \varepsilon_Y = e] = P\big(h(z, \varepsilon_T) = 1\big)$; the same fact with $Z$ alone gives $\pi(z) = P\big(h(z, \varepsilon_T) = 1\big)$. (d) $g(1, Z, \varepsilon_Y)/\pi(Z)$ is fixed once $(Z, \varepsilon_Y)$ is given: taking out what is known, in reverse. (e) The tower property. (f) If $T = 0$, both $T\,g(1, Z, \varepsilon_Y)$ and $T\,Y$ are $0$; if $T = 1$, $Y = g(1, Z, \varepsilon_Y)$. The last line is the same average, written over the observed $(T, Z, Y)$, which are functions of $(Z, \varepsilon_T, \varepsilon_Y)$. $\blacksquare$
 
-Where each assumption is used: the independence of $\varepsilon_T$ from $(Z, \varepsilon_Y)$ in $\mathbb E[T \mid Z, \varepsilon_Y] = \pi(Z)$ (a common cause of $T$ and $Y$ left out of $Z$ would sit in both noises, and then $\varepsilon_Y$ would carry information about $T$ beyond $Z$); $\pi(Z) > 0$ to divide; $Z$ not a consequence of $T$ in the last step (a $Z$ downstream of $T$ would change when $T$ is set).
+Where each assumption is used: the independence of $\varepsilon_T$ from $(Z, \varepsilon_Y)$ in (c) (a common cause of $T$ and $Y$ left out of $Z$ would sit in both noises, and then $\varepsilon_Y$ would carry information about $T$ beyond $Z$); $\pi(Z) > 0$ in (b); $Z$ not a consequence of $T$ in (a) (a $Z$ downstream of $T$ would change when $T$ is set).
 
-(b) The same lines with $1 - T$ in place of $T$: $(1 - T)\,Y = (1 - T)\,g(0, Z, \varepsilon_Y)$, $\mathbb E[1 - T \mid Z, \varepsilon_Y] = 1 - \pi(Z)$, and $1 - \pi(Z) > 0$ lets us divide.
+(b) The same steps with $1 - T$ and $1 - \pi(Z)$: in (b), multiply and divide by $1 - \pi(Z)$, which needs $\pi(Z) < 1$; in (c), $\mathbb E_{\varepsilon_T}[1 - T \mid Z, \varepsilon_Y] = 1 - \pi(Z)$; in (f), $(1 - T)\,g(0, Z, \varepsilon_Y) = (1 - T)\,Y$.
 
 (c) $\mathbb E[T\,Y \mid Z] = \mathbb E\big[Y\,\mathbb 1[T = 1] \mid Z\big] = \pi(Z)\,\mathbb E[Y \mid T = 1, Z]$. Since $1/\pi(Z)$ is a function of $Z$, the tower property gives
 $$
@@ -311,34 +325,6 @@ which are $\mathbb E[Y \mid do(T = 1)]$ and $\mathbb E[Y \mid do(T = 0)]$ from (
 (d) The treated units with $Z = 0$ and the untreated units with $Z = 1$: the units whose treatment was unlikely given their $Z$. Each stands in for the many units like it that went the other way. With $\pi(0) = 0.01$, about one in a hundred units with $Z = 0$ is treated, and each gets weight $100$. The condition $\pi(Z) > 0$ still holds, but in a sample of a few hundred units one or two treated units with $Z = 0$ would carry the estimate for half the population, so it would be unstable.
 
 Common errors: weighting by $\pi(Z)$ instead of $1/\pi(Z)$; weighting the untreated by $1/\pi(Z)$ instead of $1/(1 - \pi(Z))$; dividing by the 50 treated units instead of all 100.
-:::
-
-### Optional, can be done at home
-
-<!-- Not in the seminar. Hints are in the student file. -->
-
-**Problem 4 (the causation runs the other way).** $Y = \varepsilon_Y$ with variance $4$, and $T = 0.4\,Y + \varepsilon_T$, with $\varepsilon_T$ of variance $0.16$, independent of $Y$. Find the population slope of $Y$ on $T$ and the effect of raising $t$ by one. Compare with problem 2(b).
-
-::: {.callout-note collapse="true" title="Hint 1"}
-$\mathrm{Var}(T) = 0.4^2\,\mathrm{Var}(Y) + \mathrm{Var}(\varepsilon_T)$.
-:::
-
-::: {.callout-tip .answer collapse="true" title="Reveal answer"}
-$\mathrm{Var}(T) = 0.16 \cdot 4 + 0.16 = 0.8$, $\mathrm{Cov}(T, Y) = 0.4 \cdot 4 = 1.6$, slope $2$. The effect is $0$: $Y$'s equation has no $T$ in it, and setting $T$ changes nothing upstream. The same population slope as problem 2(b), and as a world with $Y = 2T + \varepsilon$: the regression alone cannot tell the three apart.
-
-Common errors: "the slope is 2, so the effect is 2".
-:::
-
-**Problem 5 (a model that predicts well).** A hospital fits a model that predicts which patients will be readmitted within 30 days, and it predicts well on held-out patients. Management proposes to reduce readmissions by acting on the model's strongest predictor. Draw the DAGs of three worlds consistent with that held-out score, say in which of them the plan works, and say what the score told you about which world you are in.
-
-::: {.callout-note collapse="true" title="Hint 1"}
-The explanations of an observed correlation at the start of coding part 2: the predictor causes readmission, a common cause drives both, or readmission risk drives the predictor.
-:::
-
-::: {.callout-tip .answer collapse="true" title="Reveal answer"}
-A: the predictor causes readmission (for example, discharge before a test result is back); acting on it can work. B: a common cause such as severity drives both; acting on the predictor changes nothing. C: readmission risk drives the predictor (for example, patients at high risk are put on extra monitoring, and the monitoring is the predictor); acting on it changes nothing. The held-out score is the same in all three, so it told you nothing about which world you are in. Deciding needs knowledge of the mechanism, or an experiment.
-
-Common errors: "the model is accurate, so the predictor is a cause"; drawing world C with the arrow the wrong way round.
 :::
 
 ## Coding
@@ -771,38 +757,13 @@ c(treated = sum(d_e$w[d_e$X == 1]), untreated = sum(d_e$w[d_e$X == 0])) / nrow(d
 ::: {.callout-tip .answer collapse="true" title="Reveal answer"}
 The naive difference is about $5.2$: the treated have higher $Z$, and the confounding gap is $3\,(\mathbb E[Z \mid X = 1] - \mathbb E[Z \mid X = 0]) \approx 3 \cdot 1.07$. The weighting estimate is near $2$ by the inverse propensity weighting theorem, with $\hat\pi$ in place of $\pi$; the logistic model for $\pi$ is the right one here, because `X` was generated from a logistic function of `Z`. The regression coefficient is near $2$ by the adjustment theorem (or the partialling-out theorem), because $\mathbb E[Y \mid X, Z]$ is linear in `X` and `Z`. Weighting needs a correct regression model for the treatment; regression adjustment needs a correct regression model for the outcome; both need `Z` to hold the common causes. Of the three, the weighting estimate varies most from student to student.
 
-The largest weights belong to treated units with low `Z` or untreated units with high `Z`: units whose treatment was unlikely given their `Z`. Their $\hat\pi$ (or $1 - \hat\pi$) is a few percent, so each stands in for tens of units. The largest weight is usually between about 15 and 100, and it changes a lot from run to run. With the other weights held fixed (not refitting $\hat\pi$), a treated unit with weight $w$ and outcome $Y$ contributes $wY/n$ to the estimate, so leaving it out moves the estimate by about that much: with $w = 50$, $Y = -4$ and $n = 2000$, by $0.1$, from one unit out of 2000.
-:::
-
-#### Optional, can be done at home: weighting against regression, many times
-
-**Question 7.** Simulate world E 200 times and compute the weighting estimate and the regression coefficient each time. Compare their means and their standard deviations. Why is one more variable than the other, and when would you use weighting anyway?
+The largest weights belong to treated units with low `Z` or untreated units with high `Z`: units whose treatment was unlikely given their `Z`. Their $\hat\pi$ (or $1 - \hat\pi$) is a few percent, so each stands in for tens of units. The largest weight is usually between about 15 and 100, and it changes a lot from run to run. With the other weights held fixed (not refitting $\hat\pi$), write the estimate as an average, $\hat\tau = \frac1n \sum_i s_i$ with $s_i = (2X_i - 1)\, w_i Y_i$: a treated unit adds $w_i Y_i$, an untreated one subtracts it. Leaving unit $i$ out gives $(n\hat\tau - s_i)/(n - 1)$, so the estimate moves by $(\hat\tau - s_i)/(n - 1)$, in either arm. For the unit with the largest weight in your sample:
 
 ```{r}
-#| eval: false
-# one_run <- function() {
-#   d <- simulate_world_e()
-#   pi_hat <- fitted(glm(X ~ Z, family = binomial, data = d))
-#   tibble(weighting = ____, regression = ____)
-# }
-# runs <- map_dfr(1:200, \(i) one_run())
-# runs |> summarise(across(everything(), list(mean = mean, sd = sd)))
-# ...
+s <- (2 * d_e$X - 1) * d_e$w * d_e$Y
+i <- which.max(d_e$w)
+c(estimate = mean(s), largest_weight = d_e$w[i], change_if_left_out = (mean(s) - s[i]) / (nrow(d_e) - 1))
 ```
-
-::: {.callout-tip .answer collapse="true" title="Reveal solution"}
-```{r}
-one_run <- function() {
-  d <- simulate_world_e()
-  pi_hat <- fitted(glm(X ~ Z, family = binomial, data = d))
-  tibble(weighting = mean(d$X * d$Y / pi_hat) - mean((1 - d$X) * d$Y / (1 - pi_hat)),
-         regression = coef(lm(Y ~ X + Z, data = d))[["X"]])
-}
-runs <- map_dfr(1:200, \(i) one_run())
-runs |> summarise(across(everything(), list(mean = mean, sd = sd)))
-```
-
-Both average close to $2$. The weighting estimate's standard deviation is three to four times the regression's (about $0.2$ against $0.05$). The regression uses a correct regression model for $Y$, which here is linear with little noise; weighting ignores what is known about $Y$ and depends on the few units with large weights. Weighting is the choice when you trust a regression model for who gets treated more than one for the outcome: for example, when the treatment was assigned by a rule you know.
 :::
 
 ### Optional, can be done at home: another dataset

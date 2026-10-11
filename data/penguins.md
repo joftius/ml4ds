@@ -13,8 +13,8 @@ description: "344 penguins of three species measured at Palmer Station, Antarcti
 | **Permitted predictors** | Week 3: `bill_length_mm` and `bill_depth_mm` (the default), `flipper_length_mm` alone (the weak model for the ROC curve). |
 | **Missingness** | Two birds lack all four measurements; eleven lack `sex`. `drop_na()` on the columns used. |
 | **Split unit and seed** | Birds. Week 3 fits on all 219 birds with no split: the point is the mechanism, and every number in the seminar is computed on the training rows (apparent performance; the validation week says what that flatters). |
-| **Baseline** | Predict the majority class, Adelie: accuracy 0.69 on the two-species task. |
-| **Complication it carries** | None social. Near-separability: the bill model has six errors in 219 birds and `glm` warns about fitted probabilities of 0 or 1, a live example of the lecture's "too easy" slide. |
+| **Baseline** | Predict the majority class, Adelie (the seminar computes its accuracy). |
+| **Complication it carries** | None social. Near-separability on the bill measurements: `glm` warns about fitted probabilities of 0 or 1, a live example of the lecture's "too easy" slide. |
 | **Limitations** | Three islands, three seasons, one research program: a clean dataset with no deployment story, which is why it is used when the mechanism is the lesson. |
 | **Fictional?** | No. |
 

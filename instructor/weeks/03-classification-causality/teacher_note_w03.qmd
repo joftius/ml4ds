@@ -25,8 +25,8 @@ In seminar order. Planned total 57 minutes, which leaves about 3 for transitions
 | Coding 1, step 5 and question 3: costs | 5 | Keep | The minimum sits near $1/6$; the survey chose it |
 | Coding 2, step 1 and question 4: slopes, predictions | 4 | Keep | Predictions written down before step 2 |
 | Coding 2, step 2: intervene with the same noise | 5 | Keep | Give `case_when` if stuck; keep the four right-hand sides |
-| Coding 2, step 3 and question 5: world D | 5 | Rush | The coefficient and the averaged difference agree; problem 2(c) did it by hand |
-| Coding 2, step 4 and question 6: world E, three estimates | 8 | Keep | Naive about 5.2, the other two near 2; look at the five largest weights |
+| Coding 2, step 3 and question 5: world D | 3 | Rush | The coefficient and the averaged difference agree; problem 2(c) did it by hand |
+| Coding 2, step 4 and question 6: world E, three estimates | 10 | Keep | Naive about 5.2, the other two near 2; look at the five largest weights |
 
 : {tbl-colwidths="[32,6,16,46]"}
 
@@ -38,7 +38,7 @@ How it runs
 
 - Students did exercises 1 to 4 at home. Open the [complete notebook](https://ml4ds.com/seminar-teachers/notebook3_complete.html) on screen: blue boxes are hints, opened in order after the room has had a few minutes; green boxes are answers.
 - Show an exercise's solution only if asked. Exercise 4's is the lecture's proof; exercise 3 proves the adjustment theorem, which the lecture only stated.
-- Everything headed "Optional, can be done at home" is outside the seminar, including the `yardstick` checks and world E repeated (question 7).
+- Everything headed "Optional, can be done at home" is outside the seminar, that is, the `yardstick` checks and the attrition data.
 
 What students should see
 
@@ -46,7 +46,7 @@ What students should see
 - Bill model: odds of Chinstrap times about 9 per millimeter of bill length; six errors at $\tfrac12$ (3 misses, 3 false alarms); `glm` warns that fitted probabilities are numerically 0 or 1.
 - Flipper model: AUC 0.734, and the area under the hand-built curve is the same number; with costs 5 and 1 the cost per bird is lowest, 0.58, at thresholds 0.16 and 0.17, against $1/6$; at $\tfrac12$ it is 1.11.
 - Four worlds: slopes near 2 in A, B and C and near $-3.8$ in D (they vary by student, no seed); intervention effects exactly 2, 0, 0 and $-3$; in D the coefficient on `X` with `Z` included is within about 0.1 of $-3$ and equals the averaged difference.
-- World E (2000 units, no seed): naive difference about 5.2 (the gap is $3 \times 1.07$); regression coefficient between about 1.93 and 2.09; weighting estimate near 2 but the most variable, between about 1.7 and 2.3 in nine runs out of ten. The largest weight is usually 15 to 100, on a treated unit with `Z` below about $-1.4$ or an untreated one with `Z` above about 2. Over 200 runs (question 7) the standard deviations are about 0.2 for weighting and 0.05 for regression.
+- World E (2000 units, no seed): naive difference about 5.2 (the gap is $3 \times 1.07$); regression coefficient between about 1.93 and 2.09; weighting estimate near 2 but the most variable, between about 1.7 and 2.3 in nine runs out of ten. The largest weight is usually 15 to 100, on a treated unit with `Z` below about $-1.4$ or an untreated one with `Z` above about 2. Over repeated runs the standard deviations are about 0.2 for weighting and 0.05 for regression.
 
 Where they get stuck
 
