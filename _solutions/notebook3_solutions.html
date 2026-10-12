@@ -2867,8 +2867,8 @@ T = \alpha Z + \varepsilon_T, \qquad Y = \tau T + \beta Z + \varepsilon_Y.
 <p><strong>Problem 2 (the lecture’s DAG, with numbers).</strong> Let <span class="math inline">\(Z\)</span>, <span class="math inline">\(\varepsilon_T\)</span> and <span class="math inline">\(\varepsilon_Y\)</span> be independent standard normal variables, <span class="math inline">\(T = Z + \varepsilon_T\)</span> and <span class="math inline">\(Y = T + 2Z + \varepsilon_Y\)</span>.</p>
 <ol type="a">
 <li><p>What is the effect on <span class="math inline">\(\mathbb E[Y]\)</span> of raising <span class="math inline">\(t\)</span> by one under <span class="math inline">\(do(T = t)\)</span>?</p></li>
-<li><p>Compute <span class="math inline">\(\mathrm{Var}(T)\)</span>, <span class="math inline">\(\mathrm{Cov}(T, Y)\)</span> and the population slope of the regression of <span class="math inline">\(Y\)</span> on <span class="math inline">\(T\)</span> alone. Write it as “effect plus gap” and identify the gap.</p></li>
-<li><p>Compute <span class="math inline">\(\mathbb E[Y \mid T = t, Z = z]\)</span>, average it over <span class="math inline">\(Z\)</span>, and check that you recover (a). Where did you use that the noises are independent?</p></li>
+<li><p>Compute <span class="math inline">\(\mathrm{Var}(T)\)</span>, <span class="math inline">\(\mathrm{Cov}(T, Y)\)</span> and the population slope of the regression of <span class="math inline">\(Y\)</span> on <span class="math inline">\(T\)</span> alone, and compare the slope with (a).</p></li>
+<li><p>Recover the answer to (a) from the distribution of the observed <span class="math inline">\((T, Z, Y)\)</span> alone. Which result are you using, and where do you need the noises to be independent?</p></li>
 </ol>
 <div class="answer callout callout-style-default callout-note callout-titled" title="Hint 1">
 <div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-23-contents" aria-controls="callout-23" aria-expanded="false" aria-label="Toggle callout">
@@ -2921,7 +2921,7 @@ T = \alpha Z + \varepsilon_T, \qquad Y = \tau T + \beta Z + \varepsilon_Y.
 <ol type="a">
 <li><p>Under <span class="math inline">\(do(T = t)\)</span>, <span class="math inline">\(Y = t + 2Z + \varepsilon_Y\)</span>, so <span class="math inline">\(\mathbb E[Y \mid do(T = t)] = t\)</span> and raising <span class="math inline">\(t\)</span> by one raises it by <span class="math inline">\(1\)</span>.</p></li>
 <li><p><span class="math inline">\(\mathrm{Var}(T) = 1 + 1 = 2\)</span>. <span class="math inline">\(\mathrm{Cov}(T, Y) = \mathrm{Var}(T) + 2\,\mathrm{Cov}(T, Z) + \mathrm{Cov}(T, \varepsilon_Y) = 2 + 2 + 0 = 4\)</span>. Slope <span class="math inline">\(4/2 = 2 = 1 + 2 \cdot \tfrac12\)</span>: the effect <span class="math inline">\(\tau = 1\)</span> plus the gap <span class="math inline">\(\beta\delta = 2 \cdot \tfrac12\)</span>, with <span class="math inline">\(\delta = \mathrm{Cov}(Z, T)/\mathrm{Var}(T) = \tfrac12\)</span>. The naive slope credits <span class="math inline">\(T\)</span> with what <span class="math inline">\(Z\)</span> contributes through selection, and here the gap is as large as the effect.</p></li>
-<li><p><span class="math inline">\(\mathbb E[Y \mid T = t, Z = z] = t + 2z + \mathbb E[\varepsilon_Y \mid T = t, Z = z] = t + 2z\)</span>, because <span class="math inline">\(\varepsilon_Y\)</span> is independent of <span class="math inline">\((Z, \varepsilon_T)\)</span> and so of <span class="math inline">\((T, Z)\)</span>. Averaging over <span class="math inline">\(Z\)</span>: <span class="math inline">\(\mathbb E_Z[t + 2Z] = t\)</span>, which is (a). The independence is what made <span class="math inline">\(\mathbb E[\varepsilon_Y \mid T = t, Z = z]\)</span> zero. Normality is what makes this work at every <span class="math inline">\(t\)</span>: given <span class="math inline">\(Z\)</span>, <span class="math inline">\(T\)</span> has a positive density everywhere, so the adjustment theorem’s condition holds.</p></li>
+<li><p>The adjustment theorem. <span class="math inline">\(\mathbb E[Y \mid T = t, Z = z] = t + 2z + \mathbb E[\varepsilon_Y \mid T = t, Z = z] = t + 2z\)</span>, because <span class="math inline">\(\varepsilon_Y\)</span> is independent of <span class="math inline">\((Z, \varepsilon_T)\)</span> and so of <span class="math inline">\((T, Z)\)</span>. Averaging over <span class="math inline">\(Z\)</span>: <span class="math inline">\(\mathbb E_Z[t + 2Z] = t\)</span>, which is (a). The independence is what made <span class="math inline">\(\mathbb E[\varepsilon_Y \mid T = t, Z = z]\)</span> zero. Normality is what makes this work at every <span class="math inline">\(t\)</span>: given <span class="math inline">\(Z\)</span>, <span class="math inline">\(T\)</span> has a positive density everywhere, so the adjustment theorem’s condition holds.</p></li>
 </ol>
 <p>Common errors: in (a), letting <span class="math inline">\(Z\)</span> change when <span class="math inline">\(T\)</span> is set; in (b), <span class="math inline">\(\mathrm{Cov}(T, Z) = 0\)</span>.</p>
 </div>
@@ -2930,8 +2930,8 @@ T = \alpha Z + \varepsilon_T, \qquad Y = \tau T + \beta Z + \varepsilon_Y.
 <p><strong>Problem 3 (inverse propensity weighting by hand).</strong> <span class="math inline">\(Z\)</span> is <span class="math inline">\(0\)</span> or <span class="math inline">\(1\)</span>, each with probability <span class="math inline">\(\tfrac12\)</span>. Treatment depends on <span class="math inline">\(Z\)</span>: <span class="math inline">\(T = h(Z, \varepsilon_T)\)</span> with <span class="math inline">\(\pi(0) = 0.2\)</span> and <span class="math inline">\(\pi(1) = 0.8\)</span>. The outcome is <span class="math inline">\(Y = 2T + 4Z + \varepsilon_Y\)</span>, with <span class="math inline">\(\varepsilon_Y\)</span> of mean <span class="math inline">\(0\)</span>, and <span class="math inline">\(Z\)</span>, <span class="math inline">\(\varepsilon_T\)</span>, <span class="math inline">\(\varepsilon_Y\)</span> independent.</p>
 <ol type="a">
 <li><p>What is <span class="math inline">\(\mathbb E[Y \mid do(T = 1)] - \mathbb E[Y \mid do(T = 0)]\)</span>?</p></li>
-<li><p>Picture 100 units in exactly these proportions. How many are treated with <span class="math inline">\(Z = 0\)</span>, treated with <span class="math inline">\(Z = 1\)</span>, untreated with <span class="math inline">\(Z = 0\)</span>, untreated with <span class="math inline">\(Z = 1\)</span>? Compute <span class="math inline">\(\mathbb E[Y \mid T = 1] - \mathbb E[Y \mid T = 0]\)</span> and write it as effect plus gap.</p></li>
-<li><p>Give each treated unit the weight <span class="math inline">\(1/\pi(Z)\)</span> and each untreated unit the weight <span class="math inline">\(1/(1 - \pi(Z))\)</span>, and multiply each count from (b) by its weight. What do the weighted treated units look like? Compute <span class="math inline">\(\mathbb E\big[T\,Y/\pi(Z)\big]\)</span> and <span class="math inline">\(\mathbb E\big[(1 - T)\,Y/(1 - \pi(Z))\big]\)</span> and compare with (a).</p></li>
+<li><p>Picture 100 units in exactly these proportions. How many are treated with <span class="math inline">\(Z = 0\)</span>, treated with <span class="math inline">\(Z = 1\)</span>, untreated with <span class="math inline">\(Z = 0\)</span>, untreated with <span class="math inline">\(Z = 1\)</span>? Compute <span class="math inline">\(\mathbb E[Y \mid T = 1] - \mathbb E[Y \mid T = 0]\)</span> and compare it with (a).</p></li>
+<li><p>Give each unit the weight that inverse propensity weighting gives it, and multiply each count from (b) by its weight. What do the weighted treated units look like? Compute the inverse propensity weighting estimates of <span class="math inline">\(\mathbb E[Y \mid do(T = 1)]\)</span> and <span class="math inline">\(\mathbb E[Y \mid do(T = 0)]\)</span> and compare with (a).</p></li>
 <li><p>Which units get the largest weights? What would happen to them if <span class="math inline">\(\pi(0)\)</span> were <span class="math inline">\(0.01\)</span>?</p></li>
 </ol>
 <div class="answer callout callout-style-default callout-note callout-titled" title="Hint 1">
@@ -3020,9 +3020,7 @@ T = \alpha Z + \varepsilon_T, \qquad Y = \tau T + \beta Z + \varepsilon_Y.
 </div>
 <p><strong>Step 1.</strong> How many birds, and what proportion are Chinstraps? What accuracy would a classifier that always predicts the more common species achieve?</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># nrow(pg); mean(pg$____)</span></span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="co"># max(____, 1 - ____)</span></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="co"># ...</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ...</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <div class="answer callout callout-style-default callout-tip callout-titled" title="Reveal solution">
 <div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-29-contents" aria-controls="callout-29" aria-expanded="false" aria-label="Toggle callout">
@@ -3053,12 +3051,10 @@ T = \alpha Z + \varepsilon_T, \qquad Y = \tau T + \beta Z + \varepsilon_Y.
 </div>
 </div>
 </div>
-<p><strong>Step 2.</strong> Fit the logistic regression of <code>chinstrap</code> on the two bill measurements with <code>glm(..., family = binomial)</code>. Look at <code>tidy()</code>, then at <code>tidy(..., exponentiate = TRUE)</code>.</p>
+<p><strong>Step 2.</strong> Fit the logistic regression of <code>chinstrap</code> on the two bill measurements. Look at its coefficients as they are and exponentiated (<code>tidy()</code> has an <code>exponentiate</code> argument).</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># fit_bill &lt;- glm(____ ~ ____ + ____, family = binomial, data = pg)</span></span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="co"># tidy(fit_bill)</span></span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="co"># tidy(fit_bill, exponentiate = TRUE)</span></span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="co"># ...</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># fit_bill &lt;- ____</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="co"># ...</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <div class="answer callout callout-style-default callout-tip callout-titled" title="Reveal solution">
 <div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-30-contents" aria-controls="callout-30" aria-expanded="false" aria-label="Toggle callout">
@@ -3121,12 +3117,10 @@ T = \alpha Z + \varepsilon_T, \qquad Y = \tau T + \beta Z + \varepsilon_Y.
 </div>
 <p><strong>Step 3.</strong> The confusion matrix at threshold <span class="math inline">\(\tfrac12\)</span>, with <code>table()</code>. From it, compute the accuracy, the true positive rate and the false positive rate.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># p_hat &lt;- fitted(fit_bill)</span></span>
-<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="co"># tab &lt;- table(truth = pg$chinstrap, predicted = as.numeric(p_hat &gt; ____))</span></span>
-<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="co"># tab</span></span>
-<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a><span class="co"># accuracy &lt;- (tab[1, 1] + tab[2, 2]) / sum(tab)</span></span>
-<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a><span class="co"># tpr &lt;- ____ ; fpr &lt;- ____</span></span>
-<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a><span class="co"># ...</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># p_hat &lt;- ____</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="co"># tab &lt;- table(truth = ____, predicted = ____)</span></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="co"># accuracy &lt;- ____; tpr &lt;- ____; fpr &lt;- ____</span></span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a><span class="co"># ...</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <div class="answer callout callout-style-default callout-tip callout-titled" title="Reveal solution">
 <div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-32-contents" aria-controls="callout-32" aria-expanded="false" aria-label="Toggle callout">
@@ -3166,20 +3160,17 @@ truth   0   1
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">sum</span>(tab) <span class="sc">==</span> <span class="fu">nrow</span>(pg), tpr <span class="sc">&gt;=</span> <span class="dv">0</span>, tpr <span class="sc">&lt;=</span> <span class="dv">1</span>, fpr <span class="sc">&gt;=</span> <span class="dv">0</span>, fpr <span class="sc">&lt;=</span> <span class="dv">1</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<p><strong>Step 4.</strong> The bill model is nearly perfect, so it cannot show the trade-off. Fit a weaker model on <code>flipper_length_mm</code> alone, then compute the ROC curve <em>yourself</em>: at every threshold where it can change (0, then each distinct fitted probability), the true positive rate and the false positive rate. Plot one against the other. The loop is set up; you write the two rates.</p>
+<p><strong>Step 4.</strong> The bill model is nearly perfect, so it cannot show the trade-off. Fit a weaker model on <code>flipper_length_mm</code> alone, then compute the ROC curve <em>yourself</em>: at every threshold where it can change (0, then each distinct fitted probability), the true positive rate and the false positive rate. Plot one against the other. The thresholds are set up; you write the rest.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>fit_flipper <span class="ot">&lt;-</span> <span class="fu">glm</span>(chinstrap <span class="sc">~</span> flipper_length_mm, <span class="at">family =</span> binomial, <span class="at">data =</span> pg)</span>
-<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>pg <span class="ot">&lt;-</span> pg <span class="sc">|&gt;</span> <span class="fu">mutate</span>(<span class="at">p_flipper =</span> <span class="fu">fitted</span>(fit_flipper))</span>
-<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>thresholds <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="fu">sort</span>(<span class="fu">unique</span>(pg<span class="sc">$</span>p_flipper)))   <span class="co"># 0, then every distinct fitted probability</span></span>
-<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>roc_by_hand <span class="ot">&lt;-</span> <span class="fu">map_dfr</span>(thresholds, <span class="cf">function</span>(t) {</span>
-<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>  yhat <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(pg<span class="sc">$</span>p_flipper <span class="sc">&gt;</span> t)</span>
-<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a>  <span class="co"># tibble(t = t,</span></span>
-<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a>  <span class="co">#        tpr = sum(yhat == 1 &amp; pg$chinstrap == 1) / sum(____),</span></span>
-<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a>  <span class="co">#        fpr = sum(____) / sum(____))</span></span>
-<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a>  <span class="co"># ...</span></span>
-<span id="cb22-10"><a href="#cb22-10" aria-hidden="true" tabindex="-1"></a>})</span>
-<span id="cb22-11"><a href="#cb22-11" aria-hidden="true" tabindex="-1"></a><span class="co"># ggplot(roc_by_hand, aes(____, ____)) + geom_path() + coord_equal()</span></span>
-<span id="cb22-12"><a href="#cb22-12" aria-hidden="true" tabindex="-1"></a><span class="co"># ...</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="co"># fit_flipper &lt;- ____</span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a><span class="co"># pg &lt;- pg |&gt; mutate(p_flipper = ____)</span></span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a><span class="co"># thresholds &lt;- c(0, sort(unique(pg$p_flipper)))   # 0, then every distinct fitted probability</span></span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a><span class="co"># roc_by_hand &lt;- map_dfr(thresholds, function(t) {</span></span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a><span class="co">#   ____</span></span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a><span class="co">#   tibble(t = t, tpr = ____, fpr = ____)</span></span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a><span class="co"># })</span></span>
+<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a><span class="co"># ggplot(roc_by_hand, aes(____, ____)) + geom_path() + coord_equal()</span></span>
+<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a><span class="co"># ...</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <div class="answer callout callout-style-default callout-tip callout-titled" title="Reveal solution">
 <div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-33-contents" aria-controls="callout-33" aria-expanded="false" aria-label="Toggle callout">
@@ -3257,16 +3248,14 @@ truth   0   1
 </div>
 </div>
 </div>
-<p><strong>Step 5.</strong> Costs. A miss costs 5, a false alarm 1. For each threshold on a grid from 0 to 1 in steps of 0.01, compute the cost per bird on the 219 birds, <span class="math inline">\(5 \cdot (\text{misses}/n) + 1 \cdot (\text{false alarms}/n)\)</span>, find the threshold that minimizes it, and compare with problem 1’s threshold.</p>
+<p><strong>Step 5.</strong> Costs. A miss costs 5, a false alarm 1. For each threshold on a grid from 0 to 1 in steps of 0.01, compute the average cost per bird on the 219 birds, find the threshold that minimizes it, and compare with problem 1’s threshold.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>grid <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="dv">1</span>, <span class="at">by =</span> <span class="fl">0.01</span>)</span>
 <span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a><span class="co"># costs &lt;- map_dfr(grid, function(t) {</span></span>
-<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a><span class="co">#   yhat &lt;- as.numeric(pg$p_flipper &gt; t)</span></span>
-<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a><span class="co">#   tibble(t = t, cost = (5 * sum(____) + 1 * sum(____)) / nrow(pg))</span></span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a><span class="co">#   ____</span></span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a><span class="co">#   tibble(t = t, cost = ____)</span></span>
 <span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a><span class="co"># })</span></span>
-<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a><span class="co"># ggplot(costs, aes(t, cost)) + geom_line()</span></span>
-<span id="cb29-7"><a href="#cb29-7" aria-hidden="true" tabindex="-1"></a><span class="co"># costs |&gt; slice_min(cost, n = 3)</span></span>
-<span id="cb29-8"><a href="#cb29-8" aria-hidden="true" tabindex="-1"></a><span class="co"># ...</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a><span class="co"># ...</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <div class="answer callout callout-style-default callout-tip callout-titled" title="Reveal solution">
 <div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-35-contents" aria-controls="callout-35" aria-expanded="false" aria-label="Toggle callout">
@@ -3453,10 +3442,10 @@ Prediction   0   1
 <pre><code># A tibble: 4 × 2
   world slope
   &lt;chr&gt; &lt;dbl&gt;
-1 A      2.07
-2 B      2.01
-3 C      2.02
-4 D     -3.82</code></pre>
+1 A      1.98
+2 B      1.99
+3 C      2.03
+4 D     -3.79</code></pre>
 </div>
 </div>
 </div>
@@ -3494,11 +3483,9 @@ Prediction   0   1
 <span id="cb46-10"><a href="#cb46-10" aria-hidden="true" tabindex="-1"></a>    <span class="co"># ...</span></span>
 <span id="cb46-11"><a href="#cb46-11" aria-hidden="true" tabindex="-1"></a>  )</span>
 <span id="cb46-12"><a href="#cb46-12" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb46-13"><a href="#cb46-13" aria-hidden="true" tabindex="-1"></a>worlds_do <span class="ot">&lt;-</span> <span class="fu">intervene</span>(worlds)</span>
-<span id="cb46-14"><a href="#cb46-14" aria-hidden="true" tabindex="-1"></a>worlds_do <span class="sc">|&gt;</span></span>
-<span id="cb46-15"><a href="#cb46-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(world) <span class="sc">|&gt;</span></span>
-<span id="cb46-16"><a href="#cb46-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">slope =</span> <span class="fu">coef</span>(<span class="fu">lm</span>(Y <span class="sc">~</span> X))[<span class="dv">2</span>],</span>
-<span id="cb46-17"><a href="#cb46-17" aria-hidden="true" tabindex="-1"></a>            <span class="at">effect_of_intervention =</span> <span class="fu">mean</span>(Y_do <span class="sc">-</span> Y))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb46-13"><a href="#cb46-13" aria-hidden="true" tabindex="-1"></a><span class="co"># worlds_do &lt;- intervene(worlds)</span></span>
+<span id="cb46-14"><a href="#cb46-14" aria-hidden="true" tabindex="-1"></a><span class="co"># worlds_do |&gt; group_by(world) |&gt; summarise(average_change = ____)</span></span>
+<span id="cb46-15"><a href="#cb46-15" aria-hidden="true" tabindex="-1"></a><span class="co"># ...</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <div class="answer callout callout-style-default callout-tip callout-titled" title="Reveal solution">
 <div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-40-contents" aria-controls="callout-40" aria-expanded="false" aria-label="Toggle callout">
@@ -3533,10 +3520,10 @@ Prediction   0   1
 <pre><code># A tibble: 4 × 3
   world slope effect_of_intervention
   &lt;chr&gt; &lt;dbl&gt;                  &lt;dbl&gt;
-1 A      2.07                      2
-2 B      2.01                      0
-3 C      2.02                      0
-4 D     -3.82                     -3</code></pre>
+1 A      1.98                      2
+2 B      1.99                      0
+3 C      2.03                      0
+4 D     -3.79                     -3</code></pre>
 </div>
 </div>
 <p>The average change is the average effect of shifting every unit’s <span class="math inline">\(X\)</span> up by one, computed on these units: exactly <span class="math inline">\(2\)</span>, <span class="math inline">\(0\)</span>, <span class="math inline">\(0\)</span> and <span class="math inline">\(-3\)</span>. Each world’s equations give every unit the same change, and because the noise is reused nothing else moves.</p>
@@ -3548,13 +3535,11 @@ Prediction   0   1
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb49"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">all</span>(<span class="fu">c</span>(<span class="st">&quot;X_do&quot;</span>, <span class="st">&quot;Y_do&quot;</span>) <span class="sc">%in%</span> <span class="fu">names</span>(worlds_do)), <span class="sc">!</span><span class="fu">anyNA</span>(worlds_do<span class="sc">$</span>Y_do))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>Compare the average changes with your predictions in question 4.</p>
-<p><strong>Step 3.</strong> World D, the adjustment theorem in code. Regress <code>Y</code> on <code>X</code> and <code>Z</code> and read off the coefficient on <code>X</code>. Then do what the theorem says: fit <span class="math inline">\(\hat m(x, z)\)</span> for <span class="math inline">\(\mathbb E[Y \mid X = x, Z = z]\)</span> (the same regression), evaluate it at every unit’s <span class="math inline">\(Z\)</span> with <span class="math inline">\(X\)</span> set to <span class="math inline">\(X + 1\)</span> and to <span class="math inline">\(X\)</span>, and average the difference.</p>
+<p><strong>Step 3.</strong> World D, the adjustment theorem in code. Regress <code>Y</code> on <code>X</code> and <code>Z</code> and read off the coefficient on <code>X</code>. Then use the same regression as your estimate of <span class="math inline">\(\mathbb E[Y \mid X = x, Z = z]\)</span> and do what the adjustment theorem says, to estimate the average change in <span class="math inline">\(Y\)</span> when every unit’s <span class="math inline">\(X\)</span> is raised by one.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb50"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a>d <span class="ot">&lt;-</span> worlds <span class="sc">|&gt;</span> <span class="fu">filter</span>(world <span class="sc">==</span> <span class="st">&quot;D&quot;</span>)</span>
-<span id="cb50-2"><a href="#cb50-2" aria-hidden="true" tabindex="-1"></a><span class="co"># fit_d &lt;- lm(Y ~ ____ + ____, data = d)</span></span>
-<span id="cb50-3"><a href="#cb50-3" aria-hidden="true" tabindex="-1"></a><span class="co"># tidy(fit_d)</span></span>
-<span id="cb50-4"><a href="#cb50-4" aria-hidden="true" tabindex="-1"></a><span class="co"># mean(predict(fit_d, newdata = mutate(d, X = ____))) - mean(predict(fit_d, newdata = d))</span></span>
-<span id="cb50-5"><a href="#cb50-5" aria-hidden="true" tabindex="-1"></a><span class="co"># ...</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb50-2"><a href="#cb50-2" aria-hidden="true" tabindex="-1"></a><span class="co"># fit_d &lt;- ____</span></span>
+<span id="cb50-3"><a href="#cb50-3" aria-hidden="true" tabindex="-1"></a><span class="co"># ...</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <div class="answer callout callout-style-default callout-tip callout-titled" title="Reveal solution">
 <div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-41-contents" aria-controls="callout-41" aria-expanded="false" aria-label="Toggle callout">
@@ -3576,13 +3561,13 @@ Prediction   0   1
 <pre><code># A tibble: 3 × 5
   term        estimate std.error statistic   p.value
   &lt;chr&gt;          &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;
-1 (Intercept)     4.16    0.225       18.5 1.23e- 58
-2 X              -3.05    0.0447     -68.2 1.76e-254
-3 Z               1.89    0.100       18.8 7.45e- 60</code></pre>
+1 (Intercept)     4.27    0.221       19.3 1.56e- 62
+2 X              -3.04    0.0432     -70.4 9.11e-261
+3 Z               1.90    0.0981      19.3 2.02e- 62</code></pre>
 </div>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb53"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a><span class="fu">mean</span>(<span class="fu">predict</span>(fit_d, <span class="at">newdata =</span> <span class="fu">mutate</span>(d, <span class="at">X =</span> X <span class="sc">+</span> <span class="dv">1</span>))) <span class="sc">-</span> <span class="fu">mean</span>(<span class="fu">predict</span>(fit_d, <span class="at">newdata =</span> d))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] -3.051948</code></pre>
+<pre><code>[1] -3.043221</code></pre>
 </div>
 </div>
 </div>
@@ -3605,27 +3590,23 @@ Prediction   0   1
 </div>
 </div>
 </div>
-<p><strong>Step 4.</strong> World E: the same DAG, with a binary treatment. Each unit is treated (<code>X = 1</code>) with probability <span class="math inline">\(\pi(Z)\)</span>, where <span class="math inline">\(\pi(z) = 1/(1 + e^{-(-0.5 + 1.5 z)})\)</span>, and <span class="math inline">\(Y = 1 + 2X + 3Z + \varepsilon_Y\)</span>, so the effect of treatment is <span class="math inline">\(2\)</span>. Compute three estimates of it: the naive difference in means between treated and untreated; the inverse propensity weighting estimate, with <span class="math inline">\(\hat\pi\)</span> from the logistic regression of <code>X</code> on <code>Z</code>; and the coefficient on <code>X</code> in <code>lm(Y ~ X + Z)</code>. Then look at the five units with the largest weights.</p>
+<p><strong>Step 4.</strong> World E: the same DAG, with a binary treatment. Each unit is treated (<code>X = 1</code>) with probability <span class="math inline">\(\pi(Z)\)</span>, where <span class="math inline">\(\pi(z) = 1/(1 + e^{-(-0.5 + 1.5 z)})\)</span>, and <span class="math inline">\(Y = 1 + 2X + 3Z + \varepsilon_Y\)</span>. Compute three estimates of the effect of treatment: the naive difference in means between treated and untreated, the inverse propensity weighting estimate, and regression adjustment. Then look at the five units with the largest weights.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb55"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb55-1"><a href="#cb55-1" aria-hidden="true" tabindex="-1"></a>simulate_world_e <span class="ot">&lt;-</span> <span class="cf">function</span>(<span class="at">n =</span> <span class="dv">2000</span>) {</span>
 <span id="cb55-2"><a href="#cb55-2" aria-hidden="true" tabindex="-1"></a>  Z <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(n)</span>
-<span id="cb55-3"><a href="#cb55-3" aria-hidden="true" tabindex="-1"></a>  e_x <span class="ot">&lt;-</span> <span class="fu">runif</span>(n)</span>
-<span id="cb55-4"><a href="#cb55-4" aria-hidden="true" tabindex="-1"></a>  e_y <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(n)</span>
-<span id="cb55-5"><a href="#cb55-5" aria-hidden="true" tabindex="-1"></a>  X <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(e_x <span class="sc">&lt;</span> <span class="fu">plogis</span>(<span class="sc">-</span><span class="fl">0.5</span> <span class="sc">+</span> <span class="fl">1.5</span> <span class="sc">*</span> Z))   <span class="co"># treated with probability pi(Z)</span></span>
-<span id="cb55-6"><a href="#cb55-6" aria-hidden="true" tabindex="-1"></a>  Y <span class="ot">&lt;-</span> <span class="dv">1</span> <span class="sc">+</span> <span class="dv">2</span> <span class="sc">*</span> X <span class="sc">+</span> <span class="dv">3</span> <span class="sc">*</span> Z <span class="sc">+</span> e_y</span>
-<span id="cb55-7"><a href="#cb55-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tibble</span>(<span class="at">X =</span> X, <span class="at">Y =</span> Y, <span class="at">Z =</span> Z)</span>
-<span id="cb55-8"><a href="#cb55-8" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb55-9"><a href="#cb55-9" aria-hidden="true" tabindex="-1"></a>d_e <span class="ot">&lt;-</span> <span class="fu">simulate_world_e</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb55-3"><a href="#cb55-3" aria-hidden="true" tabindex="-1"></a>  e_y <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(n)</span>
+<span id="cb55-4"><a href="#cb55-4" aria-hidden="true" tabindex="-1"></a>  X <span class="ot">&lt;-</span> <span class="fu">rbinom</span>(n, <span class="dv">1</span>, <span class="fu">plogis</span>(<span class="sc">-</span><span class="fl">0.5</span> <span class="sc">+</span> <span class="fl">1.5</span> <span class="sc">*</span> Z))   <span class="co"># treated with probability pi(Z)</span></span>
+<span id="cb55-5"><a href="#cb55-5" aria-hidden="true" tabindex="-1"></a>  Y <span class="ot">&lt;-</span> <span class="dv">1</span> <span class="sc">+</span> <span class="dv">2</span> <span class="sc">*</span> X <span class="sc">+</span> <span class="dv">3</span> <span class="sc">*</span> Z <span class="sc">+</span> e_y</span>
+<span id="cb55-6"><a href="#cb55-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tibble</span>(<span class="at">X =</span> X, <span class="at">Y =</span> Y, <span class="at">Z =</span> Z)</span>
+<span id="cb55-7"><a href="#cb55-7" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb55-8"><a href="#cb55-8" aria-hidden="true" tabindex="-1"></a>d_e <span class="ot">&lt;-</span> <span class="fu">simulate_world_e</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb56"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb56-1"><a href="#cb56-1" aria-hidden="true" tabindex="-1"></a><span class="co"># fit_pi &lt;- glm(____ ~ ____, family = binomial, data = d_e)</span></span>
-<span id="cb56-2"><a href="#cb56-2" aria-hidden="true" tabindex="-1"></a><span class="co"># d_e &lt;- d_e |&gt; mutate(pi_hat = fitted(fit_pi),</span></span>
-<span id="cb56-3"><a href="#cb56-3" aria-hidden="true" tabindex="-1"></a><span class="co">#                      w = ifelse(X == 1, ____, ____))</span></span>
-<span id="cb56-4"><a href="#cb56-4" aria-hidden="true" tabindex="-1"></a><span class="co"># c(naive = mean(d_e$Y[d_e$X == 1]) - mean(d_e$Y[d_e$X == 0]),</span></span>
-<span id="cb56-5"><a href="#cb56-5" aria-hidden="true" tabindex="-1"></a><span class="co">#   weighting = mean(d_e$X * d_e$Y / d_e$pi_hat) - mean(____),</span></span>
-<span id="cb56-6"><a href="#cb56-6" aria-hidden="true" tabindex="-1"></a><span class="co">#   regression = coef(lm(Y ~ X + Z, data = d_e))[[&quot;X&quot;]])</span></span>
-<span id="cb56-7"><a href="#cb56-7" aria-hidden="true" tabindex="-1"></a><span class="co"># d_e |&gt; slice_max(w, n = 5)</span></span>
-<span id="cb56-8"><a href="#cb56-8" aria-hidden="true" tabindex="-1"></a><span class="co"># ...</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb56"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb56-1"><a href="#cb56-1" aria-hidden="true" tabindex="-1"></a><span class="co"># fit_pi &lt;- ____</span></span>
+<span id="cb56-2"><a href="#cb56-2" aria-hidden="true" tabindex="-1"></a><span class="co"># d_e &lt;- d_e |&gt; mutate(pi_hat = ____, w = ____)</span></span>
+<span id="cb56-3"><a href="#cb56-3" aria-hidden="true" tabindex="-1"></a><span class="co"># c(naive = ____, weighting = ____, regression = ____)</span></span>
+<span id="cb56-4"><a href="#cb56-4" aria-hidden="true" tabindex="-1"></a><span class="co"># d_e |&gt; slice_max(w, n = 5)</span></span>
+<span id="cb56-5"><a href="#cb56-5" aria-hidden="true" tabindex="-1"></a><span class="co"># ...</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <div class="answer callout callout-style-default callout-tip callout-titled" title="Reveal solution">
 <div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-43-contents" aria-controls="callout-43" aria-expanded="false" aria-label="Toggle callout">
@@ -3648,18 +3629,18 @@ Prediction   0   1
 <span id="cb57-6"><a href="#cb57-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">regression =</span> <span class="fu">coef</span>(<span class="fu">lm</span>(Y <span class="sc">~</span> X <span class="sc">+</span> Z, <span class="at">data =</span> d_e))[[<span class="st">&quot;X&quot;</span>]])</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>     naive  weighting regression 
-  5.093947   2.107837   1.952533 </code></pre>
+  5.185507   1.990335   1.996637 </code></pre>
 </div>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb59"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb59-1"><a href="#cb59-1" aria-hidden="true" tabindex="-1"></a>d_e <span class="sc">|&gt;</span> <span class="fu">slice_max</span>(w, <span class="at">n =</span> <span class="dv">5</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 5 × 5
-      X     Y     Z pi_hat     w
-  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt;
-1     1 -3.13 -2.23 0.0208  48.1
-2     1 -2.33 -2.07 0.0265  37.7
-3     1 -1.99 -1.74 0.0434  23.1
-4     1 -3.09 -1.69 0.0467  21.4
-5     0  8.33  1.96 0.929   14.0</code></pre>
+      X      Y     Z pi_hat     w
+  &lt;int&gt;  &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt;
+1     1 -3.47  -2.54 0.0161  62.0
+2     1 -4.58  -2.01 0.0346  28.9
+3     1 -3.61  -1.95 0.0377  26.5
+4     1 -1.89  -1.93 0.0387  25.8
+5     1  0.245 -1.62 0.0603  16.6</code></pre>
 </div>
 </div>
 </div>
@@ -3671,10 +3652,10 @@ Prediction   0   1
 <span id="cb61-2"><a href="#cb61-2" aria-hidden="true" tabindex="-1"></a><span class="fu">c</span>(<span class="at">treated =</span> <span class="fu">sum</span>(d_e<span class="sc">$</span>w[d_e<span class="sc">$</span>X <span class="sc">==</span> <span class="dv">1</span>]), <span class="at">untreated =</span> <span class="fu">sum</span>(d_e<span class="sc">$</span>w[d_e<span class="sc">$</span>X <span class="sc">==</span> <span class="dv">0</span>])) <span class="sc">/</span> <span class="fu">nrow</span>(d_e)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>  treated untreated 
-0.9981610 0.9893866 </code></pre>
+1.0145105 0.9923636 </code></pre>
 </div>
 </div>
-<p><strong>Question 6.</strong> Which of the three estimates are near <span class="math inline">\(2\)</span>, and which result explains each one? Which units have the largest weights, and what is unusual about them? If the unit with the largest weight had not been in the sample, and the other weights stayed as they are, by how much would the weighting estimate move?</p>
+<p><strong>Question 6.</strong> What is the effect of treatment in world E, which of the three estimates are near it, and which result explains each one? Which units have the largest weights, and what is unusual about them? If the unit with the largest weight had not been in the sample, and the other weights stayed as they are, by how much would the weighting estimate move?</p>
 <div class="answer callout callout-style-default callout-tip callout-titled" title="Reveal answer">
 <div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-44-contents" aria-controls="callout-44" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
@@ -3687,7 +3668,7 @@ Prediction   0   1
 </div>
 <div id="callout-44" class="callout-44-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<p>The naive difference is about <span class="math inline">\(5.2\)</span>: the treated have higher <span class="math inline">\(Z\)</span>, and the confounding gap is <span class="math inline">\(3\,(\mathbb E[Z \mid X = 1] - \mathbb E[Z \mid X = 0]) \approx 3 \cdot 1.07\)</span>. The weighting estimate is near <span class="math inline">\(2\)</span> by the inverse propensity weighting theorem, with <span class="math inline">\(\hat\pi\)</span> in place of <span class="math inline">\(\pi\)</span>; the logistic model for <span class="math inline">\(\pi\)</span> is the right one here, because <code>X</code> was generated from a logistic function of <code>Z</code>. The regression coefficient is near <span class="math inline">\(2\)</span> by the adjustment theorem (or the partialling-out theorem), because <span class="math inline">\(\mathbb E[Y \mid X, Z]\)</span> is linear in <code>X</code> and <code>Z</code>. Weighting needs a correct regression model for the treatment; regression adjustment needs a correct regression model for the outcome; both need <code>Z</code> to hold the common causes. Of the three, the weighting estimate varies most from student to student.</p>
+<p>The effect is <span class="math inline">\(2\)</span>: <span class="math inline">\(Y\)</span>’s equation has <span class="math inline">\(2X\)</span>, and nothing else in it depends on <span class="math inline">\(X\)</span>. The naive difference is about <span class="math inline">\(5.2\)</span>: the treated have higher <span class="math inline">\(Z\)</span>, and the confounding gap is <span class="math inline">\(3\,(\mathbb E[Z \mid X = 1] - \mathbb E[Z \mid X = 0]) \approx 3 \cdot 1.07\)</span>. The weighting estimate is centered on <span class="math inline">\(2\)</span> by the inverse propensity weighting theorem, with <span class="math inline">\(\hat\pi\)</span> in place of <span class="math inline">\(\pi\)</span>; the logistic model for <span class="math inline">\(\pi\)</span> is the right one here, because <code>X</code> was generated from a logistic function of <code>Z</code>. The regression coefficient is near <span class="math inline">\(2\)</span> by the adjustment theorem (or the partialling-out theorem), because <span class="math inline">\(\mathbb E[Y \mid X, Z]\)</span> is linear in <code>X</code> and <code>Z</code>. Weighting needs a correct regression model for the treatment; regression adjustment needs a correct regression model for the outcome; both need <code>Z</code> to hold the common causes. Of the three, the weighting estimate varies most from run to run: in about one run in ten it falls outside <span class="math inline">\(1.7\)</span> to <span class="math inline">\(2.3\)</span>, so compare yours with your neighbors’.</p>
 <p>The largest weights belong to treated units with low <code>Z</code> or untreated units with high <code>Z</code>: units whose treatment was unlikely given their <code>Z</code>. Their <span class="math inline">\(\hat\pi\)</span> (or <span class="math inline">\(1 - \hat\pi\)</span>) is a few percent, so each stands in for tens of units. The largest weight is usually between about 15 and 100, and it changes a lot from run to run. With the other weights held fixed (not refitting <span class="math inline">\(\hat\pi\)</span>), write the estimate as an average, <span class="math inline">\(\hat\tau = \frac1n \sum_i s_i\)</span> with <span class="math inline">\(s_i = (2X_i - 1)\, w_i Y_i\)</span>: a treated unit adds <span class="math inline">\(w_i Y_i\)</span>, an untreated one subtracts it. Leaving unit <span class="math inline">\(i\)</span> out gives <span class="math inline">\((n\hat\tau - s_i)/(n - 1)\)</span>, so the estimate moves by <span class="math inline">\((\hat\tau - s_i)/(n - 1)\)</span>, in either arm. For the unit with the largest weight in your sample:</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb63"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb63-1"><a href="#cb63-1" aria-hidden="true" tabindex="-1"></a>s <span class="ot">&lt;-</span> (<span class="dv">2</span> <span class="sc">*</span> d_e<span class="sc">$</span>X <span class="sc">-</span> <span class="dv">1</span>) <span class="sc">*</span> d_e<span class="sc">$</span>w <span class="sc">*</span> d_e<span class="sc">$</span>Y</span>
@@ -3695,7 +3676,7 @@ Prediction   0   1
 <span id="cb63-3"><a href="#cb63-3" aria-hidden="true" tabindex="-1"></a><span class="fu">c</span>(<span class="at">estimate =</span> <span class="fu">mean</span>(s), <span class="at">largest_weight =</span> d_e<span class="sc">$</span>w[i], <span class="at">change_if_left_out =</span> (<span class="fu">mean</span>(s) <span class="sc">-</span> s[i]) <span class="sc">/</span> (<span class="fu">nrow</span>(d_e) <span class="sc">-</span> <span class="dv">1</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>          estimate     largest_weight change_if_left_out 
-         2.1078369         48.0990178          0.0762637 </code></pre>
+         1.9903346         61.9683026          0.1086913 </code></pre>
 </div>
 </div>
 </div>
@@ -3704,13 +3685,13 @@ Prediction   0   1
 </section>
 <section id="optional-can-be-done-at-home-another-dataset" class="level3">
 <h3 class="anchored" data-anchor-id="optional-can-be-done-at-home-another-dataset">Optional, can be done at home: another dataset</h3>
-<p><strong>Attrition</strong> (<code>modeldata::attrition</code>; <strong>fictional</strong>, made up by IBM data scientists, used only as an exercise): whether an employee leaves, with a threshold-and-costs story (a missed leaver costs a replacement, a false alarm costs a conversation). Leavers are 16 percent, so the accuracy-against-cost point is sharper: at threshold <span class="math inline">\(\tfrac12\)</span> almost nobody is predicted to leave.</p>
+<p><strong>Attrition</strong> (<code>modeldata::attrition</code>; <strong>fictional</strong>, made up by IBM data scientists, used only as an exercise): whether an employee leaves (<code>Attrition</code>), with a threshold-and-costs story (a missed leaver costs a replacement, a false alarm costs a conversation). Leavers are 16 percent, so the accuracy-against-cost point is sharper: at threshold <span class="math inline">\(\tfrac12\)</span> almost nobody is predicted to leave.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb65"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb65-1"><a href="#cb65-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(modeldata)</span>
 <span id="cb65-2"><a href="#cb65-2" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(attrition)</span>
 <span id="cb65-3"><a href="#cb65-3" aria-hidden="true" tabindex="-1"></a>att <span class="ot">&lt;-</span> attrition <span class="sc">|&gt;</span> <span class="fu">mutate</span>(<span class="at">left =</span> <span class="fu">as.numeric</span>(Attrition <span class="sc">==</span> <span class="st">&quot;Yes&quot;</span>))</span>
-<span id="cb65-4"><a href="#cb65-4" aria-hidden="true" tabindex="-1"></a>fit_att <span class="ot">&lt;-</span> <span class="fu">glm</span>(left <span class="sc">~</span> OverTime <span class="sc">+</span> MonthlyIncome <span class="sc">+</span> Age <span class="sc">+</span> JobSatisfaction, <span class="at">family =</span> binomial, <span class="at">data =</span> att)</span>
-<span id="cb65-5"><a href="#cb65-5" aria-hidden="true" tabindex="-1"></a><span class="co"># then steps 3, 4 and 5 with p = fitted(fit_att), costs 10 (a missed leaver) and 1 (a false alarm)</span></span>
+<span id="cb65-4"><a href="#cb65-4" aria-hidden="true" tabindex="-1"></a><span class="co"># fit_att &lt;- ____   # predictors: OverTime, MonthlyIncome, Age, JobSatisfaction</span></span>
+<span id="cb65-5"><a href="#cb65-5" aria-hidden="true" tabindex="-1"></a><span class="co"># then steps 3, 4 and 5, with costs 10 (a missed leaver) and 1 (a false alarm)</span></span>
 <span id="cb65-6"><a href="#cb65-6" aria-hidden="true" tabindex="-1"></a><span class="co"># ...</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
