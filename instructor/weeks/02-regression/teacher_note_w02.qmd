@@ -33,7 +33,7 @@ Minimum seminar, about 25 minutes: problem 2(a), coding 3, coding 4 question 6. 
 
 How it runs
 
-- Students did exercises 1 to 3 at home. Open the [complete notebook](https://ml4ds.com/seminar-teachers/notebook2_complete.html) on screen: blue boxes are hints, opened in order after the room has had a few minutes; green boxes are answers.
+- Students did exercises 1 to 3 at home. Open the [complete notebook](https://ml4ds.com/teachers/notebook2_complete.html) on screen: blue boxes are hints, opened in order after the room has had a few minutes; green boxes are answers.
 - Show an exercise's solution only if asked. Exercise 3's is the lecture's proof.
 - Everything headed "Optional, can be done at home" is outside the seminar.
 
