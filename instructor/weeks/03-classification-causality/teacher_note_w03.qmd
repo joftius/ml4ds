@@ -36,7 +36,7 @@ Minimum seminar, about 25 minutes: problems 2(a to c) and 3(a to c), coding 2 st
 
 How it runs
 
-- Students did exercises 1 to 4 at home. Open the [complete notebook](https://ml4ds.com/seminar-teachers/notebook3_complete.html) on screen: blue boxes are hints, opened in order after the room has had a few minutes; green boxes are answers.
+- Students did exercises 1 to 4 at home. Open the [complete notebook](https://ml4ds.com/teachers/notebook3_complete.html) on screen: blue boxes are hints, opened in order after the room has had a few minutes; green boxes are answers.
 - Show an exercise's solution only if asked. Exercise 4's is the lecture's proof; exercise 3 proves the adjustment theorem, which the lecture only stated.
 - Everything headed "Optional, can be done at home" is outside the seminar, that is, the `yardstick` checks and the attrition data.
 

@@ -33,7 +33,7 @@ Minimum seminar, about 30 minutes: problem 3(b), coding 2, coding 3. With more t
 
 How it runs
 
-- Students did exercises 1 to 3 at home. Open the [complete notebook](https://ml4ds.com/seminar-teachers/notebook1_complete.html) on screen: blue boxes are hints, opened in order after the room has had a few minutes; green boxes are answers.
+- Students did exercises 1 to 3 at home. Open the [complete notebook](https://ml4ds.com/teachers/notebook1_complete.html) on screen: blue boxes are hints, opened in order after the room has had a few minutes; green boxes are answers.
 - Show the solution of exercise 2 or 3 only if asked. Exercise 2's is the lecture's proof.
 - There is no `set.seed`: every student has a different split, on purpose.
 

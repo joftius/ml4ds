@@ -13,7 +13,7 @@
 #                                                     -> _solutions/ (tracked, not published); a notebook whose source has not changed is
 #                                                     skipped (FORCE=1 renders it again)
 #   _build_env/build.sh site                          public render -> docs/ (unchanged pages come from _freeze/), teacher pages kept
-#                                                     (decks with notes -> docs/decks-notes/; complete notebooks and teacher notes -> docs/seminar-teachers/;
+#                                                     (decks with notes, complete notebooks and teacher notes -> docs/teachers/;
 #                                                     for a released week, its stored notebook with solutions -> docs/solutions/)
 #   _build_env/build.sh check                         gates; non-zero exit on any failure
 #   _build_env/build.sh push "<commit message>"       check, then git add/commit/push the current branch
@@ -140,9 +140,11 @@ solutions() {
 site() {
   local keep d c w base f
   # The teacher pages of weeks not re-rendered this time exist only in docs/: keep them across the clean render.
+  # They are all in docs/teachers/ (convenor, 12 October 2026). A tree built before then has them in
+  # docs/decks-notes/ and docs/seminar-teachers/: they are moved into teachers/, and the old paths go.
   keep=$(mktemp -d)
-  for d in decks-notes seminar-teachers; do
-    [ -d "docs/$d" ] && mv "docs/$d" "$keep/$d"
+  for d in decks-notes seminar-teachers teachers; do
+    if [ -d "docs/$d" ]; then cp -R "docs/$d/." "$keep/"; fi
   done
   rm -rf docs .quarto
   quarto render
@@ -153,15 +155,13 @@ site() {
   if [ -f docs/sitemap.xml ]; then
     grep -v '<lastmod>' docs/sitemap.xml > docs/sitemap.xml.tmp && mv docs/sitemap.xml.tmp docs/sitemap.xml
   fi
-  for d in decks-notes seminar-teachers; do
-    mkdir -p "docs/$d"
-    [ -d "$keep/$d" ] && cp -R "$keep/$d/." "docs/$d/"
-  done
+  mkdir -p docs/teachers
+  cp -R "$keep/." docs/teachers/
   rm -rf "$keep"
   if [ -d instructor/_rendered ]; then
-    find instructor/_rendered -name "*-instructor.html" -exec cp {} docs/decks-notes/ \;
-    find instructor/_rendered -name "*_complete.html" -exec cp {} docs/seminar-teachers/ \;
-    find instructor/_rendered -name "teacher_note*.html" -exec cp {} docs/seminar-teachers/ \;
+    find instructor/_rendered -name "*-instructor.html" -exec cp {} docs/teachers/ \;
+    find instructor/_rendered -name "*_complete.html" -exec cp {} docs/teachers/ \;
+    find instructor/_rendered -name "teacher_note*.html" -exec cp {} docs/teachers/ \;
   fi
   # A notebook with solutions is published exactly while its week's block links to it: the stored
   # page is copied, nothing is rendered. docs/solutions/ was removed with docs/ above.
@@ -187,10 +187,20 @@ build() {
 
 check() {
   local fail=0 n s c w base st
-  n=$(find docs -name '*_complete*' -not -path 'docs/seminar-teachers/*' | wc -l | tr -d ' ')
-  [ "$n" -eq 0 ] || { echo "FAIL: _complete files under docs/"; fail=1; }
+  n=$(find docs -name '*_complete*' -not -path 'docs/teachers/*' | wc -l | tr -d ' ')
+  [ "$n" -eq 0 ] || { echo "FAIL: _complete files under docs/ outside teachers/"; fail=1; }
   [ ! -e docs/instructor ] || { echo "FAIL: docs/instructor/ exists"; fail=1; }
-  if grep -rlq --exclude-dir=seminar-teachers --exclude-dir=solutions 'Reveal answer\|Reveal solution' docs; then echo "FAIL: answer boxes in docs/ outside seminar-teachers/ and solutions/"; fail=1; fi
+  # Teacher pages are published under docs/teachers/ only (12 October 2026), and nothing else is there.
+  for d in decks-notes seminar-teachers; do
+    [ ! -e "docs/$d" ] || { echo "FAIL: docs/$d/ exists; teacher pages go under docs/teachers/ (run _build_env/build.sh site)"; fail=1; }
+  done
+  if [ -d docs/teachers ]; then
+    n=$(find docs/teachers -mindepth 1 -not \( -type f \( -name '*-instructor.html' -o -name '*_complete.html' -o -name 'teacher_note*.html' \) \) | tr '\n' ' ')
+    [ -z "$n" ] || { echo "FAIL: something other than decks with notes, complete notebooks and teacher notes under docs/teachers/: $n"; fail=1; }
+  fi
+  # Answer boxes only in the complete notebooks and teacher notes under teachers/, and in solutions/.
+  n=$(grep -rlE 'Reveal answer|Reveal solution' docs | grep -vE '^docs/(teachers/[^/]*(_complete|teacher_note[^/]*)\.html|solutions/)' | tr '\n' ' ' || true)
+  [ -z "$n" ] || { echo "FAIL: answer boxes in docs/ outside the complete notebooks and teacher notes in teachers/, and solutions/: $n"; fail=1; }
   # A notebook with solutions is published exactly when its week's block on the course page links to it,
   # and what is published is the stored page, made from the complete notebook as it is now. For a week
   # not yet released a missing or old stored page is a WARN, for the week's own agent: it must not stop
@@ -228,7 +238,8 @@ check() {
     [ "$n" -eq 0 ] || { echo "FAIL: something other than notebookN_solutions.html under docs/solutions/"; fail=1; }
     if grep -lq 'class="notes"' docs/solutions/*.html 2>/dev/null; then echo "FAIL: speaker notes under docs/solutions/"; fail=1; fi
   fi
-  if grep -rlq --exclude-dir=decks-notes 'class="notes"' docs --include='*.html'; then echo "FAIL: speaker notes in docs/"; fail=1; fi
+  n=$(grep -rl --include='*.html' 'class="notes"' docs | grep -vE '^docs/teachers/[^/]*-instructor\.html$' | tr '\n' ' ' || true)
+  [ -z "$n" ] || { echo "FAIL: speaker notes in docs/ outside the decks with notes in teachers/: $n"; fail=1; }
   [ "$(cat docs/CNAME 2>/dev/null)" = "ml4ds.com" ] || { echo "FAIL: docs/CNAME"; fail=1; }
   # Under instructor/ only the complete notebooks and the teacher notes are tracked.
   n=$(git ls-files | grep '^instructor/' | grep -vEc '^instructor/weeks/[^/]*/(notebooks/[^/]*_complete|teacher_note[^/]*)\.qmd$' || true)
@@ -241,13 +252,13 @@ check() {
   done
   if grep -lq '\.answer' weeks/*/notebooks/*.qmd 2>/dev/null; then echo "FAIL: .answer div in a student notebook"; fail=1; fi
   # Every teacher page must be self-contained (no sibling _files folder is published).
-  if grep -lq '_files/libs/' docs/seminar-teachers/*.html docs/decks-notes/*.html docs/solutions/*.html "$SOL"/*.html 2>/dev/null; then echo "FAIL: a page under docs/seminar-teachers/, docs/decks-notes/, docs/solutions/ or $SOL/ is not self-contained"; fail=1; fi
+  if grep -lq '_files/libs/' docs/teachers/*.html docs/solutions/*.html "$SOL"/*.html 2>/dev/null; then echo "FAIL: a page under docs/teachers/, docs/solutions/ or $SOL/ is not self-contained"; fail=1; fi
   # Every page uses MathJax 4 (html-math-method in _quarto.yml). A deck that ends up without a math
   # method gets MathJax 2.7.9 from reveal's plugin; one that names another URL gets that.
   if grep -rlq --include='*.html' -e "mathjax: 'https://cdn.jsdelivr.net/npm/mathjax@[0-3]" docs; then echo "FAIL: a deck loads a MathJax older than 4 (check html-math-method in its YAML and in _quarto.yml)"; fail=1; fi
-  # Nothing under seminar-teachers/ or decks-notes/ is linked from a public page. What students get,
+  # Nothing under teachers/ (or the old decks-notes/ and seminar-teachers/) is linked from a public page. What students get,
   # the week after the seminar, is the notebook with solutions under solutions/.
-  n=$(grep -rlE --include='*.html' --exclude-dir=seminar-teachers --exclude-dir=decks-notes -e 'href="[^"]*seminar-teachers/' -e 'href="[^"]*decks-notes/' docs | tr '\n' ' ' || true)
+  n=$(grep -rlE --include='*.html' --exclude-dir=teachers -e 'href="[^"]*teachers/' -e 'href="[^"]*decks-notes/' docs | tr '\n' ' ' || true)
   [ -z "$n" ] || echo "WARN: public page links to a teacher path: $n"
   # The site is built with one Quarto version; another one rewrites every page.
   if [ -f _build_env/QUARTO_VERSION ] && [ "$(quarto --version 2>/dev/null)" != "$(cat _build_env/QUARTO_VERSION)" ]; then
