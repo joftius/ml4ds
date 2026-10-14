@@ -2,7 +2,7 @@
 
 The competition re-read with everything since: outcome reasoning against model reasoning, the four MARA(s) questions a deployment has to answer and for whom, and the seven recurring flaws of systems that predict something about a person and decide about them. The week-1 task re-run with every entrant the term taught you. One unfamiliar case diagnosed live. The theorems and results in one view. If time allows, the last method: a neural network as composition, fitted by hand.
 
-**Reading**
+**Reading [PROVISIONAL]**
 
 Delivered in lecture, for reference rather than preparation:
 

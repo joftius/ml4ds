@@ -2,7 +2,7 @@
 
 A machine that asks the data one question at a time: how a split is found, why a tree is local averaging with the neighborhoods chosen by the data, and how big to grow one. Then two ways to use many trees: bagging and random forests, with the variance of an average of correlated predictions derived at the board and the out-of-bag error as a built-in estimate of held-out error; boosting as gradient descent one small tree at a time, with its three knobs. Permutation importance in the loss-difference convention, and no free lunch retrieved on four entrants.
 
-**Reading**
+**Reading [PROVISIONAL]**
 
 - ISLR Chapter 8, sections 8.1 and 8.2, pp. 327–353 (trees; bagging, random forests and boosting). The lab in section 8.3 goes with the seminar.
 - IML, the chapter "Permutation feature importance": the definition and the pictures, for recognition.

@@ -2,7 +2,7 @@
 
 One curve per predictor: how an additive model is fitted (each component to what the others leave), why it escapes the curse of dimensionality, and when it is wrong. Then a curve on any fitted model: partial dependence and ICE, computed by hand, and the question they answer. Causal block 2: direct against total dependence on a simulation where the two curves disagree, and when a model's response is also an effect.
 
-**Reading**
+**Reading [PROVISIONAL]**
 
 - ISLR Chapter 7, section 7.7, pp. 306–311 (generalized additive models). The lab in section 7.8.3 goes with the seminar.
 - ESL Chapter 9, the opening pages of section 9.1, pp. 295–298 (additive models and the backfitting algorithm, Algorithm 9.1).

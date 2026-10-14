@@ -2,7 +2,7 @@
 
 Many predictors: ridge regression and the lasso, their bias and variance against the tuning parameter (the bias–variance decomposition in its third form, with ridge written in the SVD basis), soft thresholding, and what changes when $p > n$. Then the held-out protocol under stress: the same evaluation set used many times, adaptive overfitting, and what the CIFAR-10 and ImageNet replications found.
 
-**Reading**
+**Reading [PROVISIONAL]**
 
 - ISLR Chapter 6, section 6.2, pp. 237–252 (ridge regression and the lasso, choosing the tuning parameter), and section 6.4, from p. 261 (what changes when $p > n$). The lab in section 6.5 goes with the seminar. Section 6.3 (principal components and partial least squares), which sits between them, is not part of this course.
 - PPA Chapter 8, pp. 158–167 (adaptivity: what happens when the same held-out set is used many times, and the CIFAR-10 and ImageNet replications).
