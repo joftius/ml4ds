@@ -157,17 +157,17 @@ Why is the distribution of $Z$ the same in the observed and the intervened world
 
 (a) What is the effect on $\mathbb E[Y]$ of raising $t$ by one under $do(T = t)$?
 
-(b) Compute $\mathrm{Var}(T)$, $\mathrm{Cov}(T, Y)$ and the population slope of the regression of $Y$ on $T$ alone. Write it as "effect plus gap" and identify the gap.
+(b) Compute $\mathrm{Var}(T)$, $\mathrm{Cov}(T, Y)$ and the population slope of the regression of $Y$ on $T$ alone, and compare the slope with (a).
 
-(c) Compute $\mathbb E[Y \mid T = t, Z = z]$, average it over $Z$, and check that you recover (a). Where did you use that the noises are independent?
+(c) Recover the answer to (a) from the distribution of the observed $(T, Z, Y)$ alone. Which result are you using, and where do you need the noises to be independent?
 
 **Problem 3 (inverse propensity weighting by hand).** $Z$ is $0$ or $1$, each with probability $\tfrac12$. Treatment depends on $Z$: $T = h(Z, \varepsilon_T)$ with $\pi(0) = 0.2$ and $\pi(1) = 0.8$. The outcome is $Y = 2T + 4Z + \varepsilon_Y$, with $\varepsilon_Y$ of mean $0$, and $Z$, $\varepsilon_T$, $\varepsilon_Y$ independent.
 
 (a) What is $\mathbb E[Y \mid do(T = 1)] - \mathbb E[Y \mid do(T = 0)]$?
 
-(b) Picture 100 units in exactly these proportions. How many are treated with $Z = 0$, treated with $Z = 1$, untreated with $Z = 0$, untreated with $Z = 1$? Compute $\mathbb E[Y \mid T = 1] - \mathbb E[Y \mid T = 0]$ and write it as effect plus gap.
+(b) Picture 100 units in exactly these proportions. How many are treated with $Z = 0$, treated with $Z = 1$, untreated with $Z = 0$, untreated with $Z = 1$? Compute $\mathbb E[Y \mid T = 1] - \mathbb E[Y \mid T = 0]$ and compare it with (a).
 
-(c) Give each treated unit the weight $1/\pi(Z)$ and each untreated unit the weight $1/(1 - \pi(Z))$, and multiply each count from (b) by its weight. What do the weighted treated units look like? Compute $\mathbb E\big[T\,Y/\pi(Z)\big]$ and $\mathbb E\big[(1 - T)\,Y/(1 - \pi(Z))\big]$ and compare with (a).
+(c) Give each unit the weight that inverse propensity weighting gives it, and multiply each count from (b) by its weight. What do the weighted treated units look like? Compute the inverse propensity weighting estimates of $\mathbb E[Y \mid do(T = 1)]$ and $\mathbb E[Y \mid do(T = 0)]$ and compare with (a).
 
 (d) Which units get the largest weights? What would happen to them if $\pi(0)$ were $0.01$?
 
@@ -195,18 +195,14 @@ ggplot(pg, aes(bill_length_mm, bill_depth_mm, colour = species)) +
 
 ```{r}
 #| eval: false
-# nrow(pg); mean(pg$____)
-# max(____, 1 - ____)
 # ...
 ```
 
-**Step 2.** Fit the logistic regression of `chinstrap` on the two bill measurements with `glm(..., family = binomial)`. Look at `tidy()`, then at `tidy(..., exponentiate = TRUE)`.
+**Step 2.** Fit the logistic regression of `chinstrap` on the two bill measurements. Look at its coefficients as they are and exponentiated (`tidy()` has an `exponentiate` argument).
 
 ```{r}
 #| eval: false
-# fit_bill <- glm(____ ~ ____ + ____, family = binomial, data = pg)
-# tidy(fit_bill)
-# tidy(fit_bill, exponentiate = TRUE)
+# fit_bill <- ____
 # ...
 ```
 
@@ -226,11 +222,9 @@ You may have seen a warning that fitted probabilities are numerically 0 or 1: th
 
 ```{r}
 #| eval: false
-# p_hat <- fitted(fit_bill)
-# tab <- table(truth = pg$chinstrap, predicted = as.numeric(p_hat > ____))
-# tab
-# accuracy <- (tab[1, 1] + tab[2, 2]) / sum(tab)
-# tpr <- ____ ; fpr <- ____
+# p_hat <- ____
+# tab <- table(truth = ____, predicted = ____)
+# accuracy <- ____; tpr <- ____; fpr <- ____
 # ...
 ```
 
@@ -241,20 +235,17 @@ Checkpoint:
 stopifnot(sum(tab) == nrow(pg), tpr >= 0, tpr <= 1, fpr >= 0, fpr <= 1)
 ```
 
-**Step 4.** The bill model is nearly perfect, so it cannot show the trade-off. Fit a weaker model on `flipper_length_mm` alone, then compute the ROC curve *yourself*: at every threshold where it can change (0, then each distinct fitted probability), the true positive rate and the false positive rate. Plot one against the other. The loop is set up; you write the two rates.
+**Step 4.** The bill model is nearly perfect, so it cannot show the trade-off. Fit a weaker model on `flipper_length_mm` alone, then compute the ROC curve *yourself*: at every threshold where it can change (0, then each distinct fitted probability), the true positive rate and the false positive rate. Plot one against the other. The thresholds are set up; you write the rest.
 
 ```{r}
 #| eval: false
-fit_flipper <- glm(chinstrap ~ flipper_length_mm, family = binomial, data = pg)
-pg <- pg |> mutate(p_flipper = fitted(fit_flipper))
-thresholds <- c(0, sort(unique(pg$p_flipper)))   # 0, then every distinct fitted probability
-roc_by_hand <- map_dfr(thresholds, function(t) {
-  yhat <- as.numeric(pg$p_flipper > t)
-  # tibble(t = t,
-  #        tpr = sum(yhat == 1 & pg$chinstrap == 1) / sum(____),
-  #        fpr = sum(____) / sum(____))
-  # ...
-})
+# fit_flipper <- ____
+# pg <- pg |> mutate(p_flipper = ____)
+# thresholds <- c(0, sort(unique(pg$p_flipper)))   # 0, then every distinct fitted probability
+# roc_by_hand <- map_dfr(thresholds, function(t) {
+#   ____
+#   tibble(t = t, tpr = ____, fpr = ____)
+# })
 # ggplot(roc_by_hand, aes(____, ____)) + geom_path() + coord_equal()
 # ...
 ```
@@ -270,17 +261,15 @@ stopifnot(nrow(roc_by_hand) == length(thresholds),
 
 **Question 2.** The area under your curve equals the probability that a randomly chosen Chinstrap gets a higher fitted probability than a randomly chosen Adelie, with a tie counting half. Why does accumulating one point per threshold produce that probability? Why are ties certain to occur with this model?
 
-**Step 5.** Costs. A miss costs 5, a false alarm 1. For each threshold on a grid from 0 to 1 in steps of 0.01, compute the cost per bird on the 219 birds, $5 \cdot (\text{misses}/n) + 1 \cdot (\text{false alarms}/n)$, find the threshold that minimizes it, and compare with problem 1's threshold.
+**Step 5.** Costs. A miss costs 5, a false alarm 1. For each threshold on a grid from 0 to 1 in steps of 0.01, compute the average cost per bird on the 219 birds, find the threshold that minimizes it, and compare with problem 1's threshold.
 
 ```{r}
 #| eval: false
 grid <- seq(0, 1, by = 0.01)
 # costs <- map_dfr(grid, function(t) {
-#   yhat <- as.numeric(pg$p_flipper > t)
-#   tibble(t = t, cost = (5 * sum(____) + 1 * sum(____)) / nrow(pg))
+#   ____
+#   tibble(t = t, cost = ____)
 # })
-# ggplot(costs, aes(t, cost)) + geom_line()
-# costs |> slice_min(cost, n = 3)
 # ...
 ```
 
@@ -378,11 +367,9 @@ intervene <- function(d) {
     # ...
   )
 }
-worlds_do <- intervene(worlds)
-worlds_do |>
-  group_by(world) |>
-  summarise(slope = coef(lm(Y ~ X))[2],
-            effect_of_intervention = mean(Y_do - Y))
+# worlds_do <- intervene(worlds)
+# worlds_do |> group_by(world) |> summarise(average_change = ____)
+# ...
 ```
 
 Checkpoint:
@@ -394,27 +381,24 @@ stopifnot(all(c("X_do", "Y_do") %in% names(worlds_do)), !anyNA(worlds_do$Y_do))
 
 Compare the average changes with your predictions in question 4.
 
-**Step 3.** World D, the adjustment theorem in code. Regress `Y` on `X` and `Z` and read off the coefficient on `X`. Then do what the theorem says: fit $\hat m(x, z)$ for $\mathbb E[Y \mid X = x, Z = z]$ (the same regression), evaluate it at every unit's $Z$ with $X$ set to $X + 1$ and to $X$, and average the difference.
+**Step 3.** World D, the adjustment theorem in code. Regress `Y` on `X` and `Z` and read off the coefficient on `X`. Then use the same regression as your estimate of $\mathbb E[Y \mid X = x, Z = z]$ and do what the adjustment theorem says, to estimate the average change in $Y$ when every unit's $X$ is raised by one.
 
 ```{r}
 #| eval: false
 d <- worlds |> filter(world == "D")
-# fit_d <- lm(Y ~ ____ + ____, data = d)
-# tidy(fit_d)
-# mean(predict(fit_d, newdata = mutate(d, X = ____))) - mean(predict(fit_d, newdata = d))
+# fit_d <- ____
 # ...
 ```
 
 **Question 5.** Compare the coefficient on `X` with the averaged difference, and both with the effect you found in step 2. Which result says the coefficient estimates the effect, which says the averaged difference does, and what about world D made both work? What would go wrong in world B, where the confounder `e_u` is in the table but would not be observed in practice?
 
-**Step 4.** World E: the same DAG, with a binary treatment. Each unit is treated (`X = 1`) with probability $\pi(Z)$, where $\pi(z) = 1/(1 + e^{-(-0.5 + 1.5 z)})$, and $Y = 1 + 2X + 3Z + \varepsilon_Y$, so the effect of treatment is $2$. Compute three estimates of it: the naive difference in means between treated and untreated; the inverse propensity weighting estimate, with $\hat\pi$ from the logistic regression of `X` on `Z`; and the coefficient on `X` in `lm(Y ~ X + Z)`. Then look at the five units with the largest weights.
+**Step 4.** World E: the same DAG, with a binary treatment. Each unit is treated (`X = 1`) with probability $\pi(Z)$, where $\pi(z) = 1/(1 + e^{-(-0.5 + 1.5 z)})$, and $Y = 1 + 2X + 3Z + \varepsilon_Y$. Compute three estimates of the effect of treatment: the naive difference in means between treated and untreated, the inverse propensity weighting estimate, and regression adjustment. Then look at the five units with the largest weights.
 
 ```{r}
 simulate_world_e <- function(n = 2000) {
   Z <- rnorm(n)
-  e_x <- runif(n)
   e_y <- rnorm(n)
-  X <- as.numeric(e_x < plogis(-0.5 + 1.5 * Z))   # treated with probability pi(Z)
+  X <- rbinom(n, 1, plogis(-0.5 + 1.5 * Z))   # treated with probability pi(Z)
   Y <- 1 + 2 * X + 3 * Z + e_y
   tibble(X = X, Y = Y, Z = Z)
 }
@@ -423,12 +407,9 @@ d_e <- simulate_world_e()
 
 ```{r}
 #| eval: false
-# fit_pi <- glm(____ ~ ____, family = binomial, data = d_e)
-# d_e <- d_e |> mutate(pi_hat = fitted(fit_pi),
-#                      w = ifelse(X == 1, ____, ____))
-# c(naive = mean(d_e$Y[d_e$X == 1]) - mean(d_e$Y[d_e$X == 0]),
-#   weighting = mean(d_e$X * d_e$Y / d_e$pi_hat) - mean(____),
-#   regression = coef(lm(Y ~ X + Z, data = d_e))[["X"]])
+# fit_pi <- ____
+# d_e <- d_e |> mutate(pi_hat = ____, w = ____)
+# c(naive = ____, weighting = ____, regression = ____)
 # d_e |> slice_max(w, n = 5)
 # ...
 ```
@@ -441,18 +422,18 @@ stopifnot(all(d_e$pi_hat > 0 & d_e$pi_hat < 1), all(d_e$w >= 1))
 c(treated = sum(d_e$w[d_e$X == 1]), untreated = sum(d_e$w[d_e$X == 0])) / nrow(d_e)
 ```
 
-**Question 6.** Which of the three estimates are near $2$, and which result explains each one? Which units have the largest weights, and what is unusual about them? If the unit with the largest weight had not been in the sample, and the other weights stayed as they are, by how much would the weighting estimate move?
+**Question 6.** What is the effect of treatment in world E, which of the three estimates are near it, and which result explains each one? Which units have the largest weights, and what is unusual about them? If the unit with the largest weight had not been in the sample, and the other weights stayed as they are, by how much would the weighting estimate move?
 
 ### Optional, can be done at home: another dataset
 
-**Attrition** (`modeldata::attrition`; **fictional**, made up by IBM data scientists, used only as an exercise): whether an employee leaves, with a threshold-and-costs story (a missed leaver costs a replacement, a false alarm costs a conversation). Leavers are 16 percent, so the accuracy-against-cost point is sharper: at threshold $\tfrac12$ almost nobody is predicted to leave.
+**Attrition** (`modeldata::attrition`; **fictional**, made up by IBM data scientists, used only as an exercise): whether an employee leaves (`Attrition`), with a threshold-and-costs story (a missed leaver costs a replacement, a false alarm costs a conversation). Leavers are 16 percent, so the accuracy-against-cost point is sharper: at threshold $\tfrac12$ almost nobody is predicted to leave.
 
 ```{r}
 #| eval: false
 library(modeldata)
 data(attrition)
 att <- attrition |> mutate(left = as.numeric(Attrition == "Yes"))
-fit_att <- glm(left ~ OverTime + MonthlyIncome + Age + JobSatisfaction, family = binomial, data = att)
-# then steps 3, 4 and 5 with p = fitted(fit_att), costs 10 (a missed leaver) and 1 (a false alarm)
+# fit_att <- ____   # predictors: OverTime, MonthlyIncome, Age, JobSatisfaction
+# then steps 3, 4 and 5, with costs 10 (a missed leaver) and 1 (a false alarm)
 # ...
 ```

@@ -872,7 +872,7 @@ Under $do(T = t)$, $Y = g(t, Z, \varepsilon_Y)$ with $(Z, \varepsilon_Y)$ distri
 # Right: every unit, all set to T = 1. Dashed: the average Z of the units averaged over.
 set.seed(3)
 units <- tibble(Z = qnorm(ppoints(40))) |>
-  mutate(T = as.numeric(runif(40) < plogis(2 * Z)), height = runif(40))
+  mutate(T = rbinom(40, 1, plogis(2 * Z)), height = runif(40))
 panels <- c("conditioning: the units with T = 1", "intervening: do(T = 1) for every unit")
 both <- bind_rows(mutate(units, panel = panels[1], used = T == 1),
                   mutate(units, panel = panels[2], used = TRUE)) |>

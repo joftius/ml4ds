@@ -271,9 +271,9 @@ Common errors: swapping the costs (threshold $5/6$); "the model predicts Chinstr
 
 (a) What is the effect on $\mathbb E[Y]$ of raising $t$ by one under $do(T = t)$?
 
-(b) Compute $\mathrm{Var}(T)$, $\mathrm{Cov}(T, Y)$ and the population slope of the regression of $Y$ on $T$ alone. Write it as "effect plus gap" and identify the gap.
+(b) Compute $\mathrm{Var}(T)$, $\mathrm{Cov}(T, Y)$ and the population slope of the regression of $Y$ on $T$ alone, and compare the slope with (a).
 
-(c) Compute $\mathbb E[Y \mid T = t, Z = z]$, average it over $Z$, and check that you recover (a). Where did you use that the noises are independent?
+(c) Recover the answer to (a) from the distribution of the observed $(T, Z, Y)$ alone. Which result are you using, and where do you need the noises to be independent?
 
 ::: {.callout-note .answer collapse="true" title="Hint 1"}
 (a) and (b) are exercise 2 with $\alpha = \tau = 1$ and $\beta = 2$. For the covariance, $\mathrm{Cov}(T, Z) = \mathrm{Var}(Z)$ here.
@@ -288,7 +288,7 @@ Common errors: swapping the costs (threshold $5/6$); "the model predicts Chinstr
 
 (b) $\mathrm{Var}(T) = 1 + 1 = 2$. $\mathrm{Cov}(T, Y) = \mathrm{Var}(T) + 2\,\mathrm{Cov}(T, Z) + \mathrm{Cov}(T, \varepsilon_Y) = 2 + 2 + 0 = 4$. Slope $4/2 = 2 = 1 + 2 \cdot \tfrac12$: the effect $\tau = 1$ plus the gap $\beta\delta = 2 \cdot \tfrac12$, with $\delta = \mathrm{Cov}(Z, T)/\mathrm{Var}(T) = \tfrac12$. The naive slope credits $T$ with what $Z$ contributes through selection, and here the gap is as large as the effect.
 
-(c) $\mathbb E[Y \mid T = t, Z = z] = t + 2z + \mathbb E[\varepsilon_Y \mid T = t, Z = z] = t + 2z$, because $\varepsilon_Y$ is independent of $(Z, \varepsilon_T)$ and so of $(T, Z)$. Averaging over $Z$: $\mathbb E_Z[t + 2Z] = t$, which is (a). The independence is what made $\mathbb E[\varepsilon_Y \mid T = t, Z = z]$ zero. Normality is what makes this work at every $t$: given $Z$, $T$ has a positive density everywhere, so the adjustment theorem's condition holds.
+(c) The adjustment theorem. $\mathbb E[Y \mid T = t, Z = z] = t + 2z + \mathbb E[\varepsilon_Y \mid T = t, Z = z] = t + 2z$, because $\varepsilon_Y$ is independent of $(Z, \varepsilon_T)$ and so of $(T, Z)$. Averaging over $Z$: $\mathbb E_Z[t + 2Z] = t$, which is (a). The independence is what made $\mathbb E[\varepsilon_Y \mid T = t, Z = z]$ zero. Normality is what makes this work at every $t$: given $Z$, $T$ has a positive density everywhere, so the adjustment theorem's condition holds.
 
 Common errors: in (a), letting $Z$ change when $T$ is set; in (b), $\mathrm{Cov}(T, Z) = 0$.
 :::
@@ -297,9 +297,9 @@ Common errors: in (a), letting $Z$ change when $T$ is set; in (b), $\mathrm{Cov}
 
 (a) What is $\mathbb E[Y \mid do(T = 1)] - \mathbb E[Y \mid do(T = 0)]$?
 
-(b) Picture 100 units in exactly these proportions. How many are treated with $Z = 0$, treated with $Z = 1$, untreated with $Z = 0$, untreated with $Z = 1$? Compute $\mathbb E[Y \mid T = 1] - \mathbb E[Y \mid T = 0]$ and write it as effect plus gap.
+(b) Picture 100 units in exactly these proportions. How many are treated with $Z = 0$, treated with $Z = 1$, untreated with $Z = 0$, untreated with $Z = 1$? Compute $\mathbb E[Y \mid T = 1] - \mathbb E[Y \mid T = 0]$ and compare it with (a).
 
-(c) Give each treated unit the weight $1/\pi(Z)$ and each untreated unit the weight $1/(1 - \pi(Z))$, and multiply each count from (b) by its weight. What do the weighted treated units look like? Compute $\mathbb E\big[T\,Y/\pi(Z)\big]$ and $\mathbb E\big[(1 - T)\,Y/(1 - \pi(Z))\big]$ and compare with (a).
+(c) Give each unit the weight that inverse propensity weighting gives it, and multiply each count from (b) by its weight. What do the weighted treated units look like? Compute the inverse propensity weighting estimates of $\mathbb E[Y \mid do(T = 1)]$ and $\mathbb E[Y \mid do(T = 0)]$ and compare with (a).
 
 (d) Which units get the largest weights? What would happen to them if $\pi(0)$ were $0.01$?
 
@@ -351,8 +351,6 @@ ggplot(pg, aes(bill_length_mm, bill_depth_mm, colour = species)) +
 
 ```{r}
 #| eval: false
-# nrow(pg); mean(pg$____)
-# max(____, 1 - ____)
 # ...
 ```
 
@@ -364,13 +362,11 @@ max(mean(pg$chinstrap), 1 - mean(pg$chinstrap))
 ```
 :::
 
-**Step 2.** Fit the logistic regression of `chinstrap` on the two bill measurements with `glm(..., family = binomial)`. Look at `tidy()`, then at `tidy(..., exponentiate = TRUE)`.
+**Step 2.** Fit the logistic regression of `chinstrap` on the two bill measurements. Look at its coefficients as they are and exponentiated (`tidy()` has an `exponentiate` argument).
 
 ```{r}
 #| eval: false
-# fit_bill <- glm(____ ~ ____ + ____, family = binomial, data = pg)
-# tidy(fit_bill)
-# tidy(fit_bill, exponentiate = TRUE)
+# fit_bill <- ____
 # ...
 ```
 
@@ -402,11 +398,9 @@ The odds of Chinstrap are multiplied by about $e^{2.20} \approx 9.0$ per millime
 
 ```{r}
 #| eval: false
-# p_hat <- fitted(fit_bill)
-# tab <- table(truth = pg$chinstrap, predicted = as.numeric(p_hat > ____))
-# tab
-# accuracy <- (tab[1, 1] + tab[2, 2]) / sum(tab)
-# tpr <- ____ ; fpr <- ____
+# p_hat <- ____
+# tab <- table(truth = ____, predicted = ____)
+# accuracy <- ____; tpr <- ____; fpr <- ____
 # ...
 ```
 
@@ -429,20 +423,17 @@ Checkpoint:
 stopifnot(sum(tab) == nrow(pg), tpr >= 0, tpr <= 1, fpr >= 0, fpr <= 1)
 ```
 
-**Step 4.** The bill model is nearly perfect, so it cannot show the trade-off. Fit a weaker model on `flipper_length_mm` alone, then compute the ROC curve *yourself*: at every threshold where it can change (0, then each distinct fitted probability), the true positive rate and the false positive rate. Plot one against the other. The loop is set up; you write the two rates.
+**Step 4.** The bill model is nearly perfect, so it cannot show the trade-off. Fit a weaker model on `flipper_length_mm` alone, then compute the ROC curve *yourself*: at every threshold where it can change (0, then each distinct fitted probability), the true positive rate and the false positive rate. Plot one against the other. The thresholds are set up; you write the rest.
 
 ```{r}
 #| eval: false
-fit_flipper <- glm(chinstrap ~ flipper_length_mm, family = binomial, data = pg)
-pg <- pg |> mutate(p_flipper = fitted(fit_flipper))
-thresholds <- c(0, sort(unique(pg$p_flipper)))   # 0, then every distinct fitted probability
-roc_by_hand <- map_dfr(thresholds, function(t) {
-  yhat <- as.numeric(pg$p_flipper > t)
-  # tibble(t = t,
-  #        tpr = sum(yhat == 1 & pg$chinstrap == 1) / sum(____),
-  #        fpr = sum(____) / sum(____))
-  # ...
-})
+# fit_flipper <- ____
+# pg <- pg |> mutate(p_flipper = ____)
+# thresholds <- c(0, sort(unique(pg$p_flipper)))   # 0, then every distinct fitted probability
+# roc_by_hand <- map_dfr(thresholds, function(t) {
+#   ____
+#   tibble(t = t, tpr = ____, fpr = ____)
+# })
 # ggplot(roc_by_hand, aes(____, ____)) + geom_path() + coord_equal()
 # ...
 ```
@@ -493,17 +484,15 @@ sum(diff(r$fpr) * (head(r$tpr, -1) + tail(r$tpr, -1)) / 2)
 ```
 :::
 
-**Step 5.** Costs. A miss costs 5, a false alarm 1. For each threshold on a grid from 0 to 1 in steps of 0.01, compute the cost per bird on the 219 birds, $5 \cdot (\text{misses}/n) + 1 \cdot (\text{false alarms}/n)$, find the threshold that minimizes it, and compare with problem 1's threshold.
+**Step 5.** Costs. A miss costs 5, a false alarm 1. For each threshold on a grid from 0 to 1 in steps of 0.01, compute the average cost per bird on the 219 birds, find the threshold that minimizes it, and compare with problem 1's threshold.
 
 ```{r}
 #| eval: false
 grid <- seq(0, 1, by = 0.01)
 # costs <- map_dfr(grid, function(t) {
-#   yhat <- as.numeric(pg$p_flipper > t)
-#   tibble(t = t, cost = (5 * sum(____) + 1 * sum(____)) / nrow(pg))
+#   ____
+#   tibble(t = t, cost = ____)
 # })
-# ggplot(costs, aes(t, cost)) + geom_line()
-# costs |> slice_min(cost, n = 3)
 # ...
 ```
 
@@ -641,11 +630,9 @@ intervene <- function(d) {
     # ...
   )
 }
-worlds_do <- intervene(worlds)
-worlds_do |>
-  group_by(world) |>
-  summarise(slope = coef(lm(Y ~ X))[2],
-            effect_of_intervention = mean(Y_do - Y))
+# worlds_do <- intervene(worlds)
+# worlds_do |> group_by(world) |> summarise(average_change = ____)
+# ...
 ```
 
 ::: {.callout-tip .answer collapse="true" title="Reveal solution"}
@@ -680,14 +667,12 @@ stopifnot(all(c("X_do", "Y_do") %in% names(worlds_do)), !anyNA(worlds_do$Y_do))
 
 Compare the average changes with your predictions in question 4.
 
-**Step 3.** World D, the adjustment theorem in code. Regress `Y` on `X` and `Z` and read off the coefficient on `X`. Then do what the theorem says: fit $\hat m(x, z)$ for $\mathbb E[Y \mid X = x, Z = z]$ (the same regression), evaluate it at every unit's $Z$ with $X$ set to $X + 1$ and to $X$, and average the difference.
+**Step 3.** World D, the adjustment theorem in code. Regress `Y` on `X` and `Z` and read off the coefficient on `X`. Then use the same regression as your estimate of $\mathbb E[Y \mid X = x, Z = z]$ and do what the adjustment theorem says, to estimate the average change in $Y$ when every unit's $X$ is raised by one.
 
 ```{r}
 #| eval: false
 d <- worlds |> filter(world == "D")
-# fit_d <- lm(Y ~ ____ + ____, data = d)
-# tidy(fit_d)
-# mean(predict(fit_d, newdata = mutate(d, X = ____))) - mean(predict(fit_d, newdata = d))
+# fit_d <- ____
 # ...
 ```
 
@@ -706,14 +691,13 @@ mean(predict(fit_d, newdata = mutate(d, X = X + 1))) - mean(predict(fit_d, newda
 The two numbers are equal, and both are near $-3$. The coefficient: the partialling-out theorem (week 2) says the coefficient on `X` in the long regression is the slope of `Y` on what is left of `X` after `Z`; in world D what is left is `e_x`, which is independent of everything else in `Y`, so the population value is $-3$ and the sample coefficient estimates it. The averaged difference: the adjustment theorem, $\mathbb E[Y \mid do(X = x)] = \mathbb E_Z[\mathbb E[Y \mid X = x, Z]]$, with the regression as the estimate of the inside. (Step 3 shifts each unit's own `X` rather than setting every unit to one value $x$; in world D the two agree because the effect is the same at every $x$.) The two numbers coincide exactly because the fitted model is linear in `X`, so every unit's difference is the coefficient. Both work because `Z` holds the only common cause of `X` and `Y`, is not a consequence of `X`, and the noises are independent. In world B the common cause is `U`, which you would not have: regress `Y` on `X` alone and you get the slope of about $2$ from step 1, while the effect is $0$. With `e_u` in the regression the coefficient on `X` is about $0$: the theorem working, on a variable you have only because you simulated the world.
 :::
 
-**Step 4.** World E: the same DAG, with a binary treatment. Each unit is treated (`X = 1`) with probability $\pi(Z)$, where $\pi(z) = 1/(1 + e^{-(-0.5 + 1.5 z)})$, and $Y = 1 + 2X + 3Z + \varepsilon_Y$, so the effect of treatment is $2$. Compute three estimates of it: the naive difference in means between treated and untreated; the inverse propensity weighting estimate, with $\hat\pi$ from the logistic regression of `X` on `Z`; and the coefficient on `X` in `lm(Y ~ X + Z)`. Then look at the five units with the largest weights.
+**Step 4.** World E: the same DAG, with a binary treatment. Each unit is treated (`X = 1`) with probability $\pi(Z)$, where $\pi(z) = 1/(1 + e^{-(-0.5 + 1.5 z)})$, and $Y = 1 + 2X + 3Z + \varepsilon_Y$. Compute three estimates of the effect of treatment: the naive difference in means between treated and untreated, the inverse propensity weighting estimate, and regression adjustment. Then look at the five units with the largest weights.
 
 ```{r}
 simulate_world_e <- function(n = 2000) {
   Z <- rnorm(n)
-  e_x <- runif(n)
   e_y <- rnorm(n)
-  X <- as.numeric(e_x < plogis(-0.5 + 1.5 * Z))   # treated with probability pi(Z)
+  X <- rbinom(n, 1, plogis(-0.5 + 1.5 * Z))   # treated with probability pi(Z)
   Y <- 1 + 2 * X + 3 * Z + e_y
   tibble(X = X, Y = Y, Z = Z)
 }
@@ -722,12 +706,9 @@ d_e <- simulate_world_e()
 
 ```{r}
 #| eval: false
-# fit_pi <- glm(____ ~ ____, family = binomial, data = d_e)
-# d_e <- d_e |> mutate(pi_hat = fitted(fit_pi),
-#                      w = ifelse(X == 1, ____, ____))
-# c(naive = mean(d_e$Y[d_e$X == 1]) - mean(d_e$Y[d_e$X == 0]),
-#   weighting = mean(d_e$X * d_e$Y / d_e$pi_hat) - mean(____),
-#   regression = coef(lm(Y ~ X + Z, data = d_e))[["X"]])
+# fit_pi <- ____
+# d_e <- d_e |> mutate(pi_hat = ____, w = ____)
+# c(naive = ____, weighting = ____, regression = ____)
 # d_e |> slice_max(w, n = 5)
 # ...
 ```
@@ -752,10 +733,10 @@ stopifnot(all(d_e$pi_hat > 0 & d_e$pi_hat < 1), all(d_e$w >= 1))
 c(treated = sum(d_e$w[d_e$X == 1]), untreated = sum(d_e$w[d_e$X == 0])) / nrow(d_e)
 ```
 
-**Question 6.** Which of the three estimates are near $2$, and which result explains each one? Which units have the largest weights, and what is unusual about them? If the unit with the largest weight had not been in the sample, and the other weights stayed as they are, by how much would the weighting estimate move?
+**Question 6.** What is the effect of treatment in world E, which of the three estimates are near it, and which result explains each one? Which units have the largest weights, and what is unusual about them? If the unit with the largest weight had not been in the sample, and the other weights stayed as they are, by how much would the weighting estimate move?
 
 ::: {.callout-tip .answer collapse="true" title="Reveal answer"}
-The naive difference is about $5.2$: the treated have higher $Z$, and the confounding gap is $3\,(\mathbb E[Z \mid X = 1] - \mathbb E[Z \mid X = 0]) \approx 3 \cdot 1.07$. The weighting estimate is near $2$ by the inverse propensity weighting theorem, with $\hat\pi$ in place of $\pi$; the logistic model for $\pi$ is the right one here, because `X` was generated from a logistic function of `Z`. The regression coefficient is near $2$ by the adjustment theorem (or the partialling-out theorem), because $\mathbb E[Y \mid X, Z]$ is linear in `X` and `Z`. Weighting needs a correct regression model for the treatment; regression adjustment needs a correct regression model for the outcome; both need `Z` to hold the common causes. Of the three, the weighting estimate varies most from student to student.
+The effect is $2$: $Y$'s equation has $2X$, and nothing else in it depends on $X$. The naive difference is about $5.2$: the treated have higher $Z$, and the confounding gap is $3\,(\mathbb E[Z \mid X = 1] - \mathbb E[Z \mid X = 0]) \approx 3 \cdot 1.07$. The weighting estimate is centered on $2$ by the inverse propensity weighting theorem, with $\hat\pi$ in place of $\pi$; the logistic model for $\pi$ is the right one here, because `X` was generated from a logistic function of `Z`. The regression coefficient is near $2$ by the adjustment theorem (or the partialling-out theorem), because $\mathbb E[Y \mid X, Z]$ is linear in `X` and `Z`. Weighting needs a correct regression model for the treatment; regression adjustment needs a correct regression model for the outcome; both need `Z` to hold the common causes. Of the three, the weighting estimate varies most from run to run: in about one run in ten it falls outside $1.7$ to $2.3$, so compare yours with your neighbors'.
 
 The largest weights belong to treated units with low `Z` or untreated units with high `Z`: units whose treatment was unlikely given their `Z`. Their $\hat\pi$ (or $1 - \hat\pi$) is a few percent, so each stands in for tens of units. The largest weight is usually between about 15 and 100, and it changes a lot from run to run. With the other weights held fixed (not refitting $\hat\pi$), write the estimate as an average, $\hat\tau = \frac1n \sum_i s_i$ with $s_i = (2X_i - 1)\, w_i Y_i$: a treated unit adds $w_i Y_i$, an untreated one subtracts it. Leaving unit $i$ out gives $(n\hat\tau - s_i)/(n - 1)$, so the estimate moves by $(\hat\tau - s_i)/(n - 1)$, in either arm. For the unit with the largest weight in your sample:
 
@@ -768,14 +749,14 @@ c(estimate = mean(s), largest_weight = d_e$w[i], change_if_left_out = (mean(s) -
 
 ### Optional, can be done at home: another dataset
 
-**Attrition** (`modeldata::attrition`; **fictional**, made up by IBM data scientists, used only as an exercise): whether an employee leaves, with a threshold-and-costs story (a missed leaver costs a replacement, a false alarm costs a conversation). Leavers are 16 percent, so the accuracy-against-cost point is sharper: at threshold $\tfrac12$ almost nobody is predicted to leave.
+**Attrition** (`modeldata::attrition`; **fictional**, made up by IBM data scientists, used only as an exercise): whether an employee leaves (`Attrition`), with a threshold-and-costs story (a missed leaver costs a replacement, a false alarm costs a conversation). Leavers are 16 percent, so the accuracy-against-cost point is sharper: at threshold $\tfrac12$ almost nobody is predicted to leave.
 
 ```{r}
 #| eval: false
 library(modeldata)
 data(attrition)
 att <- attrition |> mutate(left = as.numeric(Attrition == "Yes"))
-fit_att <- glm(left ~ OverTime + MonthlyIncome + Age + JobSatisfaction, family = binomial, data = att)
-# then steps 3, 4 and 5 with p = fitted(fit_att), costs 10 (a missed leaver) and 1 (a false alarm)
+# fit_att <- ____   # predictors: OverTime, MonthlyIncome, Age, JobSatisfaction
+# then steps 3, 4 and 5, with costs 10 (a missed leaver) and 1 (a false alarm)
 # ...
 ```
