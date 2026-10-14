@@ -255,13 +255,14 @@ A week's delivery edits only its own block; nothing here changes. -->
 </section>
 <section id="week-4-optimization-and-model-fitting" class="level2">
 <h2 class="anchored" data-anchor-id="week-4-optimization-and-model-fitting">Week 4: optimization and model fitting</h2>
-<p>How a model actually gets fitted: gradient descent, the quadratic case, step sizes and what goes wrong with them, then stochastic gradient descent and why its steps are unbiased. Empirical risk minimization as the common form of every method so far, the bias–variance decomposition in that form, and early stopping as a first kind of regularization.</p>
-<p><strong>Reading [PROVISIONAL]</strong></p>
+<p>How a model actually gets fitted. Logistic regression first: maximum likelihood, the score equations read as week 2’s orthogonality, and why there is no closed form. Then the method that fits almost everything else: gradient descent, step sizes and the descent lemma, and its stochastic version, whose random steps are unbiased for the full gradient. Empirical risk minimization as the common form of every method so far, the bias–variance decomposition in that form, why no method is best on every problem, and early stopping as a first kind of regularization.</p>
+<p><strong>Reading</strong></p>
 <ul>
-<li>PPA Chapter 5 (Optimization), pp.&nbsp;70–97: gradient descent, the quadratic case, stochastic gradient descent and its analysis, regularization. The two convergence bounds stated in the lecture are proved here.</li>
-<li>ISLR Chapter 6, section 6.1, pp.&nbsp;227–237 (subset selection). Section 6.2, pp.&nbsp;237–252 (ridge and the lasso), is week 7’s; reading week is a good time for it.</li>
+<li>PPA Chapter 5 (Optimization), from “Optimization basics” through “The SGD quick start guide”, pp.&nbsp;70–85: gradient descent, the quadratic case, and stochastic gradient descent in practice.</li>
 </ul>
-<p><strong>Lecture and seminar:</strong> released here at the start of the week. You will write gradient descent yourself, once, and use it twice. Data: gapminder and the penguins, then simulated data.</p>
+<p>Optional: PPA “Analysis of the stochastic gradient method”, pp.&nbsp;86–88 (a convergence bound), and “Regularization” with “Implicit regularization by optimization”, pp.&nbsp;92–94 (early stopping and the minimum-norm solution, which the seminar meets); ESL section 4.4.1 for Newton-IRLS in full; the Wikipedia pages on <a href="https://en.wikipedia.org/wiki/Newton%27s_method_in_optimization">Newton’s method</a> and <a href="https://en.wikipedia.org/wiki/Gradient_descent">gradient descent</a> for pictures and animations.</p>
+<p><strong>Lecture:</strong> <a href="weeks/04-optimization/slides/04-1-optimization.html">slides</a></p>
+<p><strong>Seminar:</strong> released here before the seminar. You will write gradient descent yourself, once, and use it for least squares, logistic regression and random batches. Data: gapminder and the penguins, then simulated data.</p>
 </section>
 <section id="week-5-validation-and-honest-evaluation" class="level2">
 <h2 class="anchored" data-anchor-id="week-5-validation-and-honest-evaluation">Week 5: validation and honest evaluation</h2>
