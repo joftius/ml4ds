@@ -2,7 +2,7 @@
 
 What an explanation computes: SHAP shown and explained in three sentences; one theorem saying what every partial dependence, ICE and SHAP number is (the model's response with some inputs set and the rest left where one unit had them), and when that is also an effect; four methods, four questions, one takeaway. Causal block 3: one effect estimated with machine learning in the nuisances, residual on residual with cross-fitting, and what that does not do. Then the data move: covariate shift, reweighting and its condition, and the shift no reweighting fixes.
 
-**Reading**
+**Reading [PROVISIONAL]**
 
 - IML, the chapters "Shapley values", "SHAP" and "Leave one feature out (LOFO) importance": the plots and the vocabulary, for recognition.
 - PPA Chapter 10, pp. 204–217 (causal inference in practice: adjustment, double machine learning in a page, quasi-experiments) and Chapter 13, pp. 268–271 (the epilogue: when patterns stop guiding action).

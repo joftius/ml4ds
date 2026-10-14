@@ -256,7 +256,7 @@ A week's delivery edits only its own block; nothing here changes. -->
 <section id="week-4-optimization-and-model-fitting" class="level2">
 <h2 class="anchored" data-anchor-id="week-4-optimization-and-model-fitting">Week 4: optimization and model fitting</h2>
 <p>How a model actually gets fitted: gradient descent, the quadratic case, step sizes and what goes wrong with them, then stochastic gradient descent and why its steps are unbiased. Empirical risk minimization as the common form of every method so far, the bias–variance decomposition in that form, and early stopping as a first kind of regularization.</p>
-<p><strong>Reading</strong></p>
+<p><strong>Reading [PROVISIONAL]</strong></p>
 <ul>
 <li>PPA Chapter 5 (Optimization), pp.&nbsp;70–97: gradient descent, the quadratic case, stochastic gradient descent and its analysis, regularization. The two convergence bounds stated in the lecture are proved here.</li>
 <li>ISLR Chapter 6, section 6.1, pp.&nbsp;227–237 (subset selection). Section 6.2, pp.&nbsp;237–252 (ridge and the lasso), is week 7’s; reading week is a good time for it.</li>
@@ -266,7 +266,7 @@ A week's delivery edits only its own block; nothing here changes. -->
 <section id="week-5-validation-and-honest-evaluation" class="level2">
 <h2 class="anchored" data-anchor-id="week-5-validation-and-honest-evaluation">Week 5: validation and honest evaluation</h2>
 <p>Why training error flatters a model (the optimism theorem), the standard error of a held-out score, and cross-validation written out. Then the ways an honest-looking evaluation goes wrong: a leak between training and evaluation data, two leaderboards that disagree, and a score computed on data the model will never meet again (in-distribution against out-of-distribution).</p>
-<p><strong>Reading</strong></p>
+<p><strong>Reading [PROVISIONAL]</strong></p>
 <ul>
 <li>ISLR Chapter 5, section 5.1, pp.&nbsp;197–209 (the validation set, leave-one-out and <span class="math inline">\(K\)</span>-fold cross-validation, and the bias–variance trade-off in choosing <span class="math inline">\(K\)</span>). Section 5.2, the bootstrap, is not part of this course.</li>
 <li>PPA Chapter 6, pp.&nbsp;100–106 (the generalization gap; what happens empirically with over-parameterized models), and Chapter 8, pp.&nbsp;146–148 (the holdout method and Kaggle’s secret holdout).</li>
@@ -280,7 +280,7 @@ A week's delivery edits only its own block; nothing here changes. -->
 <section id="week-7-regularization-and-high-dimensions" class="level2">
 <h2 class="anchored" data-anchor-id="week-7-regularization-and-high-dimensions">Week 7: regularization and high-dimensions</h2>
 <p>Many predictors: ridge regression and the lasso, their bias and variance against the tuning parameter (the bias–variance decomposition in its third form, with ridge written in the SVD basis), soft thresholding, and what changes when <span class="math inline">\(p &gt; n\)</span>. Then the held-out protocol under stress: the same evaluation set used many times, adaptive overfitting, and what the CIFAR-10 and ImageNet replications found.</p>
-<p><strong>Reading</strong></p>
+<p><strong>Reading [PROVISIONAL]</strong></p>
 <ul>
 <li>ISLR Chapter 6, section 6.2, pp.&nbsp;237–252 (ridge regression and the lasso, choosing the tuning parameter), and section 6.4, from p.&nbsp;261 (what changes when <span class="math inline">\(p &gt; n\)</span>). The lab in section 6.5 goes with the seminar. Section 6.3 (principal components and partial least squares), which sits between them, is not part of this course.</li>
 <li>PPA Chapter 8, pp.&nbsp;158–167 (adaptivity: what happens when the same held-out set is used many times, and the CIFAR-10 and ImageNet replications).</li>
@@ -291,7 +291,7 @@ A week's delivery edits only its own block; nothing here changes. -->
 <section id="week-8-additive-models-and-interpretation" class="level2">
 <h2 class="anchored" data-anchor-id="week-8-additive-models-and-interpretation">Week 8: additive models and interpretation</h2>
 <p>One curve per predictor: how an additive model is fitted (each component to what the others leave), why it escapes the curse of dimensionality, and when it is wrong. Then a curve on any fitted model: partial dependence and ICE, computed by hand, and the question they answer. Causal block 2: direct against total dependence on a simulation where the two curves disagree, and when a model’s response is also an effect.</p>
-<p><strong>Reading</strong></p>
+<p><strong>Reading [PROVISIONAL]</strong></p>
 <ul>
 <li>ISLR Chapter 7, section 7.7, pp.&nbsp;306–311 (generalized additive models). The lab in section 7.8.3 goes with the seminar.</li>
 <li>ESL Chapter 9, the opening pages of section 9.1, pp.&nbsp;295–298 (additive models and the backfitting algorithm, Algorithm 9.1).</li>
@@ -303,7 +303,7 @@ A week's delivery edits only its own block; nothing here changes. -->
 <section id="week-9-trees-and-ensembles" class="level2">
 <h2 class="anchored" data-anchor-id="week-9-trees-and-ensembles">Week 9: trees and ensembles</h2>
 <p>A machine that asks the data one question at a time: how a split is found, why a tree is local averaging with the neighborhoods chosen by the data, and how big to grow one. Then two ways to use many trees: bagging and random forests, with the variance of an average of correlated predictions derived at the board and the out-of-bag error as a built-in estimate of held-out error; boosting as gradient descent one small tree at a time, with its three knobs. Permutation importance in the loss-difference convention, and no free lunch retrieved on four entrants.</p>
-<p><strong>Reading</strong></p>
+<p><strong>Reading [PROVISIONAL]</strong></p>
 <ul>
 <li>ISLR Chapter 8, sections 8.1 and 8.2, pp.&nbsp;327–353 (trees; bagging, random forests and boosting). The lab in section 8.3 goes with the seminar.</li>
 <li>IML, the chapter “Permutation feature importance”: the definition and the pictures, for recognition.</li>
@@ -315,7 +315,7 @@ A week's delivery edits only its own block; nothing here changes. -->
 <section id="week-10-explaining-intervening-shifting" class="level2">
 <h2 class="anchored" data-anchor-id="week-10-explaining-intervening-shifting">Week 10: explaining, intervening, shifting</h2>
 <p>What an explanation computes: SHAP shown and explained in three sentences; one theorem saying what every partial dependence, ICE and SHAP number is (the model’s response with some inputs set and the rest left where one unit had them), and when that is also an effect; four methods, four questions, one takeaway. Causal block 3: one effect estimated with machine learning in the nuisances, residual on residual with cross-fitting, and what that does not do. Then the data move: covariate shift, reweighting and its condition, and the shift no reweighting fixes.</p>
-<p><strong>Reading</strong></p>
+<p><strong>Reading [PROVISIONAL]</strong></p>
 <ul>
 <li>IML, the chapters “Shapley values”, “SHAP” and “Leave one feature out (LOFO) importance”: the plots and the vocabulary, for recognition.</li>
 <li>PPA Chapter 10, pp.&nbsp;204–217 (causal inference in practice: adjustment, double machine learning in a page, quasi-experiments) and Chapter 13, pp.&nbsp;268–271 (the epilogue: when patterns stop guiding action).</li>
@@ -327,7 +327,7 @@ A week's delivery edits only its own block; nothing here changes. -->
 <section id="week-11-what-does-winning-mean" class="level2">
 <h2 class="anchored" data-anchor-id="week-11-what-does-winning-mean">Week 11: what does winning mean?</h2>
 <p>The competition re-read with everything since: outcome reasoning against model reasoning, the four MARA(s) questions a deployment has to answer and for whom, and the seven recurring flaws of systems that predict something about a person and decide about them. The week-1 task re-run with every entrant the term taught you. One unfamiliar case diagnosed live. The theorems and results in one view. If time allows, the last method: a neural network as composition, fitted by hand.</p>
-<p><strong>Reading</strong></p>
+<p><strong>Reading [PROVISIONAL]</strong></p>
 <p>Delivered in lecture, for reference rather than preparation:</p>
 <ul>
 <li>Rodu and Baiocchi, “When black box algorithms are (not) appropriate”, <em>Observational Studies</em> 2023 (arXiv 2001.07648): the common task framework, outcome and model reasoning, MARA(s).</li>
