@@ -4,9 +4,9 @@ How a model actually gets fitted. Logistic regression first: maximum likelihood,
 
 **Reading**
 
-- PPA Chapter 5 (Optimization), from "Optimization basics" through "The SGD quick start guide", pp. 70–85: gradient descent, the quadratic case, and stochastic gradient descent in practice.
+- PPA Chapter 5 (Optimization), from "Optimization basics" through "The SGD quick start guide", pp. 70–86, stopping at "Analysis of the stochastic gradient method": gradient descent, the quadratic case, and stochastic gradient descent in practice.
 
-Optional: PPA "Analysis of the stochastic gradient method", pp. 86–88 (a convergence bound), and "Regularization" with "Implicit regularization by optimization", pp. 92–94 (early stopping and the minimum-norm solution, which the seminar meets); ESL section 4.4.1 for Newton-IRLS in full; the Wikipedia pages on [Newton's method](https://en.wikipedia.org/wiki/Newton%27s_method_in_optimization) and [gradient descent](https://en.wikipedia.org/wiki/Gradient_descent) for pictures and animations.
+Optional: PPA "Analysis of the stochastic gradient method", pp. 86–88 (a convergence bound), and "Regularization" with "Implicit regularization by optimization", pp. 92–94 (why gradient descent from zero lands on the minimum-norm solution, which the seminar meets); ESL section 4.4.1 for Newton-IRLS in full; the Wikipedia pages on [Newton's method](https://en.wikipedia.org/wiki/Newton%27s_method_in_optimization) and [gradient descent](https://en.wikipedia.org/wiki/Gradient_descent) for pictures and animations.
 
 **Lecture:** [slides](weeks/04-optimization/slides/04-1-optimization.html)
 
