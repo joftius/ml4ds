@@ -1201,7 +1201,7 @@
     "href": "weeks/04-optimization/slides/04-1-optimization.html#section",
     "title": "Machine learning",
     "section": "",
-    "text": "Week 4: optimization and model fitting\nPart 1: fitting logistic regression\nPart 2: empirical risk minimization and gradient descent\nPart 3: stochastic gradient descent\nPart 4: where the error comes from, this time\nPart 5: stopping"
+    "text": "Week 4: optimization and model fitting\nPart 1: fitting logistic regression\nPart 2: gradient descent\nPart 3: what the gradient is telling you\nPart 4: stochastic gradient descent\nPart 5: what the fitting leaves over"
   },
   {
     "objectID": "weeks/04-optimization/slides/04-1-optimization.html#where-week-3-left-the-fitting",
@@ -1215,7 +1215,7 @@
     "href": "weeks/04-optimization/slides/04-1-optimization.html#fitting-logistic-regression",
     "title": "Machine learning",
     "section": "Fitting logistic regression",
-    "text": "Fitting logistic regression\nHow do we estimate \\(\\beta\\)? Maximum likelihood:\n\\[\n\\text{maximize } L(\\beta ; \\mathbf y | \\mathbf X) = \\prod_{i=1}^n L(\\beta ; y_i | \\mathbf x_i)\n\\] (assuming the data is i.i.d.)\nNext slide: a bit of mathematics"
+    "text": "Fitting logistic regression\n\nMaximum likelihood (Fisher, 1912–1922): choose the parameter that makes the observed data most probable. We maximize the log-likelihood because a product of \\(n\\) small numbers underflows and a sum differentiates term by term; log is increasing, so the maximizer is the same. Least squares is a log-likelihood: for \\(y_i \\sim N(\\mathbf x_i^\\top\\beta, \\sigma^2)\\) it is \\(-\\frac{1}{2\\sigma^2}\\sum_i (y_i - \\mathbf x_i^\\top\\beta)^2 + \\text{const}\\). In glm, family names the distribution whose likelihood is maximized: gaussian is lm, binomial is logistic regression.\n\nHow do we estimate \\(\\beta\\)? Maximum likelihood:\n\\[\n\\text{maximize } L(\\beta ; \\mathbf y | \\mathbf X) = \\prod_{i=1}^n L(\\beta ; y_i | \\mathbf x_i)\n\\] (assuming the data is i.i.d.)\nNext slide: a bit of mathematics"
   },
   {
     "objectID": "weeks/04-optimization/slides/04-1-optimization.html#mle",
@@ -1243,7 +1243,7 @@
     "href": "weeks/04-optimization/slides/04-1-optimization.html#two-things-the-score-equations-say",
     "title": "Machine learning",
     "section": "Two things the score equations say",
-    "text": "Two things the score equations say\nRow one is the intercept. \\(\\sum_i (y_i - \\hat p_i) = 0\\): the fitted probabilities average to the observed proportion of 1s on the training rows. An average identity for an unpenalized fit with an intercept, not calibration at each \\(x\\), and not a statement about new data.\nThe log-likelihood is concave. Differentiating once more, \\[\n\\frac{\\partial^2 \\ell}{\\partial\\beta\\,\\partial\\beta^\\top} = -\\sum_{i=1}^n \\hat p_i(\\beta)\\,\\big(1 - \\hat p_i(\\beta)\\big)\\, x_i x_i^\\top \\preceq 0,\n\\] so any finite solution of the score equations is a global maximum, and the only one when \\(\\mathbf X\\) has full column rank.\nWhat concavity does not give: existence. Week 3’s separable case is the case with no finite solution."
+    "text": "Two things the score equations say\nRow one is the intercept. \\(\\sum_i (y_i - \\hat p_i) = 0\\): the fitted probabilities average to the observed proportion of 1s on the training rows.\nThe log-likelihood is concave. Differentiating once more, \\[\n\\frac{\\partial^2 \\ell}{\\partial\\beta\\,\\partial\\beta^\\top} = -\\sum_{i=1}^n w_i\\, x_i x_i^\\top, \\qquad w_i = \\hat p_i(\\beta)\\,\\big(1 - \\hat p_i(\\beta)\\big) &gt; 0\n\\] Each term is minus a positive weight times \\(x_i x_i^\\top\\), a matrix that never points uphill in any direction, so the sum curves downward everywhere: the log-likelihood is concave, and any finite solution of the score equations is its global maximum\nWhat concavity does not give: existence. Week 3’s separable case is the case with no finite solution"
   },
   {
     "objectID": "weeks/04-optimization/slides/04-1-optimization.html#newton-raphson",
@@ -1257,35 +1257,35 @@
     "href": "weeks/04-optimization/slides/04-1-optimization.html#logistic-regression-fitting-multivariate-case",
     "title": "Machine learning",
     "section": "Logistic regression fitting: multivariate case",
-    "text": "Logistic regression fitting: multivariate case\nNewton-IRLS (equivalent) steps:\n\\[\n\\begin{eqnarray}\n\\hat{\\mathbf p}_t & = & g^{-1}(\\mathbf X \\hat \\beta_t)\n& \\ \\text{ update probs.} \\\\\n\\mathbf W_t & = & \\text{diag}[\\hat{\\mathbf p}_t (1 - \\hat{\\mathbf p}_t)]\n& \\ \\text{ update weights} \\\\\n\\hat{\\mathbf{y}}_t & = & g(\\hat{\\mathbf p}_t) + \\mathbf W_t^{-1}(\\mathbf y - \\hat{\\mathbf p}_t)\n& \\ \\text{ update response}\n\\end{eqnarray}\n\\]\nand then update parameter estimate (LS sub-problem) \\[\\hat{\\beta}_{t+1} = \\arg \\min_{\\beta} (\\hat{\\mathbf{y}}_t - \\mathbf X \\beta)^T \\mathbf W_t (\\hat{\\mathbf{y}}_t - \\mathbf X \\beta)\\]\n\nNote: larger weights on observations with \\(\\hat p\\) closer to 1/2, i.e. the most difficult to classify (look for variations of this theme) See Section 4.4.1 of ESL"
+    "text": "Logistic regression fitting: multivariate case\nNewton-IRLS (equivalent) steps, with \\(g\\) the logit link:\n\\[\n\\begin{eqnarray}\n\\hat{\\mathbf p}_t & = & g^{-1}(\\mathbf X \\hat \\beta_t)\n& \\ \\text{ update probs.} \\\\\n\\mathbf W_t & = & \\text{diag}[\\hat{\\mathbf p}_t (1 - \\hat{\\mathbf p}_t)]\n& \\ \\text{ update weights} \\\\\n\\hat{\\mathbf{y}}_t & = & g(\\hat{\\mathbf p}_t) + \\mathbf W_t^{-1}(\\mathbf y - \\hat{\\mathbf p}_t)\n& \\ \\text{ update response}\n\\end{eqnarray}\n\\]\nand then update parameter estimate (LS sub-problem) \\[\\hat{\\beta}_{t+1} = \\arg \\min_{\\beta} (\\hat{\\mathbf{y}}_t - \\mathbf X \\beta)^T \\mathbf W_t (\\hat{\\mathbf{y}}_t - \\mathbf X \\beta)\\]\n\nNote: larger weights on observations with \\(\\hat p\\) closer to 1/2, i.e. the most difficult to classify (look for variations of this theme) See Section 4.4.1 of ESL"
+  },
+  {
+    "objectID": "weeks/04-optimization/slides/04-1-optimization.html#glms-in-r-what-you-should-know",
+    "href": "weeks/04-optimization/slides/04-1-optimization.html#glms-in-r-what-you-should-know",
+    "title": "Machine learning",
+    "section": "GLMs in R: what you should know",
+    "text": "GLMs in R: what you should know\nDoes glm use Newton-Raphson for every family? Yes. IRLS is Fisher scoring, Newton’s method with the expected Hessian; for the default links (binomial with logit, poisson with log, gaussian with identity) the two coincide. lm is the special case where one step solves the normal equations\nHow many iterations? Usually under ten. summary() prints Number of Fisher Scoring iterations\nWhen does it fail? When there is no finite MLE: the separable case, with the week 3 warning fitted probabilities numerically 0 or 1 occurred, or a Poisson fit with coefficients running off to infinity. The algorithm is fine; the maximum is not there\nWhy does the rest of machine learning not do this? Each step solves a \\(p \\times p\\) system. For \\(p\\) in the thousands or millions that is the cost that matters, and the next part is about avoiding it"
   },
   {
     "objectID": "weeks/04-optimization/slides/04-1-optimization.html#section-1",
     "href": "weeks/04-optimization/slides/04-1-optimization.html#section-1",
     "title": "Machine learning",
     "section": "",
-    "text": "Part 2: empirical risk minimization and gradient descent"
+    "text": "Part 2: gradient descent\nML \\(\\approx\\) ERM \\(+\\) SGD"
   },
   {
     "objectID": "weeks/04-optimization/slides/04-1-optimization.html#ml-tasks-as-optimization-problems",
     "href": "weeks/04-optimization/slides/04-1-optimization.html#ml-tasks-as-optimization-problems",
     "title": "Machine learning",
     "section": "ML tasks as optimization problems",
-    "text": "ML tasks as optimization problems\nFor a given loss function \\(\\ell(y, f(x))\\) and probability model \\((X,Y) \\sim P\\), we want to find a function \\(f\\) to minimize risk:\n\\[\n\\text{minimize } R(f) = \\mathbb E_P[\\ell(Y, f(X))]\n\\]\n\nMath model \\(\\leftrightarrow\\) Statistical model\nAssume an i.i.d. sample from \\(P\\), focus on empirical risk minimization (ERM)\n\\[\n\\text{minimize } \\hat R_n(f) = \\frac{1}{n} \\sum_{i=1}^n \\ell(y_i, f(x_i))\n\\]\n\nWe also choose a function class \\(\\mathcal F\\) (or parameter set), i.e. type of function \\(f\\), determining the domain of the optimization"
+    "text": "ML tasks as optimization problems\nFor a given loss function \\(\\ell(y, f(x))\\) and probability model \\((X,Y) \\sim P\\), we want to find a function \\(f\\) to minimize risk:\n\\[\n\\underset{f}{\\text{minimize }}\\ R(f) = \\mathbb E_P[\\ell(Y, f(X))]\n\\]\n\nMath model \\(\\leftrightarrow\\) Statistical model\nAssume an i.i.d. sample from \\(P\\), focus on empirical risk minimization (ERM)\n\\[\n\\underset{f \\in \\mathcal F}{\\text{minimize }}\\ \\hat R_n(f) = \\frac{1}{n} \\sum_{i=1}^n \\ell(y_i, f(x_i))\n\\]\n\nWe also choose a function class \\(\\mathcal F\\) (or parameter set), i.e. a class of functions \\(f\\), determining the domain of the optimization"
   },
   {
-    "objectID": "weeks/04-optimization/slides/04-1-optimization.html#example-linear-regression",
-    "href": "weeks/04-optimization/slides/04-1-optimization.html#example-linear-regression",
+    "objectID": "weeks/04-optimization/slides/04-1-optimization.html#examples-linear-regression-glm",
+    "href": "weeks/04-optimization/slides/04-1-optimization.html#examples-linear-regression-glm",
     "title": "Machine learning",
-    "section": "Example: linear regression",
-    "text": "Example: linear regression\nLinear regression. Probability model: random errors \\(\\varepsilon \\sim N(0, \\sigma^2)\\). Loss: squared, \\(\\ell(y, f(\\mathbf x)) = (y - f(\\mathbf x))^2\\). Function class: \\(\\mathcal F = \\{ f_\\beta(\\mathbf x) = \\mathbf x^T \\beta : \\beta \\in \\mathbb R^{p+1} \\}\\). Algorithm: OLS, closed-form solution (memorized yet?)\n\\[\\underset{\\beta \\in \\mathbb R^{p+1}}{\\text{minimize }} \\frac{1}{n} \\sum_{i=1}^n (y_i - \\mathbf x_i^T \\beta)^2\\]"
-  },
-  {
-    "objectID": "weeks/04-optimization/slides/04-1-optimization.html#more-examples-glm",
-    "href": "weeks/04-optimization/slides/04-1-optimization.html#more-examples-glm",
-    "title": "Machine learning",
-    "section": "More examples: GLM",
-    "text": "More examples: GLM\nGLM. Probability model: family = binomial(), poisson(), etc. Loss: minus the log-likelihood of one row, so that \\(\\hat R_n(\\beta) = -\\ell(\\beta)/n\\). Function class: \\(\\{ g^{-1}(\\mathbf x^T \\beta) : \\beta \\in \\mathbb R^{p+1} \\}\\), with a fixed link function \\(g\\). Algorithm: ERM (also MLE in this case) via iterative methods like Newton-Raphson or gradient descent\n\\[\n\\underset{\\beta \\in \\mathbb R^{p+1}}{\\text{minimize }} -\\frac{1}{n} \\sum_{i=1}^n \\log L(\\beta ; y_i | \\mathbf x_i)\n\\]"
+    "section": "Examples: linear regression, GLM",
+    "text": "Examples: linear regression, GLM\nLinear regression. Probability model: errors \\(\\varepsilon \\sim N(0, \\sigma^2)\\). Loss: squared, \\(\\ell(y, f(\\mathbf x)) = (y - f(\\mathbf x))^2\\). Class: \\(\\mathcal F = \\{ f_\\beta(\\mathbf x) = \\mathbf x^T \\beta : \\beta \\in \\mathbb R^{p+1} \\}\\). Algorithm: OLS, closed form (memorized yet?) \\[\\underset{\\beta \\in \\mathbb R^{p+1}}{\\text{minimize }} \\frac{1}{n} \\sum_{i=1}^n (y_i - \\mathbf x_i^T \\beta)^2\\]\n\nGLM. Probability model: family = binomial(), poisson(), etc. Loss: minus one row’s log-likelihood, so \\(\\hat R_n(\\beta) = -\\ell(\\beta)/n\\). Class: \\(\\{ g^{-1}(\\mathbf x^T \\beta) : \\beta \\in \\mathbb R^{p+1} \\}\\), link \\(g\\) fixed. Algorithm: ERM (here also MLE) by Newton-Raphson or gradient descent \\[\n\\underset{\\beta \\in \\mathbb R^{p+1}}{\\text{minimize }} -\\frac{1}{n} \\sum_{i=1}^n \\log L(\\beta ; y_i | \\mathbf x_i)\n\\]"
   },
   {
     "objectID": "weeks/04-optimization/slides/04-1-optimization.html#optimization-algorithms",
@@ -1299,7 +1299,7 @@
     "href": "weeks/04-optimization/slides/04-1-optimization.html#gradient-steepest-descent",
     "title": "Machine learning",
     "section": "Gradient (steepest) descent",
-    "text": "Gradient (steepest) descent\ni.e. skiing as fast as possible. Notation: the objective is the empirical risk \\(\\hat R_n(\\beta)\\), and \\(t\\) counts steps\n\nStart at an initial point \\(\\beta_0\\)\nFor step \\(t = 1, \\ldots\\)\n\n\nCompute \\(\\mathbf d_t = \\nabla \\hat R_n(\\beta_{t-1}) \\color{#b73779}{\\text{ (gradient)}}\\)\nUpdate \\(\\beta_{t} = \\beta_{t-1} - \\gamma_t \\mathbf d_t\\)\n\n\nUntil some convergence criteria is satisfied\n\n\nWhere the step size \\(\\gamma_t &gt; 0\\) is made small enough to not “overshoot” and increase the loss, i.e. the loss only decreases"
+    "text": "Gradient (steepest) descent\ni.e. skiing as fast as possible. Notation: the objective is the empirical risk \\(\\hat R_n(\\beta)\\), and \\(t\\) counts steps\n\nStart at an initial point \\(\\beta_0\\)\nFor step \\(t = 1, \\ldots\\)\n\nCompute \\(\\mathbf d_t = \\nabla \\hat R_n(\\beta_{t-1}) \\color{#b73779}{\\text{ (gradient)}}\\)\nUpdate \\(\\beta_{t} = \\beta_{t-1} - \\gamma_t \\mathbf d_t\\)\n\nUntil some convergence criteria is satisfied\n\n\nWhere the step size \\(\\gamma_t &gt; 0\\) is made small enough to not “overshoot” and increase the loss, i.e. the loss only decreases"
   },
   {
     "objectID": "weeks/04-optimization/slides/04-1-optimization.html#which-step-size",
@@ -1323,25 +1323,60 @@
     "text": "The quadratic case, exactly\nOne direction with curvature \\(a &gt; 0\\): \\(f(\\beta) = \\tfrac12 a\\beta^2\\), \\(\\nabla f = a\\beta\\), so\n\\[\n\\beta_{t+1} = \\beta_t - \\gamma a\\beta_t = (1 - \\gamma a)\\,\\beta_t, \\qquad \\beta_t = (1 - \\gamma a)^t \\beta_0\n\\]\nConverges iff \\(|1 - \\gamma a| &lt; 1\\), i.e. \\(0 &lt; \\gamma &lt; 2/a\\). The step \\(\\gamma = 1/a\\) lands in one move\n\nSeveral directions with curvatures \\(a_1 \\ge \\dots \\ge a_p &gt; 0\\), one step size for all of them: \\(\\gamma &lt; 2/a_1\\) to converge, and the slowest direction shrinks like \\(\\max_j |1 - \\gamma a_j|^t\\), which for \\(\\gamma \\le 1/a_1\\) is \\((1 - \\gamma a_p)^t\\)\n\nThe largest curvature sets the safe step; the ratio \\(a_1/a_p\\), the shape of the valley, sets the speed (a direction with \\(a_j = 0\\), as in least squares with \\(p &gt; n\\), never moves). For least squares, \\(\\hat R_n(\\beta) = \\frac1n\\|\\mathbf y - \\mathbf X\\beta\\|^2\\), the \\(a_j\\) are the eigenvalues of \\(2\\mathbf X^\\top\\mathbf X/n\\)"
   },
   {
-    "objectID": "weeks/04-optimization/slides/04-1-optimization.html#beyond-the-quadratic-what-could-go-wrong",
-    "href": "weeks/04-optimization/slides/04-1-optimization.html#beyond-the-quadratic-what-could-go-wrong",
+    "objectID": "weeks/04-optimization/slides/04-1-optimization.html#section-2",
+    "href": "weeks/04-optimization/slides/04-1-optimization.html#section-2",
     "title": "Machine learning",
-    "section": "Beyond the quadratic: what could go wrong?",
-    "text": "Beyond the quadratic: what could go wrong?\n\nTaylor, to second order: for a smooth \\(f\\) and a small move \\(\\delta\\), \\(f(x + \\delta) \\approx f(x) + \\nabla f(x)^\\top\\delta + \\tfrac12\\,\\delta^\\top \\nabla^2 f(x)\\,\\delta\\).\n\nTake the step \\(\\delta = -\\gamma\\nabla f(x)\\) and write \\(g = \\nabla f(x)\\): \\[\nf(x - \\gamma g) \\approx f(x) \\;\\underbrace{-\\; \\gamma\\,\\|g\\|^2}_{\\text{always down}} \\;\\underbrace{+\\; \\tfrac12\\gamma^2\\, g^\\top \\nabla^2 f(x)\\, g}_{\\text{the curvature pushes back}}\n\\]\nIn the quadratic case the curvature was a fixed number \\(a\\). Here it depends on where you stand, and the step is safe only if it is never too large"
+    "section": "",
+    "text": "Part 3: what the gradient is telling you"
+  },
+  {
+    "objectID": "weeks/04-optimization/slides/04-1-optimization.html#reading-the-gradient",
+    "href": "weeks/04-optimization/slides/04-1-optimization.html#reading-the-gradient",
+    "title": "Machine learning",
+    "section": "Reading the gradient",
+    "text": "Reading the gradient\n\n\n\n\n\n\n\n\n\nEach step computes one thing about where it stands, the gradient \\(\\nabla \\hat R_n(\\beta_t)\\), and its size says little on its own: zero at the minimum, but also at a local minimum, and nearly zero on a plateau; large means steep, and a step may overshoot\n\nYour loss has stopped falling. Which of the four are you at, and how would you tell?"
+  },
+  {
+    "objectID": "weeks/04-optimization/slides/04-1-optimization.html#landscapes",
+    "href": "weeks/04-optimization/slides/04-1-optimization.html#landscapes",
+    "title": "Machine learning",
+    "section": "Landscapes",
+    "text": "Landscapes\n\n\n\n\n\n\n\n\n\n\nRight: \\(f(u, v) = (u^2-1)^2 + v^2\\). Compute the gradient at \\((0, 0)\\); is it a minimum? The teal path starts at \\((0, 1.2)\\): where does it end, and why does it never leave?\n\nWhere you start decides where you end. Least squares and logistic regression have one valley (convex); most of what comes after week 7 does not"
+  },
+  {
+    "objectID": "weeks/04-optimization/slides/04-1-optimization.html#too-big-too-small",
+    "href": "weeks/04-optimization/slides/04-1-optimization.html#too-big-too-small",
+    "title": "Machine learning",
+    "section": "Too big, too small",
+    "text": "Too big, too small\n\n\n\n\n\n\n\n\n\nToo big a step and the loss rises or bounces: the valley at \\(\\gamma = 0.21\\), the penguins at \\(\\gamma = 12\\). Too small a gradient and nothing moves for hundreds of steps, then everything does\nThrough the many layers of a neural network these two compound, and get names: exploding and vanishing gradients. Named here, not derived"
+  },
+  {
+    "objectID": "weeks/04-optimization/slides/04-1-optimization.html#has-it-converged",
+    "href": "weeks/04-optimization/slides/04-1-optimization.html#has-it-converged",
+    "title": "Machine learning",
+    "section": "Has it converged?",
+    "text": "Has it converged?\n\n\n\n\n\n\n\n\n\nSimulated. All three are flat at step 200 (dotted): one has converged, one is on a plateau, one has a step size that shrank to nothing on the way\n\nWhich is which? What would you check, and what would you do next?\n\n\nA flat loss is consistent with all three, and no theorem below says which. In practice: the gradient norm; restart elsewhere; run longer than you think; hold out data (next week)"
+  },
+  {
+    "objectID": "weeks/04-optimization/slides/04-1-optimization.html#curvature",
+    "href": "weeks/04-optimization/slides/04-1-optimization.html#curvature",
+    "title": "Machine learning",
+    "section": "Curvature",
+    "text": "Curvature\n\nTaylor, to second order: for a smooth \\(f\\) and a small move \\(\\delta\\), \\(f(x + \\delta) \\approx f(x) + \\nabla f(x)^\\top\\delta + \\tfrac12\\,\\delta^\\top \\nabla^2 f(x)\\,\\delta\\).\n\nWhat decides whether a step helps is how fast the gradient changes along it. Take the step \\(\\delta = -\\gamma\\nabla f(x)\\) and write \\(g = \\nabla f(x)\\): \\[\nf(x - \\gamma g) \\approx f(x) \\;\\underbrace{-\\; \\gamma\\,\\|g\\|^2}_{\\text{always down}} \\;\\underbrace{+\\; \\tfrac12\\gamma^2\\, g^\\top \\nabla^2 f(x)\\, g}_{\\text{the curvature pushes back}}\n\\]\nIn the quadratic case the curvature was a fixed number \\(a\\). On the landscapes above it changes from place to place: \\(+2\\) at the bottom of a valley, \\(-4\\) at the saddle, about \\(0\\) on the plateau"
   },
   {
     "objectID": "weeks/04-optimization/slides/04-1-optimization.html#curvature-at-most-l",
     "href": "weeks/04-optimization/slides/04-1-optimization.html#curvature-at-most-l",
     "title": "Machine learning",
     "section": "Curvature at most \\(L\\)",
-    "text": "Curvature at most \\(L\\)\nIf the curvature in every direction is at most \\(L\\), the push-back is at most \\(\\tfrac12 L\\gamma^2\\|g\\|^2\\), and then \\[\nf(x - \\gamma g) \\lesssim f(x) - \\gamma\\big(1 - \\tfrac12 L\\gamma\\big)\\|g\\|^2\n\\] The bracket is positive for \\(\\gamma &lt; 2/L\\) and the bound is best at \\(\\gamma = 1/L\\): the quadratic case’s rule, in general\n\nTo make this a theorem we need “curvature at most \\(L\\)” without a second derivative. Say it about the gradient:\nAssumption. \\(\\nabla f\\) is \\(L\\)-Lipschitz for some \\(L &gt; 0\\): \\(\\|\\nabla f(x) - \\nabla f(y)\\| \\le L\\,\\|x - y\\|\\) for all \\(x, y\\)\nFor a quadratic with curvatures \\(a_1 \\ge \\dots \\ge a_p\\) this holds with \\(L = a_1\\); for least squares, \\(L = 2\\lambda_{\\max}(\\mathbf X^\\top\\mathbf X)/n\\)"
+    "text": "Curvature at most \\(L\\)\nIf the curvature in every direction is at most \\(L\\), the push-back is at most \\(\\tfrac12 L\\gamma^2\\|g\\|^2\\), and then \\[\nf(x - \\gamma g) \\lesssim f(x) - \\gamma\\big(1 - \\tfrac12 L\\gamma\\big)\\|g\\|^2\n\\] The bracket is positive for \\(\\gamma &lt; 2/L\\) and the bound is best at \\(\\gamma = 1/L\\): the quadratic case’s rule, in general\n\nTo make this a theorem, say “curvature at most \\(L\\)” without a second derivative, about the gradient:\nAssumption. \\(\\nabla f\\) is \\(L\\)-Lipschitz for some \\(L &gt; 0\\): \\(\\|\\nabla f(x) - \\nabla f(y)\\| \\le L\\,\\|x - y\\|\\) for all \\(x, y\\)\nQuadratic with curvatures \\(a_1 \\ge \\dots \\ge a_p\\): \\(L = a_1\\). Least squares: \\(L = 2\\lambda_{\\max}(\\mathbf X^\\top\\mathbf X)/n\\). The saddle example: no single \\(L\\), its curvature in \\(u\\) is \\(12u^2 - 4\\)"
   },
   {
     "objectID": "weeks/04-optimization/slides/04-1-optimization.html#descent-lemma",
     "href": "weeks/04-optimization/slides/04-1-optimization.html#descent-lemma",
     "title": "Machine learning",
     "section": "Descent lemma",
-    "text": "Descent lemma\n\nDescent lemma. If \\(\\nabla f\\) is \\(L\\)-Lipschitz, then for every \\(x\\) \\[\nf\\!\\left(x - \\tfrac1L\\nabla f(x)\\right) \\le f(x) - \\frac{\\|\\nabla f(x)\\|^2}{2L}\n\\] Every step of size \\(1/L\\) decreases \\(f\\) by at least the squared gradient over \\(2L\\) (strictly, unless \\(\\nabla f(x) = 0\\)).\n\nThe proof tidies the heuristic. The second-order term came from Taylor’s theorem; instead, integrate the gradient along the step, and let the Lipschitz bound do what the curvature bound did"
+    "text": "Descent lemma\n\nDescent lemma. If \\(\\nabla f\\) is \\(L\\)-Lipschitz, then for every \\(x\\) \\[\nf\\!\\left(x - \\tfrac1L\\nabla f(x)\\right) \\le f(x) - \\frac{\\|\\nabla f(x)\\|^2}{2L}\n\\] Every step of size \\(1/L\\) decreases \\(f\\) by at least the squared gradient over \\(2L\\) (strictly, unless \\(\\nabla f(x) = 0\\)).\n\nThe one guarantee, and its price. It says: no convexity needed, each step helps, more so where the gradient is large. It does not say: where the steps end up (any stationary point of the landscape), or that a small gradient means arrival: it means the next step gains little, which is the plateau\nProof: integrate the gradient along the step, and let the Lipschitz bound do what the curvature bound did"
   },
   {
     "objectID": "weeks/04-optimization/slides/04-1-optimization.html#descent-lemma-proof-1-of-2",
@@ -1362,56 +1397,28 @@
     "href": "weeks/04-optimization/slides/04-1-optimization.html#logistic-regression-by-descent",
     "title": "Machine learning",
     "section": "Logistic regression by descent",
-    "text": "Logistic regression by descent\n\n\n\n\n\n\n\n\n\n\n\n\nChinstrap against Adelie from flipper length (standardized), penguins data, from \\(\\beta_0 = (0, 0)\\), step \\(\\gamma = 4\\)\nObjective: \\(\\hat R_n(\\beta) = -\\ell(\\beta)/n\\). Gradient, from part 1: \\(-\\mathbf X^\\top(\\mathbf y - \\mathbf p(\\beta))/n\\)\nSame loop as least squares; only the gradient function changed. Dotted lines: glm’s answer\nCurvature: the Hessian of \\(\\hat R_n\\) is \\(\\frac1n\\sum_i \\hat p_i(1 - \\hat p_i)x_ix_i^\\top \\preceq \\mathbf X^\\top\\mathbf X/4n\\), so \\(L = 0.25\\) here and \\(2/L = 8\\)"
+    "text": "Logistic regression by descent\n\n\n\n\n\n\n\n\n\n\n\n\nChinstrap against Adelie from flipper length (standardized), penguins data, from \\(\\beta_0 = (0, 0)\\), step \\(\\gamma = 4\\)\nObjective: \\(\\hat R_n(\\beta) = -\\ell(\\beta)/n\\). Gradient, from part 1: \\(-\\mathbf X^\\top(\\mathbf y - \\mathbf p(\\beta))/n\\)\nSame loop as least squares; only the gradient changed. Dotted: glm’s answer\nCurvature: \\(w_i \\le \\tfrac14\\) in part 1’s Hessian, so \\(L = 0.25\\) here and \\(2/L = 8\\). One valley: the benign case"
   },
   {
-    "objectID": "weeks/04-optimization/slides/04-1-optimization.html#optimization-theory",
-    "href": "weeks/04-optimization/slides/04-1-optimization.html#optimization-theory",
-    "title": "Machine learning",
-    "section": "Optimization theory",
-    "text": "Optimization theory\nYou first. \\(f(u, v) = (u^2 - 1)^2 + v^2\\): compute the gradient at \\((0, 0)\\). Is \\((0, 0)\\) a minimum?\n\n\nIf the loss function is convex many of these methods have guaranteed convergence to the global minimizer\nIf the loss function is non-convex, we lose the guarantee of reaching the global minimizer (each small step still decreases the loss)\n\nPossible convergence to a local minimizer, or to a saddle like the one above (gradient zero, curvature \\(-4\\) one way, \\(+2\\) the other)\nLocal minimizers may be much worse than the best possible model…\nOr they might not be!\n\n\nDeep learning: to hell with convexity 🤠 “it just works”"
-  },
-  {
-    "objectID": "weeks/04-optimization/slides/04-1-optimization.html#section-2",
-    "href": "weeks/04-optimization/slides/04-1-optimization.html#section-2",
+    "objectID": "weeks/04-optimization/slides/04-1-optimization.html#section-3",
+    "href": "weeks/04-optimization/slides/04-1-optimization.html#section-3",
     "title": "Machine learning",
     "section": "",
-    "text": "Part 3: stochastic gradient descent"
-  },
-  {
-    "objectID": "weeks/04-optimization/slides/04-1-optimization.html#history-imagenet-2012",
-    "href": "weeks/04-optimization/slides/04-1-optimization.html#history-imagenet-2012",
-    "title": "Machine learning",
-    "section": "History: ImageNet, 2012",
-    "text": "History: ImageNet, 2012\n60,000,000\nparameters in each network of the entry that cut the ImageNet top-5 error to 15.3%, against 26.2% for the next best\nEach network fitted in five to six days on two gaming graphics cards, by stochastic gradient descent. Nobody solved an equation\nKrizhevsky, Sutskever and Hinton, “ImageNet classification with deep convolutional neural networks”, NeurIPS 2012"
-  },
-  {
-    "objectID": "weeks/04-optimization/slides/04-1-optimization.html#computational-complexity",
-    "href": "weeks/04-optimization/slides/04-1-optimization.html#computational-complexity",
-    "title": "Machine learning",
-    "section": "Computational complexity",
-    "text": "Computational complexity\n\nSecond order methods, like Newton-Raphson, use second derivatives, i.e. inverting the \\(p \\times p\\) Hessian matrix\nFirst order methods, like gradient descent, only require computing the \\(p \\times 1\\) gradient vector\n\nMany parameters \\(\\to\\) prefer first order methods"
+    "text": "Part 4: stochastic gradient descent"
   },
   {
     "objectID": "weeks/04-optimization/slides/04-1-optimization.html#what-a-step-costs",
     "href": "weeks/04-optimization/slides/04-1-optimization.html#what-a-step-costs",
     "title": "Machine learning",
     "section": "What a step costs",
-    "text": "What a step costs\nFor a linear model or a GLM, where one row’s gradient costs about \\(p\\) operations:\n\n\n\n\n\n\n\n\n\nOperations\nOnce or per step?\n\n\n\n\nLeast-squares formula \\((\\mathbf X^\\top\\mathbf X)^{-1}\\mathbf X^\\top\\mathbf y\\)\nabout \\(np^2 + p^3\\)\nonce\n\n\nOne gradient-descent step\nabout \\(np\\)\nper step\n\n\nOne step on a random batch of \\(b\\) rows\nabout \\(bp\\)\nper step\n\n\n\n\n\\(n = 1{,}200{,}000\\) images, \\(p = 60{,}000{,}000\\) parameters. If one image’s gradient cost about \\(p\\) operations, roughly how many is one full gradient? And one step on a batch of 128?"
-  },
-  {
-    "objectID": "weeks/04-optimization/slides/04-1-optimization.html#coordinate-descent",
-    "href": "weeks/04-optimization/slides/04-1-optimization.html#coordinate-descent",
-    "title": "Machine learning",
-    "section": "Coordinate descent",
-    "text": "Coordinate descent\nUpdate only one coordinate of \\(\\beta\\) in each step\nCycle through coordinates until some convergence criteria is satisfied\n\nCan combine with any strategy for univariate optimization – e.g. one-dimensional Newton’s method – treating other parameters as constants"
+    "text": "What a step costs\nSecond-order methods invert the \\(p \\times p\\) Hessian; first-order methods compute the \\(p \\times 1\\) gradient. For a linear model or a GLM, where one row’s gradient costs about \\(p\\) operations:\n\n\n\n\n\n\n\n\n\nOperations\nOnce or per step?\n\n\n\n\nLeast-squares formula \\((\\mathbf X^\\top\\mathbf X)^{-1}\\mathbf X^\\top\\mathbf y\\)\nabout \\(np^2 + p^3\\)\nonce\n\n\nOne gradient-descent step\nabout \\(np\\)\nper step\n\n\nOne step on a random batch of \\(b\\) rows\nabout \\(bp\\)\nper step\n\n\n\n\n\\(n = 1{,}200{,}000\\) images, \\(p = 60{,}000{,}000\\) parameters. If one image’s gradient cost about \\(p\\) operations, roughly how many is one full gradient? And one step on a batch of 128?"
   },
   {
     "objectID": "weeks/04-optimization/slides/04-1-optimization.html#stochasticrandom-descent",
     "href": "weeks/04-optimization/slides/04-1-optimization.html#stochasticrandom-descent",
     "title": "Machine learning",
     "section": "Stochastic/random descent",
-    "text": "Stochastic/random descent\n\nInstead of cycling through all coordinates in coordinate descent, just pick one randomly\nInstead of computing the gradient of the loss function on the entire dataset, compute it on a random sample\n\n\nPick one row \\(I\\) uniformly at random from \\(\\{1, \\ldots, n\\}\\) and use its gradient \\(\\nabla\\ell_I(\\beta)\\) in place of the average over all \\(n\\) rows. Commit: is it biased for the full gradient \\(\\nabla\\hat R_n(\\beta)\\), yes or no?"
+    "text": "Stochastic/random descent\n\nInstead of computing the gradient of the loss function on the entire dataset, compute it on a random sample\n\n\nPick one row \\(I\\) uniformly at random from \\(\\{1, \\ldots, n\\}\\) and use its gradient \\(\\nabla\\ell_I(\\beta)\\) in place of the average over all \\(n\\) rows. Commit: is it biased for the full gradient \\(\\nabla\\hat R_n(\\beta)\\), yes or no?"
   },
   {
     "objectID": "weeks/04-optimization/slides/04-1-optimization.html#the-stochastic-gradient-is-unbiased",
@@ -1421,102 +1428,25 @@
     "text": "The stochastic gradient is unbiased\nWith the data and \\(\\beta\\) held fixed, only \\(I\\) is random, and by linearity of \\(\\nabla\\), \\(\\mathbb E\\) and \\(\\sum\\), \\[\n\\mathbb E_I\\big[\\nabla\\ell_I(\\beta)\\big] = \\sum_{i=1}^n \\frac1n\\,\\nabla\\ell_i(\\beta) = \\nabla\\hat R_n(\\beta)\n\\]\nUnbiased, whatever the data are. A batch of \\(b\\) rows drawn independently with replacement averages \\(b\\) such gradients: still unbiased, with variance \\(\\sigma^2(\\beta)/b\\), where \\(\\sigma^2(\\beta)\\) is the spread of the single-row gradients\nCompute update using one randomly sampled observation, or a randomly sampled subset (“mini-batch SGD”)"
   },
   {
-    "objectID": "weeks/04-optimization/slides/04-1-optimization.html#section-3",
-    "href": "weeks/04-optimization/slides/04-1-optimization.html#section-3",
+    "objectID": "weeks/04-optimization/slides/04-1-optimization.html#the-two-paths",
+    "href": "weeks/04-optimization/slides/04-1-optimization.html#the-two-paths",
     "title": "Machine learning",
-    "section": "",
-    "text": "Scale up more! Bigger data!"
+    "section": "The two paths",
+    "text": "The two paths\n\n\n\n\n\n\n\n\n\n\n\n\nSimulated least squares, \\(n = 200\\), two inputs\nBlue: 30 full gradient steps, \\(6{,}000\\) row-gradients. Orange: 600 single-row steps, \\(600\\) row-gradients, step \\(0.05/(1 + t/100)\\)\nThe noisy path reaches the neighborhood of the answer (\\(\\times\\)) for a tenth of the work, and never sits still. With noise the step shrinks, \\(\\gamma_t \\to 0\\), but not so fast that it stops short (panel C)"
   },
   {
-    "objectID": "weeks/04-optimization/slides/04-1-optimization.html#the-step-must-shrink-but-not-too-fast",
-    "href": "weeks/04-optimization/slides/04-1-optimization.html#the-step-must-shrink-but-not-too-fast",
+    "objectID": "weeks/04-optimization/slides/04-1-optimization.html#history-imagenet-2012",
+    "href": "weeks/04-optimization/slides/04-1-optimization.html#history-imagenet-2012",
     "title": "Machine learning",
-    "section": "The step must shrink, but not too fast",
-    "text": "The step must shrink, but not too fast\n\n\n\n\n\n\n\n\n\nSimulated: one parameter, noisy gradient \\((\\beta - 2) + \\text{noise}\\), from \\(\\beta_0 = -3\\). Target: 2. You first: one of the three stalls short of the target for ever. Which, and why?\n\nWithout noise a constant step below \\(2/L\\) is right. With noise the steps shrink, \\(\\gamma_t \\to 0\\), but not too fast; the standard conditions: \\(\\sum_t \\gamma_t = \\infty\\), \\(\\sum_t \\gamma_t^2 &lt; \\infty\\) (Robbins and Monro, 1951)"
-  },
-  {
-    "objectID": "weeks/04-optimization/slides/04-1-optimization.html#constrained-and-non-smooth-optimization",
-    "href": "weeks/04-optimization/slides/04-1-optimization.html#constrained-and-non-smooth-optimization",
-    "title": "Machine learning",
-    "section": "Constrained and non-smooth optimization",
-    "text": "Constrained and non-smooth optimization\nConstrained. Some optimization problems have constraints on the parameters. If a descent step takes us outside the constraint region: choose step sizes small enough to stay inside, or project the updated point to the nearest point inside the region\n\nNon-smooth. If the loss function is not (everywhere) differentiable but still convex, e.g. absolute value: there is no gradient at a kink but there is a subgradient, any slope whose tangent line stays below the function. Step against one of those, as against the gradient (the loss need not fall at every step)"
+    "section": "History: ImageNet, 2012",
+    "text": "History: ImageNet, 2012\n60,000,000\nparameters in each network of the entry that cut the ImageNet top-5 error to 15.3%, against 26.2% for the next best\nEach network fitted in five to six days on two gaming graphics cards, by stochastic gradient descent on a loss with every feature of part 3. Nobody solved an equation, and nobody could prove it would work\nKrizhevsky, Sutskever and Hinton, “ImageNet classification with deep convolutional neural networks”, NeurIPS 2012"
   },
   {
     "objectID": "weeks/04-optimization/slides/04-1-optimization.html#section-4",
     "href": "weeks/04-optimization/slides/04-1-optimization.html#section-4",
     "title": "Machine learning",
     "section": "",
-    "text": "Part 4: where the error comes from, this time"
-  },
-  {
-    "objectID": "weeks/04-optimization/slides/04-1-optimization.html#choosing-tuning-parameters",
-    "href": "weeks/04-optimization/slides/04-1-optimization.html#choosing-tuning-parameters",
-    "title": "Machine learning",
-    "section": "Choosing tuning parameters",
-    "text": "Choosing tuning parameters\n\ne.g. number of predictors, flexibility for non-linear methods"
-  },
-  {
-    "objectID": "weeks/04-optimization/slides/04-1-optimization.html#modeling-assumption-smoothness",
-    "href": "weeks/04-optimization/slides/04-1-optimization.html#modeling-assumption-smoothness",
-    "title": "Machine learning",
-    "section": "Modeling assumption: smoothness",
-    "text": "Modeling assumption: smoothness\nVersion of simplicity/parsimony for flexible function classes\n\nLinear functions are the smoothest\nSmooth function classes: set of functions with some type of bound on second derivatives, for example\n\n\nCool math fact: can be related to sparsity by considering (rate of decay of) coefficients of function’s Fourier transform (smoother functions have sparser representations when written in a basis of sine functions, for example)"
-  },
-  {
-    "objectID": "weeks/04-optimization/slides/04-1-optimization.html#discretize-and-fit-sequentially",
-    "href": "weeks/04-optimization/slides/04-1-optimization.html#discretize-and-fit-sequentially",
-    "title": "Machine learning",
-    "section": "Discretize and fit sequentially",
-    "text": "Discretize and fit sequentially\n\nStart with a grid of values for the tuning parameter\nFit the model for each value in this grid\nPick the best fit (visually, or based on loss function value, or…)\n\n\ne.g. For the span or fraction \\(s\\) in local regression, try \\(s \\in \\{ 0.1, 0.25, 0.5, 0.75, 0.9 \\}\\) and visualize the result\n\n\n\nProblem: When to stop increasing the complexity? (i.e. decreasing the smoothness). We’ll come back to this"
-  },
-  {
-    "objectID": "weeks/04-optimization/slides/04-1-optimization.html#three-functions",
-    "href": "weeks/04-optimization/slides/04-1-optimization.html#three-functions",
-    "title": "Machine learning",
-    "section": "Three functions",
-    "text": "Three functions\n\n\n\n\n\n\n\n\n\n\n\n\n\\(f^\\star = \\arg\\min_f R(f)\\): the best of all (squared loss: week 2’s conditional mean)\n\\(f_{\\mathcal F} = \\arg\\min_{f \\in \\mathcal F} R(f)\\): the best in the class; fixed once \\(\\mathcal F\\) is\n\\(\\hat f\\): what the algorithm returns from the sample; random, in \\(\\mathcal F\\)\nDashed lines: gaps in risk, not distances\n\n\nDouble \\(n\\). Which of the two gaps depends on the training sample, and which does not know that \\(n\\) changed?"
-  },
-  {
-    "objectID": "weeks/04-optimization/slides/04-1-optimization.html#bias-and-variance-again",
-    "href": "weeks/04-optimization/slides/04-1-optimization.html#bias-and-variance-again",
-    "title": "Machine learning",
-    "section": "Bias and variance, again",
-    "text": "Bias and variance, again\n\nWeek 1, \\(k\\)-nearest neighbors: the expected squared error at a point is noise \\(+\\) bias\\(^2\\) \\(+\\) variance, with the bias set by the method and the variance falling with \\(k\\). Week 2, the optimal model theorem: \\(R(f) - R(f^\\star) = \\mathbb E[(f^\\star(X) - f(X))^2]\\) for squared loss.\n\nWhat we want small is the excess risk \\(R(\\hat f) - R(f^\\star) \\ge 0\\): one number, for any loss\nThe class \\(\\mathcal F\\) was chosen before the data arrived. So some of that number was decided then, by how far \\(\\mathcal F\\) is from \\(f^\\star\\); the rest depends on the sample. Split it there: add and subtract \\(R(f_{\\mathcal F})\\)\n\\[\nR(\\hat f) - R(f^\\star) = \\big[R(\\hat f) - R(f_{\\mathcal F})\\big] + \\big[R(f_{\\mathcal F}) - R(f^\\star)\\big]\n\\]\nBoth brackets should be nonnegative: \\(f_{\\mathcal F}\\) is the best in \\(\\mathcal F\\), and \\(\\hat f\\) is in \\(\\mathcal F\\); \\(f^\\star\\) is the best of all"
-  },
-  {
-    "objectID": "weeks/04-optimization/slides/04-1-optimization.html#biasvariance-decomposition-erm-form",
-    "href": "weeks/04-optimization/slides/04-1-optimization.html#biasvariance-decomposition-erm-form",
-    "title": "Machine learning",
-    "section": "Bias–variance decomposition, ERM form",
-    "text": "Bias–variance decomposition, ERM form\nBias–variance decomposition, ERM form. \\(\\mathcal F\\) a class of predictors with a best member \\(f_{\\mathcal F} = \\arg\\min_{f \\in \\mathcal F} R(f)\\); \\(\\hat f = \\arg\\min_{f \\in \\mathcal F} \\hat R_n(f)\\) the empirical risk minimizer; \\(f^\\star = \\arg\\min_f R(f)\\) over all predictors. Then \\[\nR(\\hat f) - R(f^\\star) = \\underbrace{\\big[R(\\hat f) - R(f_{\\mathcal F})\\big]}_{\\text{estimation}} + \\underbrace{\\big[R(f_{\\mathcal F}) - R(f^\\star)\\big]}_{\\text{approximation}}, \\qquad \\text{both terms} \\ge 0\n\\]\n\nProof. The equation is adding and subtracting \\(R(f_{\\mathcal F})\\). The first bracket is \\(\\ge 0\\) because \\(\\hat f \\in \\mathcal F\\) and \\(f_{\\mathcal F}\\) minimizes \\(R\\) over \\(\\mathcal F\\); the second because \\(f^\\star\\) minimizes \\(R\\) over everything. \\(\\blacksquare\\)\n\n\nFor squared loss, the optimal model theorem gives the approximation term a shape: \\(R(f_{\\mathcal F}) - R(f^\\star) = \\mathbb E[(f_{\\mathcal F}(X) - f^\\star(X))^2]\\), the squared distance from the class to the truth"
-  },
-  {
-    "objectID": "weeks/04-optimization/slides/04-1-optimization.html#what-the-two-terms-do",
-    "href": "weeks/04-optimization/slides/04-1-optimization.html#what-the-two-terms-do",
-    "title": "Machine learning",
-    "section": "What the two terms do",
-    "text": "What the two terms do\n\nEstimation error: random, depends on the sample; more data usually shrinks it, a bigger class usually grows it. Approximation error: fixed before any data arrive, zero when the class attains \\(R(f^\\star)\\), and it cannot grow when the class grows (nested classes). The two play the roles of week 1’s variance and bias, for any method that minimizes something over a class"
-  },
-  {
-    "objectID": "weeks/04-optimization/slides/04-1-optimization.html#the-trade-off-in-numbers",
-    "href": "weeks/04-optimization/slides/04-1-optimization.html#the-trade-off-in-numbers",
-    "title": "Machine learning",
-    "section": "The trade-off in numbers",
-    "text": "The trade-off in numbers\n\n\n\n\n\n\n\n\n\nSimulated: \\(f^\\star(x) = \\sin(2\\pi x) + x/2\\), \\(X\\) uniform on \\([0, 1]\\), noise sd \\(0.4\\), \\(n = 40\\); the class is the polynomials of degree \\(d\\), fitted by least squares; estimation is \\(\\mathbb E[(\\hat f(X) - f_{\\mathcal F}(X))^2]\\) averaged over 200 samples\n\nDouble \\(n\\) to 80. Which curve moves, and which way?"
-  },
-  {
-    "objectID": "weeks/04-optimization/slides/04-1-optimization.html#no-free-lunch",
-    "href": "weeks/04-optimization/slides/04-1-optimization.html#no-free-lunch",
-    "title": "Machine learning",
-    "section": "No free lunch",
-    "text": "No free lunch\nNo free lunch (stated). No method has lower error than every other on every distribution. Binary classification, 0–1 loss: for any learning method and any training size \\(n\\), on a domain with at least \\(2n\\) points there is a distribution for which a perfect predictor exists and the method’s expected error (over training samples) is at least \\(1/4\\)\nWhat it says: choosing a method is an assumption about the world; the ERM form shows where one such assumption enters, the class \\(\\mathcal F\\) chosen before the data. What it does not say: that methods are equally good on the problems we meet, or that an assumption is a flaw\n\nIn the week 1 seminar a line and \\(k\\) nearest neighbors often scored within a standard error of each other on gapminder. A fact about the methods, or about the data?"
-  },
-  {
-    "objectID": "weeks/04-optimization/slides/04-1-optimization.html#section-5",
-    "href": "weeks/04-optimization/slides/04-1-optimization.html#section-5",
-    "title": "Machine learning",
-    "section": "",
-    "text": "Part 5: stopping"
+    "text": "Part 5: what the fitting leaves over"
   },
   {
     "objectID": "weeks/04-optimization/slides/04-1-optimization.html#early-stopping",
@@ -1533,17 +1463,31 @@
     "text": "Stopping early\n\n\n\n\n\n\n\n\n\n\n\n\nSimulated: least squares from \\(\\beta_0 = \\mathbf 0\\), \\(n = 80\\), \\(p = 60\\), noise sd 3, step \\(1/2L\\); held-out error on 2,000 new rows from the same model\nTraining error falls at every step. The held-out error falls, turns at step 15, and ends far above its minimum\nThe number of steps is a tuning parameter, like \\(k\\) or \\(d\\). Week 7 writes the penalty down, \\(\\hat R_n(\\beta) + \\lambda\\|\\beta\\|^2\\), with \\(\\lambda\\) as the knob"
   },
   {
+    "objectID": "weeks/04-optimization/slides/04-1-optimization.html#where-the-error-comes-from-this-time",
+    "href": "weeks/04-optimization/slides/04-1-optimization.html#where-the-error-comes-from-this-time",
+    "title": "Machine learning",
+    "section": "Where the error comes from, this time",
+    "text": "Where the error comes from, this time\nThree functions. \\(f^\\star = \\arg\\min_f R(f)\\): the best of all (squared loss: week 2’s conditional mean). \\(f_{\\mathcal F} = \\arg\\min_{f \\in \\mathcal F} R(f)\\): the best in the class, fixed once \\(\\mathcal F\\) is. \\(\\hat f = \\arg\\min_{f \\in \\mathcal F} \\hat R_n(f)\\): what the data give, random\nBias–variance decomposition, ERM form. Both terms are \\(\\ge 0\\): \\[\nR(\\hat f) - R(f^\\star) = \\underbrace{\\big[R(\\hat f) - R(f_{\\mathcal F})\\big]}_{\\text{estimation}} + \\underbrace{\\big[R(f_{\\mathcal F}) - R(f^\\star)\\big]}_{\\text{approximation}}\n\\]\n\nProof: exercise 2, two lines. The class was chosen before the data, and so was the approximation error; the estimation error is the sample’s. Week 1’s bias and variance for any method that minimizes over a class. Next week starts here"
+  },
+  {
+    "objectID": "weeks/04-optimization/slides/04-1-optimization.html#no-free-lunch",
+    "href": "weeks/04-optimization/slides/04-1-optimization.html#no-free-lunch",
+    "title": "Machine learning",
+    "section": "No free lunch",
+    "text": "No free lunch\nNo free lunch (stated). No method has lower error than every other on every distribution. Binary classification, 0–1 loss: for any learning method and any training size \\(n\\), on a domain with at least \\(2n\\) points there is a distribution for which a perfect predictor exists and the method’s expected error (over training samples) is at least \\(1/4\\)\nWhat it says: choosing a method is an assumption about the world; the ERM form shows where one such assumption enters, the class \\(\\mathcal F\\) chosen before the data. What it does not say: that methods are equally good on the problems we meet, or that an assumption is a flaw\n\nIn the week 1 seminar a line and \\(k\\) nearest neighbors often scored within a standard error of each other on gapminder. A fact about the methods, or about the data?"
+  },
+  {
     "objectID": "weeks/04-optimization/slides/04-1-optimization.html#before-the-seminar",
     "href": "weeks/04-optimization/slides/04-1-optimization.html#before-the-seminar",
     "title": "Machine learning",
     "section": "Before the seminar",
-    "text": "Before the seminar\n\nThis week: exercises 1 to 4 at the top of the notebook. The descent lemma and the ERM form of the bias–variance decomposition, both again with the slides closed; the second derivative of the logistic log-likelihood, finishing the Newton-Raphson exercise; and no free lunch on a finite domain\nIn the seminar you write gradient descent once, as a function, and use it for least squares, then logistic regression, then with random batches"
+    "text": "Before the seminar\n\nThis week: exercises 1 to 4 at the top of the notebook. The descent lemma again with the slides closed; the proof of the ERM form of the bias–variance decomposition; the second derivative of the logistic log-likelihood and the Newton-Raphson update; and no free lunch on a finite domain\nIn the seminar you write gradient descent once, as a function, and use it for least squares, then logistic regression, then with random batches; and you watch the gradient norm while it runs"
   },
   {
     "objectID": "weeks/04-optimization/slides/04-1-optimization.html#conclusion-optimization-in-ml-is-a-big-topic",
     "href": "weeks/04-optimization/slides/04-1-optimization.html#conclusion-optimization-in-ml-is-a-big-topic",
     "title": "Machine learning",
     "section": "Conclusion: optimization in ML is a big topic",
-    "text": "Conclusion: optimization in ML is a big topic\nStrategies for specific problems\ne.g. stepwise inclusion of variables, constraints, etc\nStrategies for general loss/function classes\ne.g. gradient methods, coordinate methods\nStopping at the right amount of complexity\nMaybe the most important part! Next lecture"
+    "text": "Conclusion: optimization in ML is a big topic\nOne guarantee, with a price\nEach small step helps if the curvature is bounded. Where it ends, and whether it has ended, the theory does not say\nStrategies for general loss/function classes\ne.g. gradient methods, stochastic gradient methods\nStopping at the right amount of complexity\nMaybe the most important part! Next lecture"
   }
 ]

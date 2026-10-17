@@ -152,10 +152,10 @@ Joshua Loftus
 <h2></h2>
 <h3 id="week-4-optimization-and-model-fitting">Week 4: optimization and model fitting</h3>
 <p>Part 1: fitting logistic regression</p>
-<p>Part 2: empirical risk minimization and gradient descent</p>
-<p>Part 3: stochastic gradient descent</p>
-<p>Part 4: where the error comes from, this time</p>
-<p>Part 5: stopping</p>
+<p>Part 2: gradient descent</p>
+<p>Part 3: what the gradient is telling you</p>
+<p>Part 4: stochastic gradient descent</p>
+<p>Part 5: what the fitting leaves over</p>
 </section>
 <section id="where-week-3-left-the-fitting" class="slide level2">
 <h2>Where week 3 left the fitting</h2>
@@ -167,6 +167,9 @@ Joshua Loftus
 </section>
 <section id="fitting-logistic-regression" class="slide level2">
 <h2>Fitting logistic regression</h2>
+<div class="recall">
+<p><strong>Maximum likelihood</strong> (Fisher, 1912–1922): choose the parameter that makes the observed data most probable. We maximize the <strong>log</strong>-likelihood because a product of <span class="math inline">\(n\)</span> small numbers underflows and a sum differentiates term by term; log is increasing, so the maximizer is the same. <strong>Least squares is a log-likelihood</strong>: for <span class="math inline">\(y_i \sim N(\mathbf x_i^\top\beta, \sigma^2)\)</span> it is <span class="math inline">\(-\frac{1}{2\sigma^2}\sum_i (y_i - \mathbf x_i^\top\beta)^2 + \text{const}\)</span>. In <code>glm</code>, <code>family</code> names the distribution whose likelihood is maximized: <code>gaussian</code> is <code>lm</code>, <code>binomial</code> is logistic regression.</p>
+</div>
 <p>How do we estimate <span class="math inline">\(\beta\)</span>? <strong>Maximum likelihood</strong>:</p>
 <p><span class="math display">\[
 \text{maximize } L(\beta ; \mathbf y | \mathbf X) = \prod_{i=1}^n L(\beta ; y_i | \mathbf x_i)
@@ -205,11 +208,11 @@ L(\beta ; \mathbf y | \mathbf x) = \prod_{i=1}^n \left( \frac{1}{1+e^{-x_i \beta
 </section>
 <section id="two-things-the-score-equations-say" class="slide level2">
 <h2>Two things the score equations say</h2>
-<p><strong>Row one is the intercept.</strong> <span class="math inline">\(\sum_i (y_i - \hat p_i) = 0\)</span>: the fitted probabilities average to the observed proportion of 1s on the training rows. An average identity for an unpenalized fit with an intercept, not calibration at each <span class="math inline">\(x\)</span>, and not a statement about new data.</p>
+<p><strong>Row one is the intercept.</strong> <span class="math inline">\(\sum_i (y_i - \hat p_i) = 0\)</span>: the fitted probabilities average to the observed proportion of 1s on the training rows.</p>
 <p><strong>The log-likelihood is concave.</strong> Differentiating once more, <span class="math display">\[
-\frac{\partial^2 \ell}{\partial\beta\,\partial\beta^\top} = -\sum_{i=1}^n \hat p_i(\beta)\,\big(1 - \hat p_i(\beta)\big)\, x_i x_i^\top \preceq 0,
-\]</span> so any finite solution of the score equations is a global maximum, and the only one when <span class="math inline">\(\mathbf X\)</span> has full column rank.</p>
-<p>What concavity does not give: existence. Week 3’s separable case is the case with no finite solution.</p>
+\frac{\partial^2 \ell}{\partial\beta\,\partial\beta^\top} = -\sum_{i=1}^n w_i\, x_i x_i^\top, \qquad w_i = \hat p_i(\beta)\,\big(1 - \hat p_i(\beta)\big) &gt; 0
+\]</span> Each term is minus a positive weight times <span class="math inline">\(x_i x_i^\top\)</span>, a matrix that never points uphill in any direction, so the sum curves downward everywhere: the log-likelihood is concave, and any finite solution of the score equations is its global maximum</p>
+<p>What concavity does not give: existence. Week 3’s separable case is the case with no finite solution</p>
 </section>
 <section id="newton-raphson" class="slide level2">
 <h2>Newton-Raphson</h2>
@@ -223,7 +226,7 @@ L(\beta ; \mathbf y | \mathbf x) = \prod_{i=1}^n \left( \frac{1}{1+e^{-x_i \beta
 </section>
 <section id="logistic-regression-fitting-multivariate-case" class="slide level2">
 <h2>Logistic regression fitting: multivariate case</h2>
-<p>Newton-IRLS (equivalent) steps:</p>
+<p>Newton-IRLS (equivalent) steps, with <span class="math inline">\(g\)</span> the logit link:</p>
 <p><span class="math display">\[
 \begin{eqnarray}
 \hat{\mathbf p}_t &amp; = &amp; g^{-1}(\mathbf X \hat \beta_t)
@@ -239,38 +242,43 @@ L(\beta ; \mathbf y | \mathbf x) = \prod_{i=1}^n \left( \frac{1}{1+e^{-x_i \beta
 <p><strong>Note</strong>: larger weights on observations with <span class="math inline">\(\hat p\)</span> closer to 1/2, i.e.&nbsp;the most difficult to classify (<strong><em>look for variations of this theme</em></strong>) <span class="source">See Section 4.4.1 of <a href="https://web.stanford.edu/~hastie/ElemStatLearn/">ESL</a></span></p>
 </div>
 </section>
+<section id="glms-in-r-what-you-should-know" class="slide level2">
+<h2>GLMs in <code>R</code>: what you should know</h2>
+<p><strong>Does <code>glm</code> use Newton-Raphson for every family?</strong> Yes. IRLS is Fisher scoring, Newton’s method with the expected Hessian; for the default links (<code>binomial</code> with logit, <code>poisson</code> with log, <code>gaussian</code> with identity) the two coincide. <code>lm</code> is the special case where one step solves the normal equations</p>
+<p><strong>How many iterations?</strong> Usually under ten. <code>summary()</code> prints <code>Number of Fisher Scoring iterations</code></p>
+<p><strong>When does it fail?</strong> When there is no finite MLE: the separable case, with the week 3 warning <code>fitted probabilities numerically 0 or 1 occurred</code>, or a Poisson fit with coefficients running off to infinity. The algorithm is fine; the maximum is not there</p>
+<p><strong>Why does the rest of machine learning not do this?</strong> Each step solves a <span class="math inline">\(p \times p\)</span> system. For <span class="math inline">\(p\)</span> in the thousands or millions that is the cost that matters, and the next part is about avoiding it</p>
+</section>
 <section id="section-1" class="slide level2 inverse center">
 <h2></h2>
-<h3 id="part-2-empirical-risk-minimization-and-gradient-descent">Part 2: empirical risk minimization and gradient descent</h3>
+<h3 id="part-2-gradient-descent">Part 2: gradient descent</h3>
+<h4 id="ml-approx-erm-sgd">ML <span class="math inline">\(\approx\)</span> ERM <span class="math inline">\(+\)</span> SGD</h4>
 </section>
 <section id="ml-tasks-as-optimization-problems" class="slide level2">
 <h2>ML tasks as optimization problems</h2>
 <p>For a given <strong>loss function</strong> <span class="math inline">\(\ell(y, f(x))\)</span> and <strong>probability model</strong> <span class="math inline">\((X,Y) \sim P\)</span>, we want to find a function <span class="math inline">\(f\)</span> to minimize <strong>risk</strong>:</p>
 <p><span class="math display">\[
-\text{minimize } R(f) = \mathbb E_P[\ell(Y, f(X))]
+\underset{f}{\text{minimize }}\ R(f) = \mathbb E_P[\ell(Y, f(X))]
 \]</span></p>
 <div class="fragment">
 <h4 id="math-model-leftrightarrow-statistical-model">Math model <span class="math inline">\(\leftrightarrow\)</span> Statistical model</h4>
 <p>Assume an i.i.d. sample from <span class="math inline">\(P\)</span>, focus on <em>empirical risk minimization</em> (<strong>ERM</strong>)</p>
 <p><span class="math display">\[
-\text{minimize } \hat R_n(f) = \frac{1}{n} \sum_{i=1}^n \ell(y_i, f(x_i))
+\underset{f \in \mathcal F}{\text{minimize }}\ \hat R_n(f) = \frac{1}{n} \sum_{i=1}^n \ell(y_i, f(x_i))
 \]</span></p>
 <div class="fragment">
-<p>We also choose a <strong>function class</strong> <span class="math inline">\(\mathcal F\)</span> (or parameter set), i.e.&nbsp;<em>type of function</em> <span class="math inline">\(f\)</span>, determining the <em>domain of the optimization</em></p>
+<p>We also choose a <strong>function class</strong> <span class="math inline">\(\mathcal F\)</span> (or parameter set), i.e.&nbsp;a <em>class of functions</em> <span class="math inline">\(f\)</span>, determining the <em>domain of the optimization</em></p>
 </div>
 </div>
 </section>
-<section id="example-linear-regression" class="slide level2">
-<h2>Example: linear regression</h2>
-<p><strong>Linear regression.</strong> Probability model: random errors <span class="math inline">\(\varepsilon \sim N(0, \sigma^2)\)</span>. Loss: squared, <span class="math inline">\(\ell(y, f(\mathbf x)) = (y - f(\mathbf x))^2\)</span>. Function class: <span class="math inline">\(\mathcal F = \{ f_\beta(\mathbf x) = \mathbf x^T \beta : \beta \in \mathbb R^{p+1} \}\)</span>. Algorithm: OLS, closed-form solution (memorized yet?)</p>
-<p><span class="math display">\[\underset{\beta \in \mathbb R^{p+1}}{\text{minimize }} \frac{1}{n} \sum_{i=1}^n (y_i - \mathbf x_i^T \beta)^2\]</span></p>
-</section>
-<section id="more-examples-glm" class="slide level2">
-<h2>More examples: GLM</h2>
-<p><strong>GLM.</strong> Probability model: <code>family = binomial(), poisson(), etc</code>. Loss: minus the log-likelihood of one row, so that <span class="math inline">\(\hat R_n(\beta) = -\ell(\beta)/n\)</span>. Function class: <span class="math inline">\(\{ g^{-1}(\mathbf x^T \beta) : \beta \in \mathbb R^{p+1} \}\)</span>, with a fixed link function <span class="math inline">\(g\)</span>. Algorithm: ERM (also MLE in this case) via iterative methods like Newton-Raphson or gradient descent</p>
-<p><span class="math display">\[
+<section id="examples-linear-regression-glm" class="slide level2">
+<h2>Examples: linear regression, GLM</h2>
+<p><strong>Linear regression.</strong> Probability model: errors <span class="math inline">\(\varepsilon \sim N(0, \sigma^2)\)</span>. Loss: squared, <span class="math inline">\(\ell(y, f(\mathbf x)) = (y - f(\mathbf x))^2\)</span>. Class: <span class="math inline">\(\mathcal F = \{ f_\beta(\mathbf x) = \mathbf x^T \beta : \beta \in \mathbb R^{p+1} \}\)</span>. Algorithm: OLS, closed form (memorized yet?) <span class="math display">\[\underset{\beta \in \mathbb R^{p+1}}{\text{minimize }} \frac{1}{n} \sum_{i=1}^n (y_i - \mathbf x_i^T \beta)^2\]</span></p>
+<div class="fragment">
+<p><strong>GLM.</strong> Probability model: <code>family = binomial(), poisson(), etc</code>. Loss: minus one row’s log-likelihood, so <span class="math inline">\(\hat R_n(\beta) = -\ell(\beta)/n\)</span>. Class: <span class="math inline">\(\{ g^{-1}(\mathbf x^T \beta) : \beta \in \mathbb R^{p+1} \}\)</span>, link <span class="math inline">\(g\)</span> fixed. Algorithm: ERM (here also MLE) by Newton-Raphson or gradient descent <span class="math display">\[
 \underset{\beta \in \mathbb R^{p+1}}{\text{minimize }} -\frac{1}{n} \sum_{i=1}^n \log L(\beta ; y_i | \mathbf x_i)
 \]</span></p>
+</div>
 </section>
 <section id="optimization-algorithms" class="slide level2">
 <h2>Optimization algorithms</h2>
@@ -286,14 +294,12 @@ L(\beta ; \mathbf y | \mathbf x) = \prod_{i=1}^n \left( \frac{1}{1+e^{-x_i \beta
 <p>i.e.&nbsp;skiing as fast as possible. Notation: the objective is the empirical risk <span class="math inline">\(\hat R_n(\beta)\)</span>, and <span class="math inline">\(t\)</span> counts steps</p>
 <ol type="1">
 <li><p>Start at an initial point <span class="math inline">\(\beta_0\)</span></p></li>
-<li><p>For step <span class="math inline">\(t = 1, \ldots\)</span></p></li>
-</ol>
+<li><p>For step <span class="math inline">\(t = 1, \ldots\)</span></p>
 <ul>
 <li><p>Compute <span class="math inline">\(\mathbf d_t = \nabla \hat R_n(\beta_{t-1}) \color{#b73779}{\text{ (gradient)}}\)</span></p></li>
 <li><p>Update <span class="math inline">\(\beta_{t} = \beta_{t-1} - \gamma_t \mathbf d_t\)</span></p></li>
-</ul>
-<ol start="3" type="1">
-<li>Until some <strong>convergence criteria</strong> is satisfied</li>
+</ul></li>
+<li><p>Until some <strong>convergence criteria</strong> is satisfied</p></li>
 </ol>
 <div class="fragment">
 <p>Where the <strong>step size</strong> <span class="math inline">\(\gamma_t &gt; 0\)</span> is made small enough to not “overshoot” and increase the loss, i.e.&nbsp;the loss only decreases</p>
@@ -347,15 +353,84 @@ L(\beta ; \mathbf y | \mathbf x) = \prod_{i=1}^n \left( \frac{1}{1+e^{-x_i \beta
 </div>
 </div>
 </section>
-<section id="beyond-the-quadratic-what-could-go-wrong" class="slide level2">
-<h2>Beyond the quadratic: what could go wrong?</h2>
+<section id="section-2" class="slide level2 inverse center">
+<h2></h2>
+<h3 id="part-3-what-the-gradient-is-telling-you">Part 3: what the gradient is telling you</h3>
+</section>
+<section id="reading-the-gradient" class="slide level2">
+<h2>Reading the gradient</h2>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure>
+<p><img data-src="04-1-optimization_files/figure-revealjs/landscape-1d-1.png" style="width:100.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Each step computes one thing about where it stands, the gradient <span class="math inline">\(\nabla \hat R_n(\beta_t)\)</span>, and its size says little on its own: <strong>zero</strong> at the minimum, but also at a local minimum, and nearly zero on a plateau; <strong>large</strong> means steep, and a step may overshoot</p>
+<div class="ask">
+<p>Your loss has stopped falling. Which of the four are you at, and how would you tell?</p>
+</div>
+</section>
+<section id="landscapes" class="slide level2">
+<h2>Landscapes</h2>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure>
+<p><img data-src="04-1-optimization_files/figure-revealjs/landscapes-1.png" style="width:100.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="ask">
+<p>Right: <span class="math inline">\(f(u, v) = (u^2-1)^2 + v^2\)</span>. Compute the gradient at <span class="math inline">\((0, 0)\)</span>; is it a minimum? The teal path starts at <span class="math inline">\((0, 1.2)\)</span>: where does it end, and why does it never leave?</p>
+</div>
+<p>Where you start decides where you end. Least squares and logistic regression have one valley (convex); most of what comes after week 7 does not</p>
+</section>
+<section id="too-big-too-small" class="slide level2">
+<h2>Too big, too small</h2>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure>
+<p><img data-src="04-1-optimization_files/figure-revealjs/big-small-1.png" style="width:100.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+<p><strong>Too big</strong> a step and the loss rises or bounces: the valley at <span class="math inline">\(\gamma = 0.21\)</span>, the penguins at <span class="math inline">\(\gamma = 12\)</span>. <strong>Too small</strong> a gradient and nothing moves for hundreds of steps, then everything does</p>
+<p>Through the many layers of a neural network these two compound, and get names: <strong>exploding</strong> and <strong>vanishing</strong> gradients. Named here, not derived</p>
+</section>
+<section id="has-it-converged" class="slide level2">
+<h2>Has it converged?</h2>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure>
+<p><img data-src="04-1-optimization_files/figure-revealjs/converged-1.png" style="width:100.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Simulated. All three are flat at step 200 (dotted): one has converged, one is on a plateau, one has a step size that shrank to nothing on the way</p>
+<div class="ask">
+<p>Which is which? What would you check, and what would you do next?</p>
+</div>
+<div class="fragment">
+<p>A flat loss is consistent with all three, and no theorem below says which. In practice: the gradient norm; restart elsewhere; run longer than you think; hold out data (next week)</p>
+</div>
+</section>
+<section id="curvature" class="slide level2">
+<h2>Curvature</h2>
 <div class="recall">
 <p>Taylor, to second order: for a smooth <span class="math inline">\(f\)</span> and a small move <span class="math inline">\(\delta\)</span>, <span class="math inline">\(f(x + \delta) \approx f(x) + \nabla f(x)^\top\delta + \tfrac12\,\delta^\top \nabla^2 f(x)\,\delta\)</span>.</p>
 </div>
-<p>Take the step <span class="math inline">\(\delta = -\gamma\nabla f(x)\)</span> and write <span class="math inline">\(g = \nabla f(x)\)</span>: <span class="math display">\[
+<p>What decides whether a step helps is how fast the gradient changes along it. Take the step <span class="math inline">\(\delta = -\gamma\nabla f(x)\)</span> and write <span class="math inline">\(g = \nabla f(x)\)</span>: <span class="math display">\[
 f(x - \gamma g) \approx f(x) \;\underbrace{-\; \gamma\,\|g\|^2}_{\text{always down}} \;\underbrace{+\; \tfrac12\gamma^2\, g^\top \nabla^2 f(x)\, g}_{\text{the curvature pushes back}}
 \]</span></p>
-<p>In the quadratic case the curvature was a fixed number <span class="math inline">\(a\)</span>. Here it depends on where you stand, and the step is safe only if it is never too large</p>
+<p>In the quadratic case the curvature was a fixed number <span class="math inline">\(a\)</span>. On the landscapes above it changes from place to place: <span class="math inline">\(+2\)</span> at the bottom of a valley, <span class="math inline">\(-4\)</span> at the saddle, about <span class="math inline">\(0\)</span> on the plateau</p>
 </section>
 <section id="curvature-at-most-l" class="slide level2">
 <h2>Curvature at most <span class="math inline">\(L\)</span></h2>
@@ -363,9 +438,9 @@ f(x - \gamma g) \approx f(x) \;\underbrace{-\; \gamma\,\|g\|^2}_{\text{always do
 f(x - \gamma g) \lesssim f(x) - \gamma\big(1 - \tfrac12 L\gamma\big)\|g\|^2
 \]</span> The bracket is positive for <span class="math inline">\(\gamma &lt; 2/L\)</span> and the bound is best at <span class="math inline">\(\gamma = 1/L\)</span>: the quadratic case’s rule, in general</p>
 <div class="fragment">
-<p>To make this a theorem we need “curvature at most <span class="math inline">\(L\)</span>” without a second derivative. Say it about the gradient:</p>
+<p>To make this a theorem, say “curvature at most <span class="math inline">\(L\)</span>” without a second derivative, about the gradient:</p>
 <p><strong>Assumption.</strong> <span class="math inline">\(\nabla f\)</span> is <strong><span class="math inline">\(L\)</span>-Lipschitz</strong> for some <span class="math inline">\(L &gt; 0\)</span>: <span class="math inline">\(\|\nabla f(x) - \nabla f(y)\| \le L\,\|x - y\|\)</span> for all <span class="math inline">\(x, y\)</span></p>
-<p>For a quadratic with curvatures <span class="math inline">\(a_1 \ge \dots \ge a_p\)</span> this holds with <span class="math inline">\(L = a_1\)</span>; for least squares, <span class="math inline">\(L = 2\lambda_{\max}(\mathbf X^\top\mathbf X)/n\)</span></p>
+<p>Quadratic with curvatures <span class="math inline">\(a_1 \ge \dots \ge a_p\)</span>: <span class="math inline">\(L = a_1\)</span>. Least squares: <span class="math inline">\(L = 2\lambda_{\max}(\mathbf X^\top\mathbf X)/n\)</span>. The saddle example: no single <span class="math inline">\(L\)</span>, its curvature in <span class="math inline">\(u\)</span> is <span class="math inline">\(12u^2 - 4\)</span></p>
 </div>
 </section>
 <section id="descent-lemma" class="slide level2">
@@ -375,7 +450,8 @@ f(x - \gamma g) \lesssim f(x) - \gamma\big(1 - \tfrac12 L\gamma\big)\|g\|^2
 f\!\left(x - \tfrac1L\nabla f(x)\right) \le f(x) - \frac{\|\nabla f(x)\|^2}{2L}
 \]</span> Every step of size <span class="math inline">\(1/L\)</span> decreases <span class="math inline">\(f\)</span> by at least the squared gradient over <span class="math inline">\(2L\)</span> (strictly, unless <span class="math inline">\(\nabla f(x) = 0\)</span>).</p>
 </div>
-<p>The proof tidies the heuristic. The second-order term came from Taylor’s theorem; instead, integrate the gradient along the step, and let the Lipschitz bound do what the curvature bound did</p>
+<p>The one guarantee, and its price. It says: no convexity needed, each step helps, more so where the gradient is large. It does not say: where the steps end up (any stationary point of the landscape), or that a small gradient means arrival: it means the next step gains little, which is the plateau</p>
+<p>Proof: integrate the gradient along the step, and let the Lipschitz bound do what the curvature bound did</p>
 </section>
 <section id="descent-lemma-proof-1-of-2" class="slide level2">
 <h2>Descent lemma, proof (1 of 2)</h2>
@@ -428,48 +504,17 @@ f(y) - f(x) &amp;\le \nabla f(x)^\top v + \int_0^1 L\,t\,\|v\|^2\, dt
 </div><div class="column" style="width:48%;">
 <p>Chinstrap against Adelie from flipper length (standardized), penguins data, from <span class="math inline">\(\beta_0 = (0, 0)\)</span>, step <span class="math inline">\(\gamma = 4\)</span></p>
 <p>Objective: <span class="math inline">\(\hat R_n(\beta) = -\ell(\beta)/n\)</span>. Gradient, from part 1: <span class="math inline">\(-\mathbf X^\top(\mathbf y - \mathbf p(\beta))/n\)</span></p>
-<p>Same loop as least squares; only the gradient function changed. Dotted lines: <code>glm</code>’s answer</p>
-<p>Curvature: the Hessian of <span class="math inline">\(\hat R_n\)</span> is <span class="math inline">\(\frac1n\sum_i \hat p_i(1 - \hat p_i)x_ix_i^\top \preceq \mathbf X^\top\mathbf X/4n\)</span>, so <span class="math inline">\(L = 0.25\)</span> here and <span class="math inline">\(2/L = 8\)</span></p>
+<p>Same loop as least squares; only the gradient changed. Dotted: <code>glm</code>’s answer</p>
+<p>Curvature: <span class="math inline">\(w_i \le \tfrac14\)</span> in part 1’s Hessian, so <span class="math inline">\(L = 0.25\)</span> here and <span class="math inline">\(2/L = 8\)</span>. One valley: the benign case</p>
 </div></div>
 </section>
-<section id="optimization-theory" class="slide level2">
-<h2>Optimization theory</h2>
-<p><strong>You first.</strong> <span class="math inline">\(f(u, v) = (u^2 - 1)^2 + v^2\)</span>: compute the gradient at <span class="math inline">\((0, 0)\)</span>. Is <span class="math inline">\((0, 0)\)</span> a minimum?</p>
-<div class="fragment">
-<ul>
-<li><p>If the loss function is convex many of these methods have <em>guaranteed convergence</em> to the <em>global minimizer</em></p></li>
-<li><p>If the loss function is non-convex, we lose the guarantee of reaching the <em>global</em> minimizer (each small step still decreases the loss)</p>
-<ul>
-<li><p>Possible convergence to a local minimizer, or to a saddle like the one above (gradient zero, curvature <span class="math inline">\(-4\)</span> one way, <span class="math inline">\(+2\)</span> the other)</p></li>
-<li><p>Local minimizers may be much worse than the best possible model…</p></li>
-<li><p>Or they might not be!</p></li>
-</ul></li>
-</ul>
-<p>Deep learning: to hell with convexity 🤠 “it just works”</p>
-</div>
-</section>
-<section id="section-2" class="slide level2 inverse center">
+<section id="section-3" class="slide level2 inverse center">
 <h2></h2>
-<h3 id="part-3-stochastic-gradient-descent">Part 3: stochastic gradient descent</h3>
-</section>
-<section id="history-imagenet-2012" class="slide level2 inverse">
-<h2>History: ImageNet, 2012</h2>
-<p><span class="big" style="color: #fde725;">60,000,000</span></p>
-<p>parameters in each network of the entry that cut the ImageNet top-5 error to 15.3%, against 26.2% for the next best</p>
-<p>Each network fitted in five to six days on two gaming graphics cards, by stochastic gradient descent. Nobody solved an equation</p>
-<p><span class="source">Krizhevsky, Sutskever and Hinton, “ImageNet classification with deep convolutional neural networks”, NeurIPS 2012</span></p>
-</section>
-<section id="computational-complexity" class="slide level2">
-<h2>Computational complexity</h2>
-<ul>
-<li><p><strong>Second order methods</strong>, like Newton-Raphson, use second derivatives, i.e.&nbsp;<em>inverting the <span class="math inline">\(p \times p\)</span> Hessian matrix</em></p></li>
-<li><p><strong>First order methods</strong>, like gradient descent, only require computing the <span class="math inline">\(p \times 1\)</span> gradient vector</p></li>
-</ul>
-<p>Many parameters <span class="math inline">\(\to\)</span> prefer first order methods</p>
+<h3 id="part-4-stochastic-gradient-descent">Part 4: stochastic gradient descent</h3>
 </section>
 <section id="what-a-step-costs" class="slide level2">
 <h2>What a step costs</h2>
-<p>For a linear model or a GLM, where one row’s gradient costs about <span class="math inline">\(p\)</span> operations:</p>
+<p>Second-order methods invert the <span class="math inline">\(p \times p\)</span> Hessian; first-order methods compute the <span class="math inline">\(p \times 1\)</span> gradient. For a linear model or a GLM, where one row’s gradient costs about <span class="math inline">\(p\)</span> operations:</p>
 <table class="caption-top">
 <colgroup>
 <col style="width: 33%">
@@ -505,19 +550,10 @@ f(y) - f(x) &amp;\le \nabla f(x)^\top v + \int_0^1 L\,t\,\|v\|^2\, dt
 <p><span class="math inline">\(n = 1{,}200{,}000\)</span> images, <span class="math inline">\(p = 60{,}000{,}000\)</span> parameters. If one image’s gradient cost about <span class="math inline">\(p\)</span> operations, roughly how many is one full gradient? And one step on a batch of 128?</p>
 </div>
 </section>
-<section id="coordinate-descent" class="slide level2 inverse">
-<h2>Coordinate descent</h2>
-<p>Update only one <em>coordinate</em> of <span class="math inline">\(\beta\)</span> in each step</p>
-<p>Cycle through coordinates until some convergence criteria is satisfied</p>
-<div class="fragment">
-<p>Can combine with any strategy for univariate optimization – e.g.&nbsp;one-dimensional Newton’s method – treating other parameters as constants</p>
-</div>
-</section>
 <section id="stochasticrandom-descent" class="slide level2">
 <h2>Stochastic/random descent</h2>
 <ul>
-<li><p>Instead of cycling through all coordinates in coordinate descent, just pick one randomly</p></li>
-<li><p>Instead of computing the gradient of the loss function on the entire dataset, compute it on a random sample</p></li>
+<li>Instead of computing the gradient of the loss function on the entire dataset, compute it on a random sample</li>
 </ul>
 <div class="ask">
 <p>Pick one row <span class="math inline">\(I\)</span> uniformly at random from <span class="math inline">\(\{1, \ldots, n\}\)</span> and use its gradient <span class="math inline">\(\nabla\ell_I(\beta)\)</span> in place of the average over all <span class="math inline">\(n\)</span> rows. Commit: is it biased for the full gradient <span class="math inline">\(\nabla\hat R_n(\beta)\)</span>, yes or no?</p>
@@ -531,150 +567,35 @@ f(y) - f(x) &amp;\le \nabla f(x)^\top v + \int_0^1 L\,t\,\|v\|^2\, dt
 <p>Unbiased, whatever the data are. A batch of <span class="math inline">\(b\)</span> rows drawn independently with replacement averages <span class="math inline">\(b\)</span> such gradients: still unbiased, with variance <span class="math inline">\(\sigma^2(\beta)/b\)</span>, where <span class="math inline">\(\sigma^2(\beta)\)</span> is the spread of the single-row gradients</p>
 <p>Compute update using one randomly sampled observation, or a randomly sampled subset (“mini-batch SGD”)</p>
 </section>
-<section id="section-3" class="slide level2 inverse center">
-<h2></h2>
-<h3 id="scale-up-more-bigger-data">Scale up <em>more</em>! Bigger data!</h3>
-<p><img data-src="https://upload.wikimedia.org/wikipedia/en/9/9f/Over_9000%21.png"></p>
-</section>
-<section id="the-step-must-shrink-but-not-too-fast" class="slide level2">
-<h2>The step must shrink, but not too fast</h2>
+<section id="the-two-paths" class="slide level2">
+<h2>The two paths</h2>
+<div class="columns">
+<div class="column" style="width:55%;">
 <div class="cell">
 <div class="cell-output-display">
 <div>
 <figure>
-<p><img data-src="04-1-optimization_files/figure-revealjs/schedules-1.png" style="width:100.0%"></p>
+<p><img data-src="04-1-optimization_files/figure-revealjs/two-paths-1.png" style="width:100.0%"></p>
 </figure>
 </div>
 </div>
 </div>
-<p>Simulated: one parameter, noisy gradient <span class="math inline">\((\beta - 2) + \text{noise}\)</span>, from <span class="math inline">\(\beta_0 = -3\)</span>. Target: 2. <strong>You first:</strong> one of the three stalls short of the target for ever. Which, and why?</p>
-<div class="fragment">
-<p>Without noise a constant step below <span class="math inline">\(2/L\)</span> is right. With noise the steps shrink, <span class="math inline">\(\gamma_t \to 0\)</span>, but not too fast; the standard conditions: <span class="math inline">\(\sum_t \gamma_t = \infty\)</span>, <span class="math inline">\(\sum_t \gamma_t^2 &lt; \infty\)</span> (Robbins and Monro, 1951)</p>
-</div>
+</div><div class="column" style="width:45%;">
+<p>Simulated least squares, <span class="math inline">\(n = 200\)</span>, two inputs</p>
+<p><strong>Blue:</strong> 30 full gradient steps, <span class="math inline">\(6{,}000\)</span> row-gradients. <strong>Orange:</strong> 600 single-row steps, <span class="math inline">\(600\)</span> row-gradients, step <span class="math inline">\(0.05/(1 + t/100)\)</span></p>
+<p>The noisy path reaches the neighborhood of the answer (<span class="math inline">\(\times\)</span>) for a tenth of the work, and never sits still. With noise the step shrinks, <span class="math inline">\(\gamma_t \to 0\)</span>, but not so fast that it stops short (panel C)</p>
+</div></div>
 </section>
-<section id="constrained-and-non-smooth-optimization" class="slide level2 inverse">
-<h2>Constrained and non-smooth optimization</h2>
-<p><strong>Constrained.</strong> Some optimization problems have constraints on the parameters. If a descent step takes us outside the constraint region: choose step sizes small enough to stay inside, or <em>project</em> the updated point to the <em>nearest</em> point inside the region</p>
-<div class="fragment">
-<p><strong>Non-smooth.</strong> If the loss function is not (everywhere) differentiable but <em>still <a href="https://en.wikipedia.org/wiki/Convex_function">convex</a></em>, e.g.&nbsp;absolute value: there is no gradient at a kink but there is a <em><a href="https://en.wikipedia.org/wiki/Subgradient_method">subgradient</a></em>, any slope whose tangent line stays below the function. Step against one of those, as against the gradient (the loss need not fall at every step)</p>
-</div>
+<section id="history-imagenet-2012" class="slide level2 inverse">
+<h2>History: ImageNet, 2012</h2>
+<p><span class="big" style="color: #fde725;">60,000,000</span></p>
+<p>parameters in each network of the entry that cut the ImageNet top-5 error to 15.3%, against 26.2% for the next best</p>
+<p>Each network fitted in five to six days on two gaming graphics cards, by stochastic gradient descent on a loss with every feature of part 3. Nobody solved an equation, and nobody could prove it would work</p>
+<p><span class="source">Krizhevsky, Sutskever and Hinton, “ImageNet classification with deep convolutional neural networks”, NeurIPS 2012</span></p>
 </section>
 <section id="section-4" class="slide level2 inverse center">
 <h2></h2>
-<h3 id="part-4-where-the-error-comes-from-this-time">Part 4: where the error comes from, this time</h3>
-</section>
-<section id="choosing-tuning-parameters" class="slide level2 inverse">
-<h2>Choosing tuning parameters</h2>
-<p><img data-src="https://upload.wikimedia.org/wikipedia/en/thumb/0/06/Spinal_Tap_-_Up_to_Eleven.jpg/330px-Spinal_Tap_-_Up_to_Eleven.jpg"></p>
-<p>e.g.&nbsp;number of predictors, flexibility for non-linear methods</p>
-</section>
-<section id="modeling-assumption-smoothness" class="slide level2 inverse">
-<h2>Modeling assumption: smoothness</h2>
-<p>Version of simplicity/parsimony for flexible function classes</p>
-<div class="fragment">
-<p>Linear functions are the smoothest</p>
-<p>Smooth function classes: set of functions with some type of bound on second derivatives, for example</p>
-</div>
-<div class="fragment">
-<p><strong>Cool math fact</strong>: can be related to sparsity by considering (rate of decay of) coefficients of function’s Fourier transform (smoother functions have sparser representations when written in a basis of sine functions, for example)</p>
-</div>
-</section>
-<section id="discretize-and-fit-sequentially" class="slide level2 inverse">
-<h2>Discretize and fit sequentially</h2>
-<ul>
-<li>Start with a grid of values for the tuning parameter</li>
-<li>Fit the model for each value in this grid</li>
-<li>Pick the best fit (visually, or based on loss function value, or…)</li>
-</ul>
-<div class="fragment">
-<p>e.g.&nbsp;For the <code>span</code> or fraction <span class="math inline">\(s\)</span> in local regression, try <span class="math inline">\(s \in \{ 0.1, 0.25, 0.5, 0.75, 0.9 \}\)</span> and visualize the result</p>
-</div>
-<div class="fragment">
-<ul>
-<li><strong>Problem</strong>: When to stop increasing the complexity? (i.e.&nbsp;decreasing the smoothness). We’ll come back to this</li>
-</ul>
-</div>
-</section>
-<section id="three-functions" class="slide level2">
-<h2>Three functions</h2>
-<div class="columns">
-<div class="column" style="width:50%;">
-<div class="cell">
-<div class="cell-output-display">
-<div>
-<figure>
-<p><img data-src="04-1-optimization_files/figure-revealjs/three-functions-1.png" style="width:100.0%"></p>
-</figure>
-</div>
-</div>
-</div>
-</div><div class="column" style="width:50%;">
-<p><span class="math inline">\(f^\star = \arg\min_f R(f)\)</span>: the best of all (squared loss: week 2’s conditional mean)</p>
-<p><span class="math inline">\(f_{\mathcal F} = \arg\min_{f \in \mathcal F} R(f)\)</span>: the best in the class; fixed once <span class="math inline">\(\mathcal F\)</span> is</p>
-<p><span class="math inline">\(\hat f\)</span>: what the algorithm returns from the sample; random, in <span class="math inline">\(\mathcal F\)</span></p>
-<p>Dashed lines: gaps in risk, not distances</p>
-</div></div>
-<div class="ask">
-<p>Double <span class="math inline">\(n\)</span>. Which of the two gaps depends on the training sample, and which does not know that <span class="math inline">\(n\)</span> changed?</p>
-</div>
-</section>
-<section id="bias-and-variance-again" class="slide level2">
-<h2>Bias and variance, again</h2>
-<div class="retrieval">
-<p>Week 1, <span class="math inline">\(k\)</span>-nearest neighbors: the expected squared error at a point is noise <span class="math inline">\(+\)</span> bias<span class="math inline">\(^2\)</span> <span class="math inline">\(+\)</span> variance, with the bias set by the method and the variance falling with <span class="math inline">\(k\)</span>. Week 2, the optimal model theorem: <span class="math inline">\(R(f) - R(f^\star) = \mathbb E[(f^\star(X) - f(X))^2]\)</span> for squared loss.</p>
-</div>
-<p>What we want small is the <strong>excess risk</strong> <span class="math inline">\(R(\hat f) - R(f^\star) \ge 0\)</span>: one number, for any loss</p>
-<p>The class <span class="math inline">\(\mathcal F\)</span> was chosen before the data arrived. So some of that number was decided then, by how far <span class="math inline">\(\mathcal F\)</span> is from <span class="math inline">\(f^\star\)</span>; the rest depends on the sample. Split it there: add and subtract <span class="math inline">\(R(f_{\mathcal F})\)</span></p>
-<p><span class="math display">\[
-R(\hat f) - R(f^\star) = \big[R(\hat f) - R(f_{\mathcal F})\big] + \big[R(f_{\mathcal F}) - R(f^\star)\big]
-\]</span></p>
-<p>Both brackets should be nonnegative: <span class="math inline">\(f_{\mathcal F}\)</span> is the best in <span class="math inline">\(\mathcal F\)</span>, and <span class="math inline">\(\hat f\)</span> is in <span class="math inline">\(\mathcal F\)</span>; <span class="math inline">\(f^\star\)</span> is the best of all</p>
-</section>
-<section id="biasvariance-decomposition-erm-form" class="slide level2">
-<h2>Bias–variance decomposition, ERM form</h2>
-<p><strong>Bias–variance decomposition, ERM form.</strong> <span class="math inline">\(\mathcal F\)</span> a class of predictors with a best member <span class="math inline">\(f_{\mathcal F} = \arg\min_{f \in \mathcal F} R(f)\)</span>; <span class="math inline">\(\hat f = \arg\min_{f \in \mathcal F} \hat R_n(f)\)</span> the empirical risk minimizer; <span class="math inline">\(f^\star = \arg\min_f R(f)\)</span> over all predictors. Then <span class="math display">\[
-R(\hat f) - R(f^\star) = \underbrace{\big[R(\hat f) - R(f_{\mathcal F})\big]}_{\text{estimation}} + \underbrace{\big[R(f_{\mathcal F}) - R(f^\star)\big]}_{\text{approximation}}, \qquad \text{both terms} \ge 0
-\]</span></p>
-<div class="fragment">
-<p><strong>Proof.</strong> The equation is adding and subtracting <span class="math inline">\(R(f_{\mathcal F})\)</span>. The first bracket is <span class="math inline">\(\ge 0\)</span> because <span class="math inline">\(\hat f \in \mathcal F\)</span> and <span class="math inline">\(f_{\mathcal F}\)</span> minimizes <span class="math inline">\(R\)</span> over <span class="math inline">\(\mathcal F\)</span>; the second because <span class="math inline">\(f^\star\)</span> minimizes <span class="math inline">\(R\)</span> over everything. <span class="math inline">\(\blacksquare\)</span></p>
-</div>
-<div class="fragment">
-<p>For squared loss, the optimal model theorem gives the approximation term a shape: <span class="math inline">\(R(f_{\mathcal F}) - R(f^\star) = \mathbb E[(f_{\mathcal F}(X) - f^\star(X))^2]\)</span>, the squared distance from the class to the truth</p>
-</div>
-</section>
-<section id="what-the-two-terms-do" class="slide level2">
-<h2>What the two terms do</h2>
-<div class="leave">
-<p>Estimation error: random, depends on the sample; more data usually shrinks it, a bigger class usually grows it. Approximation error: fixed before any data arrive, zero when the class attains <span class="math inline">\(R(f^\star)\)</span>, and it cannot grow when the class grows (nested classes). The two play the roles of week 1’s variance and bias, for any method that minimizes something over a class</p>
-</div>
-</section>
-<section id="the-trade-off-in-numbers" class="slide level2">
-<h2>The trade-off in numbers</h2>
-<div class="cell">
-<div class="cell-output-display">
-<div>
-<figure>
-<p><img data-src="04-1-optimization_files/figure-revealjs/tradeoff-1.png" style="width:100.0%"></p>
-</figure>
-</div>
-</div>
-</div>
-<p>Simulated: <span class="math inline">\(f^\star(x) = \sin(2\pi x) + x/2\)</span>, <span class="math inline">\(X\)</span> uniform on <span class="math inline">\([0, 1]\)</span>, noise sd <span class="math inline">\(0.4\)</span>, <span class="math inline">\(n = 40\)</span>; the class is the polynomials of degree <span class="math inline">\(d\)</span>, fitted by least squares; estimation is <span class="math inline">\(\mathbb E[(\hat f(X) - f_{\mathcal F}(X))^2]\)</span> averaged over 200 samples</p>
-<div class="ask">
-<p>Double <span class="math inline">\(n\)</span> to 80. Which curve moves, and which way?</p>
-</div>
-</section>
-<section id="no-free-lunch" class="slide level2">
-<h2>No free lunch</h2>
-<p><strong>No free lunch (stated).</strong> No method has lower error than every other on every distribution. Binary classification, 0–1 loss: for any learning method and any training size <span class="math inline">\(n\)</span>, on a domain with at least <span class="math inline">\(2n\)</span> points there is a distribution for which a perfect predictor exists and the method’s expected error (over training samples) is at least <span class="math inline">\(1/4\)</span></p>
-<p>What it says: choosing a method is an <em>assumption</em> about the world; the ERM form shows where one such assumption enters, the class <span class="math inline">\(\mathcal F\)</span> chosen before the data. What it does not say: that methods are equally good on the problems we meet, or that an assumption is a flaw</p>
-<div class="ask">
-<p>In the week 1 seminar a line and <span class="math inline">\(k\)</span> nearest neighbors often scored within a standard error of each other on gapminder. A fact about the methods, or about the data?</p>
-</div>
-</section>
-<section id="section-5" class="slide level2 inverse center">
-<h2></h2>
-<h3 id="part-5-stopping">Part 5: stopping</h3>
+<h3 id="part-5-what-the-fitting-leaves-over">Part 5: what the fitting leaves over</h3>
 </section>
 <section id="early-stopping" class="slide level2">
 <h2>Early stopping</h2>
@@ -712,19 +633,37 @@ R(\hat f) - R(f^\star) = \underbrace{\big[R(\hat f) - R(f_{\mathcal F})\big]}_{\
 <p>The number of steps is a tuning parameter, like <span class="math inline">\(k\)</span> or <span class="math inline">\(d\)</span>. Week 7 writes the penalty down, <span class="math inline">\(\hat R_n(\beta) + \lambda\|\beta\|^2\)</span>, with <span class="math inline">\(\lambda\)</span> as the knob</p>
 </div></div>
 </section>
+<section id="where-the-error-comes-from-this-time" class="slide level2">
+<h2>Where the error comes from, this time</h2>
+<p>Three functions. <span class="math inline">\(f^\star = \arg\min_f R(f)\)</span>: the best of all (squared loss: week 2’s conditional mean). <span class="math inline">\(f_{\mathcal F} = \arg\min_{f \in \mathcal F} R(f)\)</span>: the best in the class, fixed once <span class="math inline">\(\mathcal F\)</span> is. <span class="math inline">\(\hat f = \arg\min_{f \in \mathcal F} \hat R_n(f)\)</span>: what the data give, random</p>
+<p><strong>Bias–variance decomposition, ERM form.</strong> Both terms are <span class="math inline">\(\ge 0\)</span>: <span class="math display">\[
+R(\hat f) - R(f^\star) = \underbrace{\big[R(\hat f) - R(f_{\mathcal F})\big]}_{\text{estimation}} + \underbrace{\big[R(f_{\mathcal F}) - R(f^\star)\big]}_{\text{approximation}}
+\]</span></p>
+<div class="leave">
+<p>Proof: exercise 2, two lines. The class was chosen before the data, and so was the approximation error; the estimation error is the sample’s. Week 1’s bias and variance for any method that minimizes over a class. Next week starts here</p>
+</div>
+</section>
+<section id="no-free-lunch" class="slide level2">
+<h2>No free lunch</h2>
+<p><strong>No free lunch (stated).</strong> No method has lower error than every other on every distribution. Binary classification, 0–1 loss: for any learning method and any training size <span class="math inline">\(n\)</span>, on a domain with at least <span class="math inline">\(2n\)</span> points there is a distribution for which a perfect predictor exists and the method’s expected error (over training samples) is at least <span class="math inline">\(1/4\)</span></p>
+<p>What it says: choosing a method is an <em>assumption</em> about the world; the ERM form shows where one such assumption enters, the class <span class="math inline">\(\mathcal F\)</span> chosen before the data. What it does not say: that methods are equally good on the problems we meet, or that an assumption is a flaw</p>
+<div class="ask">
+<p>In the week 1 seminar a line and <span class="math inline">\(k\)</span> nearest neighbors often scored within a standard error of each other on gapminder. A fact about the methods, or about the data?</p>
+</div>
+</section>
 <section id="before-the-seminar" class="slide level2">
 <h2>Before the seminar</h2>
 <ul>
-<li><p>This week: exercises 1 to 4 at the top of the notebook. The descent lemma and the ERM form of the bias–variance decomposition, both again with the slides closed; the second derivative of the logistic log-likelihood, finishing the Newton-Raphson exercise; and no free lunch on a finite domain</p></li>
-<li><p>In the seminar you write gradient descent once, as a function, and use it for least squares, then logistic regression, then with random batches</p></li>
+<li><p>This week: exercises 1 to 4 at the top of the notebook. The descent lemma again with the slides closed; the proof of the ERM form of the bias–variance decomposition; the second derivative of the logistic log-likelihood and the Newton-Raphson update; and no free lunch on a finite domain</p></li>
+<li><p>In the seminar you write gradient descent once, as a function, and use it for least squares, then logistic regression, then with random batches; and you watch the gradient norm while it runs</p></li>
 </ul>
 </section>
 <section id="conclusion-optimization-in-ml-is-a-big-topic" class="slide level2 inverse">
 <h2>Conclusion: optimization in ML is a big topic</h2>
-<h4 id="strategies-for-specific-problems">Strategies for specific problems</h4>
-<p>e.g.&nbsp;stepwise inclusion of variables, constraints, etc</p>
+<h4 id="one-guarantee-with-a-price">One guarantee, with a price</h4>
+<p>Each small step helps if the curvature is bounded. Where it ends, and whether it has ended, the theory does not say</p>
 <h4 id="strategies-for-general-lossfunction-classes">Strategies for general loss/function classes</h4>
-<p>e.g.&nbsp;gradient methods, coordinate methods</p>
+<p>e.g.&nbsp;gradient methods, stochastic gradient methods</p>
 <h4 id="stopping-at-the-right-amount-of-complexity">Stopping at the right amount of complexity</h4>
 <p><em>Maybe the most important part! Next lecture</em></p>
 

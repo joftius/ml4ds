@@ -74,26 +74,26 @@ contour_plot <- function(path, title = NULL) {
 ## {.inverse}
 
 ::: {.notes}
-38 light slides and 13 dark: about 89 at week 2's rough pace (2 min a light slide, 1 a dark), so plan 76 of 90 only with cuts 1 to 4 made from the start and the Newton-IRLS decision taken at 0:18. Dark = rush or skip; each dark slide's note says skip or gives the compressed phrase.
+36 light slides and 8 dark: about 80 at week 2's rough pace (2 min a light slide, 1 a dark), so plan 76 of 90 with cut 1 made from the start. Dark = rush or skip; each dark slide's note says skip or gives the compressed phrase.
 
-Cut order: (1) the 2012 slide, (2) constrained and non-smooth, (3) coordinate descent, (4) smoothness and discretize-and-fit skipped (both dark), (5) Newton-IRLS to the update rule, (6) the trade-off figure to one sentence. The two proofs are last.
+Cut order: (1) ImageNet, (2) the two paths figure, (3) Newton-IRLS to the update rule, (4) the GLM FAQ to one line, (5) the ERM form to its statement. The descent lemma's proof is last.
 
-Pace: 0:18 Newton-IRLS done, 0:30 the quadratic case, 0:38 descent lemma proved, 0:44 not a bowl, 0:56 step schedules, 1:08 ERM form proved, 1:12 no free lunch, 1:16 before the seminar.
+Pace: 0:18 GLM FAQ done, 0:32 the quadratic case, 0:44 has it converged, 0:54 descent lemma proved, 1:04 SGD unbiased, 1:16 before the seminar.
 
-In the notebook: descent lemma redone (ex. 1), ERM form redone (ex. 2), score equations and the Hessian (ex. 3), no free lunch on a finite domain (ex. 4).
+In the notebook: descent lemma redone (ex. 1), ERM form proved (ex. 2), score equations and the Hessian (ex. 3), no free lunch on a finite domain (ex. 4).
 :::
 
 ### Week 4: optimization and model fitting
 
 Part 1: fitting logistic regression
 
-Part 2: empirical risk minimization and gradient descent
+Part 2: gradient descent
 
-Part 3: stochastic gradient descent
+Part 3: what the gradient is telling you
 
-Part 4: where the error comes from, this time
+Part 4: stochastic gradient descent
 
-Part 5: stopping
+Part 5: what the fitting leaves over
 
 ## Where week 3 left the fitting
 
@@ -112,7 +112,11 @@ Write down the normal equations from memory. Then guess: what plays their role f
 ## Fitting logistic regression
 
 ::: {.notes}
-Legacy slide. The likelihood is the product because the rows are independent given X.
+Legacy slide with the recall box. Fisher: the method and the word, 1912 to 1922. The log changes nothing about where the maximum is. Least squares is the Gaussian log-likelihood, so lm is glm with family gaussian.
+:::
+
+::: {.recall}
+**Maximum likelihood** (Fisher, 1912--1922): choose the parameter that makes the observed data most probable. We maximize the **log**-likelihood because a product of $n$ small numbers underflows and a sum differentiates term by term; log is increasing, so the maximizer is the same. **Least squares is a log-likelihood**: for $y_i \sim N(\mathbf x_i^\top\beta, \sigma^2)$ it is $-\frac{1}{2\sigma^2}\sum_i (y_i - \mathbf x_i^\top\beta)^2 + \text{const}$. In `glm`, `family` names the distribution whose likelihood is maximized: `gaussian` is `lm`, `binomial` is logistic regression.
 :::
 
 How do we estimate $\beta$? **Maximum likelihood**:
@@ -176,18 +180,18 @@ No closed form, because $\mathbf p(\beta)$ is not linear in $\beta$
 ## Two things the score equations say
 
 ::: {.notes}
-Row one needs an intercept, no penalty, a finite solution. Uniqueness needs full column rank; existence is the separable case from week 3.
+Row one needs an intercept, no penalty, a finite solution. Concavity is a claim here; the Hessian is minus a positive-weighted sum of outer products, which is negative semidefinite; uniqueness needs full column rank; existence is the separable case from week 3. Exercise 3 computes the Hessian.
 :::
 
-**Row one is the intercept.** $\sum_i (y_i - \hat p_i) = 0$: the fitted probabilities average to the observed proportion of 1s on the training rows. An average identity for an unpenalized fit with an intercept, not calibration at each $x$, and not a statement about new data.
+**Row one is the intercept.** $\sum_i (y_i - \hat p_i) = 0$: the fitted probabilities average to the observed proportion of 1s on the training rows.
 
 **The log-likelihood is concave.** Differentiating once more,
 $$
-\frac{\partial^2 \ell}{\partial\beta\,\partial\beta^\top} = -\sum_{i=1}^n \hat p_i(\beta)\,\big(1 - \hat p_i(\beta)\big)\, x_i x_i^\top \preceq 0,
+\frac{\partial^2 \ell}{\partial\beta\,\partial\beta^\top} = -\sum_{i=1}^n w_i\, x_i x_i^\top, \qquad w_i = \hat p_i(\beta)\,\big(1 - \hat p_i(\beta)\big) > 0
 $$
-so any finite solution of the score equations is a global maximum, and the only one when $\mathbf X$ has full column rank.
+Each term is minus a positive weight times $x_i x_i^\top$, a matrix that never points uphill in any direction, so the sum curves downward everywhere: the log-likelihood is concave, and any finite solution of the score equations is its global maximum
 
-What concavity does not give: existence. Week 3's separable case is the case with no finite solution.
+What concavity does not give: existence. Week 3's separable case is the case with no finite solution
 
 ## Newton-Raphson
 
@@ -205,10 +209,10 @@ Legacy slide; the exercise now asks for the update, since the Hessian is on the 
 ## Logistic regression fitting: multivariate case
 
 ::: {.notes}
-Legacy slide. Compress if short: each Newton step is a weighted least squares fit; the weights are largest near one half.
+Legacy slide. Compress if short: each Newton step is a weighted least squares fit; the weights are largest near one half. g is the logit link from week 3.
 :::
 
-Newton-IRLS (equivalent) steps:
+Newton-IRLS (equivalent) steps, with $g$ the logit link:
 
 $$
 \begin{eqnarray}
@@ -228,13 +232,29 @@ $$\hat{\beta}_{t+1} = \arg \min_{\beta} (\hat{\mathbf{y}}_t - \mathbf X \beta)^T
 
 **Note**: larger weights on observations with $\hat p$ closer to 1/2, i.e. the most difficult to classify (***look for variations of this theme***) [See Section 4.4.1 of [ESL](https://web.stanford.edu/~hastie/ElemStatLearn/)]{.source}
 
+## GLMs in `R`: what you should know
+
+::: {.notes}
+Compress if short: glm fits every family by IRLS, in a handful of iterations, and fails only when the MLE does not exist. The reason the rest of the world does not do this is the p by p Hessian: part 2.
+:::
+
+**Does `glm` use Newton-Raphson for every family?** Yes. IRLS is Fisher scoring, Newton's method with the expected Hessian; for the default links (`binomial` with logit, `poisson` with log, `gaussian` with identity) the two coincide. `lm` is the special case where one step solves the normal equations
+
+**How many iterations?** Usually under ten. `summary()` prints `Number of Fisher Scoring iterations`
+
+**When does it fail?** When there is no finite MLE: the separable case, with the week 3 warning `fitted probabilities numerically 0 or 1 occurred`, or a Poisson fit with coefficients running off to infinity. The algorithm is fine; the maximum is not there
+
+**Why does the rest of machine learning not do this?** Each step solves a $p \times p$ system. For $p$ in the thousands or millions that is the cost that matters, and the next part is about avoiding it
+
 ## {.inverse .center}
 
 ::: {.notes}
-Compress: every method so far is a loss, a class, and an algorithm. Today is about the algorithm.
+Compress: every method so far is a loss, a class, and an algorithm. From here on the algorithm is gradient descent, and usually its stochastic version.
 :::
 
-### Part 2: empirical risk minimization and gradient descent
+### Part 2: gradient descent
+
+#### ML $\approx$ ERM $+$ SGD
 
 ## ML tasks as optimization problems
 
@@ -245,7 +265,7 @@ Legacy slide in the course notation. Three choices: loss, class, algorithm.
 For a given **loss function** $\ell(y, f(x))$ and **probability model** $(X,Y) \sim P$, we want to find a function $f$ to minimize **risk**:
 
 $$
-\text{minimize } R(f) = \mathbb E_P[\ell(Y, f(X))]
+\underset{f}{\text{minimize }}\ R(f) = \mathbb E_P[\ell(Y, f(X))]
 $$
 
 . . .
@@ -255,31 +275,25 @@ $$
 Assume an i.i.d. sample from $P$, focus on *empirical risk minimization* (**ERM**)
 
 $$
-\text{minimize } \hat R_n(f) = \frac{1}{n} \sum_{i=1}^n \ell(y_i, f(x_i))
+\underset{f \in \mathcal F}{\text{minimize }}\ \hat R_n(f) = \frac{1}{n} \sum_{i=1}^n \ell(y_i, f(x_i))
 $$
 
 . . .
 
-We also choose a **function class** $\mathcal F$ (or parameter set), i.e. *type of function* $f$, determining the *domain of the optimization*
+We also choose a **function class** $\mathcal F$ (or parameter set), i.e. a *class of functions* $f$, determining the *domain of the optimization*
 
-## Example: linear regression
+## Examples: linear regression, GLM
 
 ::: {.notes}
-Legacy slide in the course notation.
+Legacy slides, one slide. For a GLM the loss is minus one row's log-likelihood, so -l/n is the empirical risk of the log loss.
 :::
 
-**Linear regression.** Probability model: random errors $\varepsilon \sim N(0, \sigma^2)$. Loss: squared, $\ell(y, f(\mathbf x)) = (y - f(\mathbf x))^2$. Function class: $\mathcal F = \{ f_\beta(\mathbf x) = \mathbf x^T \beta : \beta \in \mathbb R^{p+1} \}$. Algorithm: OLS, closed-form solution (memorized yet?)
-
+**Linear regression.** Probability model: errors $\varepsilon \sim N(0, \sigma^2)$. Loss: squared, $\ell(y, f(\mathbf x)) = (y - f(\mathbf x))^2$. Class: $\mathcal F = \{ f_\beta(\mathbf x) = \mathbf x^T \beta : \beta \in \mathbb R^{p+1} \}$. Algorithm: OLS, closed form (memorized yet?)
 $$\underset{\beta \in \mathbb R^{p+1}}{\text{minimize }} \frac{1}{n} \sum_{i=1}^n (y_i - \mathbf x_i^T \beta)^2$$
 
-## More examples: GLM
+. . .
 
-::: {.notes}
-Legacy slide. The loss is the negative log-likelihood of one row, so -l/n is the empirical risk of the log loss.
-:::
-
-**GLM.** Probability model: `family = binomial(), poisson(), etc`. Loss: minus the log-likelihood of one row, so that $\hat R_n(\beta) = -\ell(\beta)/n$. Function class: $\{ g^{-1}(\mathbf x^T \beta) : \beta \in \mathbb R^{p+1} \}$, with a fixed link function $g$. Algorithm: ERM (also MLE in this case) via iterative methods like Newton-Raphson or gradient descent
-
+**GLM.** Probability model: `family = binomial(), poisson(), etc`. Loss: minus one row's log-likelihood, so $\hat R_n(\beta) = -\ell(\beta)/n$. Class: $\{ g^{-1}(\mathbf x^T \beta) : \beta \in \mathbb R^{p+1} \}$, link $g$ fixed. Algorithm: ERM (here also MLE) by Newton-Raphson or gradient descent
 $$
 \underset{\beta \in \mathbb R^{p+1}}{\text{minimize }} -\frac{1}{n} \sum_{i=1}^n \log L(\beta ; y_i | \mathbf x_i)
 $$
@@ -311,9 +325,10 @@ i.e. skiing as fast as possible. Notation: the objective is the empirical risk $
 1. Start at an initial point $\beta_0$
 
 2. For step $t = 1, \ldots$
-  - Compute $\mathbf d_t = \nabla \hat R_n(\beta_{t-1}) \color{#b73779}{\text{ (gradient)}}$
 
-  - Update $\beta_{t} = \beta_{t-1} - \gamma_t \mathbf d_t$
+    - Compute $\mathbf d_t = \nabla \hat R_n(\beta_{t-1}) \color{#b73779}{\text{ (gradient)}}$
+
+    - Update $\beta_{t} = \beta_{t-1} - \gamma_t \mathbf d_t$
 
 3. Until some **convergence criteria** is satisfied
 
@@ -389,27 +404,174 @@ Several directions with curvatures $a_1 \ge \dots \ge a_p > 0$, one step size fo
 The largest curvature sets the safe step; the ratio $a_1/a_p$, the shape of the valley, sets the speed (a direction with $a_j = 0$, as in least squares with $p > n$, never moves). For least squares, $\hat R_n(\beta) = \frac1n\|\mathbf y - \mathbf X\beta\|^2$, the $a_j$ are the eigenvalues of $2\mathbf X^\top\mathbf X/n$
 :::
 
-## Beyond the quadratic: what could go wrong?
+## {.inverse .center}
 
 ::: {.notes}
-The heuristic before the lemma. We know the quadratic case exactly; a general f is quadratic to second order, so a step has a first-order term we like and a second-order term we do not control.
+Compress: the loop computes one number each step, the gradient; this part is about what that number can and cannot tell you.
+:::
+
+### Part 3: what the gradient is telling you
+
+## Reading the gradient
+
+::: {.notes}
+The gradient is zero at the minimum, but also at a local minimum, on a plateau (nearly), and at a saddle. Large means steep, and a step may overshoot. The question for the part: when the loss stops falling, which of these are you at?
+:::
+
+```{r}
+#| label: landscape-1d
+#| fig-height: 2.4
+#| fig-width: 11
+#| out-width: "100%"
+# A one-parameter loss with a steep wall, a local minimum, a plateau and the global minimum (a spline through chosen points).
+f1 <- splinefun(c(-6, -4.5, -3.5, -2.5, -1.5, -0.5, 0.5, 1.5, 2.5, 3.5, 4.5),
+                c(8, 3, 2.2, 2.6, 2.55, 2.5, 2.3, 1, 0, 1, 4), method = "natural")
+g1 <- function(x) f1(x, deriv = 1)
+curve1 <- tibble(x = seq(-6, 4.5, length.out = 400)) |> mutate(f = f1(x))
+marks <- tibble(x = c(-5.3, -3.5, -1.3, 2.5),
+                label = c("steep: large gradient", "local minimum: zero", "plateau: nearly zero", "global minimum: zero")) |>
+  mutate(f = f1(x), slope = g1(x))
+ggplot(curve1, aes(x, f)) + geom_line(linewidth = 1.1, colour = v_blue) +
+  geom_segment(data = marks, aes(x = x - 0.5, xend = x + 0.5, y = f - 0.5 * slope, yend = f + 0.5 * slope), colour = m_orange, linewidth = 1) +
+  geom_point(data = marks, aes(x, f), colour = m_orange, size = 3) +
+  geom_text(data = marks, aes(x, f + 0.9, label = label), size = 4.5, colour = v_dark) +
+  coord_cartesian(ylim = c(-0.5, 8.5)) + labs(x = expression(beta), y = "loss")
+```
+
+Each step computes one thing about where it stands, the gradient $\nabla \hat R_n(\beta_t)$, and its size says little on its own: **zero** at the minimum, but also at a local minimum, and nearly zero on a plateau; **large** means steep, and a step may overshoot
+
+::: {.ask}
+Your loss has stopped falling. Which of the four are you at, and how would you tell?
+:::
+
+## Landscapes
+
+::: {.notes}
+Left: three starts on the same loss, same step size, three endings: the local minimum, stuck on the plateau for a long time, the global minimum. Right: the saddle; a start on the u = 0 line goes to the saddle and stays. Convex losses, least squares and logistic regression, have none of this; most of what comes after week 7 has all of it.
+:::
+
+```{r}
+#| label: landscapes
+#| fig-height: 3.1
+#| fig-width: 12
+#| out-width: "100%"
+gd1 <- function(x0, gamma, steps) { x <- x0; out <- numeric(steps + 1); out[1] <- x
+  for (t in 1:steps) { x <- x - gamma * g1(x); out[t + 1] <- x }; tibble(start = as.character(x0), step = 0:steps, x = out, f = f1(out)) }
+paths1 <- bind_rows(gd1(-5.3, 0.25, 60), gd1(-1.0, 0.25, 60), gd1(4.2, 0.25, 60))
+pa <- ggplot(curve1, aes(x, f)) + geom_line(linewidth = 1, colour = "grey60") +
+  geom_point(data = paths1, aes(x, f, colour = start), size = 1.8, show.legend = FALSE) +
+  geom_point(data = filter(paths1, step == 0), aes(x, f, colour = start), size = 3.5, show.legend = FALSE) +
+  scale_colour_manual(values = c(v_dark, v_teal, m_orange)) +
+  coord_cartesian(ylim = c(-0.5, 8.5)) + labs(x = expression(beta), y = "loss", title = "three starts, same step size, 60 steps") + theme(plot.title = element_text(size = 15))
+fs <- function(u, v) (u^2 - 1)^2 + v^2
+gds <- function(start, gamma, steps) { b <- start; out <- matrix(NA, steps + 1, 2); out[1, ] <- b
+  for (t in 1:steps) { b <- b - gamma * c(4 * b[1] * (b[1]^2 - 1), 2 * b[2]); out[t + 1, ] <- b }
+  tibble(start = paste(start, collapse = ","), step = 0:steps, u = out[, 1], v = out[, 2]) }
+sgrid <- expand_grid(u = seq(-1.8, 1.8, length.out = 121), v = seq(-1.4, 1.4, length.out = 101)) |> mutate(f = fs(u, v))
+paths2 <- bind_rows(gds(c(0, 1.2), 0.1, 60), gds(c(0.15, 1.2), 0.1, 60), gds(c(-0.15, 1.2), 0.1, 60))
+pb <- ggplot() + geom_contour(data = sgrid, aes(u, v, z = f), breaks = c(0.05, 0.2, 0.5, 1, 1.5, 2.5, 4), colour = "grey70") +
+  geom_path(data = paths2, aes(u, v, group = start, colour = start), linewidth = 0.8, show.legend = FALSE) +
+  geom_point(data = paths2, aes(u, v, colour = start), size = 1.5, show.legend = FALSE) +
+  geom_point(data = filter(paths2, step == 0), aes(u, v, colour = start), size = 3.5, show.legend = FALSE) +
+  annotate("point", x = 0, y = 0, shape = 4, size = 5, stroke = 1.5) +
+  scale_colour_manual(values = c(v_dark, v_teal, m_orange)) + coord_equal() +
+  labs(x = "u", y = "v", title = "the saddle at the cross") + theme(plot.title = element_text(size = 15))
+pa + pb + plot_layout(widths = c(1.15, 1))
+```
+
+::: {.ask}
+Right: $f(u, v) = (u^2-1)^2 + v^2$. Compute the gradient at $(0, 0)$; is it a minimum? The teal path starts at $(0, 1.2)$: where does it end, and why does it never leave?
+:::
+
+Where you start decides where you end. Least squares and logistic regression have one valley (convex); most of what comes after week 7 does not
+
+## Too big, too small
+
+::: {.notes}
+Left: the penguins with gamma = 12, above 2/L = 8: the loss gets worse and then sits at 0.77, bouncing between two points; flat and not converged. Right: a plateau; the gradient is about 10^-3, the loss is flat for 500 steps, then drops. Named only: through many layers these become exploding and vanishing gradients.
+:::
+
+```{r}
+#| label: big-small
+#| fig-height: 2.9
+#| fig-width: 12
+#| out-width: "100%"
+pg <- penguins |> filter(species != "Gentoo") |> drop_na(flipper_length_mm) |>
+  mutate(chinstrap = as.numeric(species == "Chinstrap"), z = as.numeric(scale(flipper_length_mm)))
+Xl <- cbind(1, pg$z); yl <- pg$chinstrap; nl <- nrow(Xl)
+L_logit <- max(eigen(t(Xl) %*% Xl / nl)$values) / 4
+logloss <- function(b) { z <- Xl %*% b; mean((1 - yl) * z + log1p(exp(-z))) }
+run_logit <- function(gamma, steps) { b <- c(0, 0); out <- numeric(steps)
+  for (t in 1:steps) { p <- 1 / (1 + exp(-Xl %*% b)); b <- b - gamma * (-t(Xl) %*% (yl - p) / nl); out[t] <- logloss(b) }
+  tibble(gamma = paste("step", gamma), step = 1:steps, loss = out) }
+big <- bind_rows(run_logit(4, 40), run_logit(12, 40))
+pc <- ggplot(big, aes(step, loss, colour = gamma)) + geom_line(linewidth = 1.1) + geom_point(size = 1.4) +
+  scale_colour_manual(values = c(v_blue, m_orange)) +
+  labs(x = "step", y = "log loss", colour = NULL, title = "too big: penguins, 2/L = 8") + theme(legend.position = "top", plot.title = element_text(size = 15))
+fp <- function(x) 1 - tanh(x - 3); gp <- function(x) -1 / cosh(x - 3)^2
+xp <- -1.5; plateau <- numeric(800); for (t in 1:800) { xp <- xp - 2 * gp(xp); plateau[t] <- fp(xp) }
+pd <- ggplot(tibble(step = 1:800, loss = plateau), aes(step, loss)) + geom_line(linewidth = 1.1, colour = v_blue) +
+  labs(x = "step", y = "loss", title = "too small: a plateau, gradient 0.001") + theme(plot.title = element_text(size = 15))
+pc + pd
+```
+
+**Too big** a step and the loss rises or bounces: the valley at $\gamma = 0.21$, the penguins at $\gamma = 12$. **Too small** a gradient and nothing moves for hundreds of steps, then everything does
+
+Through the many layers of a neural network these two compound, and get names: **exploding** and **vanishing** gradients. Named here, not derived
+
+## Has it converged?
+
+::: {.notes}
+Simulated: A is the quadratic, converged; B is the plateau, flat until step 500 then drops; C is the geometric step schedule 0.3 (0.6)^t on the valley, whose steps sum to a finite distance, so it stops short. All three look the same at step 200. Theory does not tell you which; what people do: look at the gradient norm, restart from elsewhere, run longer than you think, hold out data (next week).
+:::
+
+```{r}
+#| label: converged
+#| fig-height: 2.4
+#| fig-width: 12
+#| out-width: "100%"
+qa <- gd_path(c(-4, 1.2), 0.15, 800) |> mutate(loss = fq(b1, b2) + 0.3)
+xb <- -1.5; lb <- numeric(800); for (t in 1:800) { xb <- xb - 2 * gp(xb); lb[t] <- fp(xb) }
+bc <- c(-4, 1.2); lc <- numeric(800); for (t in 1:800) { bc <- bc - 0.3 * 0.6^t * c(1, 10) * bc; lc[t] <- fq(bc[1], bc[2]) + 0.3 }
+conv <- bind_rows(tibble(panel = "A", step = 1:800, loss = qa$loss[-1]),
+                  tibble(panel = "B", step = 1:800, loss = lb),
+                  tibble(panel = "C", step = 1:800, loss = lc))
+ggplot(conv, aes(step, loss)) + geom_line(linewidth = 1.1, colour = v_blue) +
+  geom_vline(xintercept = 200, linetype = "dotted") + facet_wrap(~ panel, scales = "free_y") +
+  labs(x = "step", y = "training loss")
+```
+
+Simulated. All three are flat at step 200 (dotted): one has converged, one is on a plateau, one has a step size that shrank to nothing on the way
+
+::: {.ask}
+Which is which? What would you check, and what would you do next?
+:::
+
+. . .
+
+A flat loss is consistent with all three, and no theorem below says which. In practice: the gradient norm; restart elsewhere; run longer than you think; hold out data (next week)
+
+## Curvature
+
+::: {.notes}
+The ingredient the lemma needs. We know the quadratic case exactly; a general f is quadratic to second order, so a step has a first-order term we like and a second-order term we do not control.
 :::
 
 ::: {.recall}
 Taylor, to second order: for a smooth $f$ and a small move $\delta$, $f(x + \delta) \approx f(x) + \nabla f(x)^\top\delta + \tfrac12\,\delta^\top \nabla^2 f(x)\,\delta$.
 :::
 
-Take the step $\delta = -\gamma\nabla f(x)$ and write $g = \nabla f(x)$:
+What decides whether a step helps is how fast the gradient changes along it. Take the step $\delta = -\gamma\nabla f(x)$ and write $g = \nabla f(x)$:
 $$
 f(x - \gamma g) \approx f(x) \;\underbrace{-\; \gamma\,\|g\|^2}_{\text{always down}} \;\underbrace{+\; \tfrac12\gamma^2\, g^\top \nabla^2 f(x)\, g}_{\text{the curvature pushes back}}
 $$
 
-In the quadratic case the curvature was a fixed number $a$. Here it depends on where you stand, and the step is safe only if it is never too large
+In the quadratic case the curvature was a fixed number $a$. On the landscapes above it changes from place to place: $+2$ at the bottom of a valley, $-4$ at the saddle, about $0$ on the plateau
 
 ## Curvature at most $L$
 
 ::: {.notes}
-If curvature is at most L everywhere, the push-back is bounded and the quadratic rule survives. "Curvature at most L" without a Hessian: the gradient changes at rate at most L. Least squares: L = 2 lambda_max(X'X)/n.
+If curvature is at most L everywhere, the push-back is bounded and the quadratic rule survives. "Curvature at most L" without a Hessian: the gradient changes at rate at most L. Least squares: L = 2 lambda_max(X'X)/n. The saddle example has no global L: its curvature 12u^2 - 4 is unbounded.
 :::
 
 If the curvature in every direction is at most $L$, the push-back is at most $\tfrac12 L\gamma^2\|g\|^2$, and then
@@ -420,16 +582,16 @@ The bracket is positive for $\gamma < 2/L$ and the bound is best at $\gamma = 1/
 
 . . .
 
-To make this a theorem we need "curvature at most $L$" without a second derivative. Say it about the gradient:
+To make this a theorem, say "curvature at most $L$" without a second derivative, about the gradient:
 
 **Assumption.** $\nabla f$ is **$L$-Lipschitz** for some $L > 0$: $\|\nabla f(x) - \nabla f(y)\| \le L\,\|x - y\|$ for all $x, y$
 
-For a quadratic with curvatures $a_1 \ge \dots \ge a_p$ this holds with $L = a_1$; for least squares, $L = 2\lambda_{\max}(\mathbf X^\top\mathbf X)/n$
+Quadratic with curvatures $a_1 \ge \dots \ge a_p$: $L = a_1$. Least squares: $L = 2\lambda_{\max}(\mathbf X^\top\mathbf X)/n$. The saddle example: no single $L$, its curvature in $u$ is $12u^2 - 4$
 
 ## Descent lemma
 
 ::: {.notes}
-The statement. The proof tidies the heuristic: the integral form of Taylor replaces the second-order term by something the Lipschitz bound controls.
+The one positive result, and what it does and does not say. It needs no convexity; it says each step helps, by an amount proportional to the squared gradient; it does not say where you end up, and a small gradient means slow progress, not arrival.
 :::
 
 ::: {.leave}
@@ -440,7 +602,9 @@ $$
 Every step of size $1/L$ decreases $f$ by at least the squared gradient over $2L$ (strictly, unless $\nabla f(x) = 0$).
 :::
 
-The proof tidies the heuristic. The second-order term came from Taylor's theorem; instead, integrate the gradient along the step, and let the Lipschitz bound do what the curvature bound did
+The one guarantee, and its price. It says: no convexity needed, each step helps, more so where the gradient is large. It does not say: where the steps end up (any stationary point of the landscape), or that a small gradient means arrival: it means the next step gains little, which is the plateau
+
+Proof: integrate the gradient along the step, and let the Lipschitz bound do what the curvature bound did
 
 ## Descent lemma, proof (1 of 2)
 
@@ -493,7 +657,7 @@ For any $0 < \gamma < 2/L$ the right-hand side is $\le 0$, and $< 0$ unless $\na
 ## Logistic regression by descent
 
 ::: {.notes}
-Same loop, only the gradient function changed. The Hessian from part 1 is at most X'X/4n, so L is an eighth of least squares' 2 lambda_max/n; here 2/L is about 8.
+Same loop, only the gradient function changed. The Hessian from part 1 is at most X'X/4n, so L is an eighth of least squares' 2 lambda_max/n; here 2/L is 8, which is why 12 bounced. Convex, so this is the benign case: one valley, and the lemma's step lands in it.
 :::
 
 ::: {.columns}
@@ -503,10 +667,6 @@ Same loop, only the gradient function changed. The Hessian from part 1 is at mos
 #| fig-height: 3.6
 #| fig-width: 5.6
 #| out-width: "100%"
-pg <- penguins |> filter(species != "Gentoo") |> drop_na(flipper_length_mm) |>
-  mutate(chinstrap = as.numeric(species == "Chinstrap"), z = as.numeric(scale(flipper_length_mm)))
-Xl <- cbind(1, pg$z); yl <- pg$chinstrap; nl <- nrow(Xl)
-L_logit <- max(eigen(t(Xl) %*% Xl / nl)$values) / 4
 b <- c(0, 0); Tn <- 25; path <- matrix(NA, Tn, 2)
 for (t in 1:Tn) { p <- 1 / (1 + exp(-Xl %*% b)); b <- b - 4 * (-t(Xl) %*% (yl - p) / nl); path[t, ] <- b }
 glm_coef <- coef(glm(chinstrap ~ z, family = binomial, data = pg))
@@ -523,33 +683,11 @@ Chinstrap against Adelie from flipper length (standardized), penguins data, from
 
 Objective: $\hat R_n(\beta) = -\ell(\beta)/n$. Gradient, from part 1: $-\mathbf X^\top(\mathbf y - \mathbf p(\beta))/n$
 
-Same loop as least squares; only the gradient function changed. Dotted lines: `glm`'s answer
+Same loop as least squares; only the gradient changed. Dotted: `glm`'s answer
 
-Curvature: the Hessian of $\hat R_n$ is $\frac1n\sum_i \hat p_i(1 - \hat p_i)x_ix_i^\top \preceq \mathbf X^\top\mathbf X/4n$, so $L = `r round(L_logit, 2)`$ here and $2/L = `r round(2 / L_logit, 1)`$
+Curvature: $w_i \le \tfrac14$ in part 1's Hessian, so $L = `r round(L_logit, 2)`$ here and $2/L = `r round(2 / L_logit, 1)`$. One valley: the benign case
 :::
 :::
-
-## Optimization theory
-
-::: {.notes}
-Legacy slide, with one calculation in front of it. Gradient zero at (0, 0), f = 1 there and 0 at (1, 0) and (-1, 0): a saddle. The descent lemma still holds where the gradient is Lipschitz; if the iterates converge, the limit is a stationary point, not necessarily a minimum.
-:::
-
-**You first.** $f(u, v) = (u^2 - 1)^2 + v^2$: compute the gradient at $(0, 0)$. Is $(0, 0)$ a minimum?
-
-. . .
-
-- If the loss function is convex many of these methods have *guaranteed convergence* to the *global minimizer*
-
-- If the loss function is non-convex, we lose the guarantee of reaching the *global* minimizer (each small step still decreases the loss)
-
-  - Possible convergence to a local minimizer, or to a saddle like the one above (gradient zero, curvature $-4$ one way, $+2$ the other)
-
-  - Local minimizers may be much worse than the best possible model...
-
-  - Or they might not be!
-
-Deep learning: to hell with convexity 🤠 "it just works"
 
 ## {.inverse .center}
 
@@ -557,33 +695,7 @@ Deep learning: to hell with convexity 🤠 "it just works"
 Compress: one exact gradient per step is too expensive at scale; a random row's gradient is cheap and, on average, right.
 :::
 
-### Part 3: stochastic gradient descent
-
-## History: ImageNet, 2012 {.inverse}
-
-::: {.notes}
-Skip if behind. Krizhevsky, Sutskever and Hinton (2012): about 60 million parameters and 650,000 neurons per network; one network 18.2% top-5 on validation; the winning entry, an ensemble of seven, 15.3% on test against 26.2% for the runner-up; five to six days on two GTX 580 GPUs, SGD with batches of 128.
-:::
-
-[60,000,000]{.big style="color: #fde725;"}
-
-parameters in each network of the entry that cut the ImageNet top-5 error to 15.3%, against 26.2% for the next best
-
-Each network fitted in five to six days on two gaming graphics cards, by stochastic gradient descent. Nobody solved an equation
-
-[Krizhevsky, Sutskever and Hinton, "ImageNet classification with deep convolutional neural networks", NeurIPS 2012]{.source}
-
-## Computational complexity
-
-::: {.notes}
-Legacy slide. Hessian p by p, gradient p by 1.
-:::
-
-- **Second order methods**, like Newton-Raphson, use second derivatives, i.e. *inverting the $p \times p$ Hessian matrix*
-
-- **First order methods**, like gradient descent, only require computing the $p \times 1$ gradient vector
-
-Many parameters $\to$ prefer first order methods
+### Part 4: stochastic gradient descent
 
 ## What a step costs
 
@@ -591,7 +703,7 @@ Many parameters $\to$ prefer first order methods
 With the linear cost model: full gradient at the 2012 scale about 7e13 operations, a batch of 128 about 8e9, ten thousand times cheaper. For a network the per-image cost is not p, but the ratio n/b is what matters. The formula's p-cubed is not a computation anyone has done.
 :::
 
-For a linear model or a GLM, where one row's gradient costs about $p$ operations:
+Second-order methods invert the $p \times p$ Hessian; first-order methods compute the $p \times 1$ gradient. For a linear model or a GLM, where one row's gradient costs about $p$ operations:
 
 | | Operations | Once or per step? |
 |---|---|---|
@@ -603,27 +715,11 @@ For a linear model or a GLM, where one row's gradient costs about $p$ operations
 $n = 1{,}200{,}000$ images, $p = 60{,}000{,}000$ parameters. If one image's gradient cost about $p$ operations, roughly how many is one full gradient? And one step on a batch of 128?
 :::
 
-## Coordinate descent {.inverse}
-
-::: {.notes}
-Compress: change one coordinate at a time; any one-dimensional method will do for each.
-:::
-
-Update only one *coordinate* of $\beta$ in each step
-
-Cycle through coordinates until some convergence criteria is satisfied
-
-. . .
-
-Can combine with any strategy for univariate optimization -- e.g. one-dimensional Newton's method -- treating other parameters as constants
-
 ## Stochastic/random descent
 
 ::: {.notes}
 Legacy slide; the derivation is on the next slide, over the random index with the data fixed. Ask first, then reveal.
 :::
-
-- Instead of cycling through all coordinates in coordinate descent, just pick one randomly
 
 - Instead of computing the gradient of the loss function on the entire dataset, compute it on a random sample
 
@@ -646,57 +742,60 @@ Unbiased, whatever the data are. A batch of $b$ rows drawn independently with re
 
 Compute update using one randomly sampled observation, or a randomly sampled subset ("mini-batch SGD")
 
-## {.inverse .center}
+## The two paths
 
 ::: {.notes}
-Compress: with noisy steps the step size has to shrink, but not too fast.
+Simulated least squares. An epoch is one pass through the rows, 200 single-row steps, so the orange path is three epochs. Blue is exact and expensive; orange is cheap and noisy, and with a shrinking step the noise ball shrinks. Do not say "SGD is better": say what each costs and what each buys. Cut 2 if short.
 :::
 
-### Scale up *more*! Bigger data!
-
-![](https://upload.wikimedia.org/wikipedia/en/9/9f/Over_9000%21.png)
-
-## The step must shrink, but not too fast
-
-::: {.notes}
-Simulation, one parameter. Geometric: its step sizes sum to 0.45, so the total distance it can travel is finite; it converges, but to the wrong point, here about -0.9. Constant: never settles. 1/t: Robbins and Monro's choice. The two sums are sufficient conditions (under assumptions on the objective and the noise), not a theorem on the slide.
-:::
-
+::: {.columns}
+::: {.column width="55%"}
 ```{r}
-#| label: schedules
-#| fig-height: 2.6
-#| fig-width: 12
+#| label: two-paths
+#| fig-height: 3.4
+#| fig-width: 6
 #| out-width: "100%"
-set.seed(2)
-Tt <- 300
-sched <- list("constant 0.1" = function(t) 0.1, "1/t" = function(t) 1 / t, "geometric 0.3 x 0.6^t" = function(t) 0.3 * 0.6^t)
-runs <- map_dfr(names(sched), function(nm) {
-  bb <- -3; out <- numeric(Tt)
-  for (t in 1:Tt) { g <- (bb - 2) + rnorm(1); bb <- bb - sched[[nm]](t) * g; out[t] <- bb }
-  tibble(schedule = factor(nm, levels = names(sched)), step = 1:Tt, beta = out)
-})
-ggplot(runs, aes(step, beta)) + geom_hline(yintercept = 2, linetype = "dotted") +
-  geom_line(colour = v_blue, linewidth = 0.7) + facet_wrap(~ schedule) +
-  labs(x = "step", y = expression(beta[t]), title = NULL)
+set.seed(9)
+ns <- 200; x1 <- rnorm(ns); x2 <- 0.6 * x1 + 0.8 * rnorm(ns); Xs <- cbind(x1, x2); ys <- Xs %*% c(2, -1) + rnorm(ns)
+ols <- solve(t(Xs) %*% Xs, t(Xs) %*% ys)
+Ls <- 2 * max(eigen(t(Xs) %*% Xs / ns)$values)
+bg <- c(-2, 2); gdp <- matrix(NA, 31, 2); gdp[1, ] <- bg
+for (t in 1:30) { bg <- bg - (1 / Ls) * (-2 / ns * t(Xs) %*% (ys - Xs %*% bg)); gdp[t + 1, ] <- bg }
+bs <- c(-2, 2); sgp <- matrix(NA, 601, 2); sgp[1, ] <- bs
+for (t in 1:600) { i <- sample(ns, 1); bs <- bs - (0.05 / (1 + t / 100)) * (-2 * Xs[i, ] * (ys[i] - sum(Xs[i, ] * bs))); sgp[t + 1, ] <- bs }
+pgrid <- expand_grid(b1 = seq(-2.5, 3.5, length.out = 101), b2 = seq(-2.5, 2.5, length.out = 101)) |>
+  mutate(f = map2_dbl(b1, b2, ~ mean((ys - Xs %*% c(.x, .y))^2)))
+ggplot() +
+  geom_contour(data = pgrid, aes(b1, b2, z = f), breaks = min(pgrid$f) + c(0.05, 0.2, 0.5, 1, 2, 4, 8, 16), colour = "grey75") +
+  geom_path(data = as_tibble(sgp, .name_repair = ~ c("b1", "b2")), aes(b1, b2), colour = m_orange, alpha = 0.8, linewidth = 0.5) +
+  geom_path(data = as_tibble(gdp, .name_repair = ~ c("b1", "b2")), aes(b1, b2), colour = v_blue, linewidth = 1.1) +
+  geom_point(data = as_tibble(gdp, .name_repair = ~ c("b1", "b2")), aes(b1, b2), colour = v_blue, size = 1.8) +
+  annotate("point", x = ols[1], y = ols[2], shape = 4, size = 5, stroke = 1.5) +
+  coord_equal() + labs(x = expression(beta[1]), y = expression(beta[2]))
 ```
+:::
+::: {.column width="45%"}
+Simulated least squares, $n = 200$, two inputs
 
-Simulated: one parameter, noisy gradient $(\beta - 2) + \text{noise}$, from $\beta_0 = -3$. Target: 2. **You first:** one of the three stalls short of the target for ever. Which, and why?
+**Blue:** 30 full gradient steps, $6{,}000$ row-gradients. **Orange:** 600 single-row steps, $600$ row-gradients, step $0.05/(1 + t/100)$
 
-. . .
-
-Without noise a constant step below $2/L$ is right. With noise the steps shrink, $\gamma_t \to 0$, but not too fast; the standard conditions: $\sum_t \gamma_t = \infty$, $\sum_t \gamma_t^2 < \infty$ (Robbins and Monro, 1951)
-
-## Constrained and non-smooth optimization {.inverse}
-
-::: {.notes}
-Compress: outside the constraint region, project back; no gradient, use a subgradient.
+The noisy path reaches the neighborhood of the answer ($\times$) for a tenth of the work, and never sits still. With noise the step shrinks, $\gamma_t \to 0$, but not so fast that it stops short (panel C)
+:::
 :::
 
-**Constrained.** Some optimization problems have constraints on the parameters. If a descent step takes us outside the constraint region: choose step sizes small enough to stay inside, or *project* the updated point to the *nearest* point inside the region
+## History: ImageNet, 2012 {.inverse}
 
-. . .
+::: {.notes}
+Skip if behind. Krizhevsky, Sutskever and Hinton (2012): about 60 million parameters and 650,000 neurons per network; one network 18.2% top-5 on validation; the winning entry, an ensemble of seven, 15.3% on test against 26.2% for the runner-up; five to six days on two GTX 580 GPUs, SGD with batches of 128.
+:::
 
-**Non-smooth.** If the loss function is not (everywhere) differentiable but *still [convex](https://en.wikipedia.org/wiki/Convex_function)*, e.g. absolute value: there is no gradient at a kink but there is a *[subgradient](https://en.wikipedia.org/wiki/Subgradient_method)*, any slope whose tangent line stays below the function. Step against one of those, as against the gradient (the loss need not fall at every step)
+[60,000,000]{.big style="color: #fde725;"}
+
+parameters in each network of the entry that cut the ImageNet top-5 error to 15.3%, against 26.2% for the next best
+
+Each network fitted in five to six days on two gaming graphics cards, by stochastic gradient descent on a loss with every feature of part 3. Nobody solved an equation, and nobody could prove it would work
+
+[Krizhevsky, Sutskever and Hinton, "ImageNet classification with deep convolutional neural networks", NeurIPS 2012]{.source}
 
 ## {.inverse .center}
 
@@ -704,210 +803,7 @@ Compress: outside the constraint region, project back; no gradient, use a subgra
 Compress: the algorithm is done; what is left over, and where does it come from?
 :::
 
-### Part 4: where the error comes from, this time
-
-## Choosing tuning parameters {.inverse}
-
-::: {.notes}
-Compress: number of predictors, flexibility; every method has a knob.
-:::
-
-![](https://upload.wikimedia.org/wikipedia/en/thumb/0/06/Spinal_Tap_-_Up_to_Eleven.jpg/330px-Spinal_Tap_-_Up_to_Eleven.jpg)
-
-e.g. number of predictors, flexibility for non-linear methods
-
-## Modeling assumption: smoothness {.inverse}
-
-::: {.notes}
-Skip if behind: simplicity for flexible classes; smooth functions have sparse Fourier representations.
-:::
-
-Version of simplicity/parsimony for flexible function classes
-
-. . .
-
-Linear functions are the smoothest
-
-Smooth function classes: set of functions with some type of bound on second derivatives, for example
-
-. . .
-
-**Cool math fact**: can be related to sparsity by considering (rate of decay of) coefficients of function's Fourier transform (smoother functions have sparser representations when written in a basis of sine functions, for example)
-
-## Discretize and fit sequentially {.inverse}
-
-::: {.notes}
-Compress: a grid of tuning values, fit each, pick one; when to stop increasing complexity is the question.
-:::
-
-- Start with a grid of values for the tuning parameter
-- Fit the model for each value in this grid
-- Pick the best fit (visually, or based on loss function value, or...)
-
-. . .
-
-e.g. For the `span` or fraction $s$ in local regression, try $s \in \{ 0.1, 0.25, 0.5, 0.75, 0.9 \}$ and visualize the result
-
-. . .
-
-- **Problem**: When to stop increasing the complexity? (i.e. decreasing the smoothness). We'll come back to this
-
-## Three functions
-
-::: {.notes}
-Two minutes, written. Expected: the sample-to-class distance shrinks with n; the class-to-truth distance does not know n.
-:::
-
-::: {.columns}
-::: {.column width="50%"}
-```{r}
-#| label: three-functions
-#| fig-height: 3.2
-#| fig-width: 5.6
-#| out-width: "100%"
-th <- seq(0, 2 * pi, length.out = 200)
-ell <- tibble(x = 2.6 * cos(th), y = 1.4 * sin(th))
-ggplot() +
-  geom_polygon(data = ell, aes(x, y), fill = "#e5ecf6", colour = v_blue, linewidth = 0.8) +
-  annotate("text", x = -1.3, y = 0.55, label = "the class F", colour = v_blue, size = 6) +
-  annotate("point", x = 3.6, y = 2.3, size = 4, colour = v_dark) +
-  annotate("text", x = 3.6, y = 2.65, label = "f*", size = 6.5, colour = v_dark) +
-  annotate("point", x = 2.15, y = 0.79, size = 4, colour = v_blue) +
-  annotate("text", x = 2.0, y = 1.2, label = "f_F", size = 6, colour = v_blue) +
-  annotate("point", x = 0.9, y = -0.6, size = 4, colour = m_orange) +
-  annotate("text", x = 0.5, y = -1.0, label = "f hat (random)", size = 6, colour = m_orange) +
-  annotate("segment", x = 3.6, y = 2.3, xend = 2.15, yend = 0.79, linetype = "dashed", colour = v_dark) +
-  annotate("text", x = 3.75, y = 1.2, label = "approximation", size = 5.5, colour = v_dark) +
-  annotate("segment", x = 2.15, y = 0.79, xend = 0.9, yend = -0.6, linetype = "dashed", colour = m_orange) +
-  annotate("text", x = 0.85, y = 0.4, label = "estimation", size = 5.5, colour = m_orange) +
-  coord_equal(xlim = c(-3.2, 4.6), ylim = c(-2, 3)) + theme_void()
-```
-:::
-::: {.column width="50%"}
-$f^\star = \arg\min_f R(f)$: the best of all (squared loss: week 2's conditional mean)
-
-$f_{\mathcal F} = \arg\min_{f \in \mathcal F} R(f)$: the best in the class; fixed once $\mathcal F$ is
-
-$\hat f$: what the algorithm returns from the sample; random, in $\mathcal F$
-
-Dashed lines: gaps in risk, not distances
-:::
-:::
-
-::: {.ask}
-Double $n$. Which of the two gaps depends on the training sample, and which does not know that $n$ changed?
-:::
-
-## Bias and variance, again
-
-::: {.notes}
-The heuristic before the theorem. Week 1's decomposition was for one method; this one is for anything that minimizes over a class. The class is chosen before the data: part of the error is paid in advance.
-:::
-
-::: {.retrieval}
-Week 1, $k$-nearest neighbors: the expected squared error at a point is noise $+$ bias$^2$ $+$ variance, with the bias set by the method and the variance falling with $k$. Week 2, the optimal model theorem: $R(f) - R(f^\star) = \mathbb E[(f^\star(X) - f(X))^2]$ for squared loss.
-:::
-
-What we want small is the **excess risk** $R(\hat f) - R(f^\star) \ge 0$: one number, for any loss
-
-The class $\mathcal F$ was chosen before the data arrived. So some of that number was decided then, by how far $\mathcal F$ is from $f^\star$; the rest depends on the sample. Split it there: add and subtract $R(f_{\mathcal F})$
-
-$$
-R(\hat f) - R(f^\star) = \big[R(\hat f) - R(f_{\mathcal F})\big] + \big[R(f_{\mathcal F}) - R(f^\star)\big]
-$$
-
-Both brackets should be nonnegative: $f_{\mathcal F}$ is the best in $\mathcal F$, and $\hat f$ is in $\mathcal F$; $f^\star$ is the best of all
-
-## Bias--variance decomposition, ERM form
-
-::: {.notes}
-Statement, then the proof: add and subtract the class's best risk; each bracket is nonnegative by the definitions of f_F and f*. Only f-hat in F was used, so the identity holds for whatever an algorithm returns, a stopped one included (say it).
-:::
-
-**Bias--variance decomposition, ERM form.** $\mathcal F$ a class of predictors with a best member $f_{\mathcal F} = \arg\min_{f \in \mathcal F} R(f)$; $\hat f = \arg\min_{f \in \mathcal F} \hat R_n(f)$ the empirical risk minimizer; $f^\star = \arg\min_f R(f)$ over all predictors. Then
-$$
-R(\hat f) - R(f^\star) = \underbrace{\big[R(\hat f) - R(f_{\mathcal F})\big]}_{\text{estimation}} + \underbrace{\big[R(f_{\mathcal F}) - R(f^\star)\big]}_{\text{approximation}}, \qquad \text{both terms} \ge 0
-$$
-
-. . .
-
-**Proof.** The equation is adding and subtracting $R(f_{\mathcal F})$. The first bracket is $\ge 0$ because $\hat f \in \mathcal F$ and $f_{\mathcal F}$ minimizes $R$ over $\mathcal F$; the second because $f^\star$ minimizes $R$ over everything. $\blacksquare$
-
-. . .
-
-For squared loss, the optimal model theorem gives the approximation term a shape: $R(f_{\mathcal F}) - R(f^\star) = \mathbb E[(f_{\mathcal F}(X) - f^\star(X))^2]$, the squared distance from the class to the truth
-
-## What the two terms do
-
-::: {.notes}
-The identity is trivial; the content is what each term does with n and F. "Usually": the next slide's simulation has estimation error fall from degree 2 to 3. This is the box to leave up.
-:::
-
-::: {.leave}
-Estimation error: random, depends on the sample; more data usually shrinks it, a bigger class usually grows it. Approximation error: fixed before any data arrive, zero when the class attains $R(f^\star)$, and it cannot grow when the class grows (nested classes). The two play the roles of week 1's variance and bias, for any method that minimizes something over a class
-:::
-
-## The trade-off in numbers
-
-::: {.notes}
-Simulation (checked, 14 October): with n = 80 estimation falls to about 0.4 to 0.45 of its value for degrees 1 to 5 and to about 0.1 for degrees 6 and 7, where n = 40 was too small for the 1/n regime; approximation does not move. More data buys a bigger class.
-:::
-
-```{r}
-#| label: tradeoff
-#| fig-height: 2.5
-#| fig-width: 11
-#| out-width: "100%"
-set.seed(3)
-fstar <- function(x) sin(2 * pi * x) + 0.5 * x
-grid <- seq(0, 1, length.out = 801)
-n_sim <- 40; sigma <- 0.4; degs <- 1:7; reps <- 200
-errs <- map_dfr(degs, function(d) {
-  fF <- fitted(lm(fstar(grid) ~ poly(grid, d, raw = TRUE)))
-  approx <- mean((fF - fstar(grid))^2)
-  est <- mean(replicate(reps, {
-    x <- runif(n_sim); yy <- fstar(x) + rnorm(n_sim, sd = sigma)
-    fh <- predict(lm(yy ~ poly(x, d, raw = TRUE)), newdata = data.frame(x = grid))
-    mean((fh - fF)^2)
-  }))
-  tibble(degree = d, approximation = approx, estimation = est, total = approx + est)
-})
-errs |> pivot_longer(-degree, names_to = "error") |>
-  mutate(error = factor(error, levels = c("approximation", "estimation", "total"))) |>
-  ggplot(aes(degree, value, colour = error)) + geom_line(linewidth = 1.2) + geom_point(size = 2.4) +
-  scale_colour_manual(values = c(v_dark, m_orange, v_teal)) +
-  scale_x_continuous(breaks = degs) +
-  labs(x = "degree of the polynomial class", y = "excess risk", colour = NULL) + theme(legend.position = "top")
-```
-
-Simulated: $f^\star(x) = \sin(2\pi x) + x/2$, $X$ uniform on $[0, 1]$, noise sd $0.4$, $n = 40$; the class is the polynomials of degree $d$, fitted by least squares; estimation is $\mathbb E[(\hat f(X) - f_{\mathcal F}(X))^2]$ averaged over 200 samples
-
-::: {.ask}
-Double $n$ to 80. Which curve moves, and which way?
-:::
-
-## No free lunch
-
-::: {.notes}
-Stated (Shalev-Shwartz and Ben-David, Theorem 5.1, in expectation form); the finite-domain proof is exercise 4. Intuition to say: the sample says nothing about labels at points it has not seen; on a large domain those labels can be set against the method. Comes back in weeks 9 and 11.
-:::
-
-**No free lunch (stated).** No method has lower error than every other on every distribution. Binary classification, 0--1 loss: for any learning method and any training size $n$, on a domain with at least $2n$ points there is a distribution for which a perfect predictor exists and the method's expected error (over training samples) is at least $1/4$
-
-
-What it says: choosing a method is an *assumption* about the world; the ERM form shows where one such assumption enters, the class $\mathcal F$ chosen before the data. What it does not say: that methods are equally good on the problems we meet, or that an assumption is a flaw
-
-::: {.ask}
-In the week 1 seminar a line and $k$ nearest neighbors often scored within a standard error of each other on gapminder. A fact about the methods, or about the data?
-:::
-
-## {.inverse .center}
-
-::: {.notes}
-Compress: the longer the algorithm runs, the bigger the class it has effectively searched.
-:::
-
-### Part 5: stopping
+### Part 5: what the fitting leaves over
 
 ## Early stopping
 
@@ -971,29 +867,60 @@ The number of steps is a tuning parameter, like $k$ or $d$. Week 7 writes the pe
 :::
 :::
 
+## Where the error comes from, this time
+
+::: {.notes}
+Stated; the two-line proof (add and subtract R(f_F); each bracket is nonnegative by the definitions of f_F and f*) is exercise 2, which also shows that for squared loss the approximation term is E[(f_F - f*)^2] by the optimal model theorem. Three functions: the best of all, the best in the class, what the algorithm returns. The class is chosen before the data; so is the approximation error. Next week starts here.
+:::
+
+Three functions. $f^\star = \arg\min_f R(f)$: the best of all (squared loss: week 2's conditional mean). $f_{\mathcal F} = \arg\min_{f \in \mathcal F} R(f)$: the best in the class, fixed once $\mathcal F$ is. $\hat f = \arg\min_{f \in \mathcal F} \hat R_n(f)$: what the data give, random
+
+**Bias--variance decomposition, ERM form.** Both terms are $\ge 0$:
+$$
+R(\hat f) - R(f^\star) = \underbrace{\big[R(\hat f) - R(f_{\mathcal F})\big]}_{\text{estimation}} + \underbrace{\big[R(f_{\mathcal F}) - R(f^\star)\big]}_{\text{approximation}}
+$$
+
+::: {.leave}
+Proof: exercise 2, two lines. The class was chosen before the data, and so was the approximation error; the estimation error is the sample's. Week 1's bias and variance for any method that minimizes over a class. Next week starts here
+:::
+
+## No free lunch
+
+::: {.notes}
+Stated (Shalev-Shwartz and Ben-David, Theorem 5.1, in expectation form); the finite-domain proof is exercise 4. Intuition to say: the sample says nothing about labels at points it has not seen; on a large domain those labels can be set against the method. Comes back in weeks 9 and 11.
+:::
+
+**No free lunch (stated).** No method has lower error than every other on every distribution. Binary classification, 0--1 loss: for any learning method and any training size $n$, on a domain with at least $2n$ points there is a distribution for which a perfect predictor exists and the method's expected error (over training samples) is at least $1/4$
+
+What it says: choosing a method is an *assumption* about the world; the ERM form shows where one such assumption enters, the class $\mathcal F$ chosen before the data. What it does not say: that methods are equally good on the problems we meet, or that an assumption is a flaw
+
+::: {.ask}
+In the week 1 seminar a line and $k$ nearest neighbors often scored within a standard error of each other on gapminder. A fact about the methods, or about the data?
+:::
+
 ## Before the seminar
 
 ::: {.notes}
-Exercises 1 and 2 are today's proofs with the slides closed; 3 finishes the Newton-Raphson exercise; 4 proves no free lunch on a finite domain.
+Exercise 1 is today's proof with the slides closed; 2 proves the ERM form; 3 finishes the Newton-Raphson exercise; 4 proves no free lunch on a finite domain.
 :::
 
-- This week: exercises 1 to 4 at the top of the notebook. The descent lemma and the ERM form of the bias--variance decomposition, both again with the slides closed; the second derivative of the logistic log-likelihood, finishing the Newton-Raphson exercise; and no free lunch on a finite domain
+- This week: exercises 1 to 4 at the top of the notebook. The descent lemma again with the slides closed; the proof of the ERM form of the bias--variance decomposition; the second derivative of the logistic log-likelihood and the Newton-Raphson update; and no free lunch on a finite domain
 
-- In the seminar you write gradient descent once, as a function, and use it for least squares, then logistic regression, then with random batches
+- In the seminar you write gradient descent once, as a function, and use it for least squares, then logistic regression, then with random batches; and you watch the gradient norm while it runs
 
 ## Conclusion: optimization in ML is a big topic {.inverse}
 
 ::: {.notes}
-Compress: strategies for specific problems, strategies for general ones, and stopping at the right complexity, which is next week.
+Compress: the one guarantee and its price; a flat loss is not a proof of anything; stopping at the right complexity is next week.
 :::
 
-#### Strategies for specific problems
+#### One guarantee, with a price
 
-e.g. stepwise inclusion of variables, constraints, etc
+Each small step helps if the curvature is bounded. Where it ends, and whether it has ended, the theory does not say
 
 #### Strategies for general loss/function classes
 
-e.g. gradient methods, coordinate methods
+e.g. gradient methods, stochastic gradient methods
 
 #### Stopping at the right amount of complexity
 
