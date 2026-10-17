@@ -1222,14 +1222,14 @@
     "href": "weeks/04-optimization/slides/04-1-optimization.html#mle",
     "title": "Machine learning",
     "section": "MLE",
-    "text": "MLE\n\\[\nL(\\beta ; \\mathbf y | \\mathbf x) = \\prod_{i=1}^n \\left( \\frac{1}{1+e^{-x_i \\beta}} \\right)^{y_i} \\left(1- \\frac{1}{1+e^{-x_i \\beta}} \\right)^{1-y_i}\n\\]\n\n\\[\n\\ell(\\beta ; \\mathbf y | \\mathbf x) = \\sum_{i=1}^n y_i \\log \\left( \\frac{1}{1+e^{-x_i \\beta}} \\right) + (1-y_i) \\log \\left(1- \\frac{1}{1+e^{- x_i \\beta}} \\right)\n\\]"
+    "text": "MLE\n\\[\nL(\\beta ; \\mathbf y | \\mathbf x) = \\prod_{i=1}^n \\left( \\frac{1}{1+e^{-x_i \\beta}} \\right)^{y_i} \\left(1- \\frac{1}{1+e^{-x_i \\beta}} \\right)^{1-y_i}\n\\]\n\n\\[\n\\ell(\\beta ; \\mathbf y | \\mathbf x) = \\sum_{i=1}^n \\left[ y_i \\log \\left( \\frac{1}{1+e^{-x_i \\beta}} \\right) + (1-y_i) \\log \\left(1- \\frac{1}{1+e^{- x_i \\beta}} \\right) \\right]\n\\]"
   },
   {
     "objectID": "weeks/04-optimization/slides/04-1-optimization.html#mle-the-derivative",
     "href": "weeks/04-optimization/slides/04-1-optimization.html#mle-the-derivative",
     "title": "Machine learning",
     "section": "MLE: the derivative",
-    "text": "MLE: the derivative\n\\[\n\\frac{\\partial}{\\partial \\beta} \\ell(\\beta ; \\mathbf y | \\mathbf x) = \\sum_{i=1}^n y_i  \\left( \\frac{x_i e^{-x_i \\beta}}{1+e^{-x_i \\beta}} \\right) + (1-y_i) \\left(\\frac{-x_i}{1+e^{- x_i \\beta}} \\right)\n\\]\n\\[= \\sum_{i=1}^n x_i \\left[ y_i - \\left(\\frac{1}{1+e^{- x_i \\beta}} \\right) \\right] = \\color{#b73779}{\\sum_{i=1}^n x_i [y_i - \\hat p_i(\\beta)]}\\]\nSet this equal to 0 and solve for \\(\\beta\\). How: the rest of today"
+    "text": "MLE: the derivative\n\\[\n\\frac{\\partial}{\\partial \\beta} \\ell(\\beta ; \\mathbf y | \\mathbf x) = \\sum_{i=1}^n \\left[ y_i  \\left( \\frac{x_i e^{-x_i \\beta}}{1+e^{-x_i \\beta}} \\right) + (1-y_i) \\left(\\frac{-x_i}{1+e^{- x_i \\beta}} \\right) \\right]\n\\]\n\\[= \\sum_{i=1}^n x_i \\left[ y_i - \\left(\\frac{1}{1+e^{- x_i \\beta}} \\right) \\right] = \\color{#b73779}{\\sum_{i=1}^n x_i [y_i - \\hat p_i(\\beta)]}\\]\nSet this equal to 0 and solve for \\(\\beta\\). How: the rest of today"
   },
   {
     "objectID": "weeks/04-optimization/slides/04-1-optimization.html#the-score-equations-read-as-orthogonality",
@@ -1264,7 +1264,7 @@
     "href": "weeks/04-optimization/slides/04-1-optimization.html#glms-in-r-what-you-should-know",
     "title": "Machine learning",
     "section": "GLMs in R: what you should know",
-    "text": "GLMs in R: what you should know\nDoes glm use Newton-Raphson for every family? Yes. IRLS is Fisher scoring, Newton’s method with the expected Hessian; for the default links (binomial with logit, poisson with log, gaussian with identity) the two coincide. lm is the special case where one step solves the normal equations\nHow many iterations? Usually under ten. summary() prints Number of Fisher Scoring iterations\nWhen does it fail? When there is no finite MLE: the separable case, with the week 3 warning fitted probabilities numerically 0 or 1 occurred, or a Poisson fit with coefficients running off to infinity. The algorithm is fine; the maximum is not there\nWhy does the rest of machine learning not do this? Each step solves a \\(p \\times p\\) system. For \\(p\\) in the thousands or millions that is the cost that matters, and the next part is about avoiding it"
+    "text": "GLMs in R: what you should know\nDoes glm use Newton-Raphson for every family? Its fitter is IRLS, which is Fisher scoring: Newton with the expected Hessian in place of the actual one. For the default links (binomial-logit, poisson-log, gaussian-identity) the two coincide; for other links it is a close relative. lm is the one-step case\nHow many iterations? Usually under ten. summary() prints Number of Fisher Scoring iterations\nWhen does it fail? Mostly when there is no finite MLE, week 3’s separable case, with coefficients growing at every iteration. The warning fitted probabilities numerically 0 or 1 occurred is a symptom to investigate, not a diagnosis: a finite MLE with a steep slope triggers it too\nWhy does the rest of machine learning not do this? Each step solves a \\(p \\times p\\) system. For \\(p\\) in the millions that is the cost that matters; the next part avoids it"
   },
   {
     "objectID": "weeks/04-optimization/slides/04-1-optimization.html#section-1",
@@ -1348,14 +1348,21 @@
     "href": "weeks/04-optimization/slides/04-1-optimization.html#too-big-too-small",
     "title": "Machine learning",
     "section": "Too big, too small",
-    "text": "Too big, too small\n\n\n\n\n\n\n\n\n\nToo big a step and the loss rises or bounces: the valley at \\(\\gamma = 0.21\\), the penguins at \\(\\gamma = 12\\). Too small a gradient and nothing moves for hundreds of steps, then everything does\nThrough the many layers of a neural network these two compound, and get names: exploding and vanishing gradients. Named here, not derived"
+    "text": "Too big, too small\n\n\n\n\n\n\n\n\n\nToo big a step and the loss rises or bounces: the valley at \\(\\gamma = 0.21\\), the penguins at \\(\\gamma = 12\\). Too small a gradient and nothing moves for hundreds of steps, then everything does\nA different mechanism with a similar look, named and not derived: in a deep network the chain rule multiplies derivatives across layers, and the product can be enormous or negligible: exploding and vanishing gradients"
   },
   {
     "objectID": "weeks/04-optimization/slides/04-1-optimization.html#has-it-converged",
     "href": "weeks/04-optimization/slides/04-1-optimization.html#has-it-converged",
     "title": "Machine learning",
     "section": "Has it converged?",
-    "text": "Has it converged?\n\n\n\n\n\n\n\n\n\nSimulated. All three are flat at step 200 (dotted): one has converged, one is on a plateau, one has a step size that shrank to nothing on the way\n\nWhich is which? What would you check, and what would you do next?\n\n\nA flat loss is consistent with all three, and no theorem below says which. In practice: the gradient norm; restart elsewhere; run longer than you think; hold out data (next week)"
+    "text": "Has it converged?\n\n\n\n\n\n\n\n\n\nSimulated: three runs of gradient descent, 200 steps each, and all three losses are flat. One has converged to its minimum; one is on a plateau; one has a step size that shrank to nothing on the way\n\nWhich is which? What would you check, and what would you do next?"
+  },
+  {
+    "objectID": "weeks/04-optimization/slides/04-1-optimization.html#has-it-converged-the-next-600-steps",
+    "href": "weeks/04-optimization/slides/04-1-optimization.html#has-it-converged-the-next-600-steps",
+    "title": "Machine learning",
+    "section": "Has it converged? The next 600 steps",
+    "text": "Has it converged? The next 600 steps\n\n\n\n\n\n\n\n\n\nA converged (the valley). B was on the plateau and drops at step 445. C stopped short: its steps \\(0.3 \\cdot 0.6^t\\) sum to a finite distance\nAt step 200 the three were indistinguishable, and no theorem below would have told them apart. In practice, two different jobs: the gradient norm, restarts from elsewhere and running longer diagnose the optimization; held-out data decide when to stop for prediction, which is next week’s question"
   },
   {
     "objectID": "weeks/04-optimization/slides/04-1-optimization.html#curvature",
@@ -1369,14 +1376,14 @@
     "href": "weeks/04-optimization/slides/04-1-optimization.html#curvature-at-most-l",
     "title": "Machine learning",
     "section": "Curvature at most \\(L\\)",
-    "text": "Curvature at most \\(L\\)\nIf the curvature in every direction is at most \\(L\\), the push-back is at most \\(\\tfrac12 L\\gamma^2\\|g\\|^2\\), and then \\[\nf(x - \\gamma g) \\lesssim f(x) - \\gamma\\big(1 - \\tfrac12 L\\gamma\\big)\\|g\\|^2\n\\] The bracket is positive for \\(\\gamma &lt; 2/L\\) and the bound is best at \\(\\gamma = 1/L\\): the quadratic case’s rule, in general\n\nTo make this a theorem, say “curvature at most \\(L\\)” without a second derivative, about the gradient:\nAssumption. \\(\\nabla f\\) is \\(L\\)-Lipschitz for some \\(L &gt; 0\\): \\(\\|\\nabla f(x) - \\nabla f(y)\\| \\le L\\,\\|x - y\\|\\) for all \\(x, y\\)\nQuadratic with curvatures \\(a_1 \\ge \\dots \\ge a_p\\): \\(L = a_1\\). Least squares: \\(L = 2\\lambda_{\\max}(\\mathbf X^\\top\\mathbf X)/n\\). The saddle example: no single \\(L\\), its curvature in \\(u\\) is \\(12u^2 - 4\\)"
+    "text": "Curvature at most \\(L\\)\nIf the curvature in every direction is at most \\(L\\) in size, the push-back is at most \\(\\tfrac12 L\\gamma^2\\|g\\|^2\\), and then \\[\nf(x - \\gamma g) \\lesssim f(x) - \\gamma\\big(1 - \\tfrac12 L\\gamma\\big)\\|g\\|^2\n\\] The bracket is positive for \\(\\gamma &lt; 2/L\\) and the bound is best at \\(\\gamma = 1/L\\): the quadratic case’s rule, in general\n\nTo make it a theorem, say “curvature at most \\(L\\)” about the gradient, with no second derivative:\nAssumption. \\(\\nabla f\\) is \\(L\\)-Lipschitz for some \\(L &gt; 0\\): \\(\\|\\nabla f(x) - \\nabla f(y)\\| \\le L\\,\\|x - y\\|\\) for all \\(x, y\\)\nA quadratic with curvatures \\(a_j\\) has \\(L = \\max_j |a_j|\\), the valley’s \\(a_1\\); least squares, \\(L = 2\\lambda_{\\max}(\\mathbf X^\\top\\mathbf X)/n\\); the saddle example has no single \\(L\\) (curvature \\(12u^2 - 4\\) in \\(u\\))"
   },
   {
     "objectID": "weeks/04-optimization/slides/04-1-optimization.html#descent-lemma",
     "href": "weeks/04-optimization/slides/04-1-optimization.html#descent-lemma",
     "title": "Machine learning",
     "section": "Descent lemma",
-    "text": "Descent lemma\n\nDescent lemma. If \\(\\nabla f\\) is \\(L\\)-Lipschitz, then for every \\(x\\) \\[\nf\\!\\left(x - \\tfrac1L\\nabla f(x)\\right) \\le f(x) - \\frac{\\|\\nabla f(x)\\|^2}{2L}\n\\] Every step of size \\(1/L\\) decreases \\(f\\) by at least the squared gradient over \\(2L\\) (strictly, unless \\(\\nabla f(x) = 0\\)).\n\nThe one guarantee, and its price. It says: no convexity needed, each step helps, more so where the gradient is large. It does not say: where the steps end up (any stationary point of the landscape), or that a small gradient means arrival: it means the next step gains little, which is the plateau\nProof: integrate the gradient along the step, and let the Lipschitz bound do what the curvature bound did"
+    "text": "Descent lemma\n\nDescent lemma. If \\(\\nabla f\\) is \\(L\\)-Lipschitz, then for every \\(x\\) \\[\nf\\!\\left(x - \\tfrac1L\\nabla f(x)\\right) \\le f(x) - \\frac{\\|\\nabla f(x)\\|^2}{2L}\n\\] Every step of size \\(1/L\\) decreases \\(f\\) by at least the squared gradient over \\(2L\\) (strictly, unless \\(\\nabla f(x) = 0\\)).\n\nThe one guarantee, and its price. It says: no convexity needed; each step helps, more where the gradient is large. It does not say the steps converge (on \\(f(x) = -x\\) they walk off forever); if they do, the limit is a stationary point, any of the landscape’s. A small gradient is not arrival: the next step gains little, which is the plateau\nProof: integrate the gradient along the step, and let the Lipschitz bound do what the curvature bound did"
   },
   {
     "objectID": "weeks/04-optimization/slides/04-1-optimization.html#descent-lemma-proof-1-of-2",
@@ -1432,14 +1439,14 @@
     "href": "weeks/04-optimization/slides/04-1-optimization.html#the-two-paths",
     "title": "Machine learning",
     "section": "The two paths",
-    "text": "The two paths\n\n\n\n\n\n\n\n\n\n\n\n\nSimulated least squares, \\(n = 200\\), two inputs\nBlue: 30 full gradient steps, \\(6{,}000\\) row-gradients. Orange: 600 single-row steps, \\(600\\) row-gradients, step \\(0.05/(1 + t/100)\\)\nThe noisy path reaches the neighborhood of the answer (\\(\\times\\)) for a tenth of the work, and never sits still. With noise the step shrinks, \\(\\gamma_t \\to 0\\), but not so fast that it stops short (panel C)"
+    "text": "The two paths\n\n\n\n\n\n\n\n\n\n\n\n\nSimulated least squares, \\(n = 200\\), two inputs\nBlue: 30 full gradient steps, \\(6{,}000\\) row-gradients. Orange: 600 single-row steps, \\(600\\) row-gradients, step \\(0.05/(1 + t/100)\\)\nThe noisy path reaches the neighborhood of the answer (\\(\\times\\)) for a tenth of the work, and never sits still. With noise the step shrinks, \\(\\gamma_t \\to 0\\), but not so fast that it stops short (panel C): Robbins and Monro, 1951"
   },
   {
     "objectID": "weeks/04-optimization/slides/04-1-optimization.html#history-imagenet-2012",
     "href": "weeks/04-optimization/slides/04-1-optimization.html#history-imagenet-2012",
     "title": "Machine learning",
     "section": "History: ImageNet, 2012",
-    "text": "History: ImageNet, 2012\n60,000,000\nparameters in each network of the entry that cut the ImageNet top-5 error to 15.3%, against 26.2% for the next best\nEach network fitted in five to six days on two gaming graphics cards, by stochastic gradient descent on a loss with every feature of part 3. Nobody solved an equation, and nobody could prove it would work\nKrizhevsky, Sutskever and Hinton, “ImageNet classification with deep convolutional neural networks”, NeurIPS 2012"
+    "text": "History: ImageNet, 2012\n60,000,000\nparameters in the network described in the paper, fitted in five to six days on two gaming graphics cards by stochastic gradient descent, on a loss with every feature of part 3\nThe winning entry, an ensemble of seven such networks, cut the ImageNet top-5 test error to 15.3%, against 26.2% for the next best. Nobody solved an equation, and no theorem said the descent would find anything good\nKrizhevsky, Sutskever and Hinton, “ImageNet classification with deep convolutional neural networks”, NeurIPS 2012"
   },
   {
     "objectID": "weeks/04-optimization/slides/04-1-optimization.html#section-4",
@@ -1467,7 +1474,7 @@
     "href": "weeks/04-optimization/slides/04-1-optimization.html#where-the-error-comes-from-this-time",
     "title": "Machine learning",
     "section": "Where the error comes from, this time",
-    "text": "Where the error comes from, this time\nThree functions. \\(f^\\star = \\arg\\min_f R(f)\\): the best of all (squared loss: week 2’s conditional mean). \\(f_{\\mathcal F} = \\arg\\min_{f \\in \\mathcal F} R(f)\\): the best in the class, fixed once \\(\\mathcal F\\) is. \\(\\hat f = \\arg\\min_{f \\in \\mathcal F} \\hat R_n(f)\\): what the data give, random\nBias–variance decomposition, ERM form. Both terms are \\(\\ge 0\\): \\[\nR(\\hat f) - R(f^\\star) = \\underbrace{\\big[R(\\hat f) - R(f_{\\mathcal F})\\big]}_{\\text{estimation}} + \\underbrace{\\big[R(f_{\\mathcal F}) - R(f^\\star)\\big]}_{\\text{approximation}}\n\\]\n\nProof: exercise 2, two lines. The class was chosen before the data, and so was the approximation error; the estimation error is the sample’s. Week 1’s bias and variance for any method that minimizes over a class. Next week starts here"
+    "text": "Where the error comes from, this time\nThree functions. \\(f^\\star = \\arg\\min_f R(f)\\): the best of all (squared loss: week 2’s conditional mean). \\(f_{\\mathcal F} = \\arg\\min_{f \\in \\mathcal F} R(f)\\): the best in the class, fixed once \\(\\mathcal F\\) is. \\(\\hat f = \\arg\\min_{f \\in \\mathcal F} \\hat R_n(f)\\): what the data give, random\nBias–variance decomposition, ERM form. Both terms are \\(\\ge 0\\): \\[\nR(\\hat f) - R(f^\\star) = \\underbrace{\\big[R(\\hat f) - R(f_{\\mathcal F})\\big]}_{\\text{estimation}} + \\underbrace{\\big[R(f_{\\mathcal F}) - R(f^\\star)\\big]}_{\\text{approximation}}\n\\]\n\nProof: exercise 2, two lines. The class was chosen before the data, and so was the approximation error; the estimation error is the sample’s (and can hold bias as well as variance). The same trade-off as week 1’s, for any method that minimizes over a class. Next week starts here"
   },
   {
     "objectID": "weeks/04-optimization/slides/04-1-optimization.html#no-free-lunch",
@@ -1488,6 +1495,6 @@
     "href": "weeks/04-optimization/slides/04-1-optimization.html#conclusion-optimization-in-ml-is-a-big-topic",
     "title": "Machine learning",
     "section": "Conclusion: optimization in ML is a big topic",
-    "text": "Conclusion: optimization in ML is a big topic\nOne guarantee, with a price\nEach small step helps if the curvature is bounded. Where it ends, and whether it has ended, the theory does not say\nStrategies for general loss/function classes\ne.g. gradient methods, stochastic gradient methods\nStopping at the right amount of complexity\nMaybe the most important part! Next lecture"
+    "text": "Conclusion: optimization in ML is a big topic\nOne guarantee, with a price\nEach small step helps if the curvature is bounded. Where it ends, and whether it has ended, this bound alone does not say\nStrategies for general loss/function classes\ne.g. gradient methods, stochastic gradient methods\nStopping at the right amount of complexity\nMaybe the most important part! Next lecture"
   }
 ]

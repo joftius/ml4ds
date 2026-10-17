@@ -74,9 +74,9 @@ contour_plot <- function(path, title = NULL) {
 ## {.inverse}
 
 ::: {.notes}
-36 light slides and 8 dark: about 80 at week 2's rough pace (2 min a light slide, 1 a dark), so plan 76 of 90 with cut 1 made from the start. Dark = rush or skip; each dark slide's note says skip or gives the compressed phrase.
+36 light slides and 7 dark after the title: about 79 at week 2's rough pace (2 min a light slide, 1 a dark), so plan 76 of 90 with cut 1 made from the start; a planning estimate, not a rehearsed time. Dark = rush or skip; each dark slide's note says skip or gives the compressed phrase.
 
-Cut order: (1) ImageNet, (2) the two paths figure, (3) Newton-IRLS to the update rule, (4) the GLM FAQ to one line, (5) the ERM form to its statement. The descent lemma's proof is last.
+Cut order: (1) ImageNet, (2) the GLM FAQ to its last question, (3) Newton-IRLS to the update rule, (4) the two paths figure. The descent lemma's proof is last.
 
 Pace: 0:18 GLM FAQ done, 0:32 the quadratic case, 0:44 has it converged, 0:54 descent lemma proved, 1:04 SGD unbiased, 1:16 before the seminar.
 
@@ -141,7 +141,7 @@ $$
 . . .
 
 $$
-\ell(\beta ; \mathbf y | \mathbf x) = \sum_{i=1}^n y_i \log \left( \frac{1}{1+e^{-x_i \beta}} \right) + (1-y_i) \log \left(1- \frac{1}{1+e^{- x_i \beta}} \right)
+\ell(\beta ; \mathbf y | \mathbf x) = \sum_{i=1}^n \left[ y_i \log \left( \frac{1}{1+e^{-x_i \beta}} \right) + (1-y_i) \log \left(1- \frac{1}{1+e^{- x_i \beta}} \right) \right]
 $$
 
 ## MLE: the derivative
@@ -151,7 +151,7 @@ Legacy slide, continued. The last line is the one to remember: x times residual.
 :::
 
 $$
-\frac{\partial}{\partial \beta} \ell(\beta ; \mathbf y | \mathbf x) = \sum_{i=1}^n y_i  \left( \frac{x_i e^{-x_i \beta}}{1+e^{-x_i \beta}} \right) + (1-y_i) \left(\frac{-x_i}{1+e^{- x_i \beta}} \right)
+\frac{\partial}{\partial \beta} \ell(\beta ; \mathbf y | \mathbf x) = \sum_{i=1}^n \left[ y_i  \left( \frac{x_i e^{-x_i \beta}}{1+e^{-x_i \beta}} \right) + (1-y_i) \left(\frac{-x_i}{1+e^{- x_i \beta}} \right) \right]
 $$
 
 $$= \sum_{i=1}^n x_i \left[ y_i - \left(\frac{1}{1+e^{- x_i \beta}} \right) \right] = \color{#b73779}{\sum_{i=1}^n x_i [y_i - \hat p_i(\beta)]}$$
@@ -235,16 +235,16 @@ $$\hat{\beta}_{t+1} = \arg \min_{\beta} (\hat{\mathbf{y}}_t - \mathbf X \beta)^T
 ## GLMs in `R`: what you should know
 
 ::: {.notes}
-Compress if short: glm fits every family by IRLS, in a handful of iterations, and fails only when the MLE does not exist. The reason the rest of the world does not do this is the p by p Hessian: part 2.
+Compress if short: glm fits every family by IRLS (Fisher scoring, which is Newton for these links), in a handful of iterations; a boundary warning means investigate, not necessarily that the MLE does not exist (a finite MLE with a huge slope triggers it too). The reason the rest of the world does not do this is the p by p Hessian: part 2.
 :::
 
-**Does `glm` use Newton-Raphson for every family?** Yes. IRLS is Fisher scoring, Newton's method with the expected Hessian; for the default links (`binomial` with logit, `poisson` with log, `gaussian` with identity) the two coincide. `lm` is the special case where one step solves the normal equations
+**Does `glm` use Newton-Raphson for every family?** Its fitter is IRLS, which is Fisher scoring: Newton with the expected Hessian in place of the actual one. For the default links (`binomial`-logit, `poisson`-log, `gaussian`-identity) the two coincide; for other links it is a close relative. `lm` is the one-step case
 
 **How many iterations?** Usually under ten. `summary()` prints `Number of Fisher Scoring iterations`
 
-**When does it fail?** When there is no finite MLE: the separable case, with the week 3 warning `fitted probabilities numerically 0 or 1 occurred`, or a Poisson fit with coefficients running off to infinity. The algorithm is fine; the maximum is not there
+**When does it fail?** Mostly when there is no finite MLE, week 3's separable case, with coefficients growing at every iteration. The warning `fitted probabilities numerically 0 or 1 occurred` is a symptom to investigate, not a diagnosis: a finite MLE with a steep slope triggers it too
 
-**Why does the rest of machine learning not do this?** Each step solves a $p \times p$ system. For $p$ in the thousands or millions that is the cost that matters, and the next part is about avoiding it
+**Why does the rest of machine learning not do this?** Each step solves a $p \times p$ system. For $p$ in the millions that is the cost that matters; the next part avoids it
 
 ## {.inverse .center}
 
@@ -423,19 +423,21 @@ The gradient is zero at the minimum, but also at a local minimum, on a plateau (
 #| fig-height: 2.4
 #| fig-width: 11
 #| out-width: "100%"
-# A one-parameter loss with a steep wall, a local minimum, a plateau and the global minimum (a spline through chosen points).
-f1 <- splinefun(c(-6, -4.5, -3.5, -2.5, -1.5, -0.5, 0.5, 1.5, 2.5, 3.5, 4.5),
-                c(8, 3, 2.2, 2.6, 2.55, 2.5, 2.3, 1, 0, 1, 4), method = "natural")
-g1 <- function(x) f1(x, deriv = 1)
-curve1 <- tibble(x = seq(-6, 4.5, length.out = 400)) |> mutate(f = f1(x))
-marks <- tibble(x = c(-5.3, -3.5, -1.3, 2.5),
+# A one-parameter loss with a steep wall, a local minimum, a shallow monotone plateau (slope about -0.01)
+# and the global minimum: two Gaussian wells, two exponential walls and a gentle tilt. Its stationary
+# points are the two minima and the local maximum between them (checked numerically, 17 October).
+f1 <- function(x) 2.5 - 1.0 * exp(-(x + 3.5)^2 / 0.4) - 2.5 * exp(-(x - 2.5)^2 / 0.8) + exp(-2.5 * (x + 5.3)) + exp(2.5 * (x - 4.3)) - 0.01 * x
+g1 <- function(x) 1.0 * exp(-(x + 3.5)^2 / 0.4) * (2 * (x + 3.5) / 0.4) + 2.5 * exp(-(x - 2.5)^2 / 0.8) * (2 * (x - 2.5) / 0.8) - 2.5 * exp(-2.5 * (x + 5.3)) + 2.5 * exp(2.5 * (x - 4.3)) - 0.01
+x_lmin <- optimize(f1, c(-4.5, -2.5))$minimum; x_gmin <- optimize(f1, c(1.5, 3.5))$minimum
+curve1 <- tibble(x = seq(-6, 4.6, length.out = 400)) |> mutate(f = f1(x))
+marks <- tibble(x = c(-5.3, x_lmin, -1.0, x_gmin),
                 label = c("steep: large gradient", "local minimum: zero", "plateau: nearly zero", "global minimum: zero")) |>
   mutate(f = f1(x), slope = g1(x))
 ggplot(curve1, aes(x, f)) + geom_line(linewidth = 1.1, colour = v_blue) +
   geom_segment(data = marks, aes(x = x - 0.5, xend = x + 0.5, y = f - 0.5 * slope, yend = f + 0.5 * slope), colour = m_orange, linewidth = 1) +
   geom_point(data = marks, aes(x, f), colour = m_orange, size = 3) +
   geom_text(data = marks, aes(x, f + 0.9, label = label), size = 4.5, colour = v_dark) +
-  coord_cartesian(ylim = c(-0.5, 8.5)) + labs(x = expression(beta), y = "loss")
+  coord_cartesian(ylim = c(-1.5, 7)) + labs(x = expression(beta), y = "loss")
 ```
 
 Each step computes one thing about where it stands, the gradient $\nabla \hat R_n(\beta_t)$, and its size says little on its own: **zero** at the minimum, but also at a local minimum, and nearly zero on a plateau; **large** means steep, and a step may overshoot
@@ -447,7 +449,7 @@ Your loss has stopped falling. Which of the four are you at, and how would you t
 ## Landscapes
 
 ::: {.notes}
-Left: three starts on the same loss, same step size, three endings: the local minimum, stuck on the plateau for a long time, the global minimum. Right: the saddle; a start on the u = 0 line goes to the saddle and stays. Convex losses, least squares and logistic regression, have none of this; most of what comes after week 7 has all of it.
+Left: three starts on the same loss, same step size, three places after 60 steps: the local minimum, barely moved on the plateau (it reaches the global minimum after about 500 steps, panel B later), the global minimum. Right: the saddle; a start on the u = 0 line goes to the saddle and stays. Convex losses, least squares and logistic regression, have none of this; most of what comes after week 7 has all of it.
 :::
 
 ```{r}
@@ -462,7 +464,7 @@ pa <- ggplot(curve1, aes(x, f)) + geom_line(linewidth = 1, colour = "grey60") +
   geom_point(data = paths1, aes(x, f, colour = start), size = 1.8, show.legend = FALSE) +
   geom_point(data = filter(paths1, step == 0), aes(x, f, colour = start), size = 3.5, show.legend = FALSE) +
   scale_colour_manual(values = c(v_dark, v_teal, m_orange)) +
-  coord_cartesian(ylim = c(-0.5, 8.5)) + labs(x = expression(beta), y = "loss", title = "three starts, same step size, 60 steps") + theme(plot.title = element_text(size = 15))
+  coord_cartesian(ylim = c(-1.5, 7)) + labs(x = expression(beta), y = "loss", title = "three starts, same step size, 60 steps") + theme(plot.title = element_text(size = 15))
 fs <- function(u, v) (u^2 - 1)^2 + v^2
 gds <- function(start, gamma, steps) { b <- start; out <- matrix(NA, steps + 1, 2); out[1, ] <- b
   for (t in 1:steps) { b <- b - gamma * c(4 * b[1] * (b[1]^2 - 1), 2 * b[2]); out[t + 1, ] <- b }
@@ -488,7 +490,7 @@ Where you start decides where you end. Least squares and logistic regression hav
 ## Too big, too small
 
 ::: {.notes}
-Left: the penguins with gamma = 12, above 2/L = 8: the loss gets worse and then sits at 0.77, bouncing between two points; flat and not converged. Right: a plateau; the gradient is about 10^-3, the loss is flat for 500 steps, then drops. Named only: through many layers these become exploding and vanishing gradients.
+Left: the penguins with gamma = 12, above 2/L = 8: the loss gets worse and then sits at 0.77, bouncing between two points; flat and not converged (the logistic gradient is bounded, so this is a step-size problem, not an exploding gradient). Right: the landscape's plateau from beta = -1; the gradient is about 0.01, the loss is flat for 400 steps, then drops. Exploding and vanishing gradients are a chain-rule phenomenon, named only.
 :::
 
 ```{r}
@@ -508,48 +510,68 @@ big <- bind_rows(run_logit(4, 40), run_logit(12, 40))
 pc <- ggplot(big, aes(step, loss, colour = gamma)) + geom_line(linewidth = 1.1) + geom_point(size = 1.4) +
   scale_colour_manual(values = c(v_blue, m_orange)) +
   labs(x = "step", y = "log loss", colour = NULL, title = "too big: penguins, 2/L = 8") + theme(legend.position = "top", plot.title = element_text(size = 15))
-fp <- function(x) 1 - tanh(x - 3); gp <- function(x) -1 / cosh(x - 3)^2
-xp <- -1.5; plateau <- numeric(800); for (t in 1:800) { xp <- xp - 2 * gp(xp); plateau[t] <- fp(xp) }
+xp <- -1.0; plateau <- numeric(800); for (t in 1:800) { xp <- xp - 0.25 * g1(xp); plateau[t] <- f1(xp) }
 pd <- ggplot(tibble(step = 1:800, loss = plateau), aes(step, loss)) + geom_line(linewidth = 1.1, colour = v_blue) +
-  labs(x = "step", y = "loss", title = "too small: a plateau, gradient 0.001") + theme(plot.title = element_text(size = 15))
+  labs(x = "step", y = "loss", title = "too small: the plateau, gradient 0.01") + theme(plot.title = element_text(size = 15))
 pc + pd
 ```
 
 **Too big** a step and the loss rises or bounces: the valley at $\gamma = 0.21$, the penguins at $\gamma = 12$. **Too small** a gradient and nothing moves for hundreds of steps, then everything does
 
-Through the many layers of a neural network these two compound, and get names: **exploding** and **vanishing** gradients. Named here, not derived
+A different mechanism with a similar look, named and not derived: in a deep network the chain rule multiplies derivatives across layers, and the product can be enormous or negligible: **exploding** and **vanishing** gradients
 
 ## Has it converged?
 
 ::: {.notes}
-Simulated: A is the quadratic, converged; B is the plateau, flat until step 500 then drops; C is the geometric step schedule 0.3 (0.6)^t on the valley, whose steps sum to a finite distance, so it stops short. All three look the same at step 200. Theory does not tell you which; what people do: look at the gradient norm, restart from elsewhere, run longer than you think, hold out data (next week).
+Simulated, first 200 steps only: A is the quadratic valley, converged; B is the landscape from beta = -1, on the plateau; C is the valley with the geometric step schedule 0.3 (0.6)^t, whose steps sum to a finite distance, so it stopped short. Take answers before the reveal.
 :::
 
 ```{r}
-#| label: converged
-#| fig-height: 2.4
-#| fig-width: 12
-#| out-width: "100%"
+#| label: converged-data
+#| include: false
 qa <- gd_path(c(-4, 1.2), 0.15, 800) |> mutate(loss = fq(b1, b2) + 0.3)
-xb <- -1.5; lb <- numeric(800); for (t in 1:800) { xb <- xb - 2 * gp(xb); lb[t] <- fp(xb) }
+lb <- plateau
 bc <- c(-4, 1.2); lc <- numeric(800); for (t in 1:800) { bc <- bc - 0.3 * 0.6^t * c(1, 10) * bc; lc[t] <- fq(bc[1], bc[2]) + 0.3 }
 conv <- bind_rows(tibble(panel = "A", step = 1:800, loss = qa$loss[-1]),
                   tibble(panel = "B", step = 1:800, loss = lb),
                   tibble(panel = "C", step = 1:800, loss = lc))
-ggplot(conv, aes(step, loss)) + geom_line(linewidth = 1.1, colour = v_blue) +
-  geom_vline(xintercept = 200, linetype = "dotted") + facet_wrap(~ panel, scales = "free_y") +
-  labs(x = "step", y = "training loss")
+# The 200-step view keeps each panel's full vertical range, so that B's plateau looks flat rather than zoomed in.
+conv_plot <- function(d) ggplot(d, aes(step, loss)) + geom_blank(data = mutate(conv, step = 1)) +
+  geom_line(linewidth = 1.1, colour = v_blue) +
+  geom_vline(xintercept = 200, linetype = "dotted") + facet_wrap(~ panel, scales = "free_y") + labs(x = "step", y = "training loss")
 ```
 
-Simulated. All three are flat at step 200 (dotted): one has converged, one is on a plateau, one has a step size that shrank to nothing on the way
+```{r}
+#| label: converged-200
+#| fig-height: 2.6
+#| fig-width: 12
+#| out-width: "100%"
+conv_plot(filter(conv, step <= 200))
+```
+
+Simulated: three runs of gradient descent, 200 steps each, and all three losses are flat. One has converged to its minimum; one is on a plateau; one has a step size that shrank to nothing on the way
 
 ::: {.ask}
 Which is which? What would you check, and what would you do next?
 :::
 
-. . .
+## Has it converged? The next 600 steps
 
-A flat loss is consistent with all three, and no theorem below says which. In practice: the gradient norm; restart elsewhere; run longer than you think; hold out data (next week)
+::: {.notes}
+The reveal. A was converged; B drops after about 450 steps; C never moves again. A flat loss was consistent with all three. Two different jobs: the gradient norm and restarts diagnose the optimization; held-out data (next week) decide when to stop for prediction, which is a different question.
+:::
+
+```{r}
+#| label: converged-800
+#| fig-height: 2.6
+#| fig-width: 12
+#| out-width: "100%"
+conv_plot(conv)
+```
+
+A converged (the valley). B was on the plateau and drops at step `r min(which(lb < 2))`. C stopped short: its steps $0.3 \cdot 0.6^t$ sum to a finite distance
+
+At step 200 the three were indistinguishable, and no theorem below would have told them apart. In practice, two different jobs: the **gradient norm**, restarts from elsewhere and running longer diagnose the optimization; **held-out data** decide when to stop for prediction, which is next week's question
 
 ## Curvature
 
@@ -574,7 +596,7 @@ In the quadratic case the curvature was a fixed number $a$. On the landscapes ab
 If curvature is at most L everywhere, the push-back is bounded and the quadratic rule survives. "Curvature at most L" without a Hessian: the gradient changes at rate at most L. Least squares: L = 2 lambda_max(X'X)/n. The saddle example has no global L: its curvature 12u^2 - 4 is unbounded.
 :::
 
-If the curvature in every direction is at most $L$, the push-back is at most $\tfrac12 L\gamma^2\|g\|^2$, and then
+If the curvature in every direction is at most $L$ in size, the push-back is at most $\tfrac12 L\gamma^2\|g\|^2$, and then
 $$
 f(x - \gamma g) \lesssim f(x) - \gamma\big(1 - \tfrac12 L\gamma\big)\|g\|^2
 $$
@@ -582,11 +604,11 @@ The bracket is positive for $\gamma < 2/L$ and the bound is best at $\gamma = 1/
 
 . . .
 
-To make this a theorem, say "curvature at most $L$" without a second derivative, about the gradient:
+To make it a theorem, say "curvature at most $L$" about the gradient, with no second derivative:
 
 **Assumption.** $\nabla f$ is **$L$-Lipschitz** for some $L > 0$: $\|\nabla f(x) - \nabla f(y)\| \le L\,\|x - y\|$ for all $x, y$
 
-Quadratic with curvatures $a_1 \ge \dots \ge a_p$: $L = a_1$. Least squares: $L = 2\lambda_{\max}(\mathbf X^\top\mathbf X)/n$. The saddle example: no single $L$, its curvature in $u$ is $12u^2 - 4$
+A quadratic with curvatures $a_j$ has $L = \max_j |a_j|$, the valley's $a_1$; least squares, $L = 2\lambda_{\max}(\mathbf X^\top\mathbf X)/n$; the saddle example has no single $L$ (curvature $12u^2 - 4$ in $u$)
 
 ## Descent lemma
 
@@ -602,7 +624,7 @@ $$
 Every step of size $1/L$ decreases $f$ by at least the squared gradient over $2L$ (strictly, unless $\nabla f(x) = 0$).
 :::
 
-The one guarantee, and its price. It says: no convexity needed, each step helps, more so where the gradient is large. It does not say: where the steps end up (any stationary point of the landscape), or that a small gradient means arrival: it means the next step gains little, which is the plateau
+The one guarantee, and its price. It says: no convexity needed; each step helps, more where the gradient is large. It does not say the steps converge (on $f(x) = -x$ they walk off forever); if they do, the limit is a stationary point, any of the landscape's. A small gradient is not arrival: the next step gains little, which is the plateau
 
 Proof: integrate the gradient along the step, and let the Lipschitz bound do what the curvature bound did
 
@@ -779,7 +801,7 @@ Simulated least squares, $n = 200$, two inputs
 
 **Blue:** 30 full gradient steps, $6{,}000$ row-gradients. **Orange:** 600 single-row steps, $600$ row-gradients, step $0.05/(1 + t/100)$
 
-The noisy path reaches the neighborhood of the answer ($\times$) for a tenth of the work, and never sits still. With noise the step shrinks, $\gamma_t \to 0$, but not so fast that it stops short (panel C)
+The noisy path reaches the neighborhood of the answer ($\times$) for a tenth of the work, and never sits still. With noise the step shrinks, $\gamma_t \to 0$, but not so fast that it stops short (panel C): Robbins and Monro, 1951
 :::
 :::
 
@@ -791,9 +813,9 @@ Skip if behind. Krizhevsky, Sutskever and Hinton (2012): about 60 million parame
 
 [60,000,000]{.big style="color: #fde725;"}
 
-parameters in each network of the entry that cut the ImageNet top-5 error to 15.3%, against 26.2% for the next best
+parameters in the network described in the paper, fitted in five to six days on two gaming graphics cards by stochastic gradient descent, on a loss with every feature of part 3
 
-Each network fitted in five to six days on two gaming graphics cards, by stochastic gradient descent on a loss with every feature of part 3. Nobody solved an equation, and nobody could prove it would work
+The winning entry, an ensemble of seven such networks, cut the ImageNet top-5 test error to 15.3%, against 26.2% for the next best. Nobody solved an equation, and no theorem said the descent would find anything good
 
 [Krizhevsky, Sutskever and Hinton, "ImageNet classification with deep convolutional neural networks", NeurIPS 2012]{.source}
 
@@ -881,7 +903,7 @@ R(\hat f) - R(f^\star) = \underbrace{\big[R(\hat f) - R(f_{\mathcal F})\big]}_{\
 $$
 
 ::: {.leave}
-Proof: exercise 2, two lines. The class was chosen before the data, and so was the approximation error; the estimation error is the sample's. Week 1's bias and variance for any method that minimizes over a class. Next week starts here
+Proof: exercise 2, two lines. The class was chosen before the data, and so was the approximation error; the estimation error is the sample's (and can hold bias as well as variance). The same trade-off as week 1's, for any method that minimizes over a class. Next week starts here
 :::
 
 ## No free lunch
@@ -916,7 +938,7 @@ Compress: the one guarantee and its price; a flat loss is not a proof of anythin
 
 #### One guarantee, with a price
 
-Each small step helps if the curvature is bounded. Where it ends, and whether it has ended, the theory does not say
+Each small step helps if the curvature is bounded. Where it ends, and whether it has ended, this bound alone does not say
 
 #### Strategies for general loss/function classes
 
