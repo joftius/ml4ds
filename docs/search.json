@@ -1208,21 +1208,21 @@
     "href": "weeks/04-optimization/slides/04-1-optimization.html#where-week-3-left-the-fitting",
     "title": "Machine learning",
     "section": "Where week 3 left the fitting",
-    "text": "Where week 3 left the fitting\nWeek 2: least squares has a formula for \\(\\hat\\beta\\), and \\(\\hat\\beta\\) solves the normal equations\nWeek 3: logistic regression is fitted by maximum likelihood. How glm does it: this week\n\nWrite down the normal equations from memory. Then guess: what plays their role for logistic regression, where the fitted values are probabilities \\(\\hat p_i\\) instead of \\(\\mathbf x_i^\\top\\hat\\beta\\)?"
+    "text": "Where week 3 left the fitting\nWeek 2: least squares has a formula for \\(\\hat\\beta\\), and \\(\\hat\\beta\\) solves the normal equations. Week 3: logistic regression is fitted by maximum likelihood, and glm did it for us\nToday’s question, in three parts: what did glm do? how can we tell whether fitting is working? should we let it finish? In the seminar you write the fitting loop once, change one line to fit a different model, and watch it work and fail\n\nWrite down the normal equations from memory. Then guess: what plays their role for logistic regression, where the fitted values are probabilities \\(\\hat p_i\\) instead of \\(\\mathbf x_i^\\top\\hat\\beta\\)?"
   },
   {
-    "objectID": "weeks/04-optimization/slides/04-1-optimization.html#fitting-logistic-regression",
-    "href": "weeks/04-optimization/slides/04-1-optimization.html#fitting-logistic-regression",
+    "objectID": "weeks/04-optimization/slides/04-1-optimization.html#model-fitting-maximum-likelihood",
+    "href": "weeks/04-optimization/slides/04-1-optimization.html#model-fitting-maximum-likelihood",
     "title": "Machine learning",
-    "section": "Fitting logistic regression",
-    "text": "Fitting logistic regression\n\nMaximum likelihood (Fisher, 1912–1922): choose the parameter that makes the observed data most probable. We maximize the log-likelihood because a product of \\(n\\) small numbers underflows and a sum differentiates term by term; log is increasing, so the maximizer is the same. Least squares is a log-likelihood: for \\(y_i \\sim N(\\mathbf x_i^\\top\\beta, \\sigma^2)\\) it is \\(-\\frac{1}{2\\sigma^2}\\sum_i (y_i - \\mathbf x_i^\\top\\beta)^2 + \\text{const}\\). In glm, family names the distribution whose likelihood is maximized: gaussian is lm, binomial is logistic regression.\n\nHow do we estimate \\(\\beta\\)? Maximum likelihood:\n\\[\n\\text{maximize } L(\\beta ; \\mathbf y | \\mathbf X) = \\prod_{i=1}^n L(\\beta ; y_i | \\mathbf x_i)\n\\] (assuming the data is i.i.d.)\nNext slide: a bit of mathematics"
+    "section": "Model fitting: maximum likelihood",
+    "text": "Model fitting: maximum likelihood\n\nMaximum likelihood (Fisher, 1912–1922): choose the parameter that makes the observed data most probable. We maximize the log-likelihood because a product of \\(n\\) small numbers underflows and a sum differentiates term by term; log is increasing, so the maximizer is the same. Least squares is a log-likelihood: for \\(y_i \\sim N(\\mathbf x_i^\\top\\beta, \\sigma^2)\\) it is \\(-\\frac{1}{2\\sigma^2}\\sum_i (y_i - \\mathbf x_i^\\top\\beta)^2 + \\text{const}\\). In glm, family names the distribution whose likelihood is maximized: gaussian is lm, binomial is logistic regression.\n\nHow do we estimate \\(\\beta\\)? Maximum likelihood:\n\\[\n\\text{maximize } L(\\beta ; \\mathbf y | \\mathbf X) = \\prod_{i=1}^n L(\\beta ; y_i | \\mathbf x_i)\n\\] (assuming the data is i.i.d.)\nNext slide: a bit of mathematics"
   },
   {
-    "objectID": "weeks/04-optimization/slides/04-1-optimization.html#mle",
-    "href": "weeks/04-optimization/slides/04-1-optimization.html#mle",
+    "objectID": "weeks/04-optimization/slides/04-1-optimization.html#mle-for-logistic-regression",
+    "href": "weeks/04-optimization/slides/04-1-optimization.html#mle-for-logistic-regression",
     "title": "Machine learning",
-    "section": "MLE",
-    "text": "MLE\n\\[\nL(\\beta ; \\mathbf y | \\mathbf x) = \\prod_{i=1}^n \\left( \\frac{1}{1+e^{-x_i \\beta}} \\right)^{y_i} \\left(1- \\frac{1}{1+e^{-x_i \\beta}} \\right)^{1-y_i}\n\\]\n\n\\[\n\\ell(\\beta ; \\mathbf y | \\mathbf x) = \\sum_{i=1}^n \\left[ y_i \\log \\left( \\frac{1}{1+e^{-x_i \\beta}} \\right) + (1-y_i) \\log \\left(1- \\frac{1}{1+e^{- x_i \\beta}} \\right) \\right]\n\\]"
+    "section": "MLE for logistic regression",
+    "text": "MLE for logistic regression\nEach factor is a Bernoulli (binomial, one trial) probability, \\(P(y_i \\mid \\mathbf x_i) = p_i^{y_i}(1 - p_i)^{1 - y_i}\\) with \\(p_i = p(\\mathbf x_i^\\top\\beta) = 1/(1 + e^{-\\mathbf x_i^\\top\\beta})\\):\n\\[\nL(\\beta ; \\mathbf y | \\mathbf x) = \\prod_{i=1}^n \\left( \\frac{1}{1+e^{-x_i \\beta}} \\right)^{y_i} \\left(1- \\frac{1}{1+e^{-x_i \\beta}} \\right)^{1-y_i}\n\\]\n\n\\[\n\\ell(\\beta ; \\mathbf y | \\mathbf x) = \\sum_{i=1}^n \\left[ y_i \\log \\left( \\frac{1}{1+e^{-x_i \\beta}} \\right) + (1-y_i) \\log \\left(1- \\frac{1}{1+e^{- x_i \\beta}} \\right) \\right]\n\\]"
   },
   {
     "objectID": "weeks/04-optimization/slides/04-1-optimization.html#mle-the-derivative",
@@ -1257,7 +1257,7 @@
     "href": "weeks/04-optimization/slides/04-1-optimization.html#logistic-regression-fitting-multivariate-case",
     "title": "Machine learning",
     "section": "Logistic regression fitting: multivariate case",
-    "text": "Logistic regression fitting: multivariate case\nNewton-IRLS (equivalent) steps, with \\(g\\) the logit link:\n\\[\n\\begin{eqnarray}\n\\hat{\\mathbf p}_t & = & g^{-1}(\\mathbf X \\hat \\beta_t)\n& \\ \\text{ update probs.} \\\\\n\\mathbf W_t & = & \\text{diag}[\\hat{\\mathbf p}_t (1 - \\hat{\\mathbf p}_t)]\n& \\ \\text{ update weights} \\\\\n\\hat{\\mathbf{y}}_t & = & g(\\hat{\\mathbf p}_t) + \\mathbf W_t^{-1}(\\mathbf y - \\hat{\\mathbf p}_t)\n& \\ \\text{ update response}\n\\end{eqnarray}\n\\]\nand then update parameter estimate (LS sub-problem) \\[\\hat{\\beta}_{t+1} = \\arg \\min_{\\beta} (\\hat{\\mathbf{y}}_t - \\mathbf X \\beta)^T \\mathbf W_t (\\hat{\\mathbf{y}}_t - \\mathbf X \\beta)\\]\n\nNote: larger weights on observations with \\(\\hat p\\) closer to 1/2, i.e. the most difficult to classify (look for variations of this theme) See Section 4.4.1 of ESL"
+    "text": "Logistic regression fitting: multivariate case\nNewton-IRLS (equivalent) steps, \\(g\\) the logit link. The one line to keep: each iteration is a weighted least-squares fit around the current fit\n\\[\n\\begin{eqnarray}\n\\hat{\\mathbf p}_t & = & g^{-1}(\\mathbf X \\hat \\beta_t)\n& \\ \\text{ update probs.} \\\\\n\\mathbf W_t & = & \\text{diag}[\\hat{\\mathbf p}_t (1 - \\hat{\\mathbf p}_t)]\n& \\ \\text{ update weights} \\\\\n\\hat{\\mathbf{y}}_t & = & g(\\hat{\\mathbf p}_t) + \\mathbf W_t^{-1}(\\mathbf y - \\hat{\\mathbf p}_t)\n& \\ \\text{ update response}\n\\end{eqnarray}\n\\]\nand then update parameter estimate (LS sub-problem) \\[\\hat{\\beta}_{t+1} = \\arg \\min_{\\beta} (\\hat{\\mathbf{y}}_t - \\mathbf X \\beta)^T \\mathbf W_t (\\hat{\\mathbf{y}}_t - \\mathbf X \\beta)\\]\n\nNote: larger weights on observations with \\(\\hat p\\) closer to 1/2, i.e. the most difficult to classify (look for variations of this theme) See Section 4.4.1 of ESL"
   },
   {
     "objectID": "weeks/04-optimization/slides/04-1-optimization.html#glms-in-r-what-you-should-know",
@@ -1348,21 +1348,21 @@
     "href": "weeks/04-optimization/slides/04-1-optimization.html#too-big-too-small",
     "title": "Machine learning",
     "section": "Too big, too small",
-    "text": "Too big, too small\n\n\n\n\n\n\n\n\n\nToo big a step and the loss rises or bounces: the valley at \\(\\gamma = 0.21\\), the penguins at \\(\\gamma = 12\\). Too small a gradient and nothing moves for hundreds of steps, then everything does\nA different mechanism with a similar look, named and not derived: in a deep network the chain rule multiplies derivatives across layers, and the product can be enormous or negligible: exploding and vanishing gradients"
+    "text": "Too big, too small\n\n\n\n\n\n\n\n\n\nToo big a step and the iterates overshoot and bounce: the valley at \\(\\gamma = 0.21\\), the penguins at \\(\\gamma = 12\\) (the cross is glm’s answer). Too small a gradient and the position creeps for hundreds of steps, then everything moves at once\nA different mechanism with a similar look, named and not derived: in a deep network the chain rule multiplies derivatives across layers, and the product can be enormous or negligible: exploding and vanishing gradients"
   },
   {
     "objectID": "weeks/04-optimization/slides/04-1-optimization.html#has-it-converged",
     "href": "weeks/04-optimization/slides/04-1-optimization.html#has-it-converged",
     "title": "Machine learning",
     "section": "Has it converged?",
-    "text": "Has it converged?\n\n\n\n\n\n\n\n\n\nSimulated: three runs of gradient descent, 200 steps each, and all three losses are flat. One has converged to its minimum; one is on a plateau; one has a step size that shrank to nothing on the way\n\nWhich is which? What would you check, and what would you do next?"
+    "text": "Has it converged?\n\n\n\n\n\n\n\n\n\nSimulated, three runs of 200 steps, log axes. Top: the training loss, flat in all three. Bottom: the other number the loop has, \\(\\|\\nabla \\hat R_n(\\beta_t)\\|\\). One has converged, one is on a plateau, one has a step size that shrank to nothing\n\nWhich is which, from what is on the screen, and what would you do next with each?"
   },
   {
     "objectID": "weeks/04-optimization/slides/04-1-optimization.html#has-it-converged-the-next-600-steps",
     "href": "weeks/04-optimization/slides/04-1-optimization.html#has-it-converged-the-next-600-steps",
     "title": "Machine learning",
     "section": "Has it converged? The next 600 steps",
-    "text": "Has it converged? The next 600 steps\n\n\n\n\n\n\n\n\n\nA converged (the valley). B was on the plateau and drops at step 445. C stopped short: its steps \\(0.3 \\cdot 0.6^t\\) sum to a finite distance\nAt step 200 the three were indistinguishable, and no theorem below would have told them apart. In practice, two different jobs: the gradient norm, restarts from elsewhere and running longer diagnose the optimization; held-out data decide when to stop for prediction, which is next week’s question"
+    "text": "Has it converged? The next 600 steps\n\n\n\n\n\n\n\n\n\nA converged: its gradient went to nothing. B, the plateau: a small, steady gradient, then the drop at step 445. C stopped short: a large gradient, a step size \\(0.3 \\cdot 0.6^t\\) with a finite sum\nThe loss alone could not tell them apart; the gradient norm could, as could restarting elsewhere or running longer. All of it is the training loss, the number the algorithm sees; whether lower means a better model is where the lecture ends"
   },
   {
     "objectID": "weeks/04-optimization/slides/04-1-optimization.html#curvature",
@@ -1397,14 +1397,7 @@
     "href": "weeks/04-optimization/slides/04-1-optimization.html#descent-lemma-proof-2-of-2",
     "title": "Machine learning",
     "section": "Descent lemma, proof (2 of 2)",
-    "text": "Descent lemma, proof (2 of 2)\n\\[\n\\begin{alignedat}{2}\nf(y) - f(x) &\\le \\nabla f(x)^\\top v + \\int_0^1 L\\,t\\,\\|v\\|^2\\, dt\n&\\quad& \\\\\n&\\class{fragment}{{}= \\nabla f(x)^\\top v + \\tfrac{L}{2}\\|v\\|^2}\n&& \\class{fragment}{\\color{gray}\\small\\text{(e) } \\textstyle\\int_0^1 t\\, dt = \\tfrac12} \\\\\n&\\class{fragment}{{}= -\\gamma\\|\\nabla f(x)\\|^2 + \\tfrac{L}{2}\\gamma^2\\|\\nabla f(x)\\|^2}\n&& \\class{fragment}{\\color{gray}\\small\\text{(f) } v = -\\gamma\\nabla f(x)} \\\\\n&\\class{fragment}{{}= -\\gamma\\big(1 - \\tfrac12 L\\gamma\\big)\\|\\nabla f(x)\\|^2}\n&& \\class{fragment}{\\color{gray}\\small\\text{(g) collect}}\n\\end{alignedat}\n\\]\n\nAt \\(\\gamma = 1/L\\) the right-hand side is \\(-\\|\\nabla f(x)\\|^2/2L\\), which is the lemma. \\(\\blacksquare\\)\nFor any \\(0 &lt; \\gamma &lt; 2/L\\) the right-hand side is \\(\\le 0\\), and \\(&lt; 0\\) unless \\(\\nabla f(x) = 0\\): every such step decreases \\(f\\) until the gradient vanishes, and the heuristic’s bound was right"
-  },
-  {
-    "objectID": "weeks/04-optimization/slides/04-1-optimization.html#logistic-regression-by-descent",
-    "href": "weeks/04-optimization/slides/04-1-optimization.html#logistic-regression-by-descent",
-    "title": "Machine learning",
-    "section": "Logistic regression by descent",
-    "text": "Logistic regression by descent\n\n\n\n\n\n\n\n\n\n\n\n\nChinstrap against Adelie from flipper length (standardized), penguins data, from \\(\\beta_0 = (0, 0)\\), step \\(\\gamma = 4\\)\nObjective: \\(\\hat R_n(\\beta) = -\\ell(\\beta)/n\\). Gradient, from part 1: \\(-\\mathbf X^\\top(\\mathbf y - \\mathbf p(\\beta))/n\\)\nSame loop as least squares; only the gradient changed. Dotted: glm’s answer\nCurvature: \\(w_i \\le \\tfrac14\\) in part 1’s Hessian, so \\(L = 0.25\\) here and \\(2/L = 8\\). One valley: the benign case"
+    "text": "Descent lemma, proof (2 of 2)\n\\[\n\\begin{alignedat}{2}\nf(y) - f(x) &\\le \\nabla f(x)^\\top v + \\int_0^1 L\\,t\\,\\|v\\|^2\\, dt\n&\\quad& \\\\\n&= \\nabla f(x)^\\top v + \\tfrac{L}{2}\\|v\\|^2\n&& {\\color{gray}\\small\\text{(e) } \\textstyle\\int_0^1 t\\, dt = \\tfrac12} \\\\\n&= -\\gamma\\|\\nabla f(x)\\|^2 + \\tfrac{L}{2}\\gamma^2\\|\\nabla f(x)\\|^2\n&& {\\color{gray}\\small\\text{(f) } v = -\\gamma\\nabla f(x)} \\\\\n&= -\\gamma\\big(1 - \\tfrac12 L\\gamma\\big)\\|\\nabla f(x)\\|^2\n&& {\\color{gray}\\small\\text{(g) collect}}\n\\end{alignedat}\n\\]\n\nAt \\(\\gamma = 1/L\\) the right-hand side is \\(-\\|\\nabla f(x)\\|^2/2L\\), which is the lemma. \\(\\blacksquare\\)\nFor any \\(0 &lt; \\gamma &lt; 2/L\\) the right-hand side is \\(\\le 0\\), and \\(&lt; 0\\) unless \\(\\nabla f(x) = 0\\): every such step decreases \\(f\\) until the gradient vanishes, and the heuristic’s bound was right"
   },
   {
     "objectID": "weeks/04-optimization/slides/04-1-optimization.html#section-3",
@@ -1425,14 +1418,14 @@
     "href": "weeks/04-optimization/slides/04-1-optimization.html#stochasticrandom-descent",
     "title": "Machine learning",
     "section": "Stochastic/random descent",
-    "text": "Stochastic/random descent\n\nInstead of computing the gradient of the loss function on the entire dataset, compute it on a random sample\n\n\nPick one row \\(I\\) uniformly at random from \\(\\{1, \\ldots, n\\}\\) and use its gradient \\(\\nabla\\ell_I(\\beta)\\) in place of the average over all \\(n\\) rows. Commit: is it biased for the full gradient \\(\\nabla\\hat R_n(\\beta)\\), yes or no?"
+    "text": "Stochastic/random descent\n\nInstead of computing the gradient of the loss function on the entire dataset, compute it on a random sample\n\n\nPick one row \\(I\\) uniformly at random from \\(\\{1, \\ldots, n\\}\\) and use its gradient \\(\\nabla\\ell_I(\\beta)\\) in place of the average over all \\(n\\) rows. Commit: is it biased for the full gradient \\(\\nabla\\hat R_n(\\beta)\\), yes or no? And does the descent lemma’s guarantee carry over to a step along it?"
   },
   {
     "objectID": "weeks/04-optimization/slides/04-1-optimization.html#the-stochastic-gradient-is-unbiased",
     "href": "weeks/04-optimization/slides/04-1-optimization.html#the-stochastic-gradient-is-unbiased",
     "title": "Machine learning",
     "section": "The stochastic gradient is unbiased",
-    "text": "The stochastic gradient is unbiased\nWith the data and \\(\\beta\\) held fixed, only \\(I\\) is random, and by linearity of \\(\\nabla\\), \\(\\mathbb E\\) and \\(\\sum\\), \\[\n\\mathbb E_I\\big[\\nabla\\ell_I(\\beta)\\big] = \\sum_{i=1}^n \\frac1n\\,\\nabla\\ell_i(\\beta) = \\nabla\\hat R_n(\\beta)\n\\]\nUnbiased, whatever the data are. A batch of \\(b\\) rows drawn independently with replacement averages \\(b\\) such gradients: still unbiased, with variance \\(\\sigma^2(\\beta)/b\\), where \\(\\sigma^2(\\beta)\\) is the spread of the single-row gradients\nCompute update using one randomly sampled observation, or a randomly sampled subset (“mini-batch SGD”)"
+    "text": "The stochastic gradient is unbiased\nWith the data and \\(\\beta\\) held fixed, only \\(I\\) is random, and by linearity of \\(\\nabla\\), \\(\\mathbb E\\) and \\(\\sum\\), \\[\n\\mathbb E_I\\big[\\nabla\\ell_I(\\beta)\\big] = \\sum_{i=1}^n \\frac1n\\,\\nabla\\ell_i(\\beta) = \\nabla\\hat R_n(\\beta)\n\\]\nUnbiased, whatever the data are. A batch of \\(b\\) rows drawn independently with replacement averages \\(b\\) such gradients: still unbiased, with variance \\(\\sigma^2(\\beta)/b\\), where \\(\\sigma^2(\\beta)\\) is the spread of the single-row gradients\nCompute update using one randomly sampled observation, or a randomly sampled subset (“mini-batch SGD”). Correct on average, cheap, and not guaranteed to decrease the training loss on any one step: the descent lemma is about the full gradient"
   },
   {
     "objectID": "weeks/04-optimization/slides/04-1-optimization.html#the-two-paths",
@@ -1463,11 +1456,18 @@
     "text": "Early stopping\nOptimization time = complexity\n\nFor many optimization algorithms the fitted model becomes more complex the longer the optimization algorithm runs\n\n\n\ne.g. the more steps of (stochastic) gradient descent used in combination with a flexible function class\ne.g. the more steps of forward stepwise (adding more predictor variables)\n\n\n\nIdea: control model complexity by stopping the algorithm before convergence\nThis is early stopping – we’ll come back to it later"
   },
   {
-    "objectID": "weeks/04-optimization/slides/04-1-optimization.html#stopping-early",
-    "href": "weeks/04-optimization/slides/04-1-optimization.html#stopping-early",
+    "objectID": "weeks/04-optimization/slides/04-1-optimization.html#stopping-early-choose-a-stopping-point",
+    "href": "weeks/04-optimization/slides/04-1-optimization.html#stopping-early-choose-a-stopping-point",
     "title": "Machine learning",
-    "section": "Stopping early",
-    "text": "Stopping early\n\n\n\n\n\n\n\n\n\n\n\n\nSimulated: least squares from \\(\\beta_0 = \\mathbf 0\\), \\(n = 80\\), \\(p = 60\\), noise sd 3, step \\(1/2L\\); held-out error on 2,000 new rows from the same model\nTraining error falls at every step. The held-out error falls, turns at step 15, and ends far above its minimum\nThe number of steps is a tuning parameter, like \\(k\\) or \\(d\\). Week 7 writes the penalty down, \\(\\hat R_n(\\beta) + \\lambda\\|\\beta\\|^2\\), with \\(\\lambda\\) as the knob"
+    "section": "Stopping early: choose a stopping point",
+    "text": "Stopping early: choose a stopping point\n\n\n\n\n\n\n\n\n\n\n\n\nSimulated: least squares from \\(\\beta_0 = \\mathbf 0\\), \\(n = 80\\), \\(p = 60\\), noise sd 3, step \\(1/2L\\)\nThe training error, the number the algorithm sees, falls at every step and is still falling at 300\n\nYou may stop the algorithm at any step. Which one, and why?"
+  },
+  {
+    "objectID": "weeks/04-optimization/slides/04-1-optimization.html#stopping-early-what-the-training-loss-did-not-show",
+    "href": "weeks/04-optimization/slides/04-1-optimization.html#stopping-early-what-the-training-loss-did-not-show",
+    "title": "Machine learning",
+    "section": "Stopping early: what the training loss did not show",
+    "text": "Stopping early: what the training loss did not show\n\n\n\n\n\n\n\n\n\n\n\n\nThe same run scored on 2,000 new rows from the same model: the held-out error falls, turns at step 15, and ends far above its minimum\nEvery diagnostic in part 3 watched the training loss, and every one said “keep going”. Tracking the training loss is not tracking the loss you care about. Next week: by how much it lies\nThe number of steps is a tuning parameter, like \\(k\\) or \\(d\\); week 7 writes the penalty down, \\(\\hat R_n(\\beta) + \\lambda\\|\\beta\\|^2\\)"
   },
   {
     "objectID": "weeks/04-optimization/slides/04-1-optimization.html#where-the-error-comes-from-this-time",
@@ -1495,6 +1495,6 @@
     "href": "weeks/04-optimization/slides/04-1-optimization.html#conclusion-optimization-in-ml-is-a-big-topic",
     "title": "Machine learning",
     "section": "Conclusion: optimization in ML is a big topic",
-    "text": "Conclusion: optimization in ML is a big topic\nOne guarantee, with a price\nEach small step helps if the curvature is bounded. Where it ends, and whether it has ended, this bound alone does not say\nStrategies for general loss/function classes\ne.g. gradient methods, stochastic gradient methods\nStopping at the right amount of complexity\nMaybe the most important part! Next lecture"
+    "text": "Conclusion: optimization in ML is a big topic\nWhat the fitting algorithm does\nSteps against the gradient of the training loss; glm does the same with a Hessian. One guarantee, with a price: each small step helps if the curvature is bounded; where it ends, and whether it has ended, this bound alone does not say. The gradient norm tells you more than the loss\nTraining loss is not the loss you care about\nEvery diagnostic today watched the training loss. A lower training loss is numerical progress; whether it is a better model is a different question\nStopping at the right amount of complexity\nMaybe the most important part! Next lecture"
   }
 ]

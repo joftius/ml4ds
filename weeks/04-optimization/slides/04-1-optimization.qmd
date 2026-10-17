@@ -76,9 +76,9 @@ contour_plot <- function(path, title = NULL) {
 ::: {.notes}
 36 light slides and 7 dark after the title: about 79 at week 2's rough pace (2 min a light slide, 1 a dark), so plan 76 of 90 with cut 1 made from the start; a planning estimate, not a rehearsed time. Dark = rush or skip; each dark slide's note says skip or gives the compressed phrase.
 
-Cut order: (1) ImageNet, (2) the GLM FAQ to its last question, (3) Newton-IRLS to the update rule, (4) the two paths figure. The descent lemma's proof is last.
+Cut order: (1) ImageNet, (2) the GLM FAQ to its last question, (3) Newton-IRLS to its one line, (4) "Reading the gradient" to its ask. The two paths figure and the descent lemma's proof are last; the three substantial pauses (the normal equations, the step-200 diagnosis, the stopping point) are not cut.
 
-Pace: 0:18 GLM FAQ done, 0:32 the quadratic case, 0:44 has it converged, 0:54 descent lemma proved, 1:04 SGD unbiased, 1:16 before the seminar.
+Pace: 0:18 GLM FAQ done, 0:32 the quadratic case, 0:46 has it converged (reveal), 0:56 descent lemma proved, 1:06 the two paths, 1:16 before the seminar.
 
 In the notebook: descent lemma redone (ex. 1), ERM form proved (ex. 2), score equations and the Hessian (ex. 3), no free lunch on a finite domain (ex. 4).
 :::
@@ -101,15 +101,15 @@ Part 5: what the fitting leaves over
 Two minutes, written, then two people. Expected: X'(y - X beta-hat) = 0, revealed on the score-equations slide; and some guess at a logistic analogue. Do not give the score equations yet.
 :::
 
-Week 2: least squares has a formula for $\hat\beta$, and $\hat\beta$ solves the normal equations
+Week 2: least squares has a formula for $\hat\beta$, and $\hat\beta$ solves the normal equations. Week 3: logistic regression is fitted by maximum likelihood, and `glm` did it for us
 
-Week 3: logistic regression is fitted by maximum likelihood. How `glm` does it: this week
+Today's question, in three parts: **what did `glm` do? how can we tell whether fitting is working? should we let it finish?** In the seminar you write the fitting loop once, change one line to fit a different model, and watch it work and fail
 
 ::: {.ask}
 Write down the normal equations from memory. Then guess: what plays their role for logistic regression, where the fitted values are probabilities $\hat p_i$ instead of $\mathbf x_i^\top\hat\beta$?
 :::
 
-## Fitting logistic regression
+## Model fitting: maximum likelihood
 
 ::: {.notes}
 Legacy slide with the recall box. Fisher: the method and the word, 1912 to 1922. The log changes nothing about where the maximum is. Least squares is the Gaussian log-likelihood, so lm is glm with family gaussian.
@@ -128,11 +128,13 @@ $$
 
 Next slide: a bit of mathematics
 
-## MLE
+## MLE for logistic regression
 
 ::: {.notes}
-Legacy slide. Each row is a Bernoulli; log turns the product into a sum.
+Legacy slide. Each factor is a Bernoulli probability with p_i = p(x_i' beta); log turns the product into a sum.
 :::
+
+Each factor is a Bernoulli (binomial, one trial) probability, $P(y_i \mid \mathbf x_i) = p_i^{y_i}(1 - p_i)^{1 - y_i}$ with $p_i = p(\mathbf x_i^\top\beta) = 1/(1 + e^{-\mathbf x_i^\top\beta})$:
 
 $$
 L(\beta ; \mathbf y | \mathbf x) = \prod_{i=1}^n \left( \frac{1}{1+e^{-x_i \beta}} \right)^{y_i} \left(1- \frac{1}{1+e^{-x_i \beta}} \right)^{1-y_i}
@@ -209,10 +211,10 @@ Legacy slide; the exercise now asks for the update, since the Hessian is on the 
 ## Logistic regression fitting: multivariate case
 
 ::: {.notes}
-Legacy slide. Compress if short: each Newton step is a weighted least squares fit; the weights are largest near one half. g is the logit link from week 3.
+Legacy slide. Compress if short: each Newton step is a weighted least squares fit; the weights are largest near one half. g is the logit link from week 3. Recognize, not reconstruct: exercise 3 asks for the Newton update, not IRLS.
 :::
 
-Newton-IRLS (equivalent) steps, with $g$ the logit link:
+Newton-IRLS (equivalent) steps, $g$ the logit link. The one line to keep: **each iteration is a weighted least-squares fit around the current fit**
 
 $$
 \begin{eqnarray}
@@ -490,7 +492,7 @@ Where you start decides where you end. Least squares and logistic regression hav
 ## Too big, too small
 
 ::: {.notes}
-Left: the penguins with gamma = 12, above 2/L = 8: the loss gets worse and then sits at 0.77, bouncing between two points; flat and not converged (the logistic gradient is bounded, so this is a step-size problem, not an exploding gradient). Right: the landscape's plateau from beta = -1; the gradient is about 0.01, the loss is flat for 400 steps, then drops. Exploding and vanishing gradients are a chain-rule phenomenon, named only.
+Left: the penguins in the (intercept, slope) plane; the cross is glm's answer. Step 4 walks to it in a few steps; step 12, above 2/L = 8, overshoots and ends up bouncing between two points for ever, with the training loss stuck at 0.77 against 0.54 (the logistic gradient is bounded, so this is a step-size problem, not an exploding gradient). Right: the landscape's plateau from beta = -1; the position creeps for 400 steps and then plunges to the global minimum (dotted). Exploding and vanishing gradients are a chain-rule phenomenon, named only.
 :::
 
 ```{r}
@@ -506,72 +508,89 @@ logloss <- function(b) { z <- Xl %*% b; mean((1 - yl) * z + log1p(exp(-z))) }
 run_logit <- function(gamma, steps) { b <- c(0, 0); out <- numeric(steps)
   for (t in 1:steps) { p <- 1 / (1 + exp(-Xl %*% b)); b <- b - gamma * (-t(Xl) %*% (yl - p) / nl); out[t] <- logloss(b) }
   tibble(gamma = paste("step", gamma), step = 1:steps, loss = out) }
-big <- bind_rows(run_logit(4, 40), run_logit(12, 40))
-pc <- ggplot(big, aes(step, loss, colour = gamma)) + geom_line(linewidth = 1.1) + geom_point(size = 1.4) +
-  scale_colour_manual(values = c(v_blue, m_orange)) +
-  labs(x = "step", y = "log loss", colour = NULL, title = "too big: penguins, 2/L = 8") + theme(legend.position = "top", plot.title = element_text(size = 15))
-xp <- -1.0; plateau <- numeric(800); for (t in 1:800) { xp <- xp - 0.25 * g1(xp); plateau[t] <- f1(xp) }
-pd <- ggplot(tibble(step = 1:800, loss = plateau), aes(step, loss)) + geom_line(linewidth = 1.1, colour = v_blue) +
-  labs(x = "step", y = "loss", title = "too small: the plateau, gradient 0.01") + theme(plot.title = element_text(size = 15))
+run_path <- function(gamma, steps) { b <- c(0, 0); out <- matrix(NA, steps + 1, 2); out[1, ] <- b
+  for (t in 1:steps) { p <- 1 / (1 + exp(-Xl %*% b)); b <- b - gamma * (-t(Xl) %*% (yl - p) / nl); out[t + 1, ] <- b }
+  tibble(gamma = paste("step", gamma), step = 0:steps, intercept = out[, 1], slope = out[, 2]) }
+paths_l <- bind_rows(run_path(4, 30), run_path(12, 30))
+glm_coef <- coef(glm(chinstrap ~ z, family = binomial, data = pg))
+pc <- ggplot(paths_l, aes(intercept, slope, colour = gamma)) + geom_path(linewidth = 0.8) + geom_point(size = 1.6) +
+  annotate("point", x = glm_coef[1], y = glm_coef[2], shape = 4, size = 5, stroke = 1.5) +
+  scale_colour_manual(values = c(m_orange, v_blue)) +
+  labs(x = "intercept", y = "slope", colour = NULL, title = "too big: penguins, 30 steps, 2/L = 8") + theme(legend.position = "top", plot.title = element_text(size = 15))
+xp <- -1.0; plateau <- numeric(800); pos <- numeric(800); for (t in 1:800) { xp <- xp - 0.25 * g1(xp); plateau[t] <- f1(xp); pos[t] <- xp }
+pd <- ggplot(tibble(step = 1:800, beta = pos), aes(step, beta)) + geom_line(linewidth = 1.1, colour = v_blue) +
+  geom_hline(yintercept = x_gmin, linetype = "dotted") +
+  labs(x = "step", y = expression(beta[t]), title = "too small: the plateau, gradient 0.01") + theme(plot.title = element_text(size = 15))
 pc + pd
 ```
 
-**Too big** a step and the loss rises or bounces: the valley at $\gamma = 0.21$, the penguins at $\gamma = 12$. **Too small** a gradient and nothing moves for hundreds of steps, then everything does
+**Too big** a step and the iterates overshoot and bounce: the valley at $\gamma = 0.21$, the penguins at $\gamma = 12$ (the cross is `glm`'s answer). **Too small** a gradient and the position creeps for hundreds of steps, then everything moves at once
 
 A different mechanism with a similar look, named and not derived: in a deep network the chain rule multiplies derivatives across layers, and the product can be enormous or negligible: **exploding** and **vanishing** gradients
 
 ## Has it converged?
 
 ::: {.notes}
-Simulated, first 200 steps only: A is the quadratic valley, converged; B is the landscape from beta = -1, on the plateau; C is the valley with the geometric step schedule 0.3 (0.6)^t, whose steps sum to a finite distance, so it stopped short. Take answers before the reveal.
+Simulated, first 200 steps only. Expected reading of the bottom row: A's gradient norm falls geometrically to nothing (converged); B's is small and constant (plateau: the gradient is 0.01 and not shrinking); C's is large and constant (the gradient is not small at all; the step is). A is the quadratic valley; B the landscape from beta = -1; C the valley with the geometric schedule 0.3 (0.6)^t. Take answers before the reveal.
 :::
 
 ```{r}
 #| label: converged-data
 #| include: false
-qa <- gd_path(c(-4, 1.2), 0.15, 800) |> mutate(loss = fq(b1, b2) + 0.3)
-lb <- plateau
-bc <- c(-4, 1.2); lc <- numeric(800); for (t in 1:800) { bc <- bc - 0.3 * 0.6^t * c(1, 10) * bc; lc[t] <- fq(bc[1], bc[2]) + 0.3 }
-conv <- bind_rows(tibble(panel = "A", step = 1:800, loss = qa$loss[-1]),
-                  tibble(panel = "B", step = 1:800, loss = lb),
-                  tibble(panel = "C", step = 1:800, loss = lc))
-# The 200-step view keeps each panel's full vertical range, so that B's plateau looks flat rather than zoomed in.
-conv_plot <- function(d) ggplot(d, aes(step, loss)) + geom_blank(data = mutate(conv, step = 1)) +
-  geom_line(linewidth = 1.1, colour = v_blue) +
-  geom_vline(xintercept = 200, linetype = "dotted") + facet_wrap(~ panel, scales = "free_y") + labs(x = "step", y = "training loss")
+# Three runs, each recorded as training loss and gradient norm at every step.
+qa <- gd_path(c(-4, 1.2), 0.15, 800) |> mutate(loss = fq(b1, b2) + 0.3, gnorm = sqrt((b1)^2 + (10 * b2)^2))
+lb <- plateau; gb <- abs(g1(pos))
+bc <- c(-4, 1.2); lc <- numeric(800); gc <- numeric(800)
+for (t in 1:800) { bc <- bc - 0.3 * 0.6^t * c(1, 10) * bc; lc[t] <- fq(bc[1], bc[2]) + 0.3; gc[t] <- sqrt(bc[1]^2 + (10 * bc[2])^2) }
+# B's loss is the landscape's value plus 1, so that all three losses are positive and can share a log scale.
+conv <- bind_rows(tibble(panel = "A", step = 1:800, loss = qa$loss[-1], gnorm = qa$gnorm[-1]),
+                  tibble(panel = "B", step = 1:800, loss = lb + 1, gnorm = gb),
+                  tibble(panel = "C", step = 1:800, loss = lc, gnorm = gc)) |>
+  mutate(gnorm = pmax(gnorm, 1e-12))
+# Top row: training loss. Bottom row: gradient norm, log scale. The 200-step view keeps each panel's full
+# vertical range (geom_blank), so that B's plateau looks flat rather than zoomed in.
+conv_plot <- function(d) {
+  top <- ggplot(d, aes(step, loss)) + geom_blank(data = mutate(conv, step = 1)) + geom_line(linewidth = 1.1, colour = v_blue) +
+    geom_vline(xintercept = 200, linetype = "dotted") + facet_wrap(~ panel, scales = "free_y") + scale_y_log10() +
+    labs(x = NULL, y = "loss")
+  bottom <- ggplot(d, aes(step, gnorm)) + geom_blank(data = mutate(conv, step = 1)) + geom_line(linewidth = 1.1, colour = m_orange) +
+    geom_vline(xintercept = 200, linetype = "dotted") + facet_wrap(~ panel) + scale_y_log10() +
+    labs(x = "step", y = "|gradient|") + theme(strip.text = element_blank())
+  top / bottom
+}
 ```
 
 ```{r}
 #| label: converged-200
-#| fig-height: 2.6
+#| fig-height: 2.9
 #| fig-width: 12
 #| out-width: "100%"
 conv_plot(filter(conv, step <= 200))
 ```
 
-Simulated: three runs of gradient descent, 200 steps each, and all three losses are flat. One has converged to its minimum; one is on a plateau; one has a step size that shrank to nothing on the way
+Simulated, three runs of 200 steps, log axes. Top: the training loss, flat in all three. Bottom: the other number the loop has, $\|\nabla \hat R_n(\beta_t)\|$. One has converged, one is on a plateau, one has a step size that shrank to nothing
 
 ::: {.ask}
-Which is which? What would you check, and what would you do next?
+Which is which, from what is on the screen, and what would you do next with each?
 :::
 
 ## Has it converged? The next 600 steps
 
 ::: {.notes}
-The reveal. A was converged; B drops after about 450 steps; C never moves again. A flat loss was consistent with all three. Two different jobs: the gradient norm and restarts diagnose the optimization; held-out data (next week) decide when to stop for prediction, which is a different question.
+The reveal. A was converged; B drops after about 450 steps; C never moves again. A flat loss was consistent with all three; the gradient norm was not. Say it now and again at the end: everything on this slide is the training loss, which the algorithm minimizes; whether that is the loss we care about is part 5.
 :::
 
 ```{r}
 #| label: converged-800
-#| fig-height: 2.6
+#| fig-height: 2.9
 #| fig-width: 12
 #| out-width: "100%"
 conv_plot(conv)
 ```
 
-A converged (the valley). B was on the plateau and drops at step `r min(which(lb < 2))`. C stopped short: its steps $0.3 \cdot 0.6^t$ sum to a finite distance
+A converged: its gradient went to nothing. B, the plateau: a small, steady gradient, then the drop at step `r min(which(lb < 2))`. C stopped short: a large gradient, a step size $0.3 \cdot 0.6^t$ with a finite sum
 
-At step 200 the three were indistinguishable, and no theorem below would have told them apart. In practice, two different jobs: the **gradient norm**, restarts from elsewhere and running longer diagnose the optimization; **held-out data** decide when to stop for prediction, which is next week's question
+The loss alone could not tell them apart; the gradient norm could, as could restarting elsewhere or running longer. All of it is the **training** loss, the number the algorithm sees; whether lower means a better model is where the lecture ends
 
 ## Curvature
 
@@ -654,19 +673,19 @@ $$
 ## Descent lemma, proof (2 of 2)
 
 ::: {.notes}
-(e) Integrate t. (f) Put the step in: v is minus gamma times the gradient. Then read off the sign.
+(e) Integrate t. (f) Put the step in: v is minus gamma times the gradient. (g) Collect. Then read off the sign. These three lines are shown at once; the reveal is the conclusion.
 :::
 
 $$
 \begin{alignedat}{2}
 f(y) - f(x) &\le \nabla f(x)^\top v + \int_0^1 L\,t\,\|v\|^2\, dt
 &\quad& \\
-&\class{fragment}{{}= \nabla f(x)^\top v + \tfrac{L}{2}\|v\|^2}
-&& \class{fragment}{\color{gray}\small\text{(e) } \textstyle\int_0^1 t\, dt = \tfrac12} \\
-&\class{fragment}{{}= -\gamma\|\nabla f(x)\|^2 + \tfrac{L}{2}\gamma^2\|\nabla f(x)\|^2}
-&& \class{fragment}{\color{gray}\small\text{(f) } v = -\gamma\nabla f(x)} \\
-&\class{fragment}{{}= -\gamma\big(1 - \tfrac12 L\gamma\big)\|\nabla f(x)\|^2}
-&& \class{fragment}{\color{gray}\small\text{(g) collect}}
+&= \nabla f(x)^\top v + \tfrac{L}{2}\|v\|^2
+&& {\color{gray}\small\text{(e) } \textstyle\int_0^1 t\, dt = \tfrac12} \\
+&= -\gamma\|\nabla f(x)\|^2 + \tfrac{L}{2}\gamma^2\|\nabla f(x)\|^2
+&& {\color{gray}\small\text{(f) } v = -\gamma\nabla f(x)} \\
+&= -\gamma\big(1 - \tfrac12 L\gamma\big)\|\nabla f(x)\|^2
+&& {\color{gray}\small\text{(g) collect}}
 \end{alignedat}
 $$
 
@@ -675,41 +694,6 @@ $$
 At $\gamma = 1/L$ the right-hand side is $-\|\nabla f(x)\|^2/2L$, which is the lemma. $\blacksquare$
 
 For any $0 < \gamma < 2/L$ the right-hand side is $\le 0$, and $< 0$ unless $\nabla f(x) = 0$: every such step decreases $f$ until the gradient vanishes, and the heuristic's bound was right
-
-## Logistic regression by descent
-
-::: {.notes}
-Same loop, only the gradient function changed. The Hessian from part 1 is at most X'X/4n, so L is an eighth of least squares' 2 lambda_max/n; here 2/L is 8, which is why 12 bounced. Convex, so this is the benign case: one valley, and the lemma's step lands in it.
-:::
-
-::: {.columns}
-::: {.column width="52%"}
-```{r}
-#| label: logistic-descent
-#| fig-height: 3.6
-#| fig-width: 5.6
-#| out-width: "100%"
-b <- c(0, 0); Tn <- 25; path <- matrix(NA, Tn, 2)
-for (t in 1:Tn) { p <- 1 / (1 + exp(-Xl %*% b)); b <- b - 4 * (-t(Xl) %*% (yl - p) / nl); path[t, ] <- b }
-glm_coef <- coef(glm(chinstrap ~ z, family = binomial, data = pg))
-tibble(step = 1:Tn, intercept = path[, 1], slope = path[, 2]) |>
-  pivot_longer(-step, names_to = "coefficient") |>
-  ggplot(aes(step, value, colour = coefficient)) + geom_line(linewidth = 1.2) + geom_point(size = 1.6) +
-  geom_hline(yintercept = glm_coef, linetype = "dotted", colour = "grey40") +
-  scale_colour_viridis_d(end = 0.7) +
-  labs(x = "step", y = "coefficient", colour = NULL) + theme(legend.position = "top")
-```
-:::
-::: {.column width="48%"}
-Chinstrap against Adelie from flipper length (standardized), penguins data, from $\beta_0 = (0, 0)$, step $\gamma = 4$
-
-Objective: $\hat R_n(\beta) = -\ell(\beta)/n$. Gradient, from part 1: $-\mathbf X^\top(\mathbf y - \mathbf p(\beta))/n$
-
-Same loop as least squares; only the gradient changed. Dotted: `glm`'s answer
-
-Curvature: $w_i \le \tfrac14$ in part 1's Hessian, so $L = `r round(L_logit, 2)`$ here and $2/L = `r round(2 / L_logit, 1)`$. One valley: the benign case
-:::
-:::
 
 ## {.inverse .center}
 
@@ -746,7 +730,7 @@ Legacy slide; the derivation is on the next slide, over the random index with th
 - Instead of computing the gradient of the loss function on the entire dataset, compute it on a random sample
 
 ::: {.ask}
-Pick one row $I$ uniformly at random from $\{1, \ldots, n\}$ and use its gradient $\nabla\ell_I(\beta)$ in place of the average over all $n$ rows. Commit: is it biased for the full gradient $\nabla\hat R_n(\beta)$, yes or no?
+Pick one row $I$ uniformly at random from $\{1, \ldots, n\}$ and use its gradient $\nabla\ell_I(\beta)$ in place of the average over all $n$ rows. Commit: is it biased for the full gradient $\nabla\hat R_n(\beta)$, yes or no? And does the descent lemma's guarantee carry over to a step along it?
 :::
 
 ## The stochastic gradient is unbiased
@@ -762,7 +746,7 @@ $$
 
 Unbiased, whatever the data are. A batch of $b$ rows drawn independently with replacement averages $b$ such gradients: still unbiased, with variance $\sigma^2(\beta)/b$, where $\sigma^2(\beta)$ is the spread of the single-row gradients
 
-Compute update using one randomly sampled observation, or a randomly sampled subset ("mini-batch SGD")
+Compute update using one randomly sampled observation, or a randomly sampled subset ("mini-batch SGD"). Correct on average, cheap, and **not guaranteed to decrease the training loss on any one step**: the descent lemma is about the full gradient
 
 ## The two paths
 
@@ -849,19 +833,15 @@ Legacy slide. Optimization time is a knob like k or the polynomial degree.
 
 This is [early stopping](https://en.wikipedia.org/wiki/Early_stopping) -- we'll come back to it later
 
-## Stopping early
+## Stopping early: choose a stopping point
 
 ::: {.notes}
-Simulation; the picture the week points at. The algorithm does what it was asked, minimize the training error, and the training error is the wrong thing to minimize all the way. Next week: by how much it lies. Lambda: week 7.
+Simulated least squares, n = 80, p = 60, noisy, from zero. Show the training curve only and ask for a stopping step; most say "when it stops falling", about step 100 or later. Then the reveal.
 :::
 
-::: {.columns}
-::: {.column width="55%"}
 ```{r}
-#| label: early-stopping
-#| fig-height: 3.6
-#| fig-width: 6.2
-#| out-width: "100%"
+#| label: early-stopping-data
+#| include: false
 set.seed(12)
 ne <- 80; pe <- 60
 Xe <- matrix(rnorm(ne * pe), ne, pe); be <- rnorm(pe, sd = 0.5); ye <- Xe %*% be + rnorm(ne, sd = 3)
@@ -874,18 +854,56 @@ for (t in 1:300) {
 }
 es <- bind_rows(es)
 best_step <- es$step[which.min(es$`held-out`)]
-es |> pivot_longer(-step, names_to = "error") |>
+es_plot <- function(d) d |> pivot_longer(-step, names_to = "error") |>
   ggplot(aes(step, value, colour = error)) + geom_line(linewidth = 1.2) +
-  scale_colour_manual(values = c(m_orange, v_blue)) + scale_x_log10() +
+  scale_colour_manual(values = c(`held-out` = m_orange, training = v_blue), drop = FALSE) + scale_x_log10() +
+  coord_cartesian(ylim = c(0, max(es$`held-out`) * 1.05)) +
   labs(x = "gradient-descent step (log scale, from step 1)", y = "mean squared error", colour = NULL) + theme(legend.position = "top")
+```
+
+::: {.columns}
+::: {.column width="55%"}
+```{r}
+#| label: early-stopping-training
+#| fig-height: 3.6
+#| fig-width: 6.2
+#| out-width: "100%"
+es_plot(select(es, step, training))
 ```
 :::
 ::: {.column width="45%"}
-Simulated: least squares from $\beta_0 = \mathbf 0$, $n = 80$, $p = 60$, noise sd 3, step $1/2L$; held-out error on 2,000 new rows from the same model
+Simulated: least squares from $\beta_0 = \mathbf 0$, $n = 80$, $p = 60$, noise sd 3, step $1/2L$
 
-Training error falls at every step. The held-out error falls, turns at step `r best_step`, and ends far above its minimum
+The training error, the number the algorithm sees, falls at every step and is still falling at 300
 
-The number of steps is a tuning parameter, like $k$ or $d$. Week 7 writes the penalty down, $\hat R_n(\beta) + \lambda\|\beta\|^2$, with $\lambda$ as the knob
+::: {.ask}
+You may stop the algorithm at any step. Which one, and why?
+:::
+:::
+:::
+
+## Stopping early: what the training loss did not show
+
+::: {.notes}
+The picture the whole week points at. The algorithm did what it was asked, minimize the training error, and the training error is the wrong thing to minimize all the way. Nothing in parts 2 to 4 could have shown this: they only ever saw the training loss. Next week: by how much it lies. Lambda: week 7.
+:::
+
+::: {.columns}
+::: {.column width="55%"}
+```{r}
+#| label: early-stopping
+#| fig-height: 3.4
+#| fig-width: 6.2
+#| out-width: "100%"
+es_plot(es)
+```
+:::
+::: {.column width="45%"}
+The same run scored on 2,000 new rows from the same model: the held-out error falls, turns at step `r best_step`, and ends far above its minimum
+
+Every diagnostic in part 3 watched the training loss, and every one said "keep going". **Tracking the training loss is not tracking the loss you care about.** Next week: by how much it lies
+
+The number of steps is a tuning parameter, like $k$ or $d$; week 7 writes the penalty down, $\hat R_n(\beta) + \lambda\|\beta\|^2$
 :::
 :::
 
@@ -933,16 +951,16 @@ Exercise 1 is today's proof with the slides closed; 2 proves the ERM form; 3 fin
 ## Conclusion: optimization in ML is a big topic {.inverse}
 
 ::: {.notes}
-Compress: the one guarantee and its price; a flat loss is not a proof of anything; stopping at the right complexity is next week.
+Compress: the one guarantee and its price; training loss is not test loss; stopping at the right complexity is next week.
 :::
 
-#### One guarantee, with a price
+#### What the fitting algorithm does
 
-Each small step helps if the curvature is bounded. Where it ends, and whether it has ended, this bound alone does not say
+Steps against the gradient of the training loss; `glm` does the same with a Hessian. One guarantee, with a price: each small step helps if the curvature is bounded; where it ends, and whether it has ended, this bound alone does not say. The gradient norm tells you more than the loss
 
-#### Strategies for general loss/function classes
+#### Training loss is not the loss you care about
 
-e.g. gradient methods, stochastic gradient methods
+Every diagnostic today watched the training loss. A lower training loss is numerical progress; whether it is a better model is a different question
 
 #### Stopping at the right amount of complexity
 

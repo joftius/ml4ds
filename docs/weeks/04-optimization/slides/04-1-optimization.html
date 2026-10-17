@@ -159,14 +159,14 @@ Joshua Loftus
 </section>
 <section id="where-week-3-left-the-fitting" class="slide level2">
 <h2>Where week 3 left the fitting</h2>
-<p>Week 2: least squares has a formula for <span class="math inline">\(\hat\beta\)</span>, and <span class="math inline">\(\hat\beta\)</span> solves the normal equations</p>
-<p>Week 3: logistic regression is fitted by maximum likelihood. How <code>glm</code> does it: this week</p>
+<p>Week 2: least squares has a formula for <span class="math inline">\(\hat\beta\)</span>, and <span class="math inline">\(\hat\beta\)</span> solves the normal equations. Week 3: logistic regression is fitted by maximum likelihood, and <code>glm</code> did it for us</p>
+<p>Today’s question, in three parts: <strong>what did <code>glm</code> do? how can we tell whether fitting is working? should we let it finish?</strong> In the seminar you write the fitting loop once, change one line to fit a different model, and watch it work and fail</p>
 <div class="ask">
 <p>Write down the normal equations from memory. Then guess: what plays their role for logistic regression, where the fitted values are probabilities <span class="math inline">\(\hat p_i\)</span> instead of <span class="math inline">\(\mathbf x_i^\top\hat\beta\)</span>?</p>
 </div>
 </section>
-<section id="fitting-logistic-regression" class="slide level2">
-<h2>Fitting logistic regression</h2>
+<section id="model-fitting-maximum-likelihood" class="slide level2">
+<h2>Model fitting: maximum likelihood</h2>
 <div class="recall">
 <p><strong>Maximum likelihood</strong> (Fisher, 1912–1922): choose the parameter that makes the observed data most probable. We maximize the <strong>log</strong>-likelihood because a product of <span class="math inline">\(n\)</span> small numbers underflows and a sum differentiates term by term; log is increasing, so the maximizer is the same. <strong>Least squares is a log-likelihood</strong>: for <span class="math inline">\(y_i \sim N(\mathbf x_i^\top\beta, \sigma^2)\)</span> it is <span class="math inline">\(-\frac{1}{2\sigma^2}\sum_i (y_i - \mathbf x_i^\top\beta)^2 + \text{const}\)</span>. In <code>glm</code>, <code>family</code> names the distribution whose likelihood is maximized: <code>gaussian</code> is <code>lm</code>, <code>binomial</code> is logistic regression.</p>
 </div>
@@ -176,8 +176,9 @@ Joshua Loftus
 \]</span> (assuming the data is i.i.d.)</p>
 <p>Next slide: a bit of mathematics</p>
 </section>
-<section id="mle" class="slide level2">
-<h2>MLE</h2>
+<section id="mle-for-logistic-regression" class="slide level2">
+<h2>MLE for logistic regression</h2>
+<p>Each factor is a Bernoulli (binomial, one trial) probability, <span class="math inline">\(P(y_i \mid \mathbf x_i) = p_i^{y_i}(1 - p_i)^{1 - y_i}\)</span> with <span class="math inline">\(p_i = p(\mathbf x_i^\top\beta) = 1/(1 + e^{-\mathbf x_i^\top\beta})\)</span>:</p>
 <p><span class="math display">\[
 L(\beta ; \mathbf y | \mathbf x) = \prod_{i=1}^n \left( \frac{1}{1+e^{-x_i \beta}} \right)^{y_i} \left(1- \frac{1}{1+e^{-x_i \beta}} \right)^{1-y_i}
 \]</span></p>
@@ -226,7 +227,7 @@ L(\beta ; \mathbf y | \mathbf x) = \prod_{i=1}^n \left( \frac{1}{1+e^{-x_i \beta
 </section>
 <section id="logistic-regression-fitting-multivariate-case" class="slide level2">
 <h2>Logistic regression fitting: multivariate case</h2>
-<p>Newton-IRLS (equivalent) steps, with <span class="math inline">\(g\)</span> the logit link:</p>
+<p>Newton-IRLS (equivalent) steps, <span class="math inline">\(g\)</span> the logit link. The one line to keep: <strong>each iteration is a weighted least-squares fit around the current fit</strong></p>
 <p><span class="math display">\[
 \begin{eqnarray}
 \hat{\mathbf p}_t &amp; = &amp; g^{-1}(\mathbf X \hat \beta_t)
@@ -400,7 +401,7 @@ L(\beta ; \mathbf y | \mathbf x) = \prod_{i=1}^n \left( \frac{1}{1+e^{-x_i \beta
 </div>
 </div>
 </div>
-<p><strong>Too big</strong> a step and the loss rises or bounces: the valley at <span class="math inline">\(\gamma = 0.21\)</span>, the penguins at <span class="math inline">\(\gamma = 12\)</span>. <strong>Too small</strong> a gradient and nothing moves for hundreds of steps, then everything does</p>
+<p><strong>Too big</strong> a step and the iterates overshoot and bounce: the valley at <span class="math inline">\(\gamma = 0.21\)</span>, the penguins at <span class="math inline">\(\gamma = 12\)</span> (the cross is <code>glm</code>’s answer). <strong>Too small</strong> a gradient and the position creeps for hundreds of steps, then everything moves at once</p>
 <p>A different mechanism with a similar look, named and not derived: in a deep network the chain rule multiplies derivatives across layers, and the product can be enormous or negligible: <strong>exploding</strong> and <strong>vanishing</strong> gradients</p>
 </section>
 <section id="has-it-converged" class="slide level2">
@@ -414,9 +415,9 @@ L(\beta ; \mathbf y | \mathbf x) = \prod_{i=1}^n \left( \frac{1}{1+e^{-x_i \beta
 </div>
 </div>
 </div>
-<p>Simulated: three runs of gradient descent, 200 steps each, and all three losses are flat. One has converged to its minimum; one is on a plateau; one has a step size that shrank to nothing on the way</p>
+<p>Simulated, three runs of 200 steps, log axes. Top: the training loss, flat in all three. Bottom: the other number the loop has, <span class="math inline">\(\|\nabla \hat R_n(\beta_t)\|\)</span>. One has converged, one is on a plateau, one has a step size that shrank to nothing</p>
 <div class="ask">
-<p>Which is which? What would you check, and what would you do next?</p>
+<p>Which is which, from what is on the screen, and what would you do next with each?</p>
 </div>
 </section>
 <section id="has-it-converged-the-next-600-steps" class="slide level2">
@@ -430,8 +431,8 @@ L(\beta ; \mathbf y | \mathbf x) = \prod_{i=1}^n \left( \frac{1}{1+e^{-x_i \beta
 </div>
 </div>
 </div>
-<p>A converged (the valley). B was on the plateau and drops at step 445. C stopped short: its steps <span class="math inline">\(0.3 \cdot 0.6^t\)</span> sum to a finite distance</p>
-<p>At step 200 the three were indistinguishable, and no theorem below would have told them apart. In practice, two different jobs: the <strong>gradient norm</strong>, restarts from elsewhere and running longer diagnose the optimization; <strong>held-out data</strong> decide when to stop for prediction, which is next week’s question</p>
+<p>A converged: its gradient went to nothing. B, the plateau: a small, steady gradient, then the drop at step 445. C stopped short: a large gradient, a step size <span class="math inline">\(0.3 \cdot 0.6^t\)</span> with a finite sum</p>
+<p>The loss alone could not tell them apart; the gradient norm could, as could restarting elsewhere or running longer. All of it is the <strong>training</strong> loss, the number the algorithm sees; whether lower means a better model is where the lecture ends</p>
 </section>
 <section id="curvature" class="slide level2">
 <h2>Curvature</h2>
@@ -486,38 +487,18 @@ f(y) - f(x) &amp;= \int_0^1 \nabla f(x_t)^\top v\, dt
 \begin{alignedat}{2}
 f(y) - f(x) &amp;\le \nabla f(x)^\top v + \int_0^1 L\,t\,\|v\|^2\, dt
 &amp;\quad&amp; \\
-&amp;\class{fragment}{{}= \nabla f(x)^\top v + \tfrac{L}{2}\|v\|^2}
-&amp;&amp; \class{fragment}{\color{gray}\small\text{(e) } \textstyle\int_0^1 t\, dt = \tfrac12} \\
-&amp;\class{fragment}{{}= -\gamma\|\nabla f(x)\|^2 + \tfrac{L}{2}\gamma^2\|\nabla f(x)\|^2}
-&amp;&amp; \class{fragment}{\color{gray}\small\text{(f) } v = -\gamma\nabla f(x)} \\
-&amp;\class{fragment}{{}= -\gamma\big(1 - \tfrac12 L\gamma\big)\|\nabla f(x)\|^2}
-&amp;&amp; \class{fragment}{\color{gray}\small\text{(g) collect}}
+&amp;= \nabla f(x)^\top v + \tfrac{L}{2}\|v\|^2
+&amp;&amp; {\color{gray}\small\text{(e) } \textstyle\int_0^1 t\, dt = \tfrac12} \\
+&amp;= -\gamma\|\nabla f(x)\|^2 + \tfrac{L}{2}\gamma^2\|\nabla f(x)\|^2
+&amp;&amp; {\color{gray}\small\text{(f) } v = -\gamma\nabla f(x)} \\
+&amp;= -\gamma\big(1 - \tfrac12 L\gamma\big)\|\nabla f(x)\|^2
+&amp;&amp; {\color{gray}\small\text{(g) collect}}
 \end{alignedat}
 \]</span></p>
 <div class="fragment">
 <p>At <span class="math inline">\(\gamma = 1/L\)</span> the right-hand side is <span class="math inline">\(-\|\nabla f(x)\|^2/2L\)</span>, which is the lemma. <span class="math inline">\(\blacksquare\)</span></p>
 <p>For any <span class="math inline">\(0 &lt; \gamma &lt; 2/L\)</span> the right-hand side is <span class="math inline">\(\le 0\)</span>, and <span class="math inline">\(&lt; 0\)</span> unless <span class="math inline">\(\nabla f(x) = 0\)</span>: every such step decreases <span class="math inline">\(f\)</span> until the gradient vanishes, and the heuristic’s bound was right</p>
 </div>
-</section>
-<section id="logistic-regression-by-descent" class="slide level2">
-<h2>Logistic regression by descent</h2>
-<div class="columns">
-<div class="column" style="width:52%;">
-<div class="cell">
-<div class="cell-output-display">
-<div>
-<figure>
-<p><img data-src="04-1-optimization_files/figure-revealjs/logistic-descent-1.png" style="width:100.0%"></p>
-</figure>
-</div>
-</div>
-</div>
-</div><div class="column" style="width:48%;">
-<p>Chinstrap against Adelie from flipper length (standardized), penguins data, from <span class="math inline">\(\beta_0 = (0, 0)\)</span>, step <span class="math inline">\(\gamma = 4\)</span></p>
-<p>Objective: <span class="math inline">\(\hat R_n(\beta) = -\ell(\beta)/n\)</span>. Gradient, from part 1: <span class="math inline">\(-\mathbf X^\top(\mathbf y - \mathbf p(\beta))/n\)</span></p>
-<p>Same loop as least squares; only the gradient changed. Dotted: <code>glm</code>’s answer</p>
-<p>Curvature: <span class="math inline">\(w_i \le \tfrac14\)</span> in part 1’s Hessian, so <span class="math inline">\(L = 0.25\)</span> here and <span class="math inline">\(2/L = 8\)</span>. One valley: the benign case</p>
-</div></div>
 </section>
 <section id="section-3" class="slide level2 inverse center">
 <h2></h2>
@@ -567,7 +548,7 @@ f(y) - f(x) &amp;\le \nabla f(x)^\top v + \int_0^1 L\,t\,\|v\|^2\, dt
 <li>Instead of computing the gradient of the loss function on the entire dataset, compute it on a random sample</li>
 </ul>
 <div class="ask">
-<p>Pick one row <span class="math inline">\(I\)</span> uniformly at random from <span class="math inline">\(\{1, \ldots, n\}\)</span> and use its gradient <span class="math inline">\(\nabla\ell_I(\beta)\)</span> in place of the average over all <span class="math inline">\(n\)</span> rows. Commit: is it biased for the full gradient <span class="math inline">\(\nabla\hat R_n(\beta)\)</span>, yes or no?</p>
+<p>Pick one row <span class="math inline">\(I\)</span> uniformly at random from <span class="math inline">\(\{1, \ldots, n\}\)</span> and use its gradient <span class="math inline">\(\nabla\ell_I(\beta)\)</span> in place of the average over all <span class="math inline">\(n\)</span> rows. Commit: is it biased for the full gradient <span class="math inline">\(\nabla\hat R_n(\beta)\)</span>, yes or no? And does the descent lemma’s guarantee carry over to a step along it?</p>
 </div>
 </section>
 <section id="the-stochastic-gradient-is-unbiased" class="slide level2">
@@ -576,7 +557,7 @@ f(y) - f(x) &amp;\le \nabla f(x)^\top v + \int_0^1 L\,t\,\|v\|^2\, dt
 \mathbb E_I\big[\nabla\ell_I(\beta)\big] = \sum_{i=1}^n \frac1n\,\nabla\ell_i(\beta) = \nabla\hat R_n(\beta)
 \]</span></p>
 <p>Unbiased, whatever the data are. A batch of <span class="math inline">\(b\)</span> rows drawn independently with replacement averages <span class="math inline">\(b\)</span> such gradients: still unbiased, with variance <span class="math inline">\(\sigma^2(\beta)/b\)</span>, where <span class="math inline">\(\sigma^2(\beta)\)</span> is the spread of the single-row gradients</p>
-<p>Compute update using one randomly sampled observation, or a randomly sampled subset (“mini-batch SGD”)</p>
+<p>Compute update using one randomly sampled observation, or a randomly sampled subset (“mini-batch SGD”). Correct on average, cheap, and <strong>not guaranteed to decrease the training loss on any one step</strong>: the descent lemma is about the full gradient</p>
 </section>
 <section id="the-two-paths" class="slide level2">
 <h2>The two paths</h2>
@@ -625,8 +606,29 @@ f(y) - f(x) &amp;\le \nabla f(x)^\top v + \int_0^1 L\,t\,\|v\|^2\, dt
 <p>This is <a href="https://en.wikipedia.org/wiki/Early_stopping">early stopping</a> – we’ll come back to it later</p>
 </div>
 </section>
-<section id="stopping-early" class="slide level2">
-<h2>Stopping early</h2>
+<section id="stopping-early-choose-a-stopping-point" class="slide level2">
+<h2>Stopping early: choose a stopping point</h2>
+<div class="columns">
+<div class="column" style="width:55%;">
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure>
+<p><img data-src="04-1-optimization_files/figure-revealjs/early-stopping-training-1.png" style="width:100.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+</div><div class="column" style="width:45%;">
+<p>Simulated: least squares from <span class="math inline">\(\beta_0 = \mathbf 0\)</span>, <span class="math inline">\(n = 80\)</span>, <span class="math inline">\(p = 60\)</span>, noise sd 3, step <span class="math inline">\(1/2L\)</span></p>
+<p>The training error, the number the algorithm sees, falls at every step and is still falling at 300</p>
+<div class="ask">
+<p>You may stop the algorithm at any step. Which one, and why?</p>
+</div>
+</div></div>
+</section>
+<section id="stopping-early-what-the-training-loss-did-not-show" class="slide level2">
+<h2>Stopping early: what the training loss did not show</h2>
 <div class="columns">
 <div class="column" style="width:55%;">
 <div class="cell">
@@ -639,9 +641,9 @@ f(y) - f(x) &amp;\le \nabla f(x)^\top v + \int_0^1 L\,t\,\|v\|^2\, dt
 </div>
 </div>
 </div><div class="column" style="width:45%;">
-<p>Simulated: least squares from <span class="math inline">\(\beta_0 = \mathbf 0\)</span>, <span class="math inline">\(n = 80\)</span>, <span class="math inline">\(p = 60\)</span>, noise sd 3, step <span class="math inline">\(1/2L\)</span>; held-out error on 2,000 new rows from the same model</p>
-<p>Training error falls at every step. The held-out error falls, turns at step 15, and ends far above its minimum</p>
-<p>The number of steps is a tuning parameter, like <span class="math inline">\(k\)</span> or <span class="math inline">\(d\)</span>. Week 7 writes the penalty down, <span class="math inline">\(\hat R_n(\beta) + \lambda\|\beta\|^2\)</span>, with <span class="math inline">\(\lambda\)</span> as the knob</p>
+<p>The same run scored on 2,000 new rows from the same model: the held-out error falls, turns at step 15, and ends far above its minimum</p>
+<p>Every diagnostic in part 3 watched the training loss, and every one said “keep going”. <strong>Tracking the training loss is not tracking the loss you care about.</strong> Next week: by how much it lies</p>
+<p>The number of steps is a tuning parameter, like <span class="math inline">\(k\)</span> or <span class="math inline">\(d\)</span>; week 7 writes the penalty down, <span class="math inline">\(\hat R_n(\beta) + \lambda\|\beta\|^2\)</span></p>
 </div></div>
 </section>
 <section id="where-the-error-comes-from-this-time" class="slide level2">
@@ -671,10 +673,10 @@ R(\hat f) - R(f^\star) = \underbrace{\big[R(\hat f) - R(f_{\mathcal F})\big]}_{\
 </section>
 <section id="conclusion-optimization-in-ml-is-a-big-topic" class="slide level2 inverse">
 <h2>Conclusion: optimization in ML is a big topic</h2>
-<h4 id="one-guarantee-with-a-price">One guarantee, with a price</h4>
-<p>Each small step helps if the curvature is bounded. Where it ends, and whether it has ended, this bound alone does not say</p>
-<h4 id="strategies-for-general-lossfunction-classes">Strategies for general loss/function classes</h4>
-<p>e.g.&nbsp;gradient methods, stochastic gradient methods</p>
+<h4 id="what-the-fitting-algorithm-does">What the fitting algorithm does</h4>
+<p>Steps against the gradient of the training loss; <code>glm</code> does the same with a Hessian. One guarantee, with a price: each small step helps if the curvature is bounded; where it ends, and whether it has ended, this bound alone does not say. The gradient norm tells you more than the loss</p>
+<h4 id="training-loss-is-not-the-loss-you-care-about">Training loss is not the loss you care about</h4>
+<p>Every diagnostic today watched the training loss. A lower training loss is numerical progress; whether it is a better model is a different question</p>
 <h4 id="stopping-at-the-right-amount-of-complexity">Stopping at the right amount of complexity</h4>
 <p><em>Maybe the most important part! Next lecture</em></p>
 
