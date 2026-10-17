@@ -160,25 +160,25 @@ Joshua Loftus
 <section id="where-week-3-left-the-fitting" class="slide level2">
 <h2>Where week 3 left the fitting</h2>
 <p>Week 2: least squares has a formula for <span class="math inline">\(\hat\beta\)</span>, and <span class="math inline">\(\hat\beta\)</span> solves the normal equations. Week 3: logistic regression is fitted by maximum likelihood, and <code>glm</code> did it for us</p>
-<p>Today’s question, in three parts: <strong>what did <code>glm</code> do? how can we tell whether fitting is working? should we let it finish?</strong> In the seminar you write the fitting loop once, change one line to fit a different model, and watch it work and fail</p>
+<p>Today’s question, in three parts: <strong>what did <code>glm</code> do? how can we tell whether fitting is working? should we let it finish?</strong></p>
 <div class="ask">
-<p>Write down the normal equations from memory. Then guess: what plays their role for logistic regression, where the fitted values are probabilities <span class="math inline">\(\hat p_i\)</span> instead of <span class="math inline">\(\mathbf x_i^\top\hat\beta\)</span>?</p>
+<p>Write down the normal equations from memory. Then guess: how is it different for logistic regression?</p>
 </div>
 </section>
 <section id="model-fitting-maximum-likelihood" class="slide level2">
 <h2>Model fitting: maximum likelihood</h2>
-<div class="recall">
-<p><strong>Maximum likelihood</strong> (Fisher, 1912–1922): choose the parameter that makes the observed data most probable. We maximize the <strong>log</strong>-likelihood because a product of <span class="math inline">\(n\)</span> small numbers underflows and a sum differentiates term by term; log is increasing, so the maximizer is the same. <strong>Least squares is a log-likelihood</strong>: for <span class="math inline">\(y_i \sim N(\mathbf x_i^\top\beta, \sigma^2)\)</span> it is <span class="math inline">\(-\frac{1}{2\sigma^2}\sum_i (y_i - \mathbf x_i^\top\beta)^2 + \text{const}\)</span>. In <code>glm</code>, <code>family</code> names the distribution whose likelihood is maximized: <code>gaussian</code> is <code>lm</code>, <code>binomial</code> is logistic regression.</p>
-</div>
 <p>How do we estimate <span class="math inline">\(\beta\)</span>? <strong>Maximum likelihood</strong>:</p>
 <p><span class="math display">\[
 \text{maximize } L(\beta ; \mathbf y | \mathbf X) = \prod_{i=1}^n L(\beta ; y_i | \mathbf x_i)
 \]</span> (assuming the data is i.i.d.)</p>
+<div class="recall">
+<p><strong>Maximum likelihood</strong> (Fisher, 1912–1922): choose the parameter that makes the observed data most probable. We maximize the <strong>log</strong>-likelihood because a product of <span class="math inline">\(n\)</span> small numbers underflows and a sum differentiates term by term; log is increasing, so the maximizer is the same. <strong>Least squares is a log-likelihood</strong>: for <span class="math inline">\(y_i \sim N(\mathbf x_i^T\beta, \sigma^2)\)</span> it is <span class="math inline">\(-\frac{1}{2\sigma^2}\sum_i (y_i - \mathbf x_i^T\beta)^2 + \text{const}\)</span>. In <code>glm</code>, <code>family</code> names the distribution whose likelihood is maximized: <code>gaussian</code> is <code>lm</code>, <code>binomial</code> is logistic regression.</p>
+</div>
 <p>Next slide: a bit of mathematics</p>
 </section>
 <section id="mle-for-logistic-regression" class="slide level2">
 <h2>MLE for logistic regression</h2>
-<p>Each factor is a Bernoulli (binomial, one trial) probability, <span class="math inline">\(P(y_i \mid \mathbf x_i) = p_i^{y_i}(1 - p_i)^{1 - y_i}\)</span> with <span class="math inline">\(p_i = p(\mathbf x_i^\top\beta) = 1/(1 + e^{-\mathbf x_i^\top\beta})\)</span>:</p>
+<p>Each factor is a Bernoulli (binomial, one trial) probability, <span class="math inline">\(P(y_i \mid \mathbf x_i) = p_i^{y_i}(1 - p_i)^{1 - y_i}\)</span> with <span class="math inline">\(p_i = p(\mathbf x_i^T\beta) = 1/(1 + e^{-\mathbf x_i^T\beta})\)</span>:</p>
 <p><span class="math display">\[
 L(\beta ; \mathbf y | \mathbf x) = \prod_{i=1}^n \left( \frac{1}{1+e^{-x_i \beta}} \right)^{y_i} \left(1- \frac{1}{1+e^{-x_i \beta}} \right)^{1-y_i}
 \]</span></p>
@@ -199,10 +199,10 @@ L(\beta ; \mathbf y | \mathbf x) = \prod_{i=1}^n \left( \frac{1}{1+e^{-x_i \beta
 <section id="the-score-equations-read-as-orthogonality" class="slide level2">
 <h2>The score equations, read as orthogonality</h2>
 <div class="retrieval">
-<p>Week 2, least squares: <span class="math inline">\(\mathbf X^\top(\mathbf y - \mathbf X\hat\beta) = \mathbf 0\)</span>. The residual is orthogonal to every column of <span class="math inline">\(\mathbf X\)</span>.</p>
+<p>Week 2, least squares: <span class="math inline">\(\mathbf X^T(\mathbf y - \mathbf X\hat\beta) = \mathbf 0\)</span>. The residual is orthogonal to every column of <span class="math inline">\(\mathbf X\)</span>.</p>
 </div>
-<p><strong>Logistic score equations.</strong> Stack the last slide’s rows: writing <span class="math inline">\(\mathbf p(\beta) = (\hat p_1(\beta), \ldots, \hat p_n(\beta))^\top\)</span>, the MLE <span class="math inline">\(\hat\beta\)</span> solves <span class="math display">\[
-\mathbf X^\top\big(\mathbf y - \mathbf p(\hat\beta)\big) = \mathbf 0
+<p><strong>Logistic score equations.</strong> Stack the last slide’s rows: writing <span class="math inline">\(\mathbf p(\beta) = (\hat p_1(\beta), \ldots, \hat p_n(\beta))^T\)</span>, the MLE <span class="math inline">\(\hat\beta\)</span> solves <span class="math display">\[
+\mathbf X^T\big(\mathbf y - \mathbf p(\hat\beta)\big) = \mathbf 0
 \]</span></p>
 <p>Same shape as least squares, with <span class="math inline">\(\mathbf X\hat\beta\)</span> replaced by the fitted probabilities: the residual <span class="math inline">\(\mathbf y - \hat{\mathbf p}\)</span> is orthogonal to every column of <span class="math inline">\(\mathbf X\)</span></p>
 <p>No closed form, because <span class="math inline">\(\mathbf p(\beta)\)</span> is not linear in <span class="math inline">\(\beta\)</span></p>
@@ -211,9 +211,9 @@ L(\beta ; \mathbf y | \mathbf x) = \prod_{i=1}^n \left( \frac{1}{1+e^{-x_i \beta
 <h2>Two things the score equations say</h2>
 <p><strong>Row one is the intercept.</strong> <span class="math inline">\(\sum_i (y_i - \hat p_i) = 0\)</span>: the fitted probabilities average to the observed proportion of 1s on the training rows.</p>
 <p><strong>The log-likelihood is concave.</strong> Differentiating once more, <span class="math display">\[
-\frac{\partial^2 \ell}{\partial\beta\,\partial\beta^\top} = -\sum_{i=1}^n w_i\, x_i x_i^\top, \qquad w_i = \hat p_i(\beta)\,\big(1 - \hat p_i(\beta)\big) &gt; 0
-\]</span> Each term is minus a positive weight times <span class="math inline">\(x_i x_i^\top\)</span>, a matrix that never points uphill in any direction, so the sum curves downward everywhere: the log-likelihood is concave, and any finite solution of the score equations is its global maximum</p>
-<p>What concavity does not give: existence. Week 3’s separable case is the case with no finite solution</p>
+\frac{\partial^2 \ell}{\partial\beta\,\partial\beta^T} = -\sum_{i=1}^n w_i\, x_i x_i^T, \qquad w_i = \hat p_i(\beta)\,\big(1 - \hat p_i(\beta)\big) &gt; 0
+\]</span> Each term is minus a positive weight times <span class="math inline">\(x_i x_i^T\)</span>, a matrix that never points uphill in any direction, so the sum curves downward everywhere: the log-likelihood is concave, and any finite solution of the score equations is its global maximum</p>
+<p>What concavity does not give: existence (week 3’s separable case has no finite solution). <strong>So how do we solve the score equations?</strong></p>
 </section>
 <section id="newton-raphson" class="slide level2">
 <h2>Newton-Raphson</h2>
@@ -223,27 +223,27 @@ L(\beta ; \mathbf y | \mathbf x) = \prod_{i=1}^n \left( \frac{1}{1+e^{-x_i \beta
 <li>Root of the tangent line is used as starting point for next approximation</li>
 <li>See the <a href="https://en.wikipedia.org/wiki/Newton%27s_method#/media/File:NewtonIteration_Ani.gif">animation</a> on <a href="https://en.wikipedia.org/wiki/Newton%27s_method">Wikipedia</a></li>
 </ul>
-<p><strong>Exercise</strong>: using the gradient and the Hessian from the previous slides, derive the Newton-Raphson update for <span class="math inline">\(\beta\)</span> (notebook, exercise 3)</p>
+<p><strong>Exercise</strong>: using the gradient and the Hessian from the previous slides, derive the Newton-Raphson update for <span class="math inline">\(\beta\)</span></p>
 </section>
 <section id="logistic-regression-fitting-multivariate-case" class="slide level2">
 <h2>Logistic regression fitting: multivariate case</h2>
 <p>Newton-IRLS (equivalent) steps, <span class="math inline">\(g\)</span> the logit link. The one line to keep: <strong>each iteration is a weighted least-squares fit around the current fit</strong></p>
 <p><span class="math display">\[
 \begin{eqnarray}
-\hat{\mathbf p}_t &amp; = &amp; g^{-1}(\mathbf X \hat \beta_t)
+\hat{\mathbf p}_t &amp; \gets &amp; g^{-1}(\mathbf X \hat \beta_t)
 &amp; \ \text{ update probs.} \\
-\mathbf W_t &amp; = &amp; \text{diag}[\hat{\mathbf p}_t (1 - \hat{\mathbf p}_t)]
+\mathbf W_t &amp; \gets &amp; \text{diag}[\hat{\mathbf p}_t (1 - \hat{\mathbf p}_t)]
 &amp; \ \text{ update weights} \\
-\hat{\mathbf{y}}_t &amp; = &amp; g(\hat{\mathbf p}_t) + \mathbf W_t^{-1}(\mathbf y - \hat{\mathbf p}_t)
+\hat{\mathbf{y}}_t &amp; \gets &amp; g(\hat{\mathbf p}_t) + \mathbf W_t^{-1}(\mathbf y - \hat{\mathbf p}_t)
 &amp; \ \text{ update response}
 \end{eqnarray}
 \]</span></p>
-<p>and then update parameter estimate (LS sub-problem) <span class="math display">\[\hat{\beta}_{t+1} = \arg \min_{\beta} (\hat{\mathbf{y}}_t - \mathbf X \beta)^T \mathbf W_t (\hat{\mathbf{y}}_t - \mathbf X \beta)\]</span></p>
+<p>and then update parameter estimate (LS sub-problem) <span class="math display">\[\hat{\beta}_{t+1} \gets \arg \min_{\beta} (\hat{\mathbf{y}}_t - \mathbf X \beta)^T \mathbf W_t (\hat{\mathbf{y}}_t - \mathbf X \beta)\]</span></p>
 <div class="fragment">
 <p><strong>Note</strong>: larger weights on observations with <span class="math inline">\(\hat p\)</span> closer to 1/2, i.e.&nbsp;the most difficult to classify (<strong><em>look for variations of this theme</em></strong>) <span class="source">See Section 4.4.1 of <a href="https://web.stanford.edu/~hastie/ElemStatLearn/">ESL</a></span></p>
 </div>
 </section>
-<section id="glms-in-r-what-you-should-know" class="slide level2">
+<section id="glms-in-r-what-you-should-know" class="slide level2 inverse">
 <h2>GLMs in <code>R</code>: what you should know</h2>
 <p><strong>Does <code>glm</code> use Newton-Raphson for every family?</strong> Its fitter is IRLS, which is Fisher scoring: Newton with the expected Hessian in place of the actual one. For the default links (<code>binomial</code>-logit, <code>poisson</code>-log, <code>gaussian</code>-identity) the two coincide; for other links it is a close relative. <code>lm</code> is the one-step case</p>
 <p><strong>How many iterations?</strong> Usually under ten. <code>summary()</code> prints <code>Number of Fisher Scoring iterations</code></p>
@@ -276,13 +276,13 @@ L(\beta ; \mathbf y | \mathbf x) = \prod_{i=1}^n \left( \frac{1}{1+e^{-x_i \beta
 <h2>Examples: linear regression, GLM</h2>
 <p><strong>Linear regression.</strong> Probability model: errors <span class="math inline">\(\varepsilon \sim N(0, \sigma^2)\)</span>. Loss: squared, <span class="math inline">\(\ell(y, f(\mathbf x)) = (y - f(\mathbf x))^2\)</span>. Class: <span class="math inline">\(\mathcal F = \{ f_\beta(\mathbf x) = \mathbf x^T \beta : \beta \in \mathbb R^{p+1} \}\)</span>. Algorithm: OLS, closed form (memorized yet?) <span class="math display">\[\underset{\beta \in \mathbb R^{p+1}}{\text{minimize }} \frac{1}{n} \sum_{i=1}^n (y_i - \mathbf x_i^T \beta)^2\]</span></p>
 <div class="fragment">
-<p><strong>GLM.</strong> Probability model: <code>family = binomial(), poisson(), etc</code>. Loss: minus one row’s log-likelihood, so <span class="math inline">\(\hat R_n(\beta) = -\ell(\beta)/n\)</span>. Class: <span class="math inline">\(\{ g^{-1}(\mathbf x^T \beta) : \beta \in \mathbb R^{p+1} \}\)</span>, link <span class="math inline">\(g\)</span> fixed. Algorithm: ERM (here also MLE) by Newton-Raphson or gradient descent <span class="math display">\[
+<p><strong>GLM.</strong> Probability model: <code>family = binomial(), poisson(), etc</code>. Loss: negative log-likelihood, so <span class="math inline">\(\hat R_n(\beta) = -\ell(\beta)/n\)</span>. Class: <span class="math inline">\(\{ g^{-1}(\mathbf x^T \beta) : \beta \in \mathbb R^{p+1} \}\)</span>, link <span class="math inline">\(g\)</span> fixed. Algorithm: ERM (here also MLE), usually by an iterative algorithm <span class="math display">\[
 \underset{\beta \in \mathbb R^{p+1}}{\text{minimize }} -\frac{1}{n} \sum_{i=1}^n \log L(\beta ; y_i | \mathbf x_i)
 \]</span></p>
 </div>
 </section>
-<section id="optimization-algorithms" class="slide level2">
-<h2>Optimization algorithms</h2>
+<section id="iterative-optimization-algorithms" class="slide level2">
+<h2>(Iterative) optimization algorithms</h2>
 <p>Downside of Newton-Raphson: requires second derivatives, including <em>inverting the <span class="math inline">\(p \times p\)</span> Hessian matrix</em> when optimizing over <span class="math inline">\(p &gt; 1\)</span> parameters</p>
 <p>If <span class="math inline">\(p\)</span> is large, <strong>second-order</strong> optimization methods like Newton’s are very costly</p>
 <div class="fragment">
@@ -309,7 +309,7 @@ L(\beta ; \mathbf y | \mathbf x) = \prod_{i=1}^n \left( \frac{1}{1+e^{-x_i \beta
 <section id="which-step-size" class="slide level2">
 <h2>Which step size?</h2>
 <div class="columns">
-<div class="column" style="width:48%;">
+<div class="column" style="width:64%;">
 <div class="cell">
 <div class="cell-output-display">
 <div>
@@ -319,12 +319,12 @@ L(\beta ; \mathbf y | \mathbf x) = \prod_{i=1}^n \left( \frac{1}{1+e^{-x_i \beta
 </div>
 </div>
 </div>
-</div><div class="column" style="width:52%;">
-<p>A valley, <span class="math inline">\(f(\beta) = \tfrac12(\beta_1^2 + 10\beta_2^2)\)</span>, ten times steeper across than along. Gradient descent from the orange point with <span class="math inline">\(\gamma = 0.15\)</span></p>
-<p>The direction is right locally and wrong globally: a few zigzags across, then a crawl along</p>
+</div><div class="column" style="width:36%;">
+<p><strong>The valley:</strong> <span class="math inline">\(f(\beta) = \tfrac12(\beta_1^2 + 10\beta_2^2)\)</span>, ten times steeper across than along. Gradient descent from the orange point, <span class="math inline">\(\gamma = 0.15\)</span></p>
+<p>A few zigzags across, then a crawl along</p>
 </div></div>
 <div class="ask">
-<p>Same valley, same start, three step sizes: <span class="math inline">\(\gamma = 0.05\)</span>, <span class="math inline">\(\gamma = 0.18\)</span>, <span class="math inline">\(\gamma = 0.21\)</span>. For each, commit: converges, converges slowly, or diverges?</p>
+<p>The valley, same start, three step sizes: <span class="math inline">\(\gamma = 0.05\)</span>, <span class="math inline">\(\gamma = 0.18\)</span>, <span class="math inline">\(\gamma = 0.21\)</span>. For each, commit: converges, converges slowly, or diverges?</p>
 </div>
 </section>
 <section id="three-step-sizes" class="slide level2">
@@ -333,12 +333,26 @@ L(\beta ; \mathbf y | \mathbf x) = \prod_{i=1}^n \left( \frac{1}{1+e^{-x_i \beta
 <div class="cell-output-display">
 <div>
 <figure>
-<p><img data-src="04-1-optimization_files/figure-revealjs/three-steps-1.png" style="width:100.0%"></p>
+<p><img data-src="04-1-optimization_files/figure-revealjs/three-steps-top-1.png" style="width:100.0%"></p>
 </figure>
 </div>
 </div>
 </div>
+<div class="columns">
+<div class="column" style="width:50%;">
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure>
+<p><img data-src="04-1-optimization_files/figure-revealjs/three-steps-bottom-1.png" style="width:100.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+</div><div class="column" style="width:50%;">
 <p>Across the valley the update multiplies <span class="math inline">\(\beta_2\)</span> by <span class="math inline">\(1 - 10\gamma\)</span>: <span class="math inline">\(0.5\)</span>, <span class="math inline">\(-0.8\)</span>, <span class="math inline">\(-1.1\)</span></p>
+<p>The largest curvature sets the largest safe step; the smallest sets how long it takes</p>
+</div></div>
 </section>
 <section id="the-quadratic-case-exactly" class="slide level2">
 <h2>The quadratic case, exactly</h2>
@@ -350,7 +364,7 @@ L(\beta ; \mathbf y | \mathbf x) = \prod_{i=1}^n \left( \frac{1}{1+e^{-x_i \beta
 <div class="fragment">
 <p>Several directions with curvatures <span class="math inline">\(a_1 \ge \dots \ge a_p &gt; 0\)</span>, one step size for all of them: <span class="math inline">\(\gamma &lt; 2/a_1\)</span> to converge, and the slowest direction shrinks like <span class="math inline">\(\max_j |1 - \gamma a_j|^t\)</span>, which for <span class="math inline">\(\gamma \le 1/a_1\)</span> is <span class="math inline">\((1 - \gamma a_p)^t\)</span></p>
 <div class="leave">
-<p>The largest curvature sets the safe step; the ratio <span class="math inline">\(a_1/a_p\)</span>, the shape of the valley, sets the speed (a direction with <span class="math inline">\(a_j = 0\)</span>, as in least squares with <span class="math inline">\(p &gt; n\)</span>, never moves). For least squares, <span class="math inline">\(\hat R_n(\beta) = \frac1n\|\mathbf y - \mathbf X\beta\|^2\)</span>, the <span class="math inline">\(a_j\)</span> are the eigenvalues of <span class="math inline">\(2\mathbf X^\top\mathbf X/n\)</span></p>
+<p>The largest curvature sets the safe step; the ratio <span class="math inline">\(a_1/a_p\)</span>, the shape of the valley, sets the speed (a direction with <span class="math inline">\(a_j = 0\)</span>, as in least squares with <span class="math inline">\(p &gt; n\)</span>, never moves). For least squares, <span class="math inline">\(\hat R_n(\beta) = \frac1n\|\mathbf y - \mathbf X\beta\|^2\)</span>, the <span class="math inline">\(a_j\)</span> are the eigenvalues of <span class="math inline">\(2\mathbf X^T\mathbf X/n\)</span></p>
 </div>
 </div>
 </section>
@@ -364,14 +378,13 @@ L(\beta ; \mathbf y | \mathbf x) = \prod_{i=1}^n \left( \frac{1}{1+e^{-x_i \beta
 <div class="cell-output-display">
 <div>
 <figure>
-<p><img data-src="04-1-optimization_files/figure-revealjs/landscape-1d-1.png" style="width:100.0%"></p>
+<p><img data-src="04-1-optimization_files/figure-revealjs/hilly-road-1.png" style="width:100.0%"></p>
 </figure>
 </div>
 </div>
 </div>
-<p>Each step computes one thing about where it stands, the gradient <span class="math inline">\(\nabla \hat R_n(\beta_t)\)</span>, and its size says little on its own: <strong>zero</strong> at the minimum, but also at a local minimum, and nearly zero on a plateau; <strong>large</strong> means steep, and a step may overshoot</p>
 <div class="ask">
-<p>Your loss has stopped falling. Which of the four are you at, and how would you tell?</p>
+<p>Your loss has stopped falling. Which of the four places are you at, and how would you tell?</p>
 </div>
 </section>
 <section id="landscapes" class="slide level2">
@@ -386,7 +399,7 @@ L(\beta ; \mathbf y | \mathbf x) = \prod_{i=1}^n \left( \frac{1}{1+e^{-x_i \beta
 </div>
 </div>
 <div class="ask">
-<p>Right: <span class="math inline">\(f(u, v) = (u^2-1)^2 + v^2\)</span>. Compute the gradient at <span class="math inline">\((0, 0)\)</span>; is it a minimum? The teal path starts at <span class="math inline">\((0, 1.2)\)</span>: where does it end, and why does it never leave?</p>
+<p>The saddle: compute the gradient at <span class="math inline">\((0, 0)\)</span>; is it a minimum? One of the three starts is <span class="math inline">\((0, 1.2)\)</span>: where does its path end, and why does it never leave?</p>
 </div>
 <p>Where you start decides where you end. Least squares and logistic regression have one valley (convex); most of what comes after week 7 does not</p>
 </section>
@@ -401,8 +414,8 @@ L(\beta ; \mathbf y | \mathbf x) = \prod_{i=1}^n \left( \frac{1}{1+e^{-x_i \beta
 </div>
 </div>
 </div>
-<p><strong>Too big</strong> a step and the iterates overshoot and bounce: the valley at <span class="math inline">\(\gamma = 0.21\)</span>, the penguins at <span class="math inline">\(\gamma = 12\)</span> (the cross is <code>glm</code>’s answer). <strong>Too small</strong> a gradient and the position creeps for hundreds of steps, then everything moves at once</p>
-<p>A different mechanism with a similar look, named and not derived: in a deep network the chain rule multiplies derivatives across layers, and the product can be enormous or negligible: <strong>exploding</strong> and <strong>vanishing</strong> gradients</p>
+<p><strong>Too big</strong> a step (<span class="math inline">\(\gamma = 12 &gt; 2/L = 8\)</span>): the iterates overshoot and bounce. <strong>Too small</strong> a gradient (the plateau, about <span class="math inline">\(0.01\)</span>): the iterate creeps for hundreds of steps, then moves all at once</p>
+<p>Named, not derived: in a deep network the chain rule multiplies derivatives across layers, and the product can be enormous or negligible, <strong>exploding</strong> and <strong>vanishing</strong> gradients</p>
 </section>
 <section id="has-it-converged" class="slide level2">
 <h2>Has it converged?</h2>
@@ -415,9 +428,8 @@ L(\beta ; \mathbf y | \mathbf x) = \prod_{i=1}^n \left( \frac{1}{1+e^{-x_i \beta
 </div>
 </div>
 </div>
-<p>Simulated, three runs of 200 steps, log axes. Top: the training loss, flat in all three. Bottom: the other number the loop has, <span class="math inline">\(\|\nabla \hat R_n(\beta_t)\|\)</span>. One has converged, one is on a plateau, one has a step size that shrank to nothing</p>
 <div class="ask">
-<p>Which is which, from what is on the screen, and what would you do next with each?</p>
+<p>Three runs, 200 steps, log scales: training loss on top, gradient norm <span class="math inline">\(\|\nabla \hat R_n(\beta_t)\|\)</span> below. One has converged, one is on a plateau, one has a step size that shrank to nothing. Which is which?</p>
 </div>
 </section>
 <section id="has-it-converged-the-next-600-steps" class="slide level2">
@@ -431,28 +443,28 @@ L(\beta ; \mathbf y | \mathbf x) = \prod_{i=1}^n \left( \frac{1}{1+e^{-x_i \beta
 </div>
 </div>
 </div>
-<p>A converged: its gradient went to nothing. B, the plateau: a small, steady gradient, then the drop at step 445. C stopped short: a large gradient, a step size <span class="math inline">\(0.3 \cdot 0.6^t\)</span> with a finite sum</p>
-<p>The loss alone could not tell them apart; the gradient norm could, as could restarting elsewhere or running longer. All of it is the <strong>training</strong> loss, the number the algorithm sees; whether lower means a better model is where the lecture ends</p>
+<div class="leave">
+<p>A, the valley: converged. B, the hilly road: the plateau, then the drop at step 445. C, the valley with steps <span class="math inline">\(0.3 \cdot 0.6^t\)</span>: stopped short. The training loss could not tell them apart; the gradient norm could</p>
+</div>
 </section>
 <section id="curvature" class="slide level2">
 <h2>Curvature</h2>
 <div class="recall">
-<p>Taylor, to second order: for a smooth <span class="math inline">\(f\)</span> and a small move <span class="math inline">\(\delta\)</span>, <span class="math inline">\(f(x + \delta) \approx f(x) + \nabla f(x)^\top\delta + \tfrac12\,\delta^\top \nabla^2 f(x)\,\delta\)</span>.</p>
+<p>Taylor, to second order, with <span class="math inline">\(H = \nabla^2 f(x)\)</span> the Hessian: for a smooth <span class="math inline">\(f\)</span> and a small move <span class="math inline">\(\delta\)</span>, <span class="math inline">\(f(x + \delta) \approx f(x) + \nabla f(x)^T\delta + \tfrac12\,\delta^T H\,\delta\)</span>.</p>
 </div>
-<p>What decides whether a step helps is how fast the gradient changes along it. Take the step <span class="math inline">\(\delta = -\gamma\nabla f(x)\)</span> and write <span class="math inline">\(g = \nabla f(x)\)</span>: <span class="math display">\[
-f(x - \gamma g) \approx f(x) \;\underbrace{-\; \gamma\,\|g\|^2}_{\text{always down}} \;\underbrace{+\; \tfrac12\gamma^2\, g^\top \nabla^2 f(x)\, g}_{\text{the curvature pushes back}}
+<p>What decides whether a step helps is how fast the gradient changes along it. Take the step <span class="math inline">\(\delta = -\gamma\nabla f(x)\)</span>: <span class="math display">\[
+f(x - \gamma\nabla f(x)) \approx f(x) \;\underbrace{-\; \gamma\,\|\nabla f(x)\|^2}_{\text{always down}} \;\underbrace{+\; \tfrac12\gamma^2\, \nabla f(x)^T H\, \nabla f(x)}_{\text{the curvature pushes back}}
 \]</span></p>
-<p>In the quadratic case the curvature was a fixed number <span class="math inline">\(a\)</span>. On the landscapes above it changes from place to place: <span class="math inline">\(+2\)</span> at the bottom of a valley, <span class="math inline">\(-4\)</span> at the saddle, about <span class="math inline">\(0\)</span> on the plateau</p>
+<p>In the quadratic case the curvature was a fixed number <span class="math inline">\(a\)</span>. On the saddle it is <span class="math inline">\(+8\)</span> at the two minima and <span class="math inline">\(-4\)</span> at the saddle point; on the hilly road’s plateau it is about <span class="math inline">\(0\)</span></p>
 </section>
 <section id="curvature-at-most-l" class="slide level2">
 <h2>Curvature at most <span class="math inline">\(L\)</span></h2>
-<p>If the curvature in every direction is at most <span class="math inline">\(L\)</span> in size, the push-back is at most <span class="math inline">\(\tfrac12 L\gamma^2\|g\|^2\)</span>, and then <span class="math display">\[
-f(x - \gamma g) \lesssim f(x) - \gamma\big(1 - \tfrac12 L\gamma\big)\|g\|^2
-\]</span> The bracket is positive for <span class="math inline">\(\gamma &lt; 2/L\)</span> and the bound is best at <span class="math inline">\(\gamma = 1/L\)</span>: the quadratic case’s rule, in general</p>
+<p>If the curvature in every direction is at most <span class="math inline">\(L\)</span> in size, the push-back is at most <span class="math inline">\(\tfrac12 L\gamma^2\|\nabla f(x)\|^2\)</span>, and then <span class="math display">\[
+f(x - \gamma\nabla f(x)) \lesssim f(x) - \gamma\underbrace{\big(1 - \tfrac12 L\gamma\big)}_{&gt; 0 \text{ for } \gamma &lt; 2/L}\|\nabla f(x)\|^2
+\]</span> The bound is best at <span class="math inline">\(\gamma = 1/L\)</span>: the quadratic case’s rule, in general</p>
 <div class="fragment">
-<p>To make it a theorem, say “curvature at most <span class="math inline">\(L\)</span>” about the gradient, with no second derivative:</p>
-<p><strong>Assumption.</strong> <span class="math inline">\(\nabla f\)</span> is <strong><span class="math inline">\(L\)</span>-Lipschitz</strong> for some <span class="math inline">\(L &gt; 0\)</span>: <span class="math inline">\(\|\nabla f(x) - \nabla f(y)\| \le L\,\|x - y\|\)</span> for all <span class="math inline">\(x, y\)</span></p>
-<p>A quadratic with curvatures <span class="math inline">\(a_j\)</span> has <span class="math inline">\(L = \max_j |a_j|\)</span>, the valley’s <span class="math inline">\(a_1\)</span>; least squares, <span class="math inline">\(L = 2\lambda_{\max}(\mathbf X^\top\mathbf X)/n\)</span>; the saddle example has no single <span class="math inline">\(L\)</span> (curvature <span class="math inline">\(12u^2 - 4\)</span> in <span class="math inline">\(u\)</span>)</p>
+<p>To make it a theorem, say “curvature at most <span class="math inline">\(L\)</span>” about the gradient: <strong>Assumption.</strong> <span class="math inline">\(\nabla f\)</span> is <strong><span class="math inline">\(L\)</span>-Lipschitz</strong> for some <span class="math inline">\(L &gt; 0\)</span>: <span class="math inline">\(\|\nabla f(x) - \nabla f(y)\| \le L\,\|x - y\|\)</span> for all <span class="math inline">\(x, y\)</span></p>
+<p>A quadratic with curvatures <span class="math inline">\(a_j\)</span> has <span class="math inline">\(L = \max_j |a_j|\)</span> (the valley: 10); least squares, <span class="math inline">\(L = 2\lambda_{\max}(\mathbf X^T\mathbf X)/n\)</span>; the saddle has no single <span class="math inline">\(L\)</span> (curvature <span class="math inline">\(12u^2 - 4\)</span> in <span class="math inline">\(u\)</span>)</p>
 </div>
 </section>
 <section id="descent-lemma" class="slide level2">
@@ -470,13 +482,13 @@ f\!\left(x - \tfrac1L\nabla f(x)\right) \le f(x) - \frac{\|\nabla f(x)\|^2}{2L}
 <p>Write <span class="math inline">\(v = y - x\)</span> for the step, so that <span class="math inline">\(y = x - \gamma\nabla f(x)\)</span> means <span class="math inline">\(v = -\gamma\nabla f(x)\)</span>, and <span class="math inline">\(x_t = x + tv\)</span> for the point a fraction <span class="math inline">\(t\)</span> of the way along it, so that <span class="math inline">\(\|x_t - x\| = t\|v\|\)</span></p>
 <p><span class="math display">\[
 \begin{alignedat}{2}
-f(y) - f(x) &amp;= \int_0^1 \nabla f(x_t)^\top v\, dt
+f(y) - f(x) &amp;= \int_0^1 \nabla f(x_t)^T v\, dt
 &amp;\quad&amp; \class{fragment}{\color{gray}\small\text{(a) along the step}} \\
-&amp;\class{fragment}{{}= \nabla f(x)^\top v + \int_0^1 \big[\nabla f(x_t) - \nabla f(x)\big]^\top v\, dt}
+&amp;\class{fragment}{{}= \nabla f(x)^T v + \int_0^1 \big[\nabla f(x_t) - \nabla f(x)\big]^T v\, dt}
 &amp;&amp; \class{fragment}{\color{gray}\small\text{(b) add and subtract}} \\
-&amp;\class{fragment}{{}\le \nabla f(x)^\top v + \int_0^1 \|\nabla f(x_t) - \nabla f(x)\|\,\|v\|\, dt}
+&amp;\class{fragment}{{}\le \nabla f(x)^T v + \int_0^1 \|\nabla f(x_t) - \nabla f(x)\|\,\|v\|\, dt}
 &amp;&amp; \class{fragment}{\color{gray}\small\text{(c) Cauchy-Schwarz}} \\
-&amp;\class{fragment}{{}\le \nabla f(x)^\top v + \int_0^1 L\,t\,\|v\|^2\, dt}
+&amp;\class{fragment}{{}\le \nabla f(x)^T v + \int_0^1 L\,t\,\|v\|^2\, dt}
 &amp;&amp; \class{fragment}{\color{gray}\small\text{(d) Lipschitz}}
 \end{alignedat}
 \]</span></p>
@@ -485,9 +497,9 @@ f(y) - f(x) &amp;= \int_0^1 \nabla f(x_t)^\top v\, dt
 <h2>Descent lemma, proof (2 of 2)</h2>
 <p><span class="math display">\[
 \begin{alignedat}{2}
-f(y) - f(x) &amp;\le \nabla f(x)^\top v + \int_0^1 L\,t\,\|v\|^2\, dt
+f(y) - f(x) &amp;\le \nabla f(x)^T v + \int_0^1 L\,t\,\|v\|^2\, dt
 &amp;\quad&amp; \\
-&amp;= \nabla f(x)^\top v + \tfrac{L}{2}\|v\|^2
+&amp;= \nabla f(x)^T v + \tfrac{L}{2}\|v\|^2
 &amp;&amp; {\color{gray}\small\text{(e) } \textstyle\int_0^1 t\, dt = \tfrac12} \\
 &amp;= -\gamma\|\nabla f(x)\|^2 + \tfrac{L}{2}\gamma^2\|\nabla f(x)\|^2
 &amp;&amp; {\color{gray}\small\text{(f) } v = -\gamma\nabla f(x)} \\
@@ -522,7 +534,7 @@ f(y) - f(x) &amp;\le \nabla f(x)^\top v + \int_0^1 L\,t\,\|v\|^2\, dt
 </thead>
 <tbody>
 <tr class="odd">
-<td>Least-squares formula <span class="math inline">\((\mathbf X^\top\mathbf X)^{-1}\mathbf X^\top\mathbf y\)</span></td>
+<td>Least-squares formula <span class="math inline">\((\mathbf X^T\mathbf X)^{-1}\mathbf X^T\mathbf y\)</span></td>
 <td>about <span class="math inline">\(np^2 + p^3\)</span></td>
 <td>once</td>
 </tr>
@@ -562,7 +574,7 @@ f(y) - f(x) &amp;\le \nabla f(x)^\top v + \int_0^1 L\,t\,\|v\|^2\, dt
 <section id="the-two-paths" class="slide level2">
 <h2>The two paths</h2>
 <div class="columns">
-<div class="column" style="width:55%;">
+<div class="column" style="width:52%;">
 <div class="cell">
 <div class="cell-output-display">
 <div>
@@ -572,10 +584,10 @@ f(y) - f(x) &amp;\le \nabla f(x)^\top v + \int_0^1 L\,t\,\|v\|^2\, dt
 </div>
 </div>
 </div>
-</div><div class="column" style="width:45%;">
-<p>Simulated least squares, <span class="math inline">\(n = 200\)</span>, two inputs</p>
+</div><div class="column" style="width:48%;">
+<p>Simulated least squares, <span class="math inline">\(n = 200\)</span>, two inputs; <span class="math inline">\(\times\)</span> is the answer</p>
 <p><strong>Blue:</strong> 30 full gradient steps, <span class="math inline">\(6{,}000\)</span> row-gradients. <strong>Orange:</strong> 600 single-row steps, <span class="math inline">\(600\)</span> row-gradients, step <span class="math inline">\(0.05/(1 + t/100)\)</span></p>
-<p>The noisy path reaches the neighborhood of the answer (<span class="math inline">\(\times\)</span>) for a tenth of the work, and never sits still. With noise the step shrinks, <span class="math inline">\(\gamma_t \to 0\)</span>, but not so fast that it stops short (panel C): Robbins and Monro, 1951</p>
+<p>A tenth of the work, and it never sits still. The step must shrink, but not so fast that it stops short like panel C (Robbins and Monro, 1951)</p>
 </div></div>
 </section>
 <section id="history-imagenet-2012" class="slide level2 inverse">
@@ -620,7 +632,7 @@ f(y) - f(x) &amp;\le \nabla f(x)^\top v + \int_0^1 L\,t\,\|v\|^2\, dt
 </div>
 </div>
 </div><div class="column" style="width:45%;">
-<p>Simulated: least squares from <span class="math inline">\(\beta_0 = \mathbf 0\)</span>, <span class="math inline">\(n = 80\)</span>, <span class="math inline">\(p = 60\)</span>, noise sd 3, step <span class="math inline">\(1/2L\)</span></p>
+<p><strong>The wide regression:</strong> simulated least squares, <span class="math inline">\(n = 80\)</span>, <span class="math inline">\(p = 60\)</span>, noise sd 3, from <span class="math inline">\(\beta_0 = \mathbf 0\)</span> with step <span class="math inline">\(1/2L\)</span></p>
 <p>The training error, the number the algorithm sees, falls at every step and is still falling at 300</p>
 <div class="ask">
 <p>You may stop the algorithm at any step. Which one, and why?</p>
@@ -641,7 +653,7 @@ f(y) - f(x) &amp;\le \nabla f(x)^\top v + \int_0^1 L\,t\,\|v\|^2\, dt
 </div>
 </div>
 </div><div class="column" style="width:45%;">
-<p>The same run scored on 2,000 new rows from the same model: the held-out error falls, turns at step 15, and ends far above its minimum</p>
+<p>The wide regression scored on 2,000 new rows from the same model: the held-out error falls, turns at step 15, and ends far above its minimum</p>
 <p>Every diagnostic in part 3 watched the training loss, and every one said “keep going”. <strong>Tracking the training loss is not tracking the loss you care about.</strong> Next week: by how much it lies</p>
 <p>The number of steps is a tuning parameter, like <span class="math inline">\(k\)</span> or <span class="math inline">\(d\)</span>; week 7 writes the penalty down, <span class="math inline">\(\hat R_n(\beta) + \lambda\|\beta\|^2\)</span></p>
 </div></div>
@@ -649,8 +661,8 @@ f(y) - f(x) &amp;\le \nabla f(x)^\top v + \int_0^1 L\,t\,\|v\|^2\, dt
 <section id="where-the-error-comes-from-this-time" class="slide level2">
 <h2>Where the error comes from, this time</h2>
 <p>Three functions. <span class="math inline">\(f^\star = \arg\min_f R(f)\)</span>: the best of all (squared loss: week 2’s conditional mean). <span class="math inline">\(f_{\mathcal F} = \arg\min_{f \in \mathcal F} R(f)\)</span>: the best in the class, fixed once <span class="math inline">\(\mathcal F\)</span> is. <span class="math inline">\(\hat f = \arg\min_{f \in \mathcal F} \hat R_n(f)\)</span>: what the data give, random</p>
-<p><strong>Bias–variance decomposition, ERM form.</strong> Both terms are <span class="math inline">\(\ge 0\)</span>: <span class="math display">\[
-R(\hat f) - R(f^\star) = \underbrace{\big[R(\hat f) - R(f_{\mathcal F})\big]}_{\text{estimation}} + \underbrace{\big[R(f_{\mathcal F}) - R(f^\star)\big]}_{\text{approximation}}
+<p><strong>Bias–variance decomposition, ERM form.</strong> Both underbraced terms are <span class="math inline">\(\ge 0\)</span>: <span class="math display">\[
+R(\hat f) = R(f^\star) + \underbrace{\big[R(\hat f) - R(f_{\mathcal F})\big]}_{\text{estimation}} + \underbrace{\big[R(f_{\mathcal F}) - R(f^\star)\big]}_{\text{approximation}}
 \]</span></p>
 <div class="leave">
 <p>Proof: exercise 2, two lines. The class was chosen before the data, and so was the approximation error; the estimation error is the sample’s (and can hold bias as well as variance). The same trade-off as week 1’s, for any method that minimizes over a class. Next week starts here</p>
@@ -664,17 +676,10 @@ R(\hat f) - R(f^\star) = \underbrace{\big[R(\hat f) - R(f_{\mathcal F})\big]}_{\
 <p>In the week 1 seminar a line and <span class="math inline">\(k\)</span> nearest neighbors often scored within a standard error of each other on gapminder. A fact about the methods, or about the data?</p>
 </div>
 </section>
-<section id="before-the-seminar" class="slide level2">
-<h2>Before the seminar</h2>
-<ul>
-<li><p>This week: exercises 1 to 4 at the top of the notebook. The descent lemma again with the slides closed; the proof of the ERM form of the bias–variance decomposition; the second derivative of the logistic log-likelihood and the Newton-Raphson update; and no free lunch on a finite domain</p></li>
-<li><p>In the seminar you write gradient descent once, as a function, and use it for least squares, then logistic regression, then with random batches; and you watch the gradient norm while it runs</p></li>
-</ul>
-</section>
 <section id="conclusion-optimization-in-ml-is-a-big-topic" class="slide level2 inverse">
 <h2>Conclusion: optimization in ML is a big topic</h2>
 <h4 id="what-the-fitting-algorithm-does">What the fitting algorithm does</h4>
-<p>Steps against the gradient of the training loss; <code>glm</code> does the same with a Hessian. One guarantee, with a price: each small step helps if the curvature is bounded; where it ends, and whether it has ended, this bound alone does not say. The gradient norm tells you more than the loss</p>
+<p>Each small step helps when curvature is bounded; where it ends, and whether it has ended, the guarantee does not say</p>
 <h4 id="training-loss-is-not-the-loss-you-care-about">Training loss is not the loss you care about</h4>
 <p>Every diagnostic today watched the training loss. A lower training loss is numerical progress; whether it is a better model is a different question</p>
 <h4 id="stopping-at-the-right-amount-of-complexity">Stopping at the right amount of complexity</h4>
