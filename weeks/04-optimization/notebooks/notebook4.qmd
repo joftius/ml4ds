@@ -193,15 +193,7 @@ ls_grad <- function(X, y, beta) {
 ```{r}
 #| eval: false
 gradient_descent <- function(X, y, loss, grad, gamma, steps, beta0 = rep(0, ncol(X))) {
-  beta <- beta0
-  losses <- numeric(steps)
-  grad_norms <- numeric(steps)
-  for (t in 1:steps) {
-    g <- grad(X, y, beta)
-    # beta <- ____
-    losses[t] <- loss(X, y, beta)
-    grad_norms[t] <- sqrt(sum(g^2))
-  }
+  # ...
   list(beta = as.vector(beta), losses = losses, grad_norms = grad_norms)
 }
 ```
@@ -275,17 +267,8 @@ with $e_j$ the $j$th coordinate vector. Check it against `ls_grad` and `logit_gr
 ```{r}
 #| eval: false
 numeric_grad <- function(loss, X, y, beta, h = 1e-6) {
-  p <- length(beta)
-  g <- numeric(p)
-  for (j in 1:p) {
-    e <- numeric(p)
-    e[j] <- h
-    # g[j] <- ____
-  }
-  g
+  # ...
 }
-# b <- c(0.5, -0.3)
-# cbind(exact = ls_grad(X, y, b), numeric = numeric_grad(ls_loss, X, y, b))
 # fit_num <- gradient_descent(X_pg, y_pg, logit_loss, grad = ____, gamma = 4, steps = 40)
 ```
 
@@ -321,12 +304,7 @@ gamma <- 0.005
 beta_sgd <- rep(0, p_big)
 sgd_path <- tibble(epoch = 1:epochs, train_mse = NA_real_, dist_to_truth = NA_real_)
 for (e in 1:epochs) {
-  shuffled <- sample(n_big)
-  for (start in seq(1, n_big, by = batch_size)) {
-    rows <- shuffled[start:min(start + batch_size - 1, n_big)]
-    # g <- ____          # the gradient of the batch's mean squared error
-    # beta_sgd <- ____
-  }
+  # ...
   sgd_path$train_mse[e] <- ls_loss(X_big, y_big, beta_sgd)
   sgd_path$dist_to_truth[e] <- sqrt(sum((beta_sgd - beta_true)^2))
 }
@@ -350,14 +328,9 @@ y_held <- X_held %*% beta_w + rnorm(2000, sd = 3)
 
 ```{r}
 #| eval: false
-L <- 2 * max(eigen(t(X_w) %*% X_w / n_w)$values)
+# L <- ____
 beta_gd <- rep(0, p_w)
 es_path <- tibble(step = 1:300, training = NA_real_, held_out = NA_real_)
-for (t in 1:300) {
-  # beta_gd <- ____
-  es_path$training[t] <- ls_loss(X_w, y_w, beta_gd)
-  es_path$held_out[t] <- ls_loss(X_held, y_held, beta_gd)
-}
 # ...
 ```
 
@@ -369,7 +342,6 @@ Compare the stochastic gradient descent estimate from part 2, step 1, with week 
 
 ```{r}
 #| eval: false
-beta_mn <- MASS::ginv(X_big) %*% y_big
 # ...
 ```
 

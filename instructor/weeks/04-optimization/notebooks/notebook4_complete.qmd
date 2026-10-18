@@ -247,15 +247,25 @@ Common errors: choosing $\gamma = 1/10$ (which lands the steep direction in one 
 (d) The descent lemma says a full gradient step of size $1/L$ decreases $\hat R_n$. Does a step of size $1/L$ along $\nabla\ell_I(\beta)$ decrease $\hat R_n$? Give a reason or a counterexample.
 
 ::: {.callout-note .answer collapse="true" title="Hint 1"}
-(a) $P(I = i) = 1/n$ for each $i$; write out $\mathbb E_I$ as a sum. (b) The $b$ draws are independent copies of the single-row gradient.
+(a) Write $\nabla\ell_I(\beta)$ as a sum over $i = 1, \dots, n$, with indicators $\mathbb 1[I = i]$ for each case.
 :::
 
 ::: {.callout-note .answer collapse="true" title="Hint 2"}
+(a) Only the indicators are random; what is $\mathbb E\,\mathbb 1[I = i]$? (b) The $b$ draws are independent copies of the single-row gradient.
+:::
+
+::: {.callout-note .answer collapse="true" title="Hint 3"}
 (d) Take $n = 2$ with $\ell_1(\beta) = (\beta - 1)^2$ and $\ell_2(\beta) = (\beta + 1)^2$, and stand at the minimizer of $\hat R_n$.
 :::
 
 ::: {.callout-tip .answer collapse="true" title="Reveal answer"}
-(a) $\mathbb E_I[\nabla\ell_I(\beta)] = \sum_{i=1}^n P(I = i)\,\nabla\ell_i(\beta) = \tfrac1n\sum_i \nabla\ell_i(\beta) = \nabla\hat R_n(\beta)$. No assumption about the data at all: the only randomness is the index, and the $n$ rows could be anything. $\blacksquare$
+(a) Exactly one of the indicators $\mathbb 1[I = i]$ is $1$, so $\nabla\ell_I(\beta) = \sum_{i=1}^n \mathbb 1[I = i]\,\nabla\ell_i(\beta)$. Each $\nabla\ell_i(\beta)$ is a fixed vector and only the indicators are random, so by linearity of expectation
+$$
+\mathbb E_I[\nabla\ell_I(\beta)] = \sum_{i=1}^n \mathbb E\big[\mathbb 1[I = i]\big]\,\nabla\ell_i(\beta) = \sum_{i=1}^n \frac1n\,\nabla\ell_i(\beta) = \nabla\hat R_n(\beta).
+$$
+No assumption about the data at all: the only randomness is the index, and the $n$ rows could be anything. $\blacksquare$
+
+The technique is worth keeping: when a random quantity picks one of several cases, write it as a sum over the cases, each multiplied by the indicator of that case. The randomness is then all in the indicators, a linear operation such as expectation passes through the sum, and $\mathbb E\,\mathbb 1[A] = P(A)$. The same move counts expected matches, expected fixed points of a random permutation, and the expected number of distinct rows in a bootstrap sample.
 
 (b) The batch gradient is the mean of $b$ independent copies of $\nabla\ell_I(\beta)$: mean $\nabla\hat R_n(\beta)$, still unbiased, variance $\sigma^2(\beta)/b$, coordinate by coordinate.
 
@@ -329,15 +339,7 @@ ls_grad <- function(X, y, beta) -2 / nrow(X) * t(X) %*% (y - X %*% beta)
 ```{r}
 #| eval: false
 gradient_descent <- function(X, y, loss, grad, gamma, steps, beta0 = rep(0, ncol(X))) {
-  beta <- beta0
-  losses <- numeric(steps)
-  grad_norms <- numeric(steps)
-  for (t in 1:steps) {
-    g <- grad(X, y, beta)
-    # beta <- ____
-    losses[t] <- loss(X, y, beta)
-    grad_norms[t] <- sqrt(sum(g^2))
-  }
+  # ...
   list(beta = as.vector(beta), losses = losses, grad_norms = grad_norms)
 }
 ```
@@ -489,17 +491,8 @@ with $e_j$ the $j$th coordinate vector. Check it against `ls_grad` and `logit_gr
 ```{r}
 #| eval: false
 numeric_grad <- function(loss, X, y, beta, h = 1e-6) {
-  p <- length(beta)
-  g <- numeric(p)
-  for (j in 1:p) {
-    e <- numeric(p)
-    e[j] <- h
-    # g[j] <- ____
-  }
-  g
+  # ...
 }
-# b <- c(0.5, -0.3)
-# cbind(exact = ls_grad(X, y, b), numeric = numeric_grad(ls_loss, X, y, b))
 # fit_num <- gradient_descent(X_pg, y_pg, logit_loss, grad = ____, gamma = 4, steps = 40)
 ```
 
@@ -563,12 +556,7 @@ gamma <- 0.005
 beta_sgd <- rep(0, p_big)
 sgd_path <- tibble(epoch = 1:epochs, train_mse = NA_real_, dist_to_truth = NA_real_)
 for (e in 1:epochs) {
-  shuffled <- sample(n_big)
-  for (start in seq(1, n_big, by = batch_size)) {
-    rows <- shuffled[start:min(start + batch_size - 1, n_big)]
-    # g <- ____          # the gradient of the batch's mean squared error
-    # beta_sgd <- ____
-  }
+  # ...
   sgd_path$train_mse[e] <- ls_loss(X_big, y_big, beta_sgd)
   sgd_path$dist_to_truth[e] <- sqrt(sum((beta_sgd - beta_true)^2))
 }
@@ -620,14 +608,9 @@ y_held <- X_held %*% beta_w + rnorm(2000, sd = 3)
 
 ```{r}
 #| eval: false
-L <- 2 * max(eigen(t(X_w) %*% X_w / n_w)$values)
+# L <- ____
 beta_gd <- rep(0, p_w)
 es_path <- tibble(step = 1:300, training = NA_real_, held_out = NA_real_)
-for (t in 1:300) {
-  # beta_gd <- ____
-  es_path$training[t] <- ls_loss(X_w, y_w, beta_gd)
-  es_path$held_out[t] <- ls_loss(X_held, y_held, beta_gd)
-}
 # ...
 ```
 
@@ -662,7 +645,6 @@ Compare the stochastic gradient descent estimate from part 2, step 1, with week 
 
 ```{r}
 #| eval: false
-beta_mn <- MASS::ginv(X_big) %*% y_big
 # ...
 ```
 
