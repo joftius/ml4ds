@@ -555,17 +555,9 @@ Note
 <p><strong>Step 2.</strong> The loop, as a function you will reuse: start from <code>beta0</code>, take <code>steps</code> steps of size <code>gamma</code> along the negative gradient, and record the loss and the gradient norm after each step. It takes the loss and gradient <em>functions</em> as arguments, so that the same loop fits a different model when those two change.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>gradient_descent <span class="ot">&lt;-</span> <span class="cf">function</span>(X, y, loss, grad, gamma, steps, <span class="at">beta0 =</span> <span class="fu">rep</span>(<span class="dv">0</span>, <span class="fu">ncol</span>(X))) {</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  beta <span class="ot">&lt;-</span> beta0</span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  losses <span class="ot">&lt;-</span> <span class="fu">numeric</span>(steps)</span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  grad_norms <span class="ot">&lt;-</span> <span class="fu">numeric</span>(steps)</span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (t <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>steps) {</span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>    g <span class="ot">&lt;-</span> <span class="fu">grad</span>(X, y, beta)</span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>    <span class="co"># beta &lt;- ____</span></span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>    losses[t] <span class="ot">&lt;-</span> <span class="fu">loss</span>(X, y, beta)</span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>    grad_norms[t] <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(<span class="fu">sum</span>(g<span class="sc">^</span><span class="dv">2</span>))</span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>  }</span>
-<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">list</span>(<span class="at">beta =</span> <span class="fu">as.vector</span>(beta), <span class="at">losses =</span> losses, <span class="at">grad_norms =</span> grad_norms)</span>
-<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="co"># ...</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">list</span>(<span class="at">beta =</span> <span class="fu">as.vector</span>(beta), <span class="at">losses =</span> losses, <span class="at">grad_norms =</span> grad_norms)</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>Checkpoint (run it; if it stops, fix step 1 or 2 before going on):</p>
 <div class="cell">
@@ -614,18 +606,9 @@ Note
 \]</span> with <span class="math inline">\(e_j\)</span> the <span class="math inline">\(j\)</span>th coordinate vector. Check it against <code>ls_grad</code> and <code>logit_grad</code> at some <span class="math inline">\(\beta\)</span> of your choice, then fit the penguin model again with <code>gradient_descent</code>, passing a gradient function that calls <code>numeric_grad</code> on <code>logit_loss</code>.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>numeric_grad <span class="ot">&lt;-</span> <span class="cf">function</span>(loss, X, y, beta, <span class="at">h =</span> <span class="fl">1e-6</span>) {</span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  p <span class="ot">&lt;-</span> <span class="fu">length</span>(beta)</span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  g <span class="ot">&lt;-</span> <span class="fu">numeric</span>(p)</span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (j <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>p) {</span>
-<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>    e <span class="ot">&lt;-</span> <span class="fu">numeric</span>(p)</span>
-<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>    e[j] <span class="ot">&lt;-</span> h</span>
-<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>    <span class="co"># g[j] &lt;- ____</span></span>
-<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>  }</span>
-<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>  g</span>
-<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a><span class="co"># b &lt;- c(0.5, -0.3)</span></span>
-<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a><span class="co"># cbind(exact = ls_grad(X, y, b), numeric = numeric_grad(ls_loss, X, y, b))</span></span>
-<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a><span class="co"># fit_num &lt;- gradient_descent(X_pg, y_pg, logit_loss, grad = ____, gamma = 4, steps = 40)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  <span class="co"># ...</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="co"># fit_num &lt;- gradient_descent(X_pg, y_pg, logit_loss, grad = ____, gamma = 4, steps = 40)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>Checkpoint:</p>
 <div class="cell">
@@ -652,16 +635,11 @@ Note
 <span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>beta_sgd <span class="ot">&lt;-</span> <span class="fu">rep</span>(<span class="dv">0</span>, p_big)</span>
 <span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>sgd_path <span class="ot">&lt;-</span> <span class="fu">tibble</span>(<span class="at">epoch =</span> <span class="dv">1</span><span class="sc">:</span>epochs, <span class="at">train_mse =</span> <span class="cn">NA_real_</span>, <span class="at">dist_to_truth =</span> <span class="cn">NA_real_</span>)</span>
 <span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (e <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>epochs) {</span>
-<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>  shuffled <span class="ot">&lt;-</span> <span class="fu">sample</span>(n_big)</span>
-<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (start <span class="cf">in</span> <span class="fu">seq</span>(<span class="dv">1</span>, n_big, <span class="at">by =</span> batch_size)) {</span>
-<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>    rows <span class="ot">&lt;-</span> shuffled[start<span class="sc">:</span><span class="fu">min</span>(start <span class="sc">+</span> batch_size <span class="sc">-</span> <span class="dv">1</span>, n_big)]</span>
-<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>    <span class="co"># g &lt;- ____          # the gradient of the batch's mean squared error</span></span>
-<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>    <span class="co"># beta_sgd &lt;- ____</span></span>
-<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a>  }</span>
-<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a>  sgd_path<span class="sc">$</span>train_mse[e] <span class="ot">&lt;-</span> <span class="fu">ls_loss</span>(X_big, y_big, beta_sgd)</span>
-<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a>  sgd_path<span class="sc">$</span>dist_to_truth[e] <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(<span class="fu">sum</span>((beta_sgd <span class="sc">-</span> beta_true)<span class="sc">^</span><span class="dv">2</span>))</span>
-<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a><span class="co"># ...</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>  <span class="co"># ...</span></span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>  sgd_path<span class="sc">$</span>train_mse[e] <span class="ot">&lt;-</span> <span class="fu">ls_loss</span>(X_big, y_big, beta_sgd)</span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>  sgd_path<span class="sc">$</span>dist_to_truth[e] <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(<span class="fu">sum</span>((beta_sgd <span class="sc">-</span> beta_true)<span class="sc">^</span><span class="dv">2</span>))</span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a><span class="co"># ...</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p><strong>Question 4.</strong> The training MSE goes to zero. Why is that possible, and why should it worry you? The distance to the true coefficients levels off at about <span class="math inline">\(33\)</span>, from a starting distance of <span class="math inline">\(38\)</span>: what is it that the algorithm cannot learn from these data?</p>
 <p><strong>Step 2.</strong> The lecture’s wide regression: <span class="math inline">\(n = 80\)</span>, <span class="math inline">\(p = 60\)</span>, noisy, and a held-out set of 2,000 rows from the same model. Run full-batch gradient descent from zero for 300 steps with step <code>0.5 / L</code>, where <code>L</code> is twice the largest eigenvalue of <span class="math inline">\(\mathbf X^T\mathbf X/n\)</span>, and record the training and the held-out MSE after every step. Plot both against the step (log scale on the horizontal axis), and find the step at which the held-out MSE is smallest.</p>
@@ -676,15 +654,10 @@ Note
 <span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>y_held <span class="ot">&lt;-</span> X_held <span class="sc">%*%</span> beta_w <span class="sc">+</span> <span class="fu">rnorm</span>(<span class="dv">2000</span>, <span class="at">sd =</span> <span class="dv">3</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>L <span class="ot">&lt;-</span> <span class="dv">2</span> <span class="sc">*</span> <span class="fu">max</span>(<span class="fu">eigen</span>(<span class="fu">t</span>(X_w) <span class="sc">%*%</span> X_w <span class="sc">/</span> n_w)<span class="sc">$</span>values)</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># L &lt;- ____</span></span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>beta_gd <span class="ot">&lt;-</span> <span class="fu">rep</span>(<span class="dv">0</span>, p_w)</span>
 <span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>es_path <span class="ot">&lt;-</span> <span class="fu">tibble</span>(<span class="at">step =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">300</span>, <span class="at">training =</span> <span class="cn">NA_real_</span>, <span class="at">held_out =</span> <span class="cn">NA_real_</span>)</span>
-<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (t <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">300</span>) {</span>
-<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>  <span class="co"># beta_gd &lt;- ____</span></span>
-<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>  es_path<span class="sc">$</span>training[t] <span class="ot">&lt;-</span> <span class="fu">ls_loss</span>(X_w, y_w, beta_gd)</span>
-<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>  es_path<span class="sc">$</span>held_out[t] <span class="ot">&lt;-</span> <span class="fu">ls_loss</span>(X_held, y_held, beta_gd)</span>
-<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a><span class="co"># ...</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a><span class="co"># ...</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p><strong>Question 5.</strong> The training error falls at every step, as the descent lemma says it must. Where would you have stopped if you had only seen it? You chose the number of steps by looking at the held-out MSE: can you now report that held-out MSE as an honest estimate of the chosen model’s error? What would you need instead?</p>
 </section>
@@ -692,8 +665,7 @@ Note
 <h3 class="anchored" data-anchor-id="optional-can-be-done-at-home-which-of-the-many-solutions">Optional, can be done at home: which of the many solutions</h3>
 <p>Compare the stochastic gradient descent estimate from part 2, step 1, with week 2’s minimum-norm least-squares solution, <code>MASS::ginv(X_big) %*% y_big</code>, and compute the norms of the two.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>beta_mn <span class="ot">&lt;-</span> MASS<span class="sc">::</span><span class="fu">ginv</span>(X_big) <span class="sc">%*%</span> y_big</span>
-<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="co"># ...</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ...</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 
 

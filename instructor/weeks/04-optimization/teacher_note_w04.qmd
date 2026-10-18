@@ -16,15 +16,15 @@ In seminar order. Planned total 60 minutes; cutting the first item marked gets b
 | Problem 1(a, b): one step, the fixed point is the normal equations | 4 | Keep | The iteration stops where week 2's equations hold |
 | Problem 1(c, d): curvatures 2 and 4/3, safe step below 1, the slope is slow | 3 | Keep | Largest curvature sets the step, smallest sets the speed |
 | Problem 2: the recurrence, one step at $1/a$, best shared step $2/11$ | 4 | Rush; cut second | Say it: the factors cross at $2/11$, factor $9/11$ |
-| Problem 3(a to c): random row unbiased, variance $\sigma^2/b$ | 3 | Keep | Only the index is random; no assumption about the data |
+| Problem 3(a to c): random row unbiased, variance $\sigma^2/b$ | 3 | Keep | Write it as a sum with indicators; only the index is random, no assumption about the data |
 | Problem 3(d): a stochastic step can increase the loss | 2 | Keep | The two-parabola counterexample at $\beta = 0$ |
 | Problem 4: shrinking steps stop at $-2.48$, sum of steps $0.45$ | 4 | Rush | Finite total step size, finite total travel |
-| Coding 1, steps 1 and 2: the loss, the gradient, the loop as a function | 7 | Keep | Give the update line if stuck; keep the function signature |
+| Coding 1, steps 1 and 2: the loss, the gradient, the loop as a function | 7 | Keep | The skeleton gives only the signature and the return line; if stuck, give the loop with the update line blank |
 | Coding 1, step 3 and question 1: three step sizes, loss and gradient norm | 6 | Keep | The gradient norm tells $0.05$ (slow) from $0.3$ (done) |
 | Coding 1, step 4 and question 2: uncentered input, ratio 680 | 2 | Rush; cut first | Say the numbers: 300 steps and the intercept is still off by 0.4 |
 | Coding 1, step 5 and question 3: logistic by the same loop, score check | 6 | Keep | Only two functions changed; $2/L = 8$ |
 | Coding 1, step 6 and its question: the gradient by central differences | 4 | Keep | Now only the loss changes; $2p$ loss evaluations per step |
-| Coding 2, step 1 and question 4: $p > n$, training MSE to zero | 7 | Keep | Zero training error, distance to truth stuck at 33 |
+| Coding 2, step 1 and question 4: $p > n$, training MSE to zero | 7 | Keep | Zero training error, distance to truth stuck at 33. If stuck, give the shuffle-and-batch lines; the step is `ls_grad` on the batch |
 | Coding 2, step 2 and question 5: early stopping, best step 15 | 8 | Keep | Training says keep going; held-out turned at 15; the estimate is now biased |
 
 : {tbl-colwidths="[32,6,16,46]"}
