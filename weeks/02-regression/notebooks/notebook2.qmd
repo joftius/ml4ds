@@ -54,32 +54,32 @@ Show that the cross term, $\mathbb E\big[(Y - f^\star(X))\,(f^\star(X) - f(X))\b
 Condition on $X$ first (the tower property), then take out what is known.
 :::
 
-**Exercise 2 (omitted-variable bias).** Two predictors matter: $\mathbf y = \beta_1 \mathbf x_1 + \beta_2 \mathbf x_2 + \boldsymbol\varepsilon$, all vectors in $\mathbb R^n$ and centered (the intercept partialled out, as in the lecture). What is fixed: the inputs $\mathbf x_1$ and $\mathbf x_2$, which we condition on. What is random: the noise, with $\mathbb E\,\boldsymbol\varepsilon = \mathbf 0$, and through it $\mathbf y$. Somebody regresses $\mathbf y$ on $\mathbf x_1$ alone and reports $\hat\beta_{\text{short}} = \mathbf x_1^\top\mathbf y / \mathbf x_1^\top\mathbf x_1$, random through $\mathbf y$. Show that
+**Exercise 2 (omitted-variable bias).** Two predictors matter: $\mathbf y = \beta_1 \mathbf x_1 + \beta_2 \mathbf x_2 + \boldsymbol\varepsilon$, all vectors in $\mathbb R^n$ and centered (the intercept partialled out, as in the lecture). What is fixed: the inputs $\mathbf x_1$ and $\mathbf x_2$, which we condition on. What is random: the noise, with $\mathbb E\,\boldsymbol\varepsilon = \mathbf 0$, and through it $\mathbf y$. Somebody regresses $\mathbf y$ on $\mathbf x_1$ alone and reports $\hat\beta_{\text{short}} = \mathbf x_1^T\mathbf y / \mathbf x_1^T\mathbf x_1$, random through $\mathbf y$. Show that
 $$
-\mathbb E\big[\hat\beta_{\text{short}} \mid \mathbf x_1, \mathbf x_2\big] = \beta_1 + \beta_2\,\hat\delta, \qquad \hat\delta = \frac{\mathbf x_1^\top\mathbf x_2}{\mathbf x_1^\top\mathbf x_1},
+\mathbb E\big[\hat\beta_{\text{short}} \mid \mathbf x_1, \mathbf x_2\big] = \beta_1 + \beta_2\,\hat\delta, \qquad \hat\delta = \frac{\mathbf x_1^T\mathbf x_2}{\mathbf x_1^T\mathbf x_1},
 $$
 say in words what $\hat\delta$ is, and say why it carries no randomness. When is the short regression unbiased for $\beta_1$?
 
 ::: {.callout-note collapse="true" title="Hint 1"}
-Substitute the model for $\mathbf y$ inside $\mathbf x_1^\top\mathbf y$ and split the fraction into three terms.
+Substitute the model for $\mathbf y$ inside $\mathbf x_1^T\mathbf y$ and split the fraction into three terms.
 :::
 
 ::: {.callout-note collapse="true" title="Hint 2"}
 Two of the three terms are numbers once the inputs are fixed. Only the noise term is random: what is its expectation given the inputs?
 :::
 
-**Exercise 3 (partialling-out theorem).** The lecture proved this one. Close the slides and prove it again. $\mathbf X = [\mathbf X_1 \;\; \mathbf x_2]$ has full column rank, with the intercept column inside $\mathbf X_1$; $\mathbf M_1 = \mathbf I - \mathbf X_1(\mathbf X_1^\top\mathbf X_1)^{-1}\mathbf X_1^\top$ and $\tilde{\mathbf x}_2 = \mathbf M_1\mathbf x_2$. You may use that $\mathbf M_1$ is symmetric, that $\mathbf M_1^2 = \mathbf M_1$ and that $\mathbf M_1\mathbf X_1 = \mathbf 0$ (optional problem 4 proves all three). Show that the coefficient on $\mathbf x_2$ in the least-squares regression of $\mathbf y$ on $\mathbf X$ is
+**Exercise 3 (partialling-out theorem).** The lecture proved this one. Close the slides and prove it again. $\mathbf X = [\mathbf X_1 \;\; \mathbf x_2]$ has full column rank, with the intercept column inside $\mathbf X_1$; $\mathbf M_1 = \mathbf I - \mathbf X_1(\mathbf X_1^T\mathbf X_1)^{-1}\mathbf X_1^T$ and $\tilde{\mathbf x}_2 = \mathbf M_1\mathbf x_2$. You may use that $\mathbf M_1$ is symmetric, that $\mathbf M_1^2 = \mathbf M_1$ and that $\mathbf M_1\mathbf X_1 = \mathbf 0$ (optional problem 4 proves all three). Show that the coefficient on $\mathbf x_2$ in the least-squares regression of $\mathbf y$ on $\mathbf X$ is
 $$
-\hat\beta_2 = \frac{\tilde{\mathbf x}_2^\top \mathbf y}{\tilde{\mathbf x}_2^\top \tilde{\mathbf x}_2},
+\hat\beta_2 = \frac{\tilde{\mathbf x}_2^T \mathbf y}{\tilde{\mathbf x}_2^T \tilde{\mathbf x}_2},
 $$
 and that regressing $\tilde{\mathbf y} = \mathbf M_1\mathbf y$ on $\tilde{\mathbf x}_2$ gives the same number. Where is full column rank used?
 
 ::: {.callout-note collapse="true" title="Hint 1"}
-Start from the full regression and its normal equations: $\mathbf y = \mathbf X_1\hat{\boldsymbol\beta}_1 + \mathbf x_2\hat\beta_2 + \mathbf r$, with $\mathbf X_1^\top\mathbf r = \mathbf 0$ and $\mathbf x_2^\top\mathbf r = 0$. Which matrix removes the $\mathbf X_1$ term?
+Start from the full regression and its normal equations: $\mathbf y = \mathbf X_1\hat{\boldsymbol\beta}_1 + \mathbf x_2\hat\beta_2 + \mathbf r$, with $\mathbf X_1^T\mathbf r = \mathbf 0$ and $\mathbf x_2^T\mathbf r = 0$. Which matrix removes the $\mathbf X_1$ term?
 :::
 
 ::: {.callout-note collapse="true" title="Hint 2"}
-Multiply through by $\mathbf M_1$ and say what happens to each of the three terms on the right. For the last one, write $\mathbf M_1\mathbf r = \mathbf r - \mathbf X_1(\mathbf X_1^\top\mathbf X_1)^{-1}\mathbf X_1^\top\mathbf r$.
+Multiply through by $\mathbf M_1$ and say what happens to each of the three terms on the right. For the last one, write $\mathbf M_1\mathbf r = \mathbf r - \mathbf X_1(\mathbf X_1^T\mathbf X_1)^{-1}\mathbf X_1^T\mathbf r$.
 :::
 
 ::: {.callout-note collapse="true" title="Hint 3"}
@@ -87,7 +87,7 @@ You now have $\mathbf M_1\mathbf y = \tilde{\mathbf x}_2\,\hat\beta_2 + \mathbf 
 :::
 
 ::: {.callout-note collapse="true" title="Hint 4"}
-After multiplying by $\tilde{\mathbf x}_2^\top = \mathbf x_2^\top\mathbf M_1$, two things remain: the term $\tilde{\mathbf x}_2^\top\mathbf r$, and an extra $\mathbf M_1$ on the left side. Each goes away by one of the properties of $\mathbf M_1$ you were given.
+After multiplying by $\tilde{\mathbf x}_2^T = \mathbf x_2^T\mathbf M_1$, two things remain: the term $\tilde{\mathbf x}_2^T\mathbf r$, and an extra $\mathbf M_1$ on the left side. Each goes away by one of the properties of $\mathbf M_1$ you were given.
 :::
 
 ## Problems
@@ -108,7 +108,7 @@ After multiplying by $\tilde{\mathbf x}_2^\top = \mathbf x_2^\top\mathbf M_1$, t
 
 (b) Numbers: $\mathbf x_1 = (-1, 0, 1)$, $\mathbf x_2 = (-2, 1, 1)$, $\beta_1 = 1$, $\beta_2 = 2$. Compute $\hat\delta$, and what the short regression estimates on average.
 
-(c) Suppose $\mathbf x_1^\top\mathbf x_2 = 0$. What happens to the coefficient on $\mathbf x_1$ when $\mathbf x_2$ is dropped? Reconcile your answer with the partialling-out theorem: what is the residual of $\mathbf x_1$ after regressing it on $\mathbf x_2$?
+(c) Suppose $\mathbf x_1^T\mathbf x_2 = 0$. What happens to the coefficient on $\mathbf x_1$ when $\mathbf x_2$ is dropped? Reconcile your answer with the partialling-out theorem: what is the residual of $\mathbf x_1$ after regressing it on $\mathbf x_2$?
 
 ### Optional, can be done at home
 
@@ -116,7 +116,7 @@ After multiplying by $\tilde{\mathbf x}_2^\top = \mathbf x_2^\top\mathbf M_1$, t
 
 **Problem 3 (normal equations, and centering).** Simple regression, from the lecture's "nice geometry" slide. The training error is $\hat R_n(\alpha, \beta) = \frac1n\sum_{i=1}^n (y_i - \alpha - \beta x_i)^2$.
 
-(a) Compute $\partial \hat R_n/\partial\alpha$ and $\partial \hat R_n/\partial\beta$, set both to zero, and show that the residuals $r_i = y_i - \hat\alpha - \hat\beta x_i$ satisfy $\sum_i r_i = 0$ and $\sum_i x_i r_i = 0$. Write the same two equations as $\mathbf X^\top \mathbf r = \mathbf 0$ with $\mathbf X = [\mathbf 1 \;\; \mathbf x]$.
+(a) Compute $\partial \hat R_n/\partial\alpha$ and $\partial \hat R_n/\partial\beta$, set both to zero, and show that the residuals $r_i = y_i - \hat\alpha - \hat\beta x_i$ satisfy $\sum_i r_i = 0$ and $\sum_i x_i r_i = 0$. Write the same two equations as $\mathbf X^T \mathbf r = \mathbf 0$ with $\mathbf X = [\mathbf 1 \;\; \mathbf x]$.
 
 (b) Solve them: show $\hat\beta = \sum_i (x_i - \bar x)(y_i - \bar y) \big/ \sum_i (x_i - \bar x)^2$ and $\hat\alpha = \bar y - \hat\beta \bar x$.
 
@@ -127,23 +127,23 @@ After multiplying by $\tilde{\mathbf x}_2^\top = \mathbf x_2^\top\mathbf M_1$, t
 :::
 
 ::: {.callout-note collapse="true" title="Hint 2"}
-(c) $\mathbf H_1 = \mathbf 1(\mathbf 1^\top\mathbf 1)^{-1}\mathbf 1^\top$: what is $\mathbf 1^\top\mathbf 1$, and what does $\mathbf H_1$ do to a vector?
+(c) $\mathbf H_1 = \mathbf 1(\mathbf 1^T\mathbf 1)^{-1}\mathbf 1^T$: what is $\mathbf 1^T\mathbf 1$, and what does $\mathbf H_1$ do to a vector?
 :::
 
-**Problem 4 (the hat matrix).** $\mathbf X$ is $n \times q$ with full column rank ($q = p + 1$ columns, the intercept counted), $\mathbf H = \mathbf X(\mathbf X^\top\mathbf X)^{-1}\mathbf X^\top$ and $\mathbf M = \mathbf I - \mathbf H$.
+**Problem 4 (the hat matrix).** $\mathbf X$ is $n \times q$ with full column rank ($q = p + 1$ columns, the intercept counted), $\mathbf H = \mathbf X(\mathbf X^T\mathbf X)^{-1}\mathbf X^T$ and $\mathbf M = \mathbf I - \mathbf H$.
 
-(a) Show $\mathbf H^2 = \mathbf H$ and $\mathbf H^\top = \mathbf H$, and compute $\mathrm{tr}(\mathbf H)$.
+(a) Show $\mathbf H^2 = \mathbf H$ and $\mathbf H^T = \mathbf H$, and compute $\mathrm{tr}(\mathbf H)$.
 
-(b) Show $\mathbf M^2 = \mathbf M$, $\mathbf M^\top = \mathbf M$ and $\mathbf M \mathbf X = \mathbf 0$. In one sentence each: what is $\mathbf H\mathbf y$, and what is $\mathbf M\mathbf y$?
+(b) Show $\mathbf M^2 = \mathbf M$, $\mathbf M^T = \mathbf M$ and $\mathbf M \mathbf X = \mathbf 0$. In one sentence each: what is $\mathbf H\mathbf y$, and what is $\mathbf M\mathbf y$?
 
-(c) Use (b) to show that the residual vector $\mathbf r = \mathbf M\mathbf y$ satisfies $\mathbf X^\top \mathbf r = \mathbf 0$ (the normal equations again, from the geometry instead of the calculus). Where did full column rank get used?
+(c) Use (b) to show that the residual vector $\mathbf r = \mathbf M\mathbf y$ satisfies $\mathbf X^T \mathbf r = \mathbf 0$ (the normal equations again, from the geometry instead of the calculus). Where did full column rank get used?
 
 ::: {.callout-note collapse="true" title="Hint 1"}
 (a) For the trace, $\mathrm{tr}(\mathbf A\mathbf B) = \mathrm{tr}(\mathbf B\mathbf A)$ with $\mathbf A = \mathbf X$.
 :::
 
 ::: {.callout-note collapse="true" title="Hint 2"}
-(c) Write $\mathbf X^\top\mathbf r = \mathbf X^\top\mathbf M\mathbf y$ and use $\mathbf M^\top = \mathbf M$ to move $\mathbf M$ onto $\mathbf X$.
+(c) Write $\mathbf X^T\mathbf r = \mathbf X^T\mathbf M\mathbf y$ and use $\mathbf M^T = \mathbf M$ to move $\mathbf M$ onto $\mathbf X$.
 :::
 
 **Problem 5 (a zero slope with a predictable outcome).** Let $X$ take the values $-1, 0, 1$ with probability $1/3$ each, let $\varepsilon$ be independent of $X$ and take the values $-1, 1$ with probability $1/2$ each, and let $Y = X^2 + \varepsilon$.
@@ -164,18 +164,18 @@ After multiplying by $\tilde{\mathbf x}_2^\top = \mathbf x_2^\top\mathbf M_1$, t
 
 **Problem 6 (why collinearity makes a coefficient uncertain).** Fixed design: $\mathbf y = \mathbf X_1\boldsymbol\beta_1 + \mathbf x_2\beta_2 + \boldsymbol\varepsilon$ with $\mathbb E\,\boldsymbol\varepsilon = \mathbf 0$ and $\mathrm{Cov}(\boldsymbol\varepsilon) = \sigma^2\mathbf I$, full column rank, and $\tilde{\mathbf x}_2 = \mathbf M_1\mathbf x_2$ as in the lecture.
 
-(a) Use the partialling-out theorem to show that $\hat\beta_2 = \beta_2 + \tilde{\mathbf x}_2^\top\boldsymbol\varepsilon / \tilde{\mathbf x}_2^\top\tilde{\mathbf x}_2$. Which two facts about $\mathbf M_1$ do you need?
+(a) Use the partialling-out theorem to show that $\hat\beta_2 = \beta_2 + \tilde{\mathbf x}_2^T\boldsymbol\varepsilon / \tilde{\mathbf x}_2^T\tilde{\mathbf x}_2$. Which two facts about $\mathbf M_1$ do you need?
 
 (b) Find $\mathbb E\,\hat\beta_2$ and $\mathrm{Var}(\hat\beta_2)$.
 
-(c) What happens as $\mathbf x_2$ becomes almost a linear combination of the columns of $\mathbf X_1$? Compare two designs with $\tilde{\mathbf x}_2^\top\tilde{\mathbf x}_2 = 100$ and $\tilde{\mathbf x}_2^\top\tilde{\mathbf x}_2 = 4$, with the same $\sigma^2$.
+(c) What happens as $\mathbf x_2$ becomes almost a linear combination of the columns of $\mathbf X_1$? Compare two designs with $\tilde{\mathbf x}_2^T\tilde{\mathbf x}_2 = 100$ and $\tilde{\mathbf x}_2^T\tilde{\mathbf x}_2 = 4$, with the same $\sigma^2$.
 
 ::: {.callout-note collapse="true" title="Hint 1"}
-(a) The theorem gives $\hat\beta_2 = \tilde{\mathbf x}_2^\top\mathbf y/\tilde{\mathbf x}_2^\top\tilde{\mathbf x}_2$; substitute the model for $\mathbf y$.
+(a) The theorem gives $\hat\beta_2 = \tilde{\mathbf x}_2^T\mathbf y/\tilde{\mathbf x}_2^T\tilde{\mathbf x}_2$; substitute the model for $\mathbf y$.
 :::
 
 ::: {.callout-note collapse="true" title="Hint 2"}
-(a) You need $\tilde{\mathbf x}_2^\top\mathbf X_1 = \mathbf 0$ and $\tilde{\mathbf x}_2^\top\mathbf x_2 = \tilde{\mathbf x}_2^\top\tilde{\mathbf x}_2$: which property of $\mathbf M_1$ gives each? (b) For the variance of a ratio with a fixed denominator, square the denominator.
+(a) You need $\tilde{\mathbf x}_2^T\mathbf X_1 = \mathbf 0$ and $\tilde{\mathbf x}_2^T\mathbf x_2 = \tilde{\mathbf x}_2^T\tilde{\mathbf x}_2$: which property of $\mathbf M_1$ gives each? (b) For the variance of a ratio with a fixed denominator, square the denominator.
 :::
 
 ## Coding
@@ -186,7 +186,7 @@ After multiplying by $\tilde{\mathbf x}_2^\top = \mathbf x_2^\top\mathbf M_1$, t
 
 <!-- 5 min: step 1. The pieces and step 2 are optional. -->
 
-The lecture's formula $\hat\beta = (\mathbf X^\top\mathbf X)^{-1}\mathbf X^\top\mathbf y$ is a few lines of R.
+The lecture's formula $\hat\beta = (\mathbf X^T\mathbf X)^{-1}\mathbf X^T\mathbf y$ is a few lines of R.
 
 #### Optional, can be done at home: the pieces
 
@@ -208,7 +208,7 @@ dim(beta) # frustrating
 x %*% beta
 ```
 
-Transpose and symmetry: even if a matrix $\mathbf A$ is not square, both $\mathbf A^\top\mathbf A$ and $\mathbf A\mathbf A^\top$ are square and symmetric (often one is invertible).
+Transpose and symmetry: even if a matrix $\mathbf A$ is not square, both $\mathbf A^T\mathbf A$ and $\mathbf A\mathbf A^T$ are square and symmetric (often one is invertible).
 
 ```{r}
 A <- matrix(c(rep(1, 4), 0, 0), nrow = 3, byrow = FALSE)
@@ -216,7 +216,7 @@ A
 t(A) %*% A
 ```
 
-Pseudoinversion: `ginv()` in the `MASS` library (installed with R) computes $\mathbf A^\dagger = (\mathbf A^\top\mathbf A)^{-1}\mathbf A^\top$ when that exists, so $\mathbf A^\dagger\mathbf A = \mathbf I$; it is a left inverse here, not a right one.
+Pseudoinversion: `ginv()` in the `MASS` library (installed with R) computes $\mathbf A^\dagger = (\mathbf A^T\mathbf A)^{-1}\mathbf A^T$ when that exists, so $\mathbf A^\dagger\mathbf A = \mathbf I$; it is a left inverse here, not a right one.
 
 ```{r}
 Ainv <- MASS::ginv(A)
@@ -254,7 +254,7 @@ stopifnot(isTRUE(all.equal(as.numeric(beta_hat),
 
 #### Optional, can be done at home: the hat matrix
 
-**Step 2.** Build the hat matrix $\mathbf H = \mathbf X(\mathbf X^\top\mathbf X)^{-1}\mathbf X^\top$ and check two of its properties numerically: its trace, and that $\mathbf H\mathbf y$ is `fitted(lm(...))`. (Optional problem 4 proves them.)
+**Step 2.** Build the hat matrix $\mathbf H = \mathbf X(\mathbf X^T\mathbf X)^{-1}\mathbf X^T$ and check two of its properties numerically: its trace, and that $\mathbf H\mathbf y$ is `fitted(lm(...))`. (Optional problem 4 proves them.)
 
 ```{r}
 #| eval: false

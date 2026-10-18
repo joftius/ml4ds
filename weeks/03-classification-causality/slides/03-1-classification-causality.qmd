@@ -111,7 +111,7 @@ Week 2, the optimal model theorem: under squared loss the best predictor of $Y$ 
 Today the outcome is a label: $Y \in \{0, 1\}$.
 
 ::: {.ask}
-Write down what $\mathbb E[Y \mid X = x]$ is when $Y$ takes only the values $0$ and $1$. Then write one thing a straight line $x^\top\beta$ gets wrong about it.
+Write down what $\mathbb E[Y \mid X = x]$ is when $Y$ takes only the values $0$ and $1$. Then write one thing a straight line $x^T\beta$ gets wrong about it.
 :::
 
 ## The target is a probability
@@ -127,7 +127,7 @@ $$
 
 So the optimal model theorem's target is the **class probability** $p(x)$, and a fitted model gives an estimate $\hat p(x)$
 
-A line $x^\top\beta$ does not stay inside $[0, 1]$: that is the first thing logistic regression fixes
+A line $x^T\beta$ does not stay inside $[0, 1]$: that is the first thing logistic regression fixes
 
 Notation for today: $p(x)$ the class probability, $\hat p(x)$ its estimate, and a **threshold** $c$: predict $1$ when $\hat p(x) > c$
 

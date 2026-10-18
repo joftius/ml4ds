@@ -488,9 +488,9 @@ f^\star(x) := \mathbb E_{Y|X}(Y|X) = \beta_0 + \beta_1 X_1 + \cdots + \beta_p X_
 </ul>
 <p><span class="math display">\[y_i = \beta_0 + \beta_1 x_{i1} + \beta_2 x_{i2} + \cdots + \beta_p x_{ip} + \varepsilon_i\]</span></p>
 <p>or using the <a href="https://en.wikipedia.org/wiki/Dot_product">inner product</a> (of column vectors)</p>
-<p><span class="math display">\[y_i = x_i^\top \beta + \varepsilon_i\]</span></p>
+<p><span class="math display">\[y_i = x_i^T \beta + \varepsilon_i\]</span></p>
 <ul>
-<li>Random variable version: <span class="math inline">\(Y = X^\top \beta + \varepsilon\)</span></li>
+<li>Random variable version: <span class="math inline">\(Y = X^T \beta + \varepsilon\)</span></li>
 </ul>
 </section>
 <section id="notation-continued" class="slide level2">
@@ -534,8 +534,8 @@ y_n
 <ul>
 <li>Bold for vectors, bold and upper case for matrices</li>
 <li>Otherwise upper case denotes random variable</li>
-<li>Error terms <span class="math inline">\(\varepsilon = y - \mathbf x^\top \beta\)</span> never truly observed</li>
-<li>Residuals <span class="math inline">\(r = y - \mathbf x^\top \hat \beta\)</span> used as a proxy for errors</li>
+<li>Error terms <span class="math inline">\(\varepsilon = y - \mathbf x^T \beta\)</span> never truly observed</li>
+<li>Residuals <span class="math inline">\(r = y - \mathbf x^T \hat \beta\)</span> used as a proxy for errors</li>
 <li>Greek letters like <span class="math inline">\(\beta, \theta, \sigma, \Sigma\)</span> usually <em>unknown parameters</em></li>
 <li>Greek letters with hats like <span class="math inline">\(\hat \beta\)</span> are estimates computed from data</li>
 <li>Roman letters that usually denote functions with hats, like <span class="math inline">\(\hat f\)</span> are also estimates</li>
@@ -546,11 +546,11 @@ y_n
 <h2>Least-squares solutions in matrix notation</h2>
 <p>With matrix-vector notation we can always write very simply:</p>
 <p><span class="math display">\[
-\hat {\mathbf \beta} = (\mathbf X^\top\mathbf X)^{-1}\mathbf X^\top \mathbf y = \mathbf X^\dagger \mathbf y
+\hat {\mathbf \beta} = (\mathbf X^T\mathbf X)^{-1}\mathbf X^T \mathbf y = \mathbf X^\dagger \mathbf y
 \]</span></p>
 <p><strong>Remember this!</strong> It encodes many important facts…</p>
 <div class="fragment">
-<p>This assumes <span class="math inline">\(\mathbf X^\top\mathbf X\)</span> to be invertible, i.e.&nbsp;the <em>columns</em> of <span class="math inline">\(\mathbf X\)</span> have full rank (columns = variables)</p>
+<p>This assumes <span class="math inline">\(\mathbf X^T\mathbf X\)</span> to be invertible, i.e.&nbsp;the <em>columns</em> of <span class="math inline">\(\mathbf X\)</span> have full rank (columns = variables)</p>
 <ul>
 <li>That’s often true if <span class="math inline">\(n &gt; p\)</span>, unless some problem like one variable is a copy of another</li>
 </ul>
@@ -564,8 +564,8 @@ y_n
 <section id="linear-algebra-and-geometric-intuition" class="slide level2">
 <h2>Linear algebra and geometric intuition</h2>
 <p>Predictions from the linear model:</p>
-<p><span class="math display">\[\hat{\mathbf y} = \mathbf {X} \hat{\mathbf \beta} = \mathbf X (\mathbf X^\top\mathbf X)^{-1}\mathbf X^\top \mathbf y = \mathbf H \mathbf y\]</span> if we define</p>
-<p><span class="math display">\[\mathbf H = \mathbf X (\mathbf X^\top\mathbf X)^{-1}\mathbf X^\top = \mathbf X \mathbf X^\dagger\]</span></p>
+<p><span class="math display">\[\hat{\mathbf y} = \mathbf {X} \hat{\mathbf \beta} = \mathbf X (\mathbf X^T\mathbf X)^{-1}\mathbf X^T \mathbf y = \mathbf H \mathbf y\]</span> if we define</p>
+<p><span class="math display">\[\mathbf H = \mathbf X (\mathbf X^T\mathbf X)^{-1}\mathbf X^T = \mathbf X \mathbf X^\dagger\]</span></p>
 <p>(the pseudoinverse <span class="math inline">\(\mathbf X^\dagger\)</span> of the previous slide: <span class="math inline">\(\hat{\mathbf y} = \mathbf X \hat{\boldsymbol\beta} = \mathbf X \mathbf X^\dagger \mathbf y\)</span>)</p>
 </section>
 <section id="linear-algebra-and-geometric-intuition-continued" class="slide level2">
@@ -580,7 +580,7 @@ y_n
 <section id="exercise-do-the-calculus" class="slide level2 inverse">
 <h2>Exercise: do the calculus</h2>
 <p>We have the loss function</p>
-<p><span class="math display">\[L(\mathbf X, \mathbf y, \mathbf \beta) = (\mathbf y - \mathbf X \beta)^\top(\mathbf y - \mathbf X \beta)\]</span></p>
+<p><span class="math display">\[L(\mathbf X, \mathbf y, \mathbf \beta) = (\mathbf y - \mathbf X \beta)^T(\mathbf y - \mathbf X \beta)\]</span></p>
 <p>(just a different way of writing sum of squared errors)</p>
 <ul>
 <li>Consider each coordinate separately and take univariate partial derivatives</li>
@@ -589,7 +589,7 @@ y_n
 </ul>
 <div class="fragment">
 <p>Reach the same conclusion: at a stationary point of <span class="math inline">\(L\)</span>,</p>
-<p><span class="math display">\[\mathbf X^\top \mathbf X \hat \beta = \mathbf X^\top \mathbf y\]</span></p>
+<p><span class="math display">\[\mathbf X^T \mathbf X \hat \beta = \mathbf X^T \mathbf y\]</span></p>
 </div>
 </section>
 <section id="history-frisch-and-waugh-1933" class="slide level2 inverse">
@@ -603,8 +603,8 @@ y_n
 </section>
 <section id="partialling-out-theorem-frischwaughlovell" class="slide level2">
 <h2>Partialling-out theorem (Frisch–Waugh–Lovell)</h2>
-<p><span class="math inline">\(\mathbf X = [\mathbf X_1 \;\; \mathbf x_2]\)</span>, full column rank, the intercept column inside <span class="math inline">\(\mathbf X_1\)</span>. <span class="math inline">\(\mathbf M_1 = \mathbf I - \mathbf X_1(\mathbf X_1^\top\mathbf X_1)^{-1}\mathbf X_1^\top\)</span> projects onto the orthogonal complement of <span class="math inline">\(\mathrm{col}(\mathbf X_1)\)</span>, so <span class="math inline">\(\tilde{\mathbf x}_2 = \mathbf M_1 \mathbf x_2\)</span> is the residual of <span class="math inline">\(\mathbf x_2\)</span> after regressing it on <span class="math inline">\(\mathbf X_1\)</span>. The coefficient on <span class="math inline">\(\mathbf x_2\)</span> in the regression of <span class="math inline">\(\mathbf y\)</span> on <span class="math inline">\(\mathbf X\)</span> is <span class="math display">\[
-\hat\beta_2 = \frac{\tilde{\mathbf x}_2^\top \mathbf y}{\tilde{\mathbf x}_2^\top \tilde{\mathbf x}_2}
+<p><span class="math inline">\(\mathbf X = [\mathbf X_1 \;\; \mathbf x_2]\)</span>, full column rank, the intercept column inside <span class="math inline">\(\mathbf X_1\)</span>. <span class="math inline">\(\mathbf M_1 = \mathbf I - \mathbf X_1(\mathbf X_1^T\mathbf X_1)^{-1}\mathbf X_1^T\)</span> projects onto the orthogonal complement of <span class="math inline">\(\mathrm{col}(\mathbf X_1)\)</span>, so <span class="math inline">\(\tilde{\mathbf x}_2 = \mathbf M_1 \mathbf x_2\)</span> is the residual of <span class="math inline">\(\mathbf x_2\)</span> after regressing it on <span class="math inline">\(\mathbf X_1\)</span>. The coefficient on <span class="math inline">\(\mathbf x_2\)</span> in the regression of <span class="math inline">\(\mathbf y\)</span> on <span class="math inline">\(\mathbf X\)</span> is <span class="math display">\[
+\hat\beta_2 = \frac{\tilde{\mathbf x}_2^T \mathbf y}{\tilde{\mathbf x}_2^T \tilde{\mathbf x}_2}
 \]</span> (and the same number comes from regressing <span class="math inline">\(\mathbf M_1 \mathbf y\)</span> on <span class="math inline">\(\tilde{\mathbf x}_2\)</span>: residual on residual).</p>
 <div class="leave">
 <p>The coefficient on <span class="math inline">\(x_2\)</span> is the slope of <span class="math inline">\(y\)</span> on <em>what is left of <span class="math inline">\(x_2\)</span> after <span class="math inline">\(\mathbf X_1\)</span> has explained what it can</em>. Fitting to residuals: additive models, boosting and causal ML share the mechanism, not a guarantee.</p>
@@ -626,7 +626,7 @@ y_n
 <section id="partialling-out-theorem-lines-12" class="slide level2">
 <h2>Partialling-out theorem, lines 1–2</h2>
 <p>The full regression, with the normal equations read column by column: the residual is orthogonal to every column <span class="math display">\[
-\mathbf y = \mathbf X_1 \hat{\boldsymbol\beta}_1 + \mathbf x_2 \hat\beta_2 + \mathbf r, \qquad \mathbf X_1^\top \mathbf r = \mathbf 0,\ \ \mathbf x_2^\top \mathbf r = 0
+\mathbf y = \mathbf X_1 \hat{\boldsymbol\beta}_1 + \mathbf x_2 \hat\beta_2 + \mathbf r, \qquad \mathbf X_1^T \mathbf r = \mathbf 0,\ \ \mathbf x_2^T \mathbf r = 0
 \]</span></p>
 <div class="fragment">
 <p>Multiply through by <span class="math inline">\(\mathbf M_1\)</span>: <span class="math display">\[
@@ -643,23 +643,23 @@ y_n
 <h2>Partialling-out theorem, lines 3–4</h2>
 <p><span class="math inline">\(\mathbf M_1 \mathbf y = \tilde{\mathbf x}_2 \,\hat\beta_2 + \mathbf r\)</span> is a vector equation with one unknown number, <span class="math inline">\(\hat\beta_2\)</span></p>
 <div class="fragment">
-<p>Multiply by <span class="math inline">\(\tilde{\mathbf x}_2^\top = \mathbf x_2^\top \mathbf M_1\)</span>: <span class="math display">\[
-\tilde{\mathbf x}_2^\top \mathbf M_1 \mathbf y = \tilde{\mathbf x}_2^\top \tilde{\mathbf x}_2\, \hat\beta_2 + \tilde{\mathbf x}_2^\top \mathbf r
+<p>Multiply by <span class="math inline">\(\tilde{\mathbf x}_2^T = \mathbf x_2^T \mathbf M_1\)</span>: <span class="math display">\[
+\tilde{\mathbf x}_2^T \mathbf M_1 \mathbf y = \tilde{\mathbf x}_2^T \tilde{\mathbf x}_2\, \hat\beta_2 + \tilde{\mathbf x}_2^T \mathbf r
 \]</span></p>
 </div>
 <div class="fragment">
-<p>The last term: <span class="math inline">\(\tilde{\mathbf x}_2^\top \mathbf r = \mathbf x_2^\top \mathbf M_1 \mathbf r = \mathbf x_2^\top \mathbf r = 0\)</span></p>
+<p>The last term: <span class="math inline">\(\tilde{\mathbf x}_2^T \mathbf r = \mathbf x_2^T \mathbf M_1 \mathbf r = \mathbf x_2^T \mathbf r = 0\)</span></p>
 </div>
 </section>
 <section id="partialling-out-theorem-lines-56" class="slide level2">
 <h2>Partialling-out theorem, lines 5–6</h2>
-<p>Left side: <span class="math inline">\(\tilde{\mathbf x}_2^\top \mathbf M_1 \mathbf y = \mathbf x_2^\top \mathbf M_1 \mathbf M_1 \mathbf y\)</span></p>
+<p>Left side: <span class="math inline">\(\tilde{\mathbf x}_2^T \mathbf M_1 \mathbf y = \mathbf x_2^T \mathbf M_1 \mathbf M_1 \mathbf y\)</span></p>
 <div class="fragment">
-<p><span class="math inline">\(= \mathbf x_2^\top \mathbf M_1 \mathbf y = \tilde{\mathbf x}_2^\top \mathbf y\)</span>, using <span class="math inline">\(\mathbf M_1^\top = \mathbf M_1 = \mathbf M_1^2\)</span></p>
+<p><span class="math inline">\(= \mathbf x_2^T \mathbf M_1 \mathbf y = \tilde{\mathbf x}_2^T \mathbf y\)</span>, using <span class="math inline">\(\mathbf M_1^T = \mathbf M_1 = \mathbf M_1^2\)</span></p>
 </div>
 <div class="fragment">
-<p>Full column rank makes <span class="math inline">\(\tilde{\mathbf x}_2^\top \tilde{\mathbf x}_2 &gt; 0\)</span>, so <span class="math display">\[
-\hat\beta_2 = \frac{\tilde{\mathbf x}_2^\top \mathbf y}{\tilde{\mathbf x}_2^\top \tilde{\mathbf x}_2} = \frac{\tilde{\mathbf x}_2^\top \tilde{\mathbf y}}{\tilde{\mathbf x}_2^\top \tilde{\mathbf x}_2}, \qquad \tilde{\mathbf y} = \mathbf M_1 \mathbf y \qquad \blacksquare
+<p>Full column rank makes <span class="math inline">\(\tilde{\mathbf x}_2^T \tilde{\mathbf x}_2 &gt; 0\)</span>, so <span class="math display">\[
+\hat\beta_2 = \frac{\tilde{\mathbf x}_2^T \mathbf y}{\tilde{\mathbf x}_2^T \tilde{\mathbf x}_2} = \frac{\tilde{\mathbf x}_2^T \tilde{\mathbf y}}{\tilde{\mathbf x}_2^T \tilde{\mathbf x}_2}, \qquad \tilde{\mathbf y} = \mathbf M_1 \mathbf y \qquad \blacksquare
 \]</span></p>
 <p>(ESL §3.2.3.)</p>
 </div>

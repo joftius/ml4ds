@@ -81,14 +81,14 @@ The key fact is that a residual against the conditional mean, $Y - f^\star(X)$, 
 Common errors: taking $f^\star(X)$ outside an expectation without conditioning first; writing $\mathbb E[Y - f^\star(X)] = 0$, which is true but not enough (the cross term needs the conditional version, $\mathbb E[Y - f^\star(X) \mid X] = 0$, because $g(X)$ is random); assuming $f$ is linear. The theorem needs no linearity, which is the point of it.
 :::
 
-**Exercise 2 (omitted-variable bias).** Two predictors matter: $\mathbf y = \beta_1 \mathbf x_1 + \beta_2 \mathbf x_2 + \boldsymbol\varepsilon$, all vectors in $\mathbb R^n$ and centered (the intercept partialled out, as in the lecture). What is fixed: the inputs $\mathbf x_1$ and $\mathbf x_2$, which we condition on. What is random: the noise, with $\mathbb E\,\boldsymbol\varepsilon = \mathbf 0$, and through it $\mathbf y$. Somebody regresses $\mathbf y$ on $\mathbf x_1$ alone and reports $\hat\beta_{\text{short}} = \mathbf x_1^\top\mathbf y / \mathbf x_1^\top\mathbf x_1$, random through $\mathbf y$. Show that
+**Exercise 2 (omitted-variable bias).** Two predictors matter: $\mathbf y = \beta_1 \mathbf x_1 + \beta_2 \mathbf x_2 + \boldsymbol\varepsilon$, all vectors in $\mathbb R^n$ and centered (the intercept partialled out, as in the lecture). What is fixed: the inputs $\mathbf x_1$ and $\mathbf x_2$, which we condition on. What is random: the noise, with $\mathbb E\,\boldsymbol\varepsilon = \mathbf 0$, and through it $\mathbf y$. Somebody regresses $\mathbf y$ on $\mathbf x_1$ alone and reports $\hat\beta_{\text{short}} = \mathbf x_1^T\mathbf y / \mathbf x_1^T\mathbf x_1$, random through $\mathbf y$. Show that
 $$
-\mathbb E\big[\hat\beta_{\text{short}} \mid \mathbf x_1, \mathbf x_2\big] = \beta_1 + \beta_2\,\hat\delta, \qquad \hat\delta = \frac{\mathbf x_1^\top\mathbf x_2}{\mathbf x_1^\top\mathbf x_1},
+\mathbb E\big[\hat\beta_{\text{short}} \mid \mathbf x_1, \mathbf x_2\big] = \beta_1 + \beta_2\,\hat\delta, \qquad \hat\delta = \frac{\mathbf x_1^T\mathbf x_2}{\mathbf x_1^T\mathbf x_1},
 $$
 say in words what $\hat\delta$ is, and say why it carries no randomness. When is the short regression unbiased for $\beta_1$?
 
 ::: {.callout-note collapse="true" title="Hint 1"}
-Substitute the model for $\mathbf y$ inside $\mathbf x_1^\top\mathbf y$ and split the fraction into three terms.
+Substitute the model for $\mathbf y$ inside $\mathbf x_1^T\mathbf y$ and split the fraction into three terms.
 :::
 
 ::: {.callout-note collapse="true" title="Hint 2"}
@@ -96,29 +96,29 @@ Two of the three terms are numbers once the inputs are fixed. Only the noise ter
 :::
 
 ::: {.callout-tip .answer collapse="true" title="Reveal solution"}
-Hint 1: $\mathbf x_1^\top\mathbf y = \beta_1\,\mathbf x_1^\top\mathbf x_1 + \beta_2\,\mathbf x_1^\top\mathbf x_2 + \mathbf x_1^\top\boldsymbol\varepsilon$, so
+Hint 1: $\mathbf x_1^T\mathbf y = \beta_1\,\mathbf x_1^T\mathbf x_1 + \beta_2\,\mathbf x_1^T\mathbf x_2 + \mathbf x_1^T\boldsymbol\varepsilon$, so
 $$
-\hat\beta_{\text{short}} = \beta_1 + \beta_2\,\hat\delta + \frac{\mathbf x_1^\top\boldsymbol\varepsilon}{\mathbf x_1^\top\mathbf x_1}.
+\hat\beta_{\text{short}} = \beta_1 + \beta_2\,\hat\delta + \frac{\mathbf x_1^T\boldsymbol\varepsilon}{\mathbf x_1^T\mathbf x_1}.
 $$
-Hint 2: conditioning on the inputs, the last term has expectation $\mathbf x_1^\top\,\mathbb E[\boldsymbol\varepsilon \mid \mathbf x_1, \mathbf x_2] / \mathbf x_1^\top\mathbf x_1 = 0$; the noise is mean zero given the inputs, and this is the one place the randomness enters. $\blacksquare$
+Hint 2: conditioning on the inputs, the last term has expectation $\mathbf x_1^T\,\mathbb E[\boldsymbol\varepsilon \mid \mathbf x_1, \mathbf x_2] / \mathbf x_1^T\mathbf x_1 = 0$; the noise is mean zero given the inputs, and this is the one place the randomness enters. $\blacksquare$
 
 $\hat\delta$ is the least-squares slope of $\mathbf x_2$ on $\mathbf x_1$ in these inputs (through the origin, which for centered vectors is the slope with an intercept): units of $x_2$ per unit of $x_1$, a regression slope and not a correlation. It is a function of the fixed inputs only, so once they are given it is a number; the hat records that it is computed from data, not that it is random (contrast $\hat\beta_{\text{short}}$, which is random through $\mathbf y$). The bias $\beta_2\hat\delta$ is zero when the left-out variable does not matter ($\beta_2 = 0$) or is orthogonal to the kept one ($\hat\delta = 0$, uncorrelated after centering); otherwise it has either sign and can be larger than $\beta_1$ itself.
 
-Common errors: using $\mathbf x_1^\top\mathbf x_2$ for raw vectors when an intercept is fitted (the formula is then about the wrong regression); reading $\hat\delta$ as a correlation; "the bias is $\beta_2$", forgetting $\hat\delta$; treating $\boldsymbol\varepsilon$ as zero rather than mean zero (the expectation is needed here; the exact in-sample version is problem 2); writing $\mathbb E\,\hat\beta_{\text{short}}$ without saying what is being averaged over (the noise, with the inputs held fixed).
+Common errors: using $\mathbf x_1^T\mathbf x_2$ for raw vectors when an intercept is fitted (the formula is then about the wrong regression); reading $\hat\delta$ as a correlation; "the bias is $\beta_2$", forgetting $\hat\delta$; treating $\boldsymbol\varepsilon$ as zero rather than mean zero (the expectation is needed here; the exact in-sample version is problem 2); writing $\mathbb E\,\hat\beta_{\text{short}}$ without saying what is being averaged over (the noise, with the inputs held fixed).
 :::
 
-**Exercise 3 (partialling-out theorem).** The lecture proved this one. Close the slides and prove it again. $\mathbf X = [\mathbf X_1 \;\; \mathbf x_2]$ has full column rank, with the intercept column inside $\mathbf X_1$; $\mathbf M_1 = \mathbf I - \mathbf X_1(\mathbf X_1^\top\mathbf X_1)^{-1}\mathbf X_1^\top$ and $\tilde{\mathbf x}_2 = \mathbf M_1\mathbf x_2$. You may use that $\mathbf M_1$ is symmetric, that $\mathbf M_1^2 = \mathbf M_1$ and that $\mathbf M_1\mathbf X_1 = \mathbf 0$ (optional problem 4 proves all three). Show that the coefficient on $\mathbf x_2$ in the least-squares regression of $\mathbf y$ on $\mathbf X$ is
+**Exercise 3 (partialling-out theorem).** The lecture proved this one. Close the slides and prove it again. $\mathbf X = [\mathbf X_1 \;\; \mathbf x_2]$ has full column rank, with the intercept column inside $\mathbf X_1$; $\mathbf M_1 = \mathbf I - \mathbf X_1(\mathbf X_1^T\mathbf X_1)^{-1}\mathbf X_1^T$ and $\tilde{\mathbf x}_2 = \mathbf M_1\mathbf x_2$. You may use that $\mathbf M_1$ is symmetric, that $\mathbf M_1^2 = \mathbf M_1$ and that $\mathbf M_1\mathbf X_1 = \mathbf 0$ (optional problem 4 proves all three). Show that the coefficient on $\mathbf x_2$ in the least-squares regression of $\mathbf y$ on $\mathbf X$ is
 $$
-\hat\beta_2 = \frac{\tilde{\mathbf x}_2^\top \mathbf y}{\tilde{\mathbf x}_2^\top \tilde{\mathbf x}_2},
+\hat\beta_2 = \frac{\tilde{\mathbf x}_2^T \mathbf y}{\tilde{\mathbf x}_2^T \tilde{\mathbf x}_2},
 $$
 and that regressing $\tilde{\mathbf y} = \mathbf M_1\mathbf y$ on $\tilde{\mathbf x}_2$ gives the same number. Where is full column rank used?
 
 ::: {.callout-note collapse="true" title="Hint 1"}
-Start from the full regression and its normal equations: $\mathbf y = \mathbf X_1\hat{\boldsymbol\beta}_1 + \mathbf x_2\hat\beta_2 + \mathbf r$, with $\mathbf X_1^\top\mathbf r = \mathbf 0$ and $\mathbf x_2^\top\mathbf r = 0$. Which matrix removes the $\mathbf X_1$ term?
+Start from the full regression and its normal equations: $\mathbf y = \mathbf X_1\hat{\boldsymbol\beta}_1 + \mathbf x_2\hat\beta_2 + \mathbf r$, with $\mathbf X_1^T\mathbf r = \mathbf 0$ and $\mathbf x_2^T\mathbf r = 0$. Which matrix removes the $\mathbf X_1$ term?
 :::
 
 ::: {.callout-note collapse="true" title="Hint 2"}
-Multiply through by $\mathbf M_1$ and say what happens to each of the three terms on the right. For the last one, write $\mathbf M_1\mathbf r = \mathbf r - \mathbf X_1(\mathbf X_1^\top\mathbf X_1)^{-1}\mathbf X_1^\top\mathbf r$.
+Multiply through by $\mathbf M_1$ and say what happens to each of the three terms on the right. For the last one, write $\mathbf M_1\mathbf r = \mathbf r - \mathbf X_1(\mathbf X_1^T\mathbf X_1)^{-1}\mathbf X_1^T\mathbf r$.
 :::
 
 ::: {.callout-note collapse="true" title="Hint 3"}
@@ -126,23 +126,23 @@ You now have $\mathbf M_1\mathbf y = \tilde{\mathbf x}_2\,\hat\beta_2 + \mathbf 
 :::
 
 ::: {.callout-note collapse="true" title="Hint 4"}
-After multiplying by $\tilde{\mathbf x}_2^\top = \mathbf x_2^\top\mathbf M_1$, two things remain: the term $\tilde{\mathbf x}_2^\top\mathbf r$, and an extra $\mathbf M_1$ on the left side. Each goes away by one of the properties of $\mathbf M_1$ you were given.
+After multiplying by $\tilde{\mathbf x}_2^T = \mathbf x_2^T\mathbf M_1$, two things remain: the term $\tilde{\mathbf x}_2^T\mathbf r$, and an extra $\mathbf M_1$ on the left side. Each goes away by one of the properties of $\mathbf M_1$ you were given.
 :::
 
 ::: {.callout-tip .answer collapse="true" title="Reveal solution"}
-The lecture's six lines. Hint 1 is the start. Hint 2: $\mathbf M_1\mathbf y = \mathbf M_1\mathbf X_1\hat{\boldsymbol\beta}_1 + \mathbf M_1\mathbf x_2\hat\beta_2 + \mathbf M_1\mathbf r$, where $\mathbf M_1\mathbf X_1 = \mathbf 0$, $\mathbf M_1\mathbf x_2 = \tilde{\mathbf x}_2$ by definition, and $\mathbf M_1\mathbf r = \mathbf r$ because $\mathbf X_1^\top\mathbf r = \mathbf 0$ (the residual is already in the orthogonal complement of $\mathrm{col}(\mathbf X_1)$). So
+The lecture's six lines. Hint 1 is the start. Hint 2: $\mathbf M_1\mathbf y = \mathbf M_1\mathbf X_1\hat{\boldsymbol\beta}_1 + \mathbf M_1\mathbf x_2\hat\beta_2 + \mathbf M_1\mathbf r$, where $\mathbf M_1\mathbf X_1 = \mathbf 0$, $\mathbf M_1\mathbf x_2 = \tilde{\mathbf x}_2$ by definition, and $\mathbf M_1\mathbf r = \mathbf r$ because $\mathbf X_1^T\mathbf r = \mathbf 0$ (the residual is already in the orthogonal complement of $\mathrm{col}(\mathbf X_1)$). So
 $$
 \mathbf M_1\mathbf y = \tilde{\mathbf x}_2\,\hat\beta_2 + \mathbf r.
 $$
-Hint 3: multiply by $\tilde{\mathbf x}_2^\top$:
+Hint 3: multiply by $\tilde{\mathbf x}_2^T$:
 $$
-\tilde{\mathbf x}_2^\top\mathbf M_1\mathbf y = \tilde{\mathbf x}_2^\top\tilde{\mathbf x}_2\,\hat\beta_2 + \tilde{\mathbf x}_2^\top\mathbf r.
+\tilde{\mathbf x}_2^T\mathbf M_1\mathbf y = \tilde{\mathbf x}_2^T\tilde{\mathbf x}_2\,\hat\beta_2 + \tilde{\mathbf x}_2^T\mathbf r.
 $$
-Hint 4, in two steps. **Symmetry moves $\mathbf M_1$ across an inner product**: $\tilde{\mathbf x}_2^\top\mathbf r = \mathbf x_2^\top\mathbf M_1\mathbf r = \mathbf x_2^\top\mathbf r = 0$, the last normal equation. **Idempotence removes the extra $\mathbf M_1$**: $\tilde{\mathbf x}_2^\top\mathbf M_1\mathbf y = \mathbf x_2^\top\mathbf M_1\mathbf M_1\mathbf y = \mathbf x_2^\top\mathbf M_1\mathbf y = \tilde{\mathbf x}_2^\top\mathbf y$. Hence $\tilde{\mathbf x}_2^\top\mathbf y = \tilde{\mathbf x}_2^\top\tilde{\mathbf x}_2\,\hat\beta_2$. Full column rank is used twice: it makes $\mathbf X_1^\top\mathbf X_1$ invertible, so that $\mathbf M_1$ is defined, and it makes $\tilde{\mathbf x}_2 \ne \mathbf 0$ (otherwise $\mathbf x_2 = \mathbf X_1(\mathbf X_1^\top\mathbf X_1)^{-1}\mathbf X_1^\top\mathbf x_2$ would be a combination of the columns of $\mathbf X_1$), so $\tilde{\mathbf x}_2^\top\tilde{\mathbf x}_2 > 0$ and we may divide. $\blacksquare$
+Hint 4, in two steps. **Symmetry moves $\mathbf M_1$ across an inner product**: $\tilde{\mathbf x}_2^T\mathbf r = \mathbf x_2^T\mathbf M_1\mathbf r = \mathbf x_2^T\mathbf r = 0$, the last normal equation. **Idempotence removes the extra $\mathbf M_1$**: $\tilde{\mathbf x}_2^T\mathbf M_1\mathbf y = \mathbf x_2^T\mathbf M_1\mathbf M_1\mathbf y = \mathbf x_2^T\mathbf M_1\mathbf y = \tilde{\mathbf x}_2^T\mathbf y$. Hence $\tilde{\mathbf x}_2^T\mathbf y = \tilde{\mathbf x}_2^T\tilde{\mathbf x}_2\,\hat\beta_2$. Full column rank is used twice: it makes $\mathbf X_1^T\mathbf X_1$ invertible, so that $\mathbf M_1$ is defined, and it makes $\tilde{\mathbf x}_2 \ne \mathbf 0$ (otherwise $\mathbf x_2 = \mathbf X_1(\mathbf X_1^T\mathbf X_1)^{-1}\mathbf X_1^T\mathbf x_2$ would be a combination of the columns of $\mathbf X_1$), so $\tilde{\mathbf x}_2^T\tilde{\mathbf x}_2 > 0$ and we may divide. $\blacksquare$
 
-Residual on residual: the slope through the origin of $\tilde{\mathbf y}$ on $\tilde{\mathbf x}_2$ is $\tilde{\mathbf x}_2^\top\tilde{\mathbf y}/\tilde{\mathbf x}_2^\top\tilde{\mathbf x}_2$, and $\tilde{\mathbf x}_2^\top\tilde{\mathbf y} = \tilde{\mathbf x}_2^\top\mathbf M_1\mathbf y = \tilde{\mathbf x}_2^\top\mathbf y$ by the idempotence step again. (No intercept is needed in that regression: the intercept column is inside $\mathbf X_1$, so both residuals already sum to zero.)
+Residual on residual: the slope through the origin of $\tilde{\mathbf y}$ on $\tilde{\mathbf x}_2$ is $\tilde{\mathbf x}_2^T\tilde{\mathbf y}/\tilde{\mathbf x}_2^T\tilde{\mathbf x}_2$, and $\tilde{\mathbf x}_2^T\tilde{\mathbf y} = \tilde{\mathbf x}_2^T\mathbf M_1\mathbf y = \tilde{\mathbf x}_2^T\mathbf y$ by the idempotence step again. (No intercept is needed in that regression: the intercept column is inside $\mathbf X_1$, so both residuals already sum to zero.)
 
-Common errors: "$\mathbf M_1\mathbf x_2 = \mathbf 0$" (true exactly for vectors in $\mathrm{col}(\mathbf X_1)$, which full column rank rules out for $\mathbf x_2$); asserting $\mathbf M_1\mathbf r = \mathbf r$ without saying which normal equations give it; using $\mathbf M_1\mathbf y = \mathbf y$; dividing by $\tilde{\mathbf x}_2^\top\tilde{\mathbf x}_2$ without saying why it is not zero; writing a ratio of vectors.
+Common errors: "$\mathbf M_1\mathbf x_2 = \mathbf 0$" (true exactly for vectors in $\mathrm{col}(\mathbf X_1)$, which full column rank rules out for $\mathbf x_2$); asserting $\mathbf M_1\mathbf r = \mathbf r$ without saying which normal equations give it; using $\mathbf M_1\mathbf y = \mathbf y$; dividing by $\tilde{\mathbf x}_2^T\tilde{\mathbf x}_2$ without saying why it is not zero; writing a ratio of vectors.
 :::
 
 ## Problems
@@ -181,10 +181,10 @@ Common errors: differentiating $\mathbb E[(Y - c)^2]$ in $c$ directly (correct, 
 
 (b) Numbers: $\mathbf x_1 = (-1, 0, 1)$, $\mathbf x_2 = (-2, 1, 1)$, $\beta_1 = 1$, $\beta_2 = 2$. Compute $\hat\delta$, and what the short regression estimates on average.
 
-(c) Suppose $\mathbf x_1^\top\mathbf x_2 = 0$. What happens to the coefficient on $\mathbf x_1$ when $\mathbf x_2$ is dropped? Reconcile your answer with the partialling-out theorem: what is the residual of $\mathbf x_1$ after regressing it on $\mathbf x_2$?
+(c) Suppose $\mathbf x_1^T\mathbf x_2 = 0$. What happens to the coefficient on $\mathbf x_1$ when $\mathbf x_2$ is dropped? Reconcile your answer with the partialling-out theorem: what is the residual of $\mathbf x_1$ after regressing it on $\mathbf x_2$?
 
 ::: {.callout-note .answer collapse="true" title="Hint 1"}
-(a) Multiply the fitted equation $\mathbf y = \hat\beta_1\mathbf x_1 + \hat\beta_2\mathbf x_2 + \mathbf r$ by $\mathbf x_1^\top$, as in exercise 2, and look at the last term.
+(a) Multiply the fitted equation $\mathbf y = \hat\beta_1\mathbf x_1 + \hat\beta_2\mathbf x_2 + \mathbf r$ by $\mathbf x_1^T$, as in exercise 2, and look at the last term.
 :::
 
 ::: {.callout-note .answer collapse="true" title="Hint 2"}
@@ -192,11 +192,11 @@ Common errors: differentiating $\mathbb E[(Y - c)^2]$ in $c$ directly (correct, 
 :::
 
 ::: {.callout-tip .answer collapse="true" title="Reveal answer"}
-(a) Multiplying by $\mathbf x_1^\top$ and dividing by $\mathbf x_1^\top\mathbf x_1$: $\hat\beta_{\text{short}} = \hat\beta_1 + \hat\beta_2\hat\delta + \mathbf x_1^\top\mathbf r/\mathbf x_1^\top\mathbf x_1$, and $\mathbf x_1^\top\mathbf r = 0$ by the normal equations. The fact: **a least-squares residual is orthogonal to every column it was fitted on**, the sample twin of exercise 1's population fact (the residual $Y - f^\star(X)$ is orthogonal to every function of $X$). The same algebra as exercise 2 with the fitted coefficients in place of the truth and the residual in place of the noise, except that the last term is exactly zero rather than zero on average: the noise is not orthogonal to $\mathbf x_1$ in the sample, only mean zero given the inputs, which is why exercise 2 needs an expectation and this problem does not. Coding part 3 checks the identity on real data to every printed digit.
+(a) Multiplying by $\mathbf x_1^T$ and dividing by $\mathbf x_1^T\mathbf x_1$: $\hat\beta_{\text{short}} = \hat\beta_1 + \hat\beta_2\hat\delta + \mathbf x_1^T\mathbf r/\mathbf x_1^T\mathbf x_1$, and $\mathbf x_1^T\mathbf r = 0$ by the normal equations. The fact: **a least-squares residual is orthogonal to every column it was fitted on**, the sample twin of exercise 1's population fact (the residual $Y - f^\star(X)$ is orthogonal to every function of $X$). The same algebra as exercise 2 with the fitted coefficients in place of the truth and the residual in place of the noise, except that the last term is exactly zero rather than zero on average: the noise is not orthogonal to $\mathbf x_1$ in the sample, only mean zero given the inputs, which is why exercise 2 needs an expectation and this problem does not. Coding part 3 checks the identity on real data to every printed digit.
 
-(b) Both vectors are centered, so the formula applies as written. $\mathbf x_1^\top\mathbf x_2 = 2 + 0 + 1 = 3$ and $\mathbf x_1^\top\mathbf x_1 = 2$, so $\hat\delta = 1.5$ and $\mathbb E\,\hat\beta_{\text{short}} = 1 + 2 \times 1.5 = 4$: four times the coefficient it was meant to estimate.
+(b) Both vectors are centered, so the formula applies as written. $\mathbf x_1^T\mathbf x_2 = 2 + 0 + 1 = 3$ and $\mathbf x_1^T\mathbf x_1 = 2$, so $\hat\delta = 1.5$ and $\mathbb E\,\hat\beta_{\text{short}} = 1 + 2 \times 1.5 = 4$: four times the coefficient it was meant to estimate.
 
-(c) $\hat\delta = 0$, so $\hat\beta_{\text{short}} = \hat\beta_1$: dropping an orthogonal column does not move the coefficient, and by exercise 2 the short regression is then unbiased. From the theorem: partial $\mathbf x_2$ out of $\mathbf x_1$; the residual is $\mathbf x_1 - \mathbf x_2\,(\mathbf x_2^\top\mathbf x_1)/(\mathbf x_2^\top\mathbf x_2) = \mathbf x_1$ when the two are orthogonal, so the long coefficient on $\mathbf x_1$ is $\mathbf x_1^\top\mathbf y/\mathbf x_1^\top\mathbf x_1$, which is the short one. On the standard error: the two regressions estimate the noise variance from different residuals, and the short one's residual still contains $\hat\beta_2\mathbf x_2$, so the reported standard error usually grows when a relevant orthogonal column is dropped even though the coefficient does not move; the details are for the validation week.
+(c) $\hat\delta = 0$, so $\hat\beta_{\text{short}} = \hat\beta_1$: dropping an orthogonal column does not move the coefficient, and by exercise 2 the short regression is then unbiased. From the theorem: partial $\mathbf x_2$ out of $\mathbf x_1$; the residual is $\mathbf x_1 - \mathbf x_2\,(\mathbf x_2^T\mathbf x_1)/(\mathbf x_2^T\mathbf x_2) = \mathbf x_1$ when the two are orthogonal, so the long coefficient on $\mathbf x_1$ is $\mathbf x_1^T\mathbf y/\mathbf x_1^T\mathbf x_1$, which is the short one. On the standard error: the two regressions estimate the noise variance from different residuals, and the short one's residual still contains $\hat\beta_2\mathbf x_2$, so the reported standard error usually grows when a relevant orthogonal column is dropped even though the coefficient does not move; the details are for the validation week.
 
 Common errors: raw vectors in place of centered ones; believing (a) needs an expectation (it is an identity of the data); in (c), "the coefficient is the same, so the two regressions are the same" (the residuals differ).
 :::
@@ -207,7 +207,7 @@ Common errors: raw vectors in place of centered ones; believing (a) needs an exp
 
 **Problem 3 (normal equations, and centering).** Simple regression, from the lecture's "nice geometry" slide. The training error is $\hat R_n(\alpha, \beta) = \frac1n\sum_{i=1}^n (y_i - \alpha - \beta x_i)^2$.
 
-(a) Compute $\partial \hat R_n/\partial\alpha$ and $\partial \hat R_n/\partial\beta$, set both to zero, and show that the residuals $r_i = y_i - \hat\alpha - \hat\beta x_i$ satisfy $\sum_i r_i = 0$ and $\sum_i x_i r_i = 0$. Write the same two equations as $\mathbf X^\top \mathbf r = \mathbf 0$ with $\mathbf X = [\mathbf 1 \;\; \mathbf x]$.
+(a) Compute $\partial \hat R_n/\partial\alpha$ and $\partial \hat R_n/\partial\beta$, set both to zero, and show that the residuals $r_i = y_i - \hat\alpha - \hat\beta x_i$ satisfy $\sum_i r_i = 0$ and $\sum_i x_i r_i = 0$. Write the same two equations as $\mathbf X^T \mathbf r = \mathbf 0$ with $\mathbf X = [\mathbf 1 \;\; \mathbf x]$.
 
 (b) Solve them: show $\hat\beta = \sum_i (x_i - \bar x)(y_i - \bar y) \big/ \sum_i (x_i - \bar x)^2$ and $\hat\alpha = \bar y - \hat\beta \bar x$.
 
@@ -218,41 +218,41 @@ Common errors: raw vectors in place of centered ones; believing (a) needs an exp
 :::
 
 ::: {.callout-note collapse="true" title="Hint 2"}
-(c) $\mathbf H_1 = \mathbf 1(\mathbf 1^\top\mathbf 1)^{-1}\mathbf 1^\top$: what is $\mathbf 1^\top\mathbf 1$, and what does $\mathbf H_1$ do to a vector?
+(c) $\mathbf H_1 = \mathbf 1(\mathbf 1^T\mathbf 1)^{-1}\mathbf 1^T$: what is $\mathbf 1^T\mathbf 1$, and what does $\mathbf H_1$ do to a vector?
 :::
 
 ::: {.callout-tip .answer collapse="true" title="Reveal answer"}
-(a) $\partial \hat R_n/\partial\alpha = -\frac2n\sum_i (y_i - \alpha - \beta x_i)$ and $\partial \hat R_n/\partial\beta = -\frac2n\sum_i x_i (y_i - \alpha - \beta x_i)$. Setting both to zero at $(\hat\alpha, \hat\beta)$ gives $\sum_i r_i = 0$ and $\sum_i x_i r_i = 0$: the two rows of $\mathbf X^\top\mathbf r = \mathbf 0$, one per column of $\mathbf X$. Since $\bar r = 0$ and $\sum x_i r_i = 0$, the sample correlation of $x$ and $r$ is zero: no *linear* signal is left in the residuals, which is all least squares promises.
+(a) $\partial \hat R_n/\partial\alpha = -\frac2n\sum_i (y_i - \alpha - \beta x_i)$ and $\partial \hat R_n/\partial\beta = -\frac2n\sum_i x_i (y_i - \alpha - \beta x_i)$. Setting both to zero at $(\hat\alpha, \hat\beta)$ gives $\sum_i r_i = 0$ and $\sum_i x_i r_i = 0$: the two rows of $\mathbf X^T\mathbf r = \mathbf 0$, one per column of $\mathbf X$. Since $\bar r = 0$ and $\sum x_i r_i = 0$, the sample correlation of $x$ and $r$ is zero: no *linear* signal is left in the residuals, which is all least squares promises.
 
 (b) The first equation gives $\hat\alpha = \bar y - \hat\beta \bar x$. Substitute into the second: $\sum_i x_i (y_i - \bar y - \hat\beta(x_i - \bar x)) = 0$, and because $\sum_i (y_i - \bar y) = 0 = \sum_i (x_i - \bar x)$ you may replace $x_i$ by $x_i - \bar x$ in the sum, giving $\hat\beta = \sum_i (x_i - \bar x)(y_i - \bar y) / \sum_i (x_i - \bar x)^2$.
 
-(c) $\mathbf H_1 = \mathbf 1(\mathbf 1^\top\mathbf 1)^{-1}\mathbf 1^\top = \frac1n \mathbf 1\mathbf 1^\top$, so $\mathbf H_1\mathbf x = \bar x\mathbf 1$ and $\mathbf M_1\mathbf x = \mathbf x - \bar x\mathbf 1$: partialling out the intercept *is* centering. The theorem gives $\hat\beta = \tilde{\mathbf x}^\top\mathbf y/\tilde{\mathbf x}^\top\tilde{\mathbf x}$ with $\tilde{\mathbf x} = \mathbf x - \bar x\mathbf 1$, and since $\tilde{\mathbf x}^\top \mathbf y = \tilde{\mathbf x}^\top(\mathbf y - \bar y\mathbf 1)$ (the centered $\tilde{\mathbf x}$ sums to zero) this is $\sum (x_i - \bar x)(y_i - \bar y)/\sum(x_i - \bar x)^2$, part (b). The same step is why exercise 2 and problem 2 use centered vectors whenever an intercept is fitted.
+(c) $\mathbf H_1 = \mathbf 1(\mathbf 1^T\mathbf 1)^{-1}\mathbf 1^T = \frac1n \mathbf 1\mathbf 1^T$, so $\mathbf H_1\mathbf x = \bar x\mathbf 1$ and $\mathbf M_1\mathbf x = \mathbf x - \bar x\mathbf 1$: partialling out the intercept *is* centering. The theorem gives $\hat\beta = \tilde{\mathbf x}^T\mathbf y/\tilde{\mathbf x}^T\tilde{\mathbf x}$ with $\tilde{\mathbf x} = \mathbf x - \bar x\mathbf 1$, and since $\tilde{\mathbf x}^T \mathbf y = \tilde{\mathbf x}^T(\mathbf y - \bar y\mathbf 1)$ (the centered $\tilde{\mathbf x}$ sums to zero) this is $\sum (x_i - \bar x)(y_i - \bar y)/\sum(x_i - \bar x)^2$, part (b). The same step is why exercise 2 and problem 2 use centered vectors whenever an intercept is fitted.
 
 Common errors: the chain rule's $-1$ (harmless here); in (b), dividing by $\sum x_i^2$ instead of $\sum (x_i - \bar x)^2$.
 :::
 
-**Problem 4 (the hat matrix).** $\mathbf X$ is $n \times q$ with full column rank ($q = p + 1$ columns, the intercept counted), $\mathbf H = \mathbf X(\mathbf X^\top\mathbf X)^{-1}\mathbf X^\top$ and $\mathbf M = \mathbf I - \mathbf H$.
+**Problem 4 (the hat matrix).** $\mathbf X$ is $n \times q$ with full column rank ($q = p + 1$ columns, the intercept counted), $\mathbf H = \mathbf X(\mathbf X^T\mathbf X)^{-1}\mathbf X^T$ and $\mathbf M = \mathbf I - \mathbf H$.
 
-(a) Show $\mathbf H^2 = \mathbf H$ and $\mathbf H^\top = \mathbf H$, and compute $\mathrm{tr}(\mathbf H)$.
+(a) Show $\mathbf H^2 = \mathbf H$ and $\mathbf H^T = \mathbf H$, and compute $\mathrm{tr}(\mathbf H)$.
 
-(b) Show $\mathbf M^2 = \mathbf M$, $\mathbf M^\top = \mathbf M$ and $\mathbf M \mathbf X = \mathbf 0$. In one sentence each: what is $\mathbf H\mathbf y$, and what is $\mathbf M\mathbf y$?
+(b) Show $\mathbf M^2 = \mathbf M$, $\mathbf M^T = \mathbf M$ and $\mathbf M \mathbf X = \mathbf 0$. In one sentence each: what is $\mathbf H\mathbf y$, and what is $\mathbf M\mathbf y$?
 
-(c) Use (b) to show that the residual vector $\mathbf r = \mathbf M\mathbf y$ satisfies $\mathbf X^\top \mathbf r = \mathbf 0$ (the normal equations again, from the geometry instead of the calculus). Where did full column rank get used?
+(c) Use (b) to show that the residual vector $\mathbf r = \mathbf M\mathbf y$ satisfies $\mathbf X^T \mathbf r = \mathbf 0$ (the normal equations again, from the geometry instead of the calculus). Where did full column rank get used?
 
 ::: {.callout-note collapse="true" title="Hint 1"}
 (a) For the trace, $\mathrm{tr}(\mathbf A\mathbf B) = \mathrm{tr}(\mathbf B\mathbf A)$ with $\mathbf A = \mathbf X$.
 :::
 
 ::: {.callout-note collapse="true" title="Hint 2"}
-(c) Write $\mathbf X^\top\mathbf r = \mathbf X^\top\mathbf M\mathbf y$ and use $\mathbf M^\top = \mathbf M$ to move $\mathbf M$ onto $\mathbf X$.
+(c) Write $\mathbf X^T\mathbf r = \mathbf X^T\mathbf M\mathbf y$ and use $\mathbf M^T = \mathbf M$ to move $\mathbf M$ onto $\mathbf X$.
 :::
 
 ::: {.callout-tip .answer collapse="true" title="Reveal answer"}
-(a) $\mathbf H^2 = \mathbf X(\mathbf X^\top\mathbf X)^{-1}\mathbf X^\top\mathbf X(\mathbf X^\top\mathbf X)^{-1}\mathbf X^\top = \mathbf H$, the middle $(\mathbf X^\top\mathbf X)^{-1}\mathbf X^\top\mathbf X$ cancelling; $\mathbf H^\top = \mathbf H$ because $(\mathbf X^\top\mathbf X)^{-1}$ is symmetric; $\mathrm{tr}(\mathbf H) = \mathrm{tr}\big((\mathbf X^\top\mathbf X)^{-1}\mathbf X^\top\mathbf X\big) = \mathrm{tr}(\mathbf I_q) = q$ by the cyclic property $\mathrm{tr}(\mathbf A\mathbf B) = \mathrm{tr}(\mathbf B\mathbf A)$. So the hat matrix has trace $p + 1$ with the intercept counted: the number of coefficients. (The validation week turns this trace into degrees of freedom.)
+(a) $\mathbf H^2 = \mathbf X(\mathbf X^T\mathbf X)^{-1}\mathbf X^T\mathbf X(\mathbf X^T\mathbf X)^{-1}\mathbf X^T = \mathbf H$, the middle $(\mathbf X^T\mathbf X)^{-1}\mathbf X^T\mathbf X$ cancelling; $\mathbf H^T = \mathbf H$ because $(\mathbf X^T\mathbf X)^{-1}$ is symmetric; $\mathrm{tr}(\mathbf H) = \mathrm{tr}\big((\mathbf X^T\mathbf X)^{-1}\mathbf X^T\mathbf X\big) = \mathrm{tr}(\mathbf I_q) = q$ by the cyclic property $\mathrm{tr}(\mathbf A\mathbf B) = \mathrm{tr}(\mathbf B\mathbf A)$. So the hat matrix has trace $p + 1$ with the intercept counted: the number of coefficients. (The validation week turns this trace into degrees of freedom.)
 
-(b) $\mathbf M^2 = \mathbf I - 2\mathbf H + \mathbf H^2 = \mathbf I - \mathbf H = \mathbf M$; symmetric because $\mathbf H$ is; $\mathbf M\mathbf X = \mathbf X - \mathbf X(\mathbf X^\top\mathbf X)^{-1}\mathbf X^\top\mathbf X = \mathbf X - \mathbf X = \mathbf 0$. $\mathbf H\mathbf y$ is the fitted vector $\hat{\mathbf y}$, the point of $\mathrm{col}(\mathbf X)$ closest to $\mathbf y$; $\mathbf M\mathbf y$ is the residual vector, what is left of $\mathbf y$ after $\mathrm{col}(\mathbf X)$ has explained what it can.
+(b) $\mathbf M^2 = \mathbf I - 2\mathbf H + \mathbf H^2 = \mathbf I - \mathbf H = \mathbf M$; symmetric because $\mathbf H$ is; $\mathbf M\mathbf X = \mathbf X - \mathbf X(\mathbf X^T\mathbf X)^{-1}\mathbf X^T\mathbf X = \mathbf X - \mathbf X = \mathbf 0$. $\mathbf H\mathbf y$ is the fitted vector $\hat{\mathbf y}$, the point of $\mathrm{col}(\mathbf X)$ closest to $\mathbf y$; $\mathbf M\mathbf y$ is the residual vector, what is left of $\mathbf y$ after $\mathrm{col}(\mathbf X)$ has explained what it can.
 
-(c) $\mathbf X^\top\mathbf r = \mathbf X^\top\mathbf M\mathbf y = (\mathbf M\mathbf X)^\top\mathbf y = \mathbf 0$, using $\mathbf M^\top = \mathbf M$ and $\mathbf M\mathbf X = \mathbf 0$. Full column rank is what makes $\mathbf X^\top\mathbf X$ invertible, so that $\mathbf H$ is defined at all; without it the projection onto $\mathrm{col}(\mathbf X)$ still exists (a pseudoinverse gives it) but the coefficients are not unique, which is the `NA` that `lm` prints when one column is a copy of the others.
+(c) $\mathbf X^T\mathbf r = \mathbf X^T\mathbf M\mathbf y = (\mathbf M\mathbf X)^T\mathbf y = \mathbf 0$, using $\mathbf M^T = \mathbf M$ and $\mathbf M\mathbf X = \mathbf 0$. Full column rank is what makes $\mathbf X^T\mathbf X$ invertible, so that $\mathbf H$ is defined at all; without it the projection onto $\mathrm{col}(\mathbf X)$ still exists (a pseudoinverse gives it) but the coefficients are not unique, which is the `NA` that `lm` prints when one column is a copy of the others.
 
 Common errors: $\mathrm{tr}(\mathbf H) = n$ (confusing $\mathbf H$ with the identity); claiming $\mathbf H = \mathbf I$ because $\mathbf H^2 = \mathbf H$.
 :::
@@ -285,28 +285,28 @@ Common errors: concluding from $\mathrm{Cov}(X, Y) = 0$ that $X$ carries no info
 
 **Problem 6 (why collinearity makes a coefficient uncertain).** Fixed design: $\mathbf y = \mathbf X_1\boldsymbol\beta_1 + \mathbf x_2\beta_2 + \boldsymbol\varepsilon$ with $\mathbb E\,\boldsymbol\varepsilon = \mathbf 0$ and $\mathrm{Cov}(\boldsymbol\varepsilon) = \sigma^2\mathbf I$, full column rank, and $\tilde{\mathbf x}_2 = \mathbf M_1\mathbf x_2$ as in the lecture.
 
-(a) Use the partialling-out theorem to show that $\hat\beta_2 = \beta_2 + \tilde{\mathbf x}_2^\top\boldsymbol\varepsilon / \tilde{\mathbf x}_2^\top\tilde{\mathbf x}_2$. Which two facts about $\mathbf M_1$ do you need?
+(a) Use the partialling-out theorem to show that $\hat\beta_2 = \beta_2 + \tilde{\mathbf x}_2^T\boldsymbol\varepsilon / \tilde{\mathbf x}_2^T\tilde{\mathbf x}_2$. Which two facts about $\mathbf M_1$ do you need?
 
 (b) Find $\mathbb E\,\hat\beta_2$ and $\mathrm{Var}(\hat\beta_2)$.
 
-(c) What happens as $\mathbf x_2$ becomes almost a linear combination of the columns of $\mathbf X_1$? Compare two designs with $\tilde{\mathbf x}_2^\top\tilde{\mathbf x}_2 = 100$ and $\tilde{\mathbf x}_2^\top\tilde{\mathbf x}_2 = 4$, with the same $\sigma^2$.
+(c) What happens as $\mathbf x_2$ becomes almost a linear combination of the columns of $\mathbf X_1$? Compare two designs with $\tilde{\mathbf x}_2^T\tilde{\mathbf x}_2 = 100$ and $\tilde{\mathbf x}_2^T\tilde{\mathbf x}_2 = 4$, with the same $\sigma^2$.
 
 ::: {.callout-note collapse="true" title="Hint 1"}
-(a) The theorem gives $\hat\beta_2 = \tilde{\mathbf x}_2^\top\mathbf y/\tilde{\mathbf x}_2^\top\tilde{\mathbf x}_2$; substitute the model for $\mathbf y$.
+(a) The theorem gives $\hat\beta_2 = \tilde{\mathbf x}_2^T\mathbf y/\tilde{\mathbf x}_2^T\tilde{\mathbf x}_2$; substitute the model for $\mathbf y$.
 :::
 
 ::: {.callout-note collapse="true" title="Hint 2"}
-(a) You need $\tilde{\mathbf x}_2^\top\mathbf X_1 = \mathbf 0$ and $\tilde{\mathbf x}_2^\top\mathbf x_2 = \tilde{\mathbf x}_2^\top\tilde{\mathbf x}_2$: which property of $\mathbf M_1$ gives each? (b) For the variance of a ratio with a fixed denominator, square the denominator.
+(a) You need $\tilde{\mathbf x}_2^T\mathbf X_1 = \mathbf 0$ and $\tilde{\mathbf x}_2^T\mathbf x_2 = \tilde{\mathbf x}_2^T\tilde{\mathbf x}_2$: which property of $\mathbf M_1$ gives each? (b) For the variance of a ratio with a fixed denominator, square the denominator.
 :::
 
 ::: {.callout-tip .answer collapse="true" title="Reveal answer"}
-(a) By the theorem, $\hat\beta_2 = \tilde{\mathbf x}_2^\top\mathbf y / \tilde{\mathbf x}_2^\top\tilde{\mathbf x}_2$. Substitute the model for $\mathbf y$: $\tilde{\mathbf x}_2^\top\mathbf X_1 = \mathbf x_2^\top\mathbf M_1\mathbf X_1 = \mathbf 0$ ($\mathbf M_1$ is symmetric and $\mathbf M_1\mathbf X_1 = \mathbf 0$), and $\tilde{\mathbf x}_2^\top\mathbf x_2 = \mathbf x_2^\top\mathbf M_1\mathbf x_2 = \mathbf x_2^\top\mathbf M_1\mathbf M_1\mathbf x_2 = \tilde{\mathbf x}_2^\top\tilde{\mathbf x}_2$ ($\mathbf M_1$ is idempotent). So $\hat\beta_2 = \beta_2 + \tilde{\mathbf x}_2^\top\boldsymbol\varepsilon / \tilde{\mathbf x}_2^\top\tilde{\mathbf x}_2$: the fitted coefficient is the true one plus the noise projected onto $\tilde{\mathbf x}_2$.
+(a) By the theorem, $\hat\beta_2 = \tilde{\mathbf x}_2^T\mathbf y / \tilde{\mathbf x}_2^T\tilde{\mathbf x}_2$. Substitute the model for $\mathbf y$: $\tilde{\mathbf x}_2^T\mathbf X_1 = \mathbf x_2^T\mathbf M_1\mathbf X_1 = \mathbf 0$ ($\mathbf M_1$ is symmetric and $\mathbf M_1\mathbf X_1 = \mathbf 0$), and $\tilde{\mathbf x}_2^T\mathbf x_2 = \mathbf x_2^T\mathbf M_1\mathbf x_2 = \mathbf x_2^T\mathbf M_1\mathbf M_1\mathbf x_2 = \tilde{\mathbf x}_2^T\tilde{\mathbf x}_2$ ($\mathbf M_1$ is idempotent). So $\hat\beta_2 = \beta_2 + \tilde{\mathbf x}_2^T\boldsymbol\varepsilon / \tilde{\mathbf x}_2^T\tilde{\mathbf x}_2$: the fitted coefficient is the true one plus the noise projected onto $\tilde{\mathbf x}_2$.
 
-(b) $\mathbb E\,\hat\beta_2 = \beta_2$, and $\mathrm{Var}(\hat\beta_2) = \tilde{\mathbf x}_2^\top(\sigma^2\mathbf I)\tilde{\mathbf x}_2 / (\tilde{\mathbf x}_2^\top\tilde{\mathbf x}_2)^2 = \sigma^2 / \tilde{\mathbf x}_2^\top\tilde{\mathbf x}_2$.
+(b) $\mathbb E\,\hat\beta_2 = \beta_2$, and $\mathrm{Var}(\hat\beta_2) = \tilde{\mathbf x}_2^T(\sigma^2\mathbf I)\tilde{\mathbf x}_2 / (\tilde{\mathbf x}_2^T\tilde{\mathbf x}_2)^2 = \sigma^2 / \tilde{\mathbf x}_2^T\tilde{\mathbf x}_2$.
 
 (c) The denominator is the squared length of what is left of $\mathbf x_2$ after $\mathbf X_1$ has explained what it can. As $\mathbf x_2$ approaches $\mathrm{col}(\mathbf X_1)$ that length goes to zero and the variance blows up; at zero the coefficient is not identified, which is the `NA` from the lecture. With $100$ against $4$ the variance ratio is $25$: a standard deviation five times larger in the second design. Collinearity does not bias the coefficient; it makes it uncertain, and the picture in the lecture says why: a short $\tilde{\mathbf x}_2$ is a short baseline for a slope.
 
-Common errors: writing $\mathrm{Var}(\hat\beta_2) = \sigma^2/\mathbf x_2^\top\mathbf x_2$ (the raw column instead of the residual), which is the variance when $\mathbf x_2$ is the only column (regression through the origin); with an intercept the denominator is $\sum_i (x_{2i} - \bar x_2)^2$, which is this problem's formula with $\mathbf X_1 = \mathbf 1$; forgetting the square in the denominator when taking the variance of the ratio.
+Common errors: writing $\mathrm{Var}(\hat\beta_2) = \sigma^2/\mathbf x_2^T\mathbf x_2$ (the raw column instead of the residual), which is the variance when $\mathbf x_2$ is the only column (regression through the origin); with an intercept the denominator is $\sum_i (x_{2i} - \bar x_2)^2$, which is this problem's formula with $\mathbf X_1 = \mathbf 1$; forgetting the square in the denominator when taking the variance of the ratio.
 :::
 
 ## Coding
@@ -317,7 +317,7 @@ Common errors: writing $\mathrm{Var}(\hat\beta_2) = \sigma^2/\mathbf x_2^\top\ma
 
 <!-- 5 min: step 1. The pieces and step 2 are optional. -->
 
-The lecture's formula $\hat\beta = (\mathbf X^\top\mathbf X)^{-1}\mathbf X^\top\mathbf y$ is a few lines of R.
+The lecture's formula $\hat\beta = (\mathbf X^T\mathbf X)^{-1}\mathbf X^T\mathbf y$ is a few lines of R.
 
 #### Optional, can be done at home: the pieces
 
@@ -339,7 +339,7 @@ dim(beta) # frustrating
 x %*% beta
 ```
 
-Transpose and symmetry: even if a matrix $\mathbf A$ is not square, both $\mathbf A^\top\mathbf A$ and $\mathbf A\mathbf A^\top$ are square and symmetric (often one is invertible).
+Transpose and symmetry: even if a matrix $\mathbf A$ is not square, both $\mathbf A^T\mathbf A$ and $\mathbf A\mathbf A^T$ are square and symmetric (often one is invertible).
 
 ```{r}
 A <- matrix(c(rep(1, 4), 0, 0), nrow = 3, byrow = FALSE)
@@ -347,7 +347,7 @@ A
 t(A) %*% A
 ```
 
-Pseudoinversion: `ginv()` in the `MASS` library (installed with R) computes $\mathbf A^\dagger = (\mathbf A^\top\mathbf A)^{-1}\mathbf A^\top$ when that exists, so $\mathbf A^\dagger\mathbf A = \mathbf I$; it is a left inverse here, not a right one.
+Pseudoinversion: `ginv()` in the `MASS` library (installed with R) computes $\mathbf A^\dagger = (\mathbf A^T\mathbf A)^{-1}\mathbf A^T$ when that exists, so $\mathbf A^\dagger\mathbf A = \mathbf I$; it is a left inverse here, not a right one.
 
 ```{r}
 Ainv <- MASS::ginv(A)
@@ -392,7 +392,7 @@ stopifnot(isTRUE(all.equal(as.numeric(beta_hat),
 
 #### Optional, can be done at home: the hat matrix
 
-**Step 2.** Build the hat matrix $\mathbf H = \mathbf X(\mathbf X^\top\mathbf X)^{-1}\mathbf X^\top$ and check two of its properties numerically: its trace, and that $\mathbf H\mathbf y$ is `fitted(lm(...))`. (Optional problem 4 proves them.)
+**Step 2.** Build the hat matrix $\mathbf H = \mathbf X(\mathbf X^T\mathbf X)^{-1}\mathbf X^T$ and check two of its properties numerically: its trace, and that $\mathbf H\mathbf y$ is `fitted(lm(...))`. (Optional problem 4 proves them.)
 
 ```{r}
 #| eval: false
@@ -413,7 +413,7 @@ all.equal(as.numeric(H %*% y), as.numeric(fitted(lm(lifeExp ~ lgdp + lpop, data 
 **Question 1.** The trace came out as a small integer. Which one, and why?
 
 ::: {.callout-tip .answer collapse="true" title="Reveal answer"}
-$3 = q$, the number of columns of $\mathbf X$ (intercept, `lgdp`, `lpop`): $\mathrm{tr}(\mathbf H) = \mathrm{tr}\big((\mathbf X^\top\mathbf X)^{-1}\mathbf X^\top\mathbf X\big) = \mathrm{tr}(\mathbf I_q)$ by the cyclic property of the trace. It is the number of coefficients, not $n$ (optional problem 4(a)). Building `H` with `MASS::ginv(X)` instead of the explicit inverse gives the same matrix.
+$3 = q$, the number of columns of $\mathbf X$ (intercept, `lgdp`, `lpop`): $\mathrm{tr}(\mathbf H) = \mathrm{tr}\big((\mathbf X^T\mathbf X)^{-1}\mathbf X^T\mathbf X\big) = \mathrm{tr}(\mathbf I_q)$ by the cyclic property of the trace. It is the number of coefficients, not $n$ (optional problem 4(a)). Building `H` with `MASS::ginv(X)` instead of the explicit inverse gives the same matrix.
 :::
 
 ### 2. Regression on real data
@@ -610,7 +610,7 @@ stopifnot(isTRUE(all.equal(coef(long)[["lgdp"]], coef(lm(gm$lifeExp ~ lgdp_tilde
 **Question 4.** In one sentence, what is the coefficient on `lgdp` in `long` the slope of? Your neighbor regressed the *residual* of `lifeExp` (on `lpop` and `continent`) on `lgdp_tilde` and got the same number. Why is that not a coincidence?
 
 ::: {.callout-tip .answer collapse="true" title="Reveal answer"}
-The slope of `lifeExp` on the part of `lgdp` not linearly explained by `lpop`, the continent indicators and the intercept. Residual on residual gives the same slope because $\tilde{\mathbf x}_2^\top \mathbf M_1 \mathbf y = \tilde{\mathbf x}_2^\top \mathbf y$: $\mathbf M_1$ is symmetric and idempotent, so it can be moved onto $\tilde{\mathbf x}_2$, where it changes nothing (lines 5 to 6 of the lecture's proof). If the numbers disagree, the residual came from the wrong regression (`lifeExp` instead of `lgdp` on the left), the two fits used different rows, or a column was left out of the auxiliary regression. Dropping the explicit intercept with `- 1` does not change the answer here: R then codes every continent with its own indicator, and together they span the constant column.
+The slope of `lifeExp` on the part of `lgdp` not linearly explained by `lpop`, the continent indicators and the intercept. Residual on residual gives the same slope because $\tilde{\mathbf x}_2^T \mathbf M_1 \mathbf y = \tilde{\mathbf x}_2^T \mathbf y$: $\mathbf M_1$ is symmetric and idempotent, so it can be moved onto $\tilde{\mathbf x}_2$, where it changes nothing (lines 5 to 6 of the lecture's proof). If the numbers disagree, the residual came from the wrong regression (`lifeExp` instead of `lgdp` on the left), the two fits used different rows, or a column was left out of the auxiliary regression. Dropping the explicit intercept with `- 1` does not change the answer here: R then codes every continent with its own indicator, and together they span the constant column.
 :::
 
 **Step 2.** Now leave `lpop` out. Fit the short regression `lifeExp ~ lgdp + continent`, and the auxiliary regression of the omitted variable on what was kept, `lpop ~ lgdp + continent`. Check problem 2(a): the short coefficient on `lgdp` equals the long one plus the long coefficient on `lpop` times the auxiliary slope, exactly.

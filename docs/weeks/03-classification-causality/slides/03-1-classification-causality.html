@@ -225,7 +225,7 @@ Joshua Loftus
 </div>
 <p>Today the outcome is a label: <span class="math inline">\(Y \in \{0, 1\}\)</span>.</p>
 <div class="ask">
-<p>Write down what <span class="math inline">\(\mathbb E[Y \mid X = x]\)</span> is when <span class="math inline">\(Y\)</span> takes only the values <span class="math inline">\(0\)</span> and <span class="math inline">\(1\)</span>. Then write one thing a straight line <span class="math inline">\(x^\top\beta\)</span> gets wrong about it.</p>
+<p>Write down what <span class="math inline">\(\mathbb E[Y \mid X = x]\)</span> is when <span class="math inline">\(Y\)</span> takes only the values <span class="math inline">\(0\)</span> and <span class="math inline">\(1\)</span>. Then write one thing a straight line <span class="math inline">\(x^T\beta\)</span> gets wrong about it.</p>
 </div>
 </section>
 <section id="the-target-is-a-probability" class="slide level2">
@@ -234,7 +234,7 @@ Joshua Loftus
 p(x) = P(Y = 1 \mid X = x) = \mathbb E[Y \mid X = x]
 \]</span></p>
 <p>So the optimal model theorem’s target is the <strong>class probability</strong> <span class="math inline">\(p(x)\)</span>, and a fitted model gives an estimate <span class="math inline">\(\hat p(x)\)</span></p>
-<p>A line <span class="math inline">\(x^\top\beta\)</span> does not stay inside <span class="math inline">\([0, 1]\)</span>: that is the first thing logistic regression fixes</p>
+<p>A line <span class="math inline">\(x^T\beta\)</span> does not stay inside <span class="math inline">\([0, 1]\)</span>: that is the first thing logistic regression fixes</p>
 <p>Notation for today: <span class="math inline">\(p(x)\)</span> the class probability, <span class="math inline">\(\hat p(x)\)</span> its estimate, and a <strong>threshold</strong> <span class="math inline">\(c\)</span>: predict <span class="math inline">\(1\)</span> when <span class="math inline">\(\hat p(x) &gt; c\)</span></p>
 </section>
 <section id="classification" class="slide level2 inverse">
@@ -320,7 +320,7 @@ p(x) = P(Y = 1 \mid X = x) = \mathbb E[Y \mid X = x]
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a aria-hidden="true" tabindex="-1"></a>model_fit <span class="ot">&lt;-</span> <span class="fu">glm</span>(y <span class="sc">~</span> x1 <span class="sc">+</span> x2, <span class="at">family =</span> <span class="st">"binomial"</span>, <span class="at">data =</span> train)</span>
 <span id="cb1-2"><a aria-hidden="true" tabindex="-1"></a>broom<span class="sc">::</span><span class="fu">tidy</span>(model_fit)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 3 × 5
+<pre><code># A tibble: 3 x 5
   term        estimate std.error statistic  p.value
   &lt;chr&gt;          &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;
 1 (Intercept)    -2.24     0.656     -3.42 0.000635
@@ -332,7 +332,7 @@ p(x) = P(Y = 1 \mid X = x) = \mathbb E[Y \mid X = x]
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a aria-hidden="true" tabindex="-1"></a>broom<span class="sc">::</span><span class="fu">tidy</span>(model_fit, <span class="at">exponentiate =</span> <span class="cn">TRUE</span>) <span class="sc">|&gt;</span> <span class="fu">select</span>(term, estimate)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 3 × 2
+<pre><code># A tibble: 3 x 2
   term        estimate
   &lt;chr&gt;          &lt;dbl&gt;
 1 (Intercept)    0.106
@@ -354,7 +354,7 @@ p(x) = P(Y = 1 \mid X = x) = \mathbb E[Y \mid X = x]
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a aria-hidden="true" tabindex="-1"></a>broom<span class="sc">::</span><span class="fu">glance</span>(model_fit)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 1 × 8
+<pre><code># A tibble: 1 x 8
   null.deviance df.null logLik   AIC   BIC deviance df.residual  nobs
           &lt;dbl&gt;   &lt;int&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;    &lt;dbl&gt;       &lt;int&gt; &lt;int&gt;
 1          110.      79  -25.8  57.5  64.7     51.5          77    80</code></pre>
