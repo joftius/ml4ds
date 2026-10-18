@@ -55,19 +55,23 @@ gd_path <- function(start, gamma, steps, a = c(1, 10)) {
   for (t in 1:steps) { b <- b - gamma * a * b; out[t + 1, ] <- b }
   tibble(step = 0:steps, b1 = out[, 1], b2 = out[, 2])
 }
-contour_grid <- expand_grid(b1 = seq(-4.5, 4.5, length.out = 121),
+contour_grid <- expand_grid(b1 = seq(-5, 5, length.out = 121),
                             b2 = seq(-2.2, 2.2, length.out = 121)) |>
   mutate(f = fq(b1, b2))
-contour_plot <- function(path, title = NULL) {
-  ggplot() +
+# coord_equal fixes the panel at about 2:1, so the canvas (fig-width by fig-height) should have
+# about that shape once the title and tick labels are taken off, or the panel floats in whitespace.
+contour_plot <- function(path, title = NULL, axis_titles = TRUE) {
+  p <- ggplot() +
     geom_contour(data = contour_grid, aes(b1, b2, z = f),
                  breaks = c(0.25, 1, 2.5, 5, 10, 20), colour = "grey70") +
     geom_path(data = path, aes(b1, b2), colour = v_blue, linewidth = 0.8) +
     geom_point(data = path, aes(b1, b2), colour = v_blue, size = 1.8) +
     geom_point(data = path[1, ], aes(b1, b2), colour = m_orange, size = 3) +
-    coord_equal(xlim = c(-4.5, 4.5), ylim = c(-2.2, 2.2)) +
+    coord_equal(xlim = c(-5, 5), ylim = c(-2, 2), expand = FALSE) +
     labs(x = expression(beta[1]), y = expression(beta[2]), title = title) +
-    theme(plot.title = element_text(size = 16))
+    theme(plot.title = element_text(size = 14), plot.margin = margin(0, 6, 0, 0))
+  if (!axis_titles) p <- p + theme(axis.title = element_blank())
+  p
 }
 ```
 
@@ -191,7 +195,7 @@ Row one needs an intercept, no penalty, a finite solution. Concavity is a claim 
 $$
 \frac{\partial^2 \ell}{\partial\beta\,\partial\beta^T} = -\sum_{i=1}^n w_i\, x_i x_i^T, \qquad w_i = \hat p_i(\beta)\,\big(1 - \hat p_i(\beta)\big) > 0
 $$
-Each term is minus a positive weight times $x_i x_i^T$, a matrix that never points uphill in any direction, so the sum curves downward everywhere: the log-likelihood is concave, and any finite solution of the score equations is its global maximum
+Each term is $-w_i\, x_i x_i^T$ with $w_i > 0$. In any direction $v$, $v^T x_i x_i^T v = (x_i^T v)^2 \ge 0$, so the sum curves downward, or is flat, in every direction: the log-likelihood is concave, and any finite solution of the score equations is its global maximum
 
 What concavity does not give: existence (week 3's separable case has no finite solution). **So how do we solve the score equations?**
 
@@ -348,7 +352,7 @@ Name the example: the valley; it comes back on the next slide and in part 3. One
 ::: {.column width="64%"}
 ```{r}
 #| label: valley
-#| fig-height: 3.6
+#| fig-height: 3.3
 #| fig-width: 7.4
 #| out-width: "100%"
 contour_plot(gd_path(c(-4, 1.2), 0.15, 25))
@@ -375,19 +379,19 @@ The 0.21 panel shows eight steps; the rest are off the page. Say it: the largest
 ::: {.column width="50%"}
 ```{r}
 #| label: three-steps-a
-#| fig-height: 2.85
+#| fig-height: 2.8
 #| fig-width: 6
 #| out-width: "100%"
-contour_plot(gd_path(c(-4, 1.2), 0.05, 25), "0.05: 25 steps, still crawling")
+contour_plot(gd_path(c(-4, 1.2), 0.05, 25), "0.05: 25 steps, still crawling", axis_titles = FALSE)
 ```
 :::
 ::: {.column width="50%"}
 ```{r}
 #| label: three-steps-c
-#| fig-height: 2.85
+#| fig-height: 2.8
 #| fig-width: 6
 #| out-width: "100%"
-contour_plot(gd_path(c(-4, 1.2), 0.21, 8), "0.21: diverges")
+contour_plot(gd_path(c(-4, 1.2), 0.21, 8), "0.21: diverges", axis_titles = FALSE)
 ```
 :::
 :::
@@ -396,10 +400,10 @@ contour_plot(gd_path(c(-4, 1.2), 0.21, 8), "0.21: diverges")
 ::: {.column width="50%"}
 ```{r}
 #| label: three-steps-b
-#| fig-height: 2.85
+#| fig-height: 2.8
 #| fig-width: 6
 #| out-width: "100%"
-contour_plot(gd_path(c(-4, 1.2), 0.18, 25), "0.18: zigzag, converges")
+contour_plot(gd_path(c(-4, 1.2), 0.18, 25), "0.18: zigzag, converges", axis_titles = FALSE)
 ```
 :::
 ::: {.column width="50%"}
@@ -442,7 +446,7 @@ Compress: the loop computes one number each step, the gradient; this part is abo
 ## Reading the gradient
 
 ::: {.notes}
-Name the example: the hilly road, a one-parameter loss; it comes back on the next three slides. The gradient is zero at the minimum, but also at a local minimum, and nearly zero on a plateau. Large means steep, and a step may overshoot. The question for the part: when the loss stops falling, which of these are you at?
+Name the example: the hilly road, a one-parameter loss; it comes back on the next three slides. The gradient is zero at the minimum, but also at a local minimum, and small but not shrinking on a plateau (0.01 here). Large means steep, and a step may overshoot. The question for the part: when the loss stops falling, which of these are you at?
 :::
 
 ```{r}
@@ -458,7 +462,7 @@ g1 <- function(x) 1.0 * exp(-(x + 3.5)^2 / 0.4) * (2 * (x + 3.5) / 0.4) + 2.5 * 
 x_lmin <- optimize(f1, c(-4.5, -2.5))$minimum; x_gmin <- optimize(f1, c(1.5, 3.5))$minimum
 curve1 <- tibble(x = seq(-6, 4.6, length.out = 400)) |> mutate(f = f1(x))
 marks <- tibble(x = c(-5.3, x_lmin, -1.0, x_gmin),
-                label = c("steep: large gradient", "local minimum: zero", "plateau: nearly zero", "global minimum: zero")) |>
+                label = c("steep: large gradient", "local minimum: zero", "plateau: small, about 0.01", "global minimum: zero")) |>
   mutate(f = f1(x), slope = g1(x))
 ggplot(curve1, aes(x, f)) + geom_line(linewidth = 1.1, colour = v_blue) +
   geom_segment(data = marks, aes(x = x - 0.5, xend = x + 0.5, y = f - 0.5 * slope, yend = f + 0.5 * slope), colour = m_orange, linewidth = 1) +
@@ -523,7 +527,7 @@ Left, the penguin fit: Chinstrap against Adelie from flipper length (standardize
 
 ```{r}
 #| label: big-small
-#| fig-height: 3.1
+#| fig-height: 4.3
 #| fig-width: 12
 #| out-width: "100%"
 pg <- penguins |> filter(species != "Gentoo") |> drop_na(flipper_length_mm) |>
@@ -549,9 +553,7 @@ pd <- ggplot(tibble(step = 1:800, beta = pos), aes(step, beta)) + geom_line(line
 pc + pd
 ```
 
-**Too big** a step ($\gamma = 12 > 2/L = 8$): the iterates overshoot and bounce. **Too small** a gradient (the plateau, about $0.01$): the iterate creeps for hundreds of steps, then moves all at once
-
-Named, not derived: in a deep network the chain rule multiplies derivatives across layers, and the product can be enormous or negligible, **exploding** and **vanishing** gradients
+**Too big** a step ($\gamma = 12 > 2/L = 8$): overshoot and bounce. **Too small** a gradient (the plateau, $0.01$): creep for hundreds of steps, then move all at once. In deep networks the chain rule can make gradients **explode** or **vanish**
 
 ## Has it converged?
 
@@ -575,27 +577,32 @@ conv <- bind_rows(tibble(panel = "A", step = 1:800, loss = qa$loss[-1], gnorm = 
   mutate(gnorm = pmax(gnorm, 1e-12))
 # Top row: training loss. Bottom row: gradient norm. Both log. The 200-step view keeps each panel's full
 # vertical range (geom_blank), so that B's plateau looks flat rather than zoomed in.
+# The plateau reference line and its label belong to panel B only, so they come from one-row data frames
+# with panel = "B" (annotate() would repeat them in every facet).
 conv_plot <- function(d) {
-  top <- ggplot(d, aes(step, loss)) + geom_blank(data = mutate(conv, step = 1)) + geom_line(linewidth = 1.1, colour = v_blue) +
-    geom_vline(xintercept = 200, linetype = "dotted") + facet_wrap(~ panel, scales = "free_y") + scale_y_log10() +
-    labs(x = NULL, y = "loss") + theme(strip.text = element_text(size = 16))
-  bottom <- ggplot(d, aes(step, gnorm)) + geom_blank(data = mutate(conv, step = 1)) + geom_line(linewidth = 1.1, colour = m_orange) +
-    geom_vline(xintercept = 200, linetype = "dotted") + facet_wrap(~ panel) + scale_y_log10() +
-    labs(x = "step", y = "|gradient|") + theme(strip.text = element_blank())
+  top <- ggplot(d, aes(step, loss)) + geom_blank(data = mutate(conv, step = 1)) + geom_line(linewidth = 1.2, colour = v_blue) +
+    facet_wrap(~ panel, scales = "free_y") + scale_y_log10() +
+    labs(x = NULL, y = "training loss") + theme(strip.text = element_text(size = 18))
+  bottom <- ggplot(d, aes(step, gnorm)) + geom_blank(data = mutate(conv, step = 1)) + geom_line(linewidth = 1.2, colour = m_orange) +
+    geom_hline(data = tibble(panel = "B"), aes(yintercept = 0.01), linetype = "dotted") +
+    geom_text(data = tibble(panel = "B", step = 5, gnorm = 0.01), aes(step, gnorm), label = "plateau slope 0.01",
+              hjust = 0, vjust = -0.5, size = 4.5, colour = "grey30") +
+    facet_wrap(~ panel) + scale_y_log10(breaks = c(1e-9, 1e-6, 1e-3, 1), labels = c("1e-9", "1e-6", "1e-3", "1")) +
+    labs(x = "step", y = "gradient norm") + theme(strip.text = element_blank())
   top / bottom
 }
 ```
 
 ```{r}
 #| label: converged-200
-#| fig-height: 3.6
+#| fig-height: 4.1
 #| fig-width: 12
 #| out-width: "100%"
 conv_plot(filter(conv, step <= 200))
 ```
 
 ::: {.ask}
-Three runs, 200 steps, log scales: training loss on top, gradient norm $\|\nabla \hat R_n(\beta_t)\|$ below. One has converged, one is on a plateau, one has a step size that shrank to nothing. Which is which?
+Three runs, 200 steps, log scales. One has converged, one is on a plateau, one has a step size that shrank to nothing. Which is which?
 :::
 
 ## Has it converged? The next 600 steps
@@ -606,14 +613,14 @@ The reveal. A, the valley, was converged. B, the hilly road, was on the plateau 
 
 ```{r}
 #| label: converged-800
-#| fig-height: 3.6
+#| fig-height: 4.1
 #| fig-width: 12
 #| out-width: "100%"
 conv_plot(conv)
 ```
 
 ::: {.leave}
-A, the valley: converged. B, the hilly road: the plateau, then the drop at step `r min(which(lb < 2))`. C, the valley with steps $0.3 \cdot 0.6^t$: stopped short. The training loss could not tell them apart; the gradient norm could
+A, the valley: converged. B, the hilly road: its loss fell by `r sprintf("%.3f", lb[1] - lb[200])` in 200 steps, its gradient is $0.01$ and not shrinking; the drop comes at step `r min(which(lb < 2))`. C, the valley with steps $0.3 \cdot 0.6^t$: stopped short
 :::
 
 ## Curvature
@@ -654,7 +661,7 @@ A quadratic with curvatures $a_j$ has $L = \max_j |a_j|$ (the valley: 10); least
 ## Descent lemma
 
 ::: {.notes}
-The one positive result, and what it does and does not say. It needs no convexity; it says each step helps, by an amount proportional to the squared gradient; it does not say where you end up, and a small gradient means slow progress, not arrival.
+The one positive result, and what it does and does not say. Needs no convexity. Says: each step helps, by at least the squared gradient over 2L, so more where the gradient is large. Does not say: that the steps converge (on f(x) = -x they walk off forever); where they end if they do (any stationary point of the landscape); that a small gradient means arrival (the next step gains little: the plateau). Proof: integrate the gradient along the step and let the Lipschitz bound do what the curvature bound did.
 :::
 
 ::: {.leave}
@@ -665,9 +672,9 @@ $$
 Every step of size $1/L$ decreases $f$ by at least the squared gradient over $2L$ (strictly, unless $\nabla f(x) = 0$).
 :::
 
-The one guarantee, and its price. It says: no convexity needed; each step helps, more where the gradient is large. It does not say the steps converge (on $f(x) = -x$ they walk off forever); if they do, the limit is a stationary point, any of the landscape's. A small gradient is not arrival: the next step gains little, which is the plateau
+*Says*: each step helps, more where the gradient is large. No convexity needed
 
-Proof: integrate the gradient along the step, and let the Lipschitz bound do what the curvature bound did
+*Does not say*: where the steps end, or that they end
 
 ## Descent lemma, proof (1 of 2)
 
@@ -695,27 +702,23 @@ $$
 ## Descent lemma, proof (2 of 2)
 
 ::: {.notes}
-(e) Integrate t. (f) Put the step in: v is minus gamma times the gradient. (g) Collect. Then read off the sign. These three lines are shown at once; the reveal is the conclusion.
+(e) Integrate t. (f) Put the step in: v is minus gamma times the gradient. (g) Collect. Then read off the sign: at gamma = 1/L the right-hand side is minus the squared gradient over 2L, the lemma. For any 0 < gamma < 2/L it is negative unless the gradient is zero, so every such step decreases f, which is what the curvature heuristic said. The conclusion is the last row of the display, so that it reveals after (g); a text fragment below the display would reveal first.
 :::
 
 $$
 \begin{alignedat}{2}
 f(y) - f(x) &\le \nabla f(x)^T v + \int_0^1 L\,t\,\|v\|^2\, dt
 &\quad& \\
-&= \nabla f(x)^T v + \tfrac{L}{2}\|v\|^2
-&& {\color{gray}\small\text{(e) } \textstyle\int_0^1 t\, dt = \tfrac12} \\
-&= -\gamma\|\nabla f(x)\|^2 + \tfrac{L}{2}\gamma^2\|\nabla f(x)\|^2
-&& {\color{gray}\small\text{(f) } v = -\gamma\nabla f(x)} \\
-&= -\gamma\big(1 - \tfrac12 L\gamma\big)\|\nabla f(x)\|^2
-&& {\color{gray}\small\text{(g) collect}}
+&\class{fragment}{{}= \nabla f(x)^T v + \tfrac{L}{2}\|v\|^2}
+&& \class{fragment}{{\color{gray}\small\text{(e) } \textstyle\int_0^1 t\, dt = \tfrac12}} \\
+&\class{fragment}{{}= -\gamma\|\nabla f(x)\|^2 + \tfrac{L}{2}\gamma^2\|\nabla f(x)\|^2}
+&& \class{fragment}{{\color{gray}\small\text{(f) } v = -\gamma\nabla f(x)}} \\
+&\class{fragment}{{}= -\gamma\big(1 - \tfrac12 L\gamma\big)\|\nabla f(x)\|^2}
+&& \class{fragment}{{\color{gray}\small\text{(g) collect}}} \\[1.2em]
+&\class{fragment}{\rlap{\text{At } \gamma = 1/L\text{: } f(y) - f(x) \le -\|\nabla f(x)\|^2/2L\text{, the lemma. } \blacksquare}}
+&&
 \end{alignedat}
 $$
-
-. . .
-
-At $\gamma = 1/L$ the right-hand side is $-\|\nabla f(x)\|^2/2L$, which is the lemma. $\blacksquare$
-
-For any $0 < \gamma < 2/L$ the right-hand side is $\le 0$, and $< 0$ unless $\nabla f(x) = 0$: every such step decreases $f$ until the gradient vanishes, and the heuristic's bound was right
 
 ## {.inverse .center}
 
@@ -758,15 +761,21 @@ Pick one row $I$ uniformly at random from $\{1, \ldots, n\}$ and use its gradien
 ## The stochastic gradient is unbiased
 
 ::: {.notes}
-Derived in one line. Only the index is random; the data and beta are fixed, so nothing about where the data came from is used. Without replacement the variance is smaller by the finite-population factor; week 2's seminar met that factor.
+Derived in one line. Only the index is random; the data and beta are fixed, so nothing about where the data came from is used. The batch variance is sigma^2(beta)/b, with sigma^2 the spread of the single-row gradients (seminar, problem 3). Without replacement the variance is smaller by the finite-population factor; week 2's seminar met that factor.
 :::
+
+::: {.ask}
+How would you prove this?
+:::
+
+. . .
 
 With the data and $\beta$ held fixed, only $I$ is random, and by linearity of $\nabla$, $\mathbb E$ and $\sum$,
 $$
 \mathbb E_I\big[\nabla\ell_I(\beta)\big] = \sum_{i=1}^n \frac1n\,\nabla\ell_i(\beta) = \nabla\hat R_n(\beta)
 $$
 
-Unbiased, whatever the data are. A batch of $b$ rows drawn independently with replacement averages $b$ such gradients: still unbiased, with variance $\sigma^2(\beta)/b$, where $\sigma^2(\beta)$ is the spread of the single-row gradients
+Unbiased, whatever the data are. A batch of $b$ rows drawn with replacement averages $b$ such gradients: still unbiased
 
 Compute update using one randomly sampled observation, or a randomly sampled subset ("mini-batch SGD"). Correct on average, cheap, and **not guaranteed to decrease the training loss on any one step**: the descent lemma is about the full gradient
 
@@ -841,7 +850,7 @@ Legacy slide. Optimization time is a knob like k or the polynomial degree.
 
 #### Optimization time = complexity
 
-- For many optimization algorithms the fitted model becomes more complex the longer the optimization algorithm runs
+- For many optimization algorithms the model fits closer to the training data the longer the optimization algorithm runs
 
 . . .
 
@@ -907,7 +916,7 @@ You may stop the algorithm at any step. Which one, and why?
 ## Stopping early: what the training loss did not show
 
 ::: {.notes}
-The picture the whole week points at. The algorithm did what it was asked, minimize the training error, and the training error is the wrong thing to minimize all the way. Nothing in parts 2 to 4 could have shown this: they only ever saw the training loss. Next week: by how much it lies. Lambda: week 7.
+The picture the whole week points at. The algorithm did what it was asked, minimize the training error, and the training error is the wrong thing to minimize all the way. Nothing in parts 2 to 4 could have shown this: they only ever saw the training loss. Say, do not show: next week measures by how much it lies; the number of steps is a tuning parameter like k or d; week 7 writes the penalty down.
 :::
 
 ::: {.columns}
@@ -923,16 +932,14 @@ es_plot(es)
 ::: {.column width="45%"}
 The wide regression scored on 2,000 new rows from the same model: the held-out error falls, turns at step `r best_step`, and ends far above its minimum
 
-Every diagnostic in part 3 watched the training loss, and every one said "keep going". **Tracking the training loss is not tracking the loss you care about.** Next week: by how much it lies
-
-The number of steps is a tuning parameter, like $k$ or $d$; week 7 writes the penalty down, $\hat R_n(\beta) + \lambda\|\beta\|^2$
+Every diagnostic in part 3 watched the training loss, and every one said "keep going". **Tracking the training loss is not tracking the loss you care about**
 :::
 :::
 
 ## Where the error comes from, this time
 
 ::: {.notes}
-Stated; the two-line proof (add and subtract R(f_F); each bracket is nonnegative by the definitions of f_F and f*) is exercise 2, which also shows that for squared loss the approximation term is E[(f_F - f*)^2] by the optimal model theorem. Three functions: the best of all, the best in the class, what the algorithm returns. The class is chosen before the data; so is the approximation error. Next week starts here.
+Stated; the two-line proof (add and subtract R(f_F); each bracket is nonnegative by the definitions of f_F and f*) is exercise 2. Say: the class was chosen before the data, and so was the approximation error; the estimation error is the sample's, and can hold bias as well as variance; the same trade-off as week 1's, for any method that minimizes over a class; next week starts here. Exercise 2 also shows that for squared loss the approximation term is E[(f_F - f*)^2] by the optimal model theorem. Three functions: the best of all, the best in the class, what the algorithm returns. The class is chosen before the data; so is the approximation error. Next week starts here.
 :::
 
 Three functions. $f^\star = \arg\min_f R(f)$: the best of all (squared loss: week 2's conditional mean). $f_{\mathcal F} = \arg\min_{f \in \mathcal F} R(f)$: the best in the class, fixed once $\mathcal F$ is. $\hat f = \arg\min_{f \in \mathcal F} \hat R_n(f)$: what the data give, random
@@ -942,9 +949,7 @@ $$
 R(\hat f) = R(f^\star) + \underbrace{\big[R(\hat f) - R(f_{\mathcal F})\big]}_{\text{estimation}} + \underbrace{\big[R(f_{\mathcal F}) - R(f^\star)\big]}_{\text{approximation}}
 $$
 
-::: {.leave}
-Proof: exercise 2, two lines. The class was chosen before the data, and so was the approximation error; the estimation error is the sample's (and can hold bias as well as variance). The same trade-off as week 1's, for any method that minimizes over a class. Next week starts here
-:::
+Proof: exercise 2
 
 ## No free lunch
 
@@ -954,7 +959,9 @@ Stated (Shalev-Shwartz and Ben-David, Theorem 5.1, in expectation form); the fin
 
 **No free lunch (stated).** No method has lower error than every other on every distribution. Binary classification, 0--1 loss: for any learning method and any training size $n$, on a domain with at least $2n$ points there is a distribution for which a perfect predictor exists and the method's expected error (over training samples) is at least $1/4$
 
-What it says: choosing a method is an *assumption* about the world; the ERM form shows where one such assumption enters, the class $\mathcal F$ chosen before the data. What it does not say: that methods are equally good on the problems we meet, or that an assumption is a flaw
+*Says*: choosing a method is an *assumption* about the world; the ERM form shows where one such assumption enters, the class $\mathcal F$ chosen before the data
+
+*Does not say*: all methods are equally good
 
 ::: {.ask}
 In the week 1 seminar a line and $k$ nearest neighbors often scored within a standard error of each other on gapminder. A fact about the methods, or about the data?

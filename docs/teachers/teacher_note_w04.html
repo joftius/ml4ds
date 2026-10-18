@@ -2334,7 +2334,7 @@ window.Quarto = {
 
 <section id="keep-or-rush" class="level2">
 <h2 class="anchored" data-anchor-id="keep-or-rush">Keep or rush</h2>
-<p>In seminar order. Planned total 58 minutes, which leaves about 2 for transitions and questions.</p>
+<p>In seminar order. Planned total 60 minutes; cutting the first item marked gets back to 58, which leaves about 2 for transitions and questions.</p>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 32%">
@@ -2366,7 +2366,7 @@ window.Quarto = {
 <tr class="odd">
 <td>Problem 2: the recurrence, one step at <span class="math inline">\(1/a\)</span>, best shared step <span class="math inline">\(2/11\)</span></td>
 <td style="text-align: right;">4</td>
-<td>Rush; cut first</td>
+<td>Rush; cut second</td>
 <td>Say it: the factors cross at <span class="math inline">\(2/11\)</span>, factor <span class="math inline">\(9/11\)</span></td>
 </tr>
 <tr class="even">
@@ -2401,8 +2401,8 @@ window.Quarto = {
 </tr>
 <tr class="odd">
 <td>Coding 1, step 4 and question 2: uncentered input, ratio 680</td>
-<td style="text-align: right;">3</td>
-<td>Rush; cut second</td>
+<td style="text-align: right;">2</td>
+<td>Rush; cut first</td>
 <td>Say the numbers: 300 steps and the intercept is still off by 0.4</td>
 </tr>
 <tr class="even">
@@ -2412,12 +2412,18 @@ window.Quarto = {
 <td>Only two functions changed; <span class="math inline">\(2/L = 8\)</span></td>
 </tr>
 <tr class="odd">
+<td>Coding 1, step 6 and its question: the gradient by central differences</td>
+<td style="text-align: right;">4</td>
+<td>Keep</td>
+<td>Now only the loss changes; <span class="math inline">\(2p\)</span> loss evaluations per step</td>
+</tr>
+<tr class="even">
 <td>Coding 2, step 1 and question 4: <span class="math inline">\(p &gt; n\)</span>, training MSE to zero</td>
-<td style="text-align: right;">8</td>
+<td style="text-align: right;">7</td>
 <td>Keep</td>
 <td>Zero training error, distance to truth stuck at 33</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td>Coding 2, step 2 and question 5: early stopping, best step 15</td>
 <td style="text-align: right;">8</td>
 <td>Keep</td>
@@ -2425,7 +2431,7 @@ window.Quarto = {
 </tr>
 </tbody>
 </table>
-<p>Minimum seminar, about 30 minutes: problems 1 and 3, coding 1 steps 1, 2 and 5, coding 2 step 2. With more time, add coding 2 step 1 back first.</p>
+<p>Minimum seminar, about 30 minutes: problems 1 and 3, coding 1 steps 1, 2 and 5, coding 2 step 2. With more time, add coding 1 step 6 back first, then coding 2 step 1.</p>
 </section>
 <section id="if-you-read-on" class="level2">
 <h2 class="anchored" data-anchor-id="if-you-read-on">If you read on</h2>
@@ -2440,6 +2446,7 @@ window.Quarto = {
 <li>Problem 1: gradient <span class="math inline">\((-8/3, -2)\)</span> at zero, one step to <span class="math inline">\((0.267, 0.2)\)</span>, fixed point <span class="math inline">\((4/3, 3/2)\)</span>, curvatures <span class="math inline">\(2\)</span> and <span class="math inline">\(4/3\)</span>.</li>
 <li>Coding 1: 142 countries; curvatures <span class="math inline">\(2\)</span> and <span class="math inline">\(0.69\)</span> centered, <span class="math inline">\(30.6\)</span> and <span class="math inline">\(0.045\)</span> uncentered. At <span class="math inline">\(\gamma = 0.3\)</span> the slope is <span class="math inline">\(16.585\)</span> to three decimals after 50 steps with gradient norm about <span class="math inline">\(10^{-4}\)</span>; at <span class="math inline">\(0.05\)</span> the slope is <span class="math inline">\(13.7\)</span> with gradient norm about <span class="math inline">\(2\)</span>; at <span class="math inline">\(1.05\)</span> the loss is about <span class="math inline">\(6 \times 10^7\)</span> after 50 steps. Uncentered, <span class="math inline">\(\gamma = 1/30\)</span>, 300 steps: intercept <span class="math inline">\(4.58\)</span> against <code>lm</code>’s <span class="math inline">\(4.95\)</span>.</li>
 <li>Coding 1, step 5: 219 birds; gradient descent and <code>glm</code> agree to three decimals, <span class="math inline">\((-0.935, 0.938)\)</span>; the score vector is about <span class="math inline">\(10^{-10}\)</span>.</li>
+<li>Coding 1, step 6: numeric and exact gradients agree to about <span class="math inline">\(10^{-10}\)</span> (logistic) and <span class="math inline">\(10^{-7}\)</span> (least squares, whose loss is of order <span class="math inline">\(10^3\)</span>); the fit by numeric gradient matches the exact one to <span class="math inline">\(10^{-10}\)</span>. If asked why not a smaller <span class="math inline">\(h\)</span>: at <span class="math inline">\(10^{-10}\)</span> the error grows to <span class="math inline">\(10^{-7}\)</span>.</li>
 <li>Coding 2, step 1 (seed 1): training MSE <span class="math inline">\(459\)</span> after one epoch, <span class="math inline">\(2.8\)</span> after ten, <span class="math inline">\(10^{-4}\)</span> after forty; distance to the truth <span class="math inline">\(35.5\)</span>, then <span class="math inline">\(33.3\)</span> from epoch ten on, from <span class="math inline">\(38.3\)</span> at the start.</li>
 <li>Coding 2, step 2 (seed 12): <span class="math inline">\(L \approx 7.5\)</span>; held-out MSE smallest at step 15, about <span class="math inline">\(15.7\)</span>, and about <span class="math inline">\(32\)</span> at step 300; training MSE <span class="math inline">\(2.2\)</span> at step 300.</li>
 </ul>
@@ -2448,6 +2455,7 @@ window.Quarto = {
 <li>The <span class="math inline">\(2/n\)</span> in the gradient: dropping it leaves the fixed point unchanged and makes every step-size statement wrong by a factor.</li>
 <li>Writing the update as <code>beta + gamma * g</code> (uphill), which the checkpoint catches as a rising loss.</li>
 <li>In step 5, <code>log(p)</code> with <span class="math inline">\(p\)</span> numerically <span class="math inline">\(0\)</span>: the solution’s <code>log1p(exp(-z))</code> form avoids it; if a student’s own version gives <code>NaN</code> at a large step, that is the reason.</li>
+<li>In step 6, forgetting to reset <code>e</code> inside the loop (so that <span class="math inline">\(e\)</span> gains a second nonzero entry), or dividing by <code>h</code> instead of <code>2 * h</code>; the checkpoint catches both.</li>
 <li>In part 2, step 1, <code>X_big[rows, ]</code> on a one-row batch drops to a vector: <code>drop = FALSE</code>.</li>
 <li>Reading question 5 as “then use a smaller step”: the point is which data chose the step, not the step.</li>
 <li>In the student file, a chunk with a blank starts with <code>#| eval: false</code>; they delete that line once the blank is filled. The <code># ...</code> line can stay.</li>

@@ -532,10 +532,10 @@ Note
 </section>
 <section id="coding" class="level2">
 <h2 class="anchored" data-anchor-id="coding">Coding</h2>
-<!-- About 40 min: part 1 22, part 2 18. Skeleton lines in comments are scaffolds: the statistical operation is what you write. Everything headed "Optional, can be done at home" is outside the seminar. -->
+<!-- About 42 min: part 1 26, part 2 16. Skeleton lines in comments are scaffolds: the statistical operation is what you write. Everything headed "Optional, can be done at home" is outside the seminar. -->
 <section id="gradient-descent-written-once" class="level3">
 <h3 class="anchored" data-anchor-id="gradient-descent-written-once">1. Gradient descent, written once</h3>
-<!-- 22 min: steps 1 to 5, questions 1 to 3. -->
+<!-- 26 min: steps 1 to 6, questions 1 to 3 and the step 6 question. -->
 <p>Life expectancy on <span class="math inline">\(\log_{10}\)</span> GDP per capita in 2007, as in week 2. The input is centered; step 4 shows why.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>g07 <span class="ot">&lt;-</span> gapminder <span class="sc">|&gt;</span> <span class="fu">filter</span>(year <span class="sc">==</span> <span class="dv">2007</span>) <span class="sc">|&gt;</span> <span class="fu">mutate</span>(<span class="at">lgdp =</span> <span class="fu">log10</span>(gdpPercap))</span>
@@ -609,59 +609,82 @@ Note
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">max</span>(<span class="fu">abs</span>(fit_logit<span class="sc">$</span>beta <span class="sc">-</span> <span class="fu">coef</span>(<span class="fu">glm</span>(chinstrap <span class="sc">~</span> z, <span class="at">family =</span> binomial, <span class="at">data =</span> pg)))) <span class="sc">&lt;</span> <span class="fl">1e-3</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p><strong>Question 3.</strong> Exactly two things changed between the least-squares run and this one. Name them. Why is a step of <span class="math inline">\(4\)</span> safe here when <span class="math inline">\(1.05\)</span> was not for least squares?</p>
+<p><strong>Step 6.</strong> The gradient without the calculus. Write <code>numeric_grad(loss, X, y, beta, h = 1e-6)</code>, which returns the vector whose <span class="math inline">\(j\)</span>th entry is the central difference <span class="math display">\[
+\frac{\hat R_n(\beta + h\,e_j) - \hat R_n(\beta - h\,e_j)}{2h},
+\]</span> with <span class="math inline">\(e_j\)</span> the <span class="math inline">\(j\)</span>th coordinate vector. Check it against <code>ls_grad</code> and <code>logit_grad</code> at some <span class="math inline">\(\beta\)</span> of your choice, then fit the penguin model again with <code>gradient_descent</code>, passing a gradient function that calls <code>numeric_grad</code> on <code>logit_loss</code>.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>numeric_grad <span class="ot">&lt;-</span> <span class="cf">function</span>(loss, X, y, beta, <span class="at">h =</span> <span class="fl">1e-6</span>) {</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  p <span class="ot">&lt;-</span> <span class="fu">length</span>(beta)</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  g <span class="ot">&lt;-</span> <span class="fu">numeric</span>(p)</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (j <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>p) {</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>    e <span class="ot">&lt;-</span> <span class="fu">numeric</span>(p)</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>    e[j] <span class="ot">&lt;-</span> h</span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>    <span class="co"># g[j] &lt;- ____</span></span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>  g</span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a><span class="co"># b &lt;- c(0.5, -0.3)</span></span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a><span class="co"># cbind(exact = ls_grad(X, y, b), numeric = numeric_grad(ls_loss, X, y, b))</span></span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a><span class="co"># fit_num &lt;- gradient_descent(X_pg, y_pg, logit_loss, grad = ____, gamma = 4, steps = 40)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>Checkpoint:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">max</span>(<span class="fu">abs</span>(<span class="fu">numeric_grad</span>(logit_loss, X_pg, y_pg, <span class="fu">c</span>(<span class="fl">0.5</span>, <span class="sc">-</span><span class="fl">0.3</span>)) <span class="sc">-</span> <span class="fu">logit_grad</span>(X_pg, y_pg, <span class="fu">c</span>(<span class="fl">0.5</span>, <span class="sc">-</span><span class="fl">0.3</span>)))) <span class="sc">&lt;</span> <span class="fl">1e-6</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p><strong>Question.</strong> To fit a different model with what you now have, say a Poisson regression or a neural network, what would you have to write, and what would it cost you per step?</p>
 </section>
 <section id="many-solutions-and-stopping-early" class="level3">
 <h3 class="anchored" data-anchor-id="many-solutions-and-stopping-early">2. Many solutions, and stopping early</h3>
-<!-- 18 min: steps 1 and 2, questions 4 and 5. -->
+<!-- 16 min: steps 1 and 2, questions 4 and 5. -->
 <p><strong>Step 1.</strong> More coefficients than observations: <span class="math inline">\(n = 100\)</span>, <span class="math inline">\(p = 400\)</span>. Implement mini-batch stochastic gradient descent for least squares from <code>beta &lt;- rep(0, p)</code>: in each epoch, shuffle the rows (<code>sample(n)</code>) and, for each batch of 10 rows, take a step of size <code>gamma = 0.005</code> along the batch’s gradient. Record after each epoch the training MSE and the distance <span class="math inline">\(\|\beta_t - \beta\|\)</span> to the true coefficients.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1</span>)</span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>n_big <span class="ot">&lt;-</span> <span class="dv">100</span></span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>p_big <span class="ot">&lt;-</span> <span class="dv">400</span></span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>X_big <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">rnorm</span>(n_big <span class="sc">*</span> p_big), n_big, p_big)</span>
-<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>beta_true <span class="ot">&lt;-</span> <span class="fu">rpois</span>(p_big, <span class="fl">1.5</span>)</span>
-<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>y_big <span class="ot">&lt;-</span> X_big <span class="sc">%*%</span> beta_true <span class="sc">+</span> <span class="fu">rnorm</span>(n_big, <span class="at">sd =</span> <span class="dv">2</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1</span>)</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>n_big <span class="ot">&lt;-</span> <span class="dv">100</span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>p_big <span class="ot">&lt;-</span> <span class="dv">400</span></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>X_big <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">rnorm</span>(n_big <span class="sc">*</span> p_big), n_big, p_big)</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>beta_true <span class="ot">&lt;-</span> <span class="fu">rpois</span>(p_big, <span class="fl">1.5</span>)</span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>y_big <span class="ot">&lt;-</span> X_big <span class="sc">%*%</span> beta_true <span class="sc">+</span> <span class="fu">rnorm</span>(n_big, <span class="at">sd =</span> <span class="dv">2</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>epochs <span class="ot">&lt;-</span> <span class="dv">40</span></span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>batch_size <span class="ot">&lt;-</span> <span class="dv">10</span></span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>gamma <span class="ot">&lt;-</span> <span class="fl">0.005</span></span>
-<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>beta_sgd <span class="ot">&lt;-</span> <span class="fu">rep</span>(<span class="dv">0</span>, p_big)</span>
-<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>sgd_path <span class="ot">&lt;-</span> <span class="fu">tibble</span>(<span class="at">epoch =</span> <span class="dv">1</span><span class="sc">:</span>epochs, <span class="at">train_mse =</span> <span class="cn">NA_real_</span>, <span class="at">dist_to_truth =</span> <span class="cn">NA_real_</span>)</span>
-<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (e <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>epochs) {</span>
-<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>  shuffled <span class="ot">&lt;-</span> <span class="fu">sample</span>(n_big)</span>
-<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (start <span class="cf">in</span> <span class="fu">seq</span>(<span class="dv">1</span>, n_big, <span class="at">by =</span> batch_size)) {</span>
-<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>    rows <span class="ot">&lt;-</span> shuffled[start<span class="sc">:</span><span class="fu">min</span>(start <span class="sc">+</span> batch_size <span class="sc">-</span> <span class="dv">1</span>, n_big)]</span>
-<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>    <span class="co"># g &lt;- ____          # the gradient of the batch's mean squared error</span></span>
-<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>    <span class="co"># beta_sgd &lt;- ____</span></span>
-<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>  }</span>
-<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a>  sgd_path<span class="sc">$</span>train_mse[e] <span class="ot">&lt;-</span> <span class="fu">ls_loss</span>(X_big, y_big, beta_sgd)</span>
-<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a>  sgd_path<span class="sc">$</span>dist_to_truth[e] <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(<span class="fu">sum</span>((beta_sgd <span class="sc">-</span> beta_true)<span class="sc">^</span><span class="dv">2</span>))</span>
-<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a><span class="co"># ...</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>epochs <span class="ot">&lt;-</span> <span class="dv">40</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>batch_size <span class="ot">&lt;-</span> <span class="dv">10</span></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>gamma <span class="ot">&lt;-</span> <span class="fl">0.005</span></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>beta_sgd <span class="ot">&lt;-</span> <span class="fu">rep</span>(<span class="dv">0</span>, p_big)</span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>sgd_path <span class="ot">&lt;-</span> <span class="fu">tibble</span>(<span class="at">epoch =</span> <span class="dv">1</span><span class="sc">:</span>epochs, <span class="at">train_mse =</span> <span class="cn">NA_real_</span>, <span class="at">dist_to_truth =</span> <span class="cn">NA_real_</span>)</span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (e <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>epochs) {</span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>  shuffled <span class="ot">&lt;-</span> <span class="fu">sample</span>(n_big)</span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (start <span class="cf">in</span> <span class="fu">seq</span>(<span class="dv">1</span>, n_big, <span class="at">by =</span> batch_size)) {</span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>    rows <span class="ot">&lt;-</span> shuffled[start<span class="sc">:</span><span class="fu">min</span>(start <span class="sc">+</span> batch_size <span class="sc">-</span> <span class="dv">1</span>, n_big)]</span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>    <span class="co"># g &lt;- ____          # the gradient of the batch's mean squared error</span></span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>    <span class="co"># beta_sgd &lt;- ____</span></span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a>  sgd_path<span class="sc">$</span>train_mse[e] <span class="ot">&lt;-</span> <span class="fu">ls_loss</span>(X_big, y_big, beta_sgd)</span>
+<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a>  sgd_path<span class="sc">$</span>dist_to_truth[e] <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(<span class="fu">sum</span>((beta_sgd <span class="sc">-</span> beta_true)<span class="sc">^</span><span class="dv">2</span>))</span>
+<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a><span class="co"># ...</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p><strong>Question 4.</strong> The training MSE goes to zero. Why is that possible, and why should it worry you? The distance to the true coefficients levels off at about <span class="math inline">\(33\)</span>, from a starting distance of <span class="math inline">\(38\)</span>: what is it that the algorithm cannot learn from these data?</p>
 <p><strong>Step 2.</strong> The lecture’s wide regression: <span class="math inline">\(n = 80\)</span>, <span class="math inline">\(p = 60\)</span>, noisy, and a held-out set of 2,000 rows from the same model. Run full-batch gradient descent from zero for 300 steps with step <code>0.5 / L</code>, where <code>L</code> is twice the largest eigenvalue of <span class="math inline">\(\mathbf X^T\mathbf X/n\)</span>, and record the training and the held-out MSE after every step. Plot both against the step (log scale on the horizontal axis), and find the step at which the held-out MSE is smallest.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">12</span>)</span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>n_w <span class="ot">&lt;-</span> <span class="dv">80</span></span>
-<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>p_w <span class="ot">&lt;-</span> <span class="dv">60</span></span>
-<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>X_w <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">rnorm</span>(n_w <span class="sc">*</span> p_w), n_w, p_w)</span>
-<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>beta_w <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(p_w, <span class="at">sd =</span> <span class="fl">0.5</span>)</span>
-<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>y_w <span class="ot">&lt;-</span> X_w <span class="sc">%*%</span> beta_w <span class="sc">+</span> <span class="fu">rnorm</span>(n_w, <span class="at">sd =</span> <span class="dv">3</span>)</span>
-<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>X_held <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">rnorm</span>(<span class="dv">2000</span> <span class="sc">*</span> p_w), <span class="dv">2000</span>, p_w)</span>
-<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>y_held <span class="ot">&lt;-</span> X_held <span class="sc">%*%</span> beta_w <span class="sc">+</span> <span class="fu">rnorm</span>(<span class="dv">2000</span>, <span class="at">sd =</span> <span class="dv">3</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">12</span>)</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>n_w <span class="ot">&lt;-</span> <span class="dv">80</span></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>p_w <span class="ot">&lt;-</span> <span class="dv">60</span></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>X_w <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">rnorm</span>(n_w <span class="sc">*</span> p_w), n_w, p_w)</span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>beta_w <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(p_w, <span class="at">sd =</span> <span class="fl">0.5</span>)</span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>y_w <span class="ot">&lt;-</span> X_w <span class="sc">%*%</span> beta_w <span class="sc">+</span> <span class="fu">rnorm</span>(n_w, <span class="at">sd =</span> <span class="dv">3</span>)</span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>X_held <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">rnorm</span>(<span class="dv">2000</span> <span class="sc">*</span> p_w), <span class="dv">2000</span>, p_w)</span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>y_held <span class="ot">&lt;-</span> X_held <span class="sc">%*%</span> beta_w <span class="sc">+</span> <span class="fu">rnorm</span>(<span class="dv">2000</span>, <span class="at">sd =</span> <span class="dv">3</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>L <span class="ot">&lt;-</span> <span class="dv">2</span> <span class="sc">*</span> <span class="fu">max</span>(<span class="fu">eigen</span>(<span class="fu">t</span>(X_w) <span class="sc">%*%</span> X_w <span class="sc">/</span> n_w)<span class="sc">$</span>values)</span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>beta_gd <span class="ot">&lt;-</span> <span class="fu">rep</span>(<span class="dv">0</span>, p_w)</span>
-<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>es_path <span class="ot">&lt;-</span> <span class="fu">tibble</span>(<span class="at">step =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">300</span>, <span class="at">training =</span> <span class="cn">NA_real_</span>, <span class="at">held_out =</span> <span class="cn">NA_real_</span>)</span>
-<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (t <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">300</span>) {</span>
-<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>  <span class="co"># beta_gd &lt;- ____</span></span>
-<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>  es_path<span class="sc">$</span>training[t] <span class="ot">&lt;-</span> <span class="fu">ls_loss</span>(X_w, y_w, beta_gd)</span>
-<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>  es_path<span class="sc">$</span>held_out[t] <span class="ot">&lt;-</span> <span class="fu">ls_loss</span>(X_held, y_held, beta_gd)</span>
-<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a><span class="co"># ...</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>L <span class="ot">&lt;-</span> <span class="dv">2</span> <span class="sc">*</span> <span class="fu">max</span>(<span class="fu">eigen</span>(<span class="fu">t</span>(X_w) <span class="sc">%*%</span> X_w <span class="sc">/</span> n_w)<span class="sc">$</span>values)</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>beta_gd <span class="ot">&lt;-</span> <span class="fu">rep</span>(<span class="dv">0</span>, p_w)</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>es_path <span class="ot">&lt;-</span> <span class="fu">tibble</span>(<span class="at">step =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">300</span>, <span class="at">training =</span> <span class="cn">NA_real_</span>, <span class="at">held_out =</span> <span class="cn">NA_real_</span>)</span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (t <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">300</span>) {</span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>  <span class="co"># beta_gd &lt;- ____</span></span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>  es_path<span class="sc">$</span>training[t] <span class="ot">&lt;-</span> <span class="fu">ls_loss</span>(X_w, y_w, beta_gd)</span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>  es_path<span class="sc">$</span>held_out[t] <span class="ot">&lt;-</span> <span class="fu">ls_loss</span>(X_held, y_held, beta_gd)</span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a><span class="co"># ...</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p><strong>Question 5.</strong> The training error falls at every step, as the descent lemma says it must. Where would you have stopped if you had only seen it? You chose the number of steps by looking at the held-out MSE: can you now report that held-out MSE as an honest estimate of the chosen model’s error? What would you need instead?</p>
 </section>
@@ -669,8 +692,8 @@ Note
 <h3 class="anchored" data-anchor-id="optional-can-be-done-at-home-which-of-the-many-solutions">Optional, can be done at home: which of the many solutions</h3>
 <p>Compare the stochastic gradient descent estimate from part 2, step 1, with week 2’s minimum-norm least-squares solution, <code>MASS::ginv(X_big) %*% y_big</code>, and compute the norms of the two.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>beta_mn <span class="ot">&lt;-</span> MASS<span class="sc">::</span><span class="fu">ginv</span>(X_big) <span class="sc">%*%</span> y_big</span>
-<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="co"># ...</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>beta_mn <span class="ot">&lt;-</span> MASS<span class="sc">::</span><span class="fu">ginv</span>(X_big) <span class="sc">%*%</span> y_big</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="co"># ...</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 
 

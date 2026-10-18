@@ -290,11 +290,11 @@ Common errors: reading a flat loss curve as convergence (the point of panel C); 
 
 ## Coding
 
-<!-- About 40 min: part 1 22, part 2 18. Skeleton lines in comments are scaffolds: the statistical operation is what you write. Everything headed "Optional, can be done at home" is outside the seminar. -->
+<!-- About 42 min: part 1 26, part 2 16. Skeleton lines in comments are scaffolds: the statistical operation is what you write. Everything headed "Optional, can be done at home" is outside the seminar. -->
 
 ### 1. Gradient descent, written once
 
-<!-- 22 min: steps 1 to 5, questions 1 to 3. -->
+<!-- 26 min: steps 1 to 6, questions 1 to 3 and the step 6 question. -->
 
 Life expectancy on $\log_{10}$ GDP per capita in 2007, as in week 2. The input is centered; step 4 shows why.
 
@@ -480,9 +480,69 @@ stopifnot(max(abs(fit_logit$beta - coef(glm(chinstrap ~ z, family = binomial, da
 The loss function and the gradient function; the loop, the data matrix's shape and the stopping rule are untouched. For least squares the curvature was $2\lambda_{\max}(\mathbf X^T\mathbf X)/n = 2$, so steps had to stay below $1$. For the logistic loss the Hessian is $\tfrac1n\sum_i p_i(1 - p_i)\mathbf x_i\mathbf x_i^T$ with every weight $p_i(1 - p_i) \le \tfrac14$, so the curvature is at most $\lambda_{\max}(\mathbf X^T\mathbf X)/4n = 0.25$ here and any step below $2/0.25 = 8$ is safe. The lecture's $\gamma = 12$ was not, and bounced.
 :::
 
+**Step 6.** The gradient without the calculus. Write `numeric_grad(loss, X, y, beta, h = 1e-6)`, which returns the vector whose $j$th entry is the central difference
+$$
+\frac{\hat R_n(\beta + h\,e_j) - \hat R_n(\beta - h\,e_j)}{2h},
+$$
+with $e_j$ the $j$th coordinate vector. Check it against `ls_grad` and `logit_grad` at some $\beta$ of your choice, then fit the penguin model again with `gradient_descent`, passing a gradient function that calls `numeric_grad` on `logit_loss`.
+
+```{r}
+#| eval: false
+numeric_grad <- function(loss, X, y, beta, h = 1e-6) {
+  p <- length(beta)
+  g <- numeric(p)
+  for (j in 1:p) {
+    e <- numeric(p)
+    e[j] <- h
+    # g[j] <- ____
+  }
+  g
+}
+# b <- c(0.5, -0.3)
+# cbind(exact = ls_grad(X, y, b), numeric = numeric_grad(ls_loss, X, y, b))
+# fit_num <- gradient_descent(X_pg, y_pg, logit_loss, grad = ____, gamma = 4, steps = 40)
+```
+
+::: {.callout-tip .answer collapse="true" title="Reveal solution"}
+```{r}
+numeric_grad <- function(loss, X, y, beta, h = 1e-6) {
+  p <- length(beta)
+  g <- numeric(p)
+  for (j in 1:p) {
+    e <- numeric(p)
+    e[j] <- h
+    g[j] <- (loss(X, y, beta + e) - loss(X, y, beta - e)) / (2 * h)
+  }
+  g
+}
+b <- c(0.5, -0.3)
+cbind(exact = ls_grad(X, y, b), numeric = numeric_grad(ls_loss, X, y, b))
+cbind(exact = logit_grad(X_pg, y_pg, b), numeric = numeric_grad(logit_loss, X_pg, y_pg, b))
+fit_num <- gradient_descent(X_pg, y_pg, logit_loss,
+                            grad = function(X, y, beta) numeric_grad(logit_loss, X, y, beta),
+                            gamma = 4, steps = 40)
+rbind(numeric = fit_num$beta, exact = fit_logit$beta)
+```
+
+The two gradients agree to about $10^{-10}$ for the logistic loss (and to about $10^{-7}$ for least squares, whose loss is of order $10^3$ at this $\beta$), and the two fits agree to $10^{-10}$. Smaller $h$ is not better: at $h = 10^{-10}$ the error is $10^{-7}$, because the difference of two nearly equal numbers loses digits. The central difference has truncation error of order $h^2$ and rounding error of order $\epsilon/h$, with $\epsilon \approx 2 \times 10^{-16}$, and $h \approx 10^{-6}$ is near the best trade-off.
+:::
+
+Checkpoint:
+
+```{r}
+#| eval: !expr exists("numeric_grad")
+stopifnot(max(abs(numeric_grad(logit_loss, X_pg, y_pg, c(0.5, -0.3)) - logit_grad(X_pg, y_pg, c(0.5, -0.3)))) < 1e-6)
+```
+
+**Question.** To fit a different model with what you now have, say a Poisson regression or a neural network, what would you have to write, and what would it cost you per step?
+
+::: {.callout-tip .answer collapse="true" title="Reveal answer"}
+Only the loss. The loop is `gradient_descent`, unchanged since step 2, and the gradient is now computed from the loss. The cost: $2p$ evaluations of the loss per step instead of one gradient, so for a model with a million parameters the exact gradient (or automatic differentiation, which computes it from the loss at the cost of a few loss evaluations) is the only option; and an error of about $10^{-10}$ in each coordinate, which is harmless for the fit (the fits above agree to $10^{-10}$) but means the score equations will not be satisfied to machine precision.
+:::
+
 ### 2. Many solutions, and stopping early
 
-<!-- 18 min: steps 1 and 2, questions 4 and 5. -->
+<!-- 16 min: steps 1 and 2, questions 4 and 5. -->
 
 **Step 1.** More coefficients than observations: $n = 100$, $p = 400$. Implement mini-batch stochastic gradient descent for least squares from `beta <- rep(0, p)`: in each epoch, shuffle the rows (`sample(n)`) and, for each batch of 10 rows, take a step of size `gamma = 0.005` along the batch's gradient. Record after each epoch the training MSE and the distance $\|\beta_t - \beta\|$ to the true coefficients.
 

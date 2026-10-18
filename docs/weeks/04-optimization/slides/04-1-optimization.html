@@ -212,7 +212,7 @@ L(\beta ; \mathbf y | \mathbf x) = \prod_{i=1}^n \left( \frac{1}{1+e^{-x_i \beta
 <p><strong>Row one is the intercept.</strong> <span class="math inline">\(\sum_i (y_i - \hat p_i) = 0\)</span>: the fitted probabilities average to the observed proportion of 1s on the training rows.</p>
 <p><strong>The log-likelihood is concave.</strong> Differentiating once more, <span class="math display">\[
 \frac{\partial^2 \ell}{\partial\beta\,\partial\beta^T} = -\sum_{i=1}^n w_i\, x_i x_i^T, \qquad w_i = \hat p_i(\beta)\,\big(1 - \hat p_i(\beta)\big) &gt; 0
-\]</span> Each term is minus a positive weight times <span class="math inline">\(x_i x_i^T\)</span>, a matrix that never points uphill in any direction, so the sum curves downward everywhere: the log-likelihood is concave, and any finite solution of the score equations is its global maximum</p>
+\]</span> Each term is <span class="math inline">\(-w_i\, x_i x_i^T\)</span> with <span class="math inline">\(w_i &gt; 0\)</span>. In any direction <span class="math inline">\(v\)</span>, <span class="math inline">\(v^T x_i x_i^T v = (x_i^T v)^2 \ge 0\)</span>, so the sum curves downward, or is flat, in every direction: the log-likelihood is concave, and any finite solution of the score equations is its global maximum</p>
 <p>What concavity does not give: existence (week 3’s separable case has no finite solution). <strong>So how do we solve the score equations?</strong></p>
 </section>
 <section id="newton-raphson" class="slide level2">
@@ -427,8 +427,7 @@ L(\beta ; \mathbf y | \mathbf x) = \prod_{i=1}^n \left( \frac{1}{1+e^{-x_i \beta
 </div>
 </div>
 </div>
-<p><strong>Too big</strong> a step (<span class="math inline">\(\gamma = 12 &gt; 2/L = 8\)</span>): the iterates overshoot and bounce. <strong>Too small</strong> a gradient (the plateau, about <span class="math inline">\(0.01\)</span>): the iterate creeps for hundreds of steps, then moves all at once</p>
-<p>Named, not derived: in a deep network the chain rule multiplies derivatives across layers, and the product can be enormous or negligible, <strong>exploding</strong> and <strong>vanishing</strong> gradients</p>
+<p><strong>Too big</strong> a step (<span class="math inline">\(\gamma = 12 &gt; 2/L = 8\)</span>): overshoot and bounce. <strong>Too small</strong> a gradient (the plateau, <span class="math inline">\(0.01\)</span>): creep for hundreds of steps, then move all at once. In deep networks the chain rule can make gradients <strong>explode</strong> or <strong>vanish</strong></p>
 </section>
 <section id="has-it-converged" class="slide level2">
 <h2>Has it converged?</h2>
@@ -442,7 +441,7 @@ L(\beta ; \mathbf y | \mathbf x) = \prod_{i=1}^n \left( \frac{1}{1+e^{-x_i \beta
 </div>
 </div>
 <div class="ask">
-<p>Three runs, 200 steps, log scales: training loss on top, gradient norm <span class="math inline">\(\|\nabla \hat R_n(\beta_t)\|\)</span> below. One has converged, one is on a plateau, one has a step size that shrank to nothing. Which is which?</p>
+<p>Three runs, 200 steps, log scales. One has converged, one is on a plateau, one has a step size that shrank to nothing. Which is which?</p>
 </div>
 </section>
 <section id="has-it-converged-the-next-600-steps" class="slide level2">
@@ -457,7 +456,7 @@ L(\beta ; \mathbf y | \mathbf x) = \prod_{i=1}^n \left( \frac{1}{1+e^{-x_i \beta
 </div>
 </div>
 <div class="leave">
-<p>A, the valley: converged. B, the hilly road: the plateau, then the drop at step 445. C, the valley with steps <span class="math inline">\(0.3 \cdot 0.6^t\)</span>: stopped short. The training loss could not tell them apart; the gradient norm could</p>
+<p>A, the valley: converged. B, the hilly road: its loss fell by 0.005 in 200 steps, its gradient is <span class="math inline">\(0.01\)</span> and not shrinking; the drop comes at step 445. C, the valley with steps <span class="math inline">\(0.3 \cdot 0.6^t\)</span>: stopped short</p>
 </div>
 </section>
 <section id="curvature" class="slide level2">
@@ -487,8 +486,8 @@ f(x - \gamma\nabla f(x)) \lesssim f(x) - \gamma\underbrace{\big(1 - \tfrac12 L\g
 f\!\left(x - \tfrac1L\nabla f(x)\right) \le f(x) - \frac{\|\nabla f(x)\|^2}{2L}
 \]</span> Every step of size <span class="math inline">\(1/L\)</span> decreases <span class="math inline">\(f\)</span> by at least the squared gradient over <span class="math inline">\(2L\)</span> (strictly, unless <span class="math inline">\(\nabla f(x) = 0\)</span>).</p>
 </div>
-<p>The one guarantee, and its price. It says: no convexity needed; each step helps, more where the gradient is large. It does not say the steps converge (on <span class="math inline">\(f(x) = -x\)</span> they walk off forever); if they do, the limit is a stationary point, any of the landscape’s. A small gradient is not arrival: the next step gains little, which is the plateau</p>
-<p>Proof: integrate the gradient along the step, and let the Lipschitz bound do what the curvature bound did</p>
+<p><em>Says</em>: each step helps, more where the gradient is large. No convexity needed</p>
+<p><em>Does not say</em>: where the steps end, or that they end</p>
 </section>
 <section id="descent-lemma-proof-1-of-2" class="slide level2">
 <h2>Descent lemma, proof (1 of 2)</h2>
@@ -512,18 +511,16 @@ f(y) - f(x) &amp;= \int_0^1 \nabla f(x_t)^T v\, dt
 \begin{alignedat}{2}
 f(y) - f(x) &amp;\le \nabla f(x)^T v + \int_0^1 L\,t\,\|v\|^2\, dt
 &amp;\quad&amp; \\
-&amp;= \nabla f(x)^T v + \tfrac{L}{2}\|v\|^2
-&amp;&amp; {\color{gray}\small\text{(e) } \textstyle\int_0^1 t\, dt = \tfrac12} \\
-&amp;= -\gamma\|\nabla f(x)\|^2 + \tfrac{L}{2}\gamma^2\|\nabla f(x)\|^2
-&amp;&amp; {\color{gray}\small\text{(f) } v = -\gamma\nabla f(x)} \\
-&amp;= -\gamma\big(1 - \tfrac12 L\gamma\big)\|\nabla f(x)\|^2
-&amp;&amp; {\color{gray}\small\text{(g) collect}}
+&amp;\class{fragment}{{}= \nabla f(x)^T v + \tfrac{L}{2}\|v\|^2}
+&amp;&amp; \class{fragment}{{\color{gray}\small\text{(e) } \textstyle\int_0^1 t\, dt = \tfrac12}} \\
+&amp;\class{fragment}{{}= -\gamma\|\nabla f(x)\|^2 + \tfrac{L}{2}\gamma^2\|\nabla f(x)\|^2}
+&amp;&amp; \class{fragment}{{\color{gray}\small\text{(f) } v = -\gamma\nabla f(x)}} \\
+&amp;\class{fragment}{{}= -\gamma\big(1 - \tfrac12 L\gamma\big)\|\nabla f(x)\|^2}
+&amp;&amp; \class{fragment}{{\color{gray}\small\text{(g) collect}}} \\[1.2em]
+&amp;\class{fragment}{\rlap{\text{At } \gamma = 1/L\text{: } f(y) - f(x) \le -\|\nabla f(x)\|^2/2L\text{, the lemma. } \blacksquare}}
+&amp;&amp;
 \end{alignedat}
 \]</span></p>
-<div class="fragment">
-<p>At <span class="math inline">\(\gamma = 1/L\)</span> the right-hand side is <span class="math inline">\(-\|\nabla f(x)\|^2/2L\)</span>, which is the lemma. <span class="math inline">\(\blacksquare\)</span></p>
-<p>For any <span class="math inline">\(0 &lt; \gamma &lt; 2/L\)</span> the right-hand side is <span class="math inline">\(\le 0\)</span>, and <span class="math inline">\(&lt; 0\)</span> unless <span class="math inline">\(\nabla f(x) = 0\)</span>: every such step decreases <span class="math inline">\(f\)</span> until the gradient vanishes, and the heuristic’s bound was right</p>
-</div>
 </section>
 <section id="section-3" class="slide level2 inverse center">
 <h2></h2>
@@ -578,11 +575,16 @@ f(y) - f(x) &amp;\le \nabla f(x)^T v + \int_0^1 L\,t\,\|v\|^2\, dt
 </section>
 <section id="the-stochastic-gradient-is-unbiased" class="slide level2">
 <h2>The stochastic gradient is unbiased</h2>
+<div class="ask">
+<p>How would you prove this?</p>
+</div>
+<div class="fragment">
 <p>With the data and <span class="math inline">\(\beta\)</span> held fixed, only <span class="math inline">\(I\)</span> is random, and by linearity of <span class="math inline">\(\nabla\)</span>, <span class="math inline">\(\mathbb E\)</span> and <span class="math inline">\(\sum\)</span>, <span class="math display">\[
 \mathbb E_I\big[\nabla\ell_I(\beta)\big] = \sum_{i=1}^n \frac1n\,\nabla\ell_i(\beta) = \nabla\hat R_n(\beta)
 \]</span></p>
-<p>Unbiased, whatever the data are. A batch of <span class="math inline">\(b\)</span> rows drawn independently with replacement averages <span class="math inline">\(b\)</span> such gradients: still unbiased, with variance <span class="math inline">\(\sigma^2(\beta)/b\)</span>, where <span class="math inline">\(\sigma^2(\beta)\)</span> is the spread of the single-row gradients</p>
+<p>Unbiased, whatever the data are. A batch of <span class="math inline">\(b\)</span> rows drawn with replacement averages <span class="math inline">\(b\)</span> such gradients: still unbiased</p>
 <p>Compute update using one randomly sampled observation, or a randomly sampled subset (“mini-batch SGD”). Correct on average, cheap, and <strong>not guaranteed to decrease the training loss on any one step</strong>: the descent lemma is about the full gradient</p>
+</div>
 </section>
 <section id="the-two-paths" class="slide level2">
 <h2>The two paths</h2>
@@ -618,7 +620,7 @@ f(y) - f(x) &amp;\le \nabla f(x)^T v + \int_0^1 L\,t\,\|v\|^2\, dt
 <h2>Early stopping</h2>
 <h4 id="optimization-time-complexity">Optimization time = complexity</h4>
 <ul>
-<li>For many optimization algorithms the fitted model becomes more complex the longer the optimization algorithm runs</li>
+<li>For many optimization algorithms the model fits closer to the training data the longer the optimization algorithm runs</li>
 </ul>
 <div class="fragment">
 <ul>
@@ -667,8 +669,7 @@ f(y) - f(x) &amp;\le \nabla f(x)^T v + \int_0^1 L\,t\,\|v\|^2\, dt
 </div>
 </div><div class="column" style="width:45%;">
 <p>The wide regression scored on 2,000 new rows from the same model: the held-out error falls, turns at step 15, and ends far above its minimum</p>
-<p>Every diagnostic in part 3 watched the training loss, and every one said “keep going”. <strong>Tracking the training loss is not tracking the loss you care about.</strong> Next week: by how much it lies</p>
-<p>The number of steps is a tuning parameter, like <span class="math inline">\(k\)</span> or <span class="math inline">\(d\)</span>; week 7 writes the penalty down, <span class="math inline">\(\hat R_n(\beta) + \lambda\|\beta\|^2\)</span></p>
+<p>Every diagnostic in part 3 watched the training loss, and every one said “keep going”. <strong>Tracking the training loss is not tracking the loss you care about</strong></p>
 </div></div>
 </section>
 <section id="where-the-error-comes-from-this-time" class="slide level2">
@@ -677,14 +678,13 @@ f(y) - f(x) &amp;\le \nabla f(x)^T v + \int_0^1 L\,t\,\|v\|^2\, dt
 <p><strong>Bias–variance decomposition, ERM form.</strong> Both underbraced terms are <span class="math inline">\(\ge 0\)</span>: <span class="math display">\[
 R(\hat f) = R(f^\star) + \underbrace{\big[R(\hat f) - R(f_{\mathcal F})\big]}_{\text{estimation}} + \underbrace{\big[R(f_{\mathcal F}) - R(f^\star)\big]}_{\text{approximation}}
 \]</span></p>
-<div class="leave">
-<p>Proof: exercise 2, two lines. The class was chosen before the data, and so was the approximation error; the estimation error is the sample’s (and can hold bias as well as variance). The same trade-off as week 1’s, for any method that minimizes over a class. Next week starts here</p>
-</div>
+<p>Proof: exercise 2</p>
 </section>
 <section id="no-free-lunch" class="slide level2">
 <h2>No free lunch</h2>
 <p><strong>No free lunch (stated).</strong> No method has lower error than every other on every distribution. Binary classification, 0–1 loss: for any learning method and any training size <span class="math inline">\(n\)</span>, on a domain with at least <span class="math inline">\(2n\)</span> points there is a distribution for which a perfect predictor exists and the method’s expected error (over training samples) is at least <span class="math inline">\(1/4\)</span></p>
-<p>What it says: choosing a method is an <em>assumption</em> about the world; the ERM form shows where one such assumption enters, the class <span class="math inline">\(\mathcal F\)</span> chosen before the data. What it does not say: that methods are equally good on the problems we meet, or that an assumption is a flaw</p>
+<p><em>Says</em>: choosing a method is an <em>assumption</em> about the world; the ERM form shows where one such assumption enters, the class <span class="math inline">\(\mathcal F\)</span> chosen before the data</p>
+<p><em>Does not say</em>: all methods are equally good</p>
 <div class="ask">
 <p>In the week 1 seminar a line and <span class="math inline">\(k\)</span> nearest neighbors often scored within a standard error of each other on gapminder. A fact about the methods, or about the data?</p>
 </div>

@@ -9,26 +9,27 @@ format:
 
 ## Keep or rush
 
-In seminar order. Planned total 58 minutes, which leaves about 2 for transitions and questions.
+In seminar order. Planned total 60 minutes; cutting the first item marked gets back to 58, which leaves about 2 for transitions and questions.
 
 | Item | Min | | If short |
 |---|---:|---|---|
 | Problem 1(a, b): one step, the fixed point is the normal equations | 4 | Keep | The iteration stops where week 2's equations hold |
 | Problem 1(c, d): curvatures 2 and 4/3, safe step below 1, the slope is slow | 3 | Keep | Largest curvature sets the step, smallest sets the speed |
-| Problem 2: the recurrence, one step at $1/a$, best shared step $2/11$ | 4 | Rush; cut first | Say it: the factors cross at $2/11$, factor $9/11$ |
+| Problem 2: the recurrence, one step at $1/a$, best shared step $2/11$ | 4 | Rush; cut second | Say it: the factors cross at $2/11$, factor $9/11$ |
 | Problem 3(a to c): random row unbiased, variance $\sigma^2/b$ | 3 | Keep | Only the index is random; no assumption about the data |
 | Problem 3(d): a stochastic step can increase the loss | 2 | Keep | The two-parabola counterexample at $\beta = 0$ |
 | Problem 4: shrinking steps stop at $-2.48$, sum of steps $0.45$ | 4 | Rush | Finite total step size, finite total travel |
 | Coding 1, steps 1 and 2: the loss, the gradient, the loop as a function | 7 | Keep | Give the update line if stuck; keep the function signature |
 | Coding 1, step 3 and question 1: three step sizes, loss and gradient norm | 6 | Keep | The gradient norm tells $0.05$ (slow) from $0.3$ (done) |
-| Coding 1, step 4 and question 2: uncentered input, ratio 680 | 3 | Rush; cut second | Say the numbers: 300 steps and the intercept is still off by 0.4 |
+| Coding 1, step 4 and question 2: uncentered input, ratio 680 | 2 | Rush; cut first | Say the numbers: 300 steps and the intercept is still off by 0.4 |
 | Coding 1, step 5 and question 3: logistic by the same loop, score check | 6 | Keep | Only two functions changed; $2/L = 8$ |
-| Coding 2, step 1 and question 4: $p > n$, training MSE to zero | 8 | Keep | Zero training error, distance to truth stuck at 33 |
+| Coding 1, step 6 and its question: the gradient by central differences | 4 | Keep | Now only the loss changes; $2p$ loss evaluations per step |
+| Coding 2, step 1 and question 4: $p > n$, training MSE to zero | 7 | Keep | Zero training error, distance to truth stuck at 33 |
 | Coding 2, step 2 and question 5: early stopping, best step 15 | 8 | Keep | Training says keep going; held-out turned at 15; the estimate is now biased |
 
 : {tbl-colwidths="[32,6,16,46]"}
 
-Minimum seminar, about 30 minutes: problems 1 and 3, coding 1 steps 1, 2 and 5, coding 2 step 2. With more time, add coding 2 step 1 back first.
+Minimum seminar, about 30 minutes: problems 1 and 3, coding 1 steps 1, 2 and 5, coding 2 step 2. With more time, add coding 1 step 6 back first, then coding 2 step 1.
 
 ## If you read on
 
@@ -43,6 +44,7 @@ What students should see
 - Problem 1: gradient $(-8/3, -2)$ at zero, one step to $(0.267, 0.2)$, fixed point $(4/3, 3/2)$, curvatures $2$ and $4/3$.
 - Coding 1: 142 countries; curvatures $2$ and $0.69$ centered, $30.6$ and $0.045$ uncentered. At $\gamma = 0.3$ the slope is $16.585$ to three decimals after 50 steps with gradient norm about $10^{-4}$; at $0.05$ the slope is $13.7$ with gradient norm about $2$; at $1.05$ the loss is about $6 \times 10^7$ after 50 steps. Uncentered, $\gamma = 1/30$, 300 steps: intercept $4.58$ against `lm`'s $4.95$.
 - Coding 1, step 5: 219 birds; gradient descent and `glm` agree to three decimals, $(-0.935, 0.938)$; the score vector is about $10^{-10}$.
+- Coding 1, step 6: numeric and exact gradients agree to about $10^{-10}$ (logistic) and $10^{-7}$ (least squares, whose loss is of order $10^3$); the fit by numeric gradient matches the exact one to $10^{-10}$. If asked why not a smaller $h$: at $10^{-10}$ the error grows to $10^{-7}$.
 - Coding 2, step 1 (seed 1): training MSE $459$ after one epoch, $2.8$ after ten, $10^{-4}$ after forty; distance to the truth $35.5$, then $33.3$ from epoch ten on, from $38.3$ at the start.
 - Coding 2, step 2 (seed 12): $L \approx 7.5$; held-out MSE smallest at step 15, about $15.7$, and about $32$ at step 300; training MSE $2.2$ at step 300.
 
@@ -51,6 +53,7 @@ Where they get stuck
 - The $2/n$ in the gradient: dropping it leaves the fixed point unchanged and makes every step-size statement wrong by a factor.
 - Writing the update as `beta + gamma * g` (uphill), which the checkpoint catches as a rising loss.
 - In step 5, `log(p)` with $p$ numerically $0$: the solution's `log1p(exp(-z))` form avoids it; if a student's own version gives `NaN` at a large step, that is the reason.
+- In step 6, forgetting to reset `e` inside the loop (so that $e$ gains a second nonzero entry), or dividing by `h` instead of `2 * h`; the checkpoint catches both.
 - In part 2, step 1, `X_big[rows, ]` on a one-row batch drops to a vector: `drop = FALSE`.
 - Reading question 5 as "then use a smaller step": the point is which data chose the step, not the step.
 - In the student file, a chunk with a blank starts with `#| eval: false`; they delete that line once the blank is filled. The `# ...` line can stay.
