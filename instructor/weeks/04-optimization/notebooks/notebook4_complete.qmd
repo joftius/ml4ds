@@ -1,0 +1,618 @@
+---
+title: "Week 4 seminar (complete)"
+author: "Joshua Loftus"
+format:
+  html:
+    toc: true
+    embed-resources: false
+execute:
+  echo: true
+  warning: false
+  message: false
+  error: false
+---
+
+<!-- Teacher version. This file is shown on screen in the seminar, so nothing in it
+is addressed to the teacher except this comment. Boxes: blue "Hint 1, 2, ..." and
+green "Reveal solution/answer", all collapsed; click to open. Hints are revealed in
+order, after the room has had a few minutes, the solution last. Hints and solutions
+carrying the class .answer are removed from the student file notebook4.qmd by
+_build_env/make_incomplete.py; hints without it (the pre-seminar exercises and the
+optional problems) stay in the student file, behind a warning not to open them
+early. Do not edit the student file by hand.
+
+How this seminar runs: students do exercises 1 to 4 at home (1 redoes the lecture's
+proof and is not gone through in the room). In the room: problems 1 to 4 (about 20
+minutes, hints then answers), then the coding (about 40: part 1 22, part 2 18).
+Everything headed "Optional, can be done at home" is outside the seminar. If the room
+runs slow, protect problem 1, coding part 1 steps 2 and 5, and coding part 2 step 2.
+The simulations in part 2 have seeds, so every student sees the same numbers. -->
+
+```{r}
+#| label: setup
+library(tidyverse)       # should've already install.packages("tidyverse")
+library(gapminder)       # might need to install.packages("gapminder")
+library(palmerpenguins)  # might need to install.packages("palmerpenguins")
+theme_set(theme_minimal())
+```
+
+## Before the seminar
+
+<!-- At home, before the seminar. -->
+
+The lecture proved one result, the descent lemma, which you prove again with the slides closed (exercise 1). It stated the ERM form of the bias--variance decomposition and left its two-line proof to you (exercise 2), set the Newton-Raphson exercise on the logistic log-likelihood (exercise 3), and stated no free lunch (exercise 4, a proof on a finite domain). Do all four on paper before the seminar; the seminar's problems are variations on them. You may use, without proof: the fundamental theorem of calculus along a line, $f(y) - f(x) = \int_0^1 \nabla f(x + t(y - x))^T (y - x)\, dt$ for a differentiable $f$; the Cauchy-Schwarz inequality $|a^T b| \le \|a\|\,\|b\|$; and the tower property, $\mathbb E[W] = \mathbb E\big[\mathbb E[W \mid X]\big]$. Throughout, assume that every expectation that appears exists.
+
+::: {.callout-warning title="Hints"}
+Each exercise has hints, collapsed below it. Do not open a hint unless you have been stuck for at least a few minutes, and open them in order. Exercise 1's proof is on the lecture slides. Solutions to exercises 2 to 4 are shown in the seminar if you ask.
+:::
+
+**Exercise 1 (descent lemma).** Let $f: \mathbb R^p \to \mathbb R$ be differentiable with an $L$-Lipschitz gradient: $\|\nabla f(x) - \nabla f(y)\| \le L\,\|x - y\|$ for all $x, y$, for some $L > 0$. Fix $x$, a step size $\gamma > 0$, and write $y = x - \gamma\nabla f(x)$ and $v = y - x$.
+
+(a) Write $f(y) - f(x)$ as an integral along the segment from $x$ to $y$, and split it into $\nabla f(x)^T v$ plus a remainder.
+
+(b) Bound the remainder by $\tfrac{L}{2}\|v\|^2$.
+
+(c) Substitute $v = -\gamma\nabla f(x)$ and show that $f(y) \le f(x) - \gamma\big(1 - \tfrac12 L\gamma\big)\|\nabla f(x)\|^2$. For which $\gamma$ is the right-hand side below $f(x)$, and what does $\gamma = 1/L$ give?
+
+(d) The lemma says each step decreases $f$. Give a function with an $L$-Lipschitz gradient for which the iterates $x_{t+1} = x_t - \nabla f(x_t)/L$ never converge, and say in one sentence what the lemma does and does not guarantee.
+
+::: {.callout-note collapse="true" title="Hint 1"}
+(a) Apply the fundamental theorem of calculus along the line to $f$, with $x_t = x + tv$. To split, add and subtract $\nabla f(x)^T v$ inside the integral.
+:::
+
+::: {.callout-note collapse="true" title="Hint 2"}
+(b) Cauchy-Schwarz on $[\nabla f(x_t) - \nabla f(x)]^T v$, then the Lipschitz bound, then $\|x_t - x\| = t\|v\|$. What is $\int_0^1 t\, dt$?
+:::
+
+::: {.callout-note collapse="true" title="Hint 3"}
+(d) Think of a function with no minimum at all. Its gradient is as Lipschitz as you like.
+:::
+
+::: {.callout-tip .answer collapse="true" title="Reveal solution"}
+(a) With $x_t = x + tv$,
+$$
+f(y) - f(x) = \int_0^1 \nabla f(x_t)^T v\, dt = \nabla f(x)^T v + \int_0^1 \big[\nabla f(x_t) - \nabla f(x)\big]^T v\, dt.
+$$
+
+(b) By Cauchy-Schwarz and then the Lipschitz bound, $\big|[\nabla f(x_t) - \nabla f(x)]^T v\big| \le \|\nabla f(x_t) - \nabla f(x)\|\,\|v\| \le L\,\|x_t - x\|\,\|v\| = L\,t\,\|v\|^2$, so the remainder is at most $\int_0^1 L\,t\,\|v\|^2\, dt = \tfrac{L}{2}\|v\|^2$.
+
+(c) With $v = -\gamma\nabla f(x)$: $\nabla f(x)^T v = -\gamma\|\nabla f(x)\|^2$ and $\tfrac{L}{2}\|v\|^2 = \tfrac{L}{2}\gamma^2\|\nabla f(x)\|^2$, so $f(y) - f(x) \le -\gamma(1 - \tfrac12 L\gamma)\|\nabla f(x)\|^2$. The bracket is positive for $0 < \gamma < 2/L$, so every such step decreases $f$ unless $\nabla f(x) = 0$. At $\gamma = 1/L$ the bound is $f(y) \le f(x) - \|\nabla f(x)\|^2/2L$, the lemma. $\blacksquare$
+
+(d) $f(x) = -x$ on $\mathbb R$: its gradient is the constant $-1$, Lipschitz with any $L > 0$, and the iterates $x_{t+1} = x_t + 1/L$ walk off to infinity while $f$ falls at every step. The lemma guarantees that each step decreases $f$; it does not guarantee that the steps converge, and if they do, only that the limit is a stationary point (a minimum, a maximum or a saddle), not which.
+
+Common errors: forgetting the $t$ in $\|x_t - x\| = t\|v\|$ (which gives $L\|v\|^2$ instead of $\tfrac L2\|v\|^2$ and a step bound of $1/L$ instead of $2/L$); reading the lemma as convergence to a minimum.
+:::
+
+**Exercise 2 (bias--variance decomposition, ERM form).** Risk $R(f) = \mathbb E\,\ell(Y, f(X))$. Let $f^\star$ minimize $R$ over all predictors, let $\mathcal F$ be a class of predictors with a best member $f_{\mathcal F} = \arg\min_{f \in \mathcal F} R(f)$, and let $\hat f \in \mathcal F$ be the predictor an algorithm returns from the sample (the empirical risk minimizer, or anything else in $\mathcal F$).
+
+(a) Show that $R(\hat f) - R(f_{\mathcal F}) \ge 0$ and $R(f_{\mathcal F}) - R(f^\star) \ge 0$.
+
+(b) Show that $R(\hat f) = R(f^\star) + \big[R(\hat f) - R(f_{\mathcal F})\big] + \big[R(f_{\mathcal F}) - R(f^\star)\big]$, and say which term is random and which is fixed once $\mathcal F$ is chosen.
+
+(c) For squared loss, use week 2's optimal model theorem to write the approximation term as a squared distance.
+
+(d) The smallest class there is, $\mathcal F = \{\text{constant functions}\}$, squared loss, $\hat f = \bar y$ from an i.i.d. sample of size $n$. Find $f_{\mathcal F}$, show that the approximation error is $\mathrm{Var}(f^\star(X))$, and show that the expected estimation error is $\mathrm{Var}(Y)/n$.
+
+::: {.callout-note collapse="true" title="Hint 1"}
+(a) What does "$f_{\mathcal F}$ minimizes $R$ over $\mathcal F$" say about $R(\hat f)$, given that $\hat f \in \mathcal F$?
+:::
+
+::: {.callout-note collapse="true" title="Hint 2"}
+(c) The optimal model theorem: $R(f) - R(f^\star) = \mathbb E[(f^\star(X) - f(X))^2]$ for every $f$. Apply it to $f = f_{\mathcal F}$.
+:::
+
+::: {.callout-note collapse="true" title="Hint 3"}
+(d) For a constant $c$, $R(c) = \mathbb E(Y - c)^2 = \mathrm{Var}(Y) + (c - \mathbb E Y)^2$. Then the optimal model theorem once more, and $\mathrm{Var}(Y) = \mathbb E[\mathrm{Var}(Y \mid X)] + \mathrm{Var}(\mathbb E[Y \mid X])$.
+:::
+
+::: {.callout-tip .answer collapse="true" title="Reveal solution"}
+(a) $\hat f \in \mathcal F$ and $f_{\mathcal F}$ minimizes $R$ over $\mathcal F$, so $R(f_{\mathcal F}) \le R(\hat f)$. $f^\star$ minimizes $R$ over everything, so $R(f^\star) \le R(f_{\mathcal F})$.
+
+(b) Add and subtract $R(f_{\mathcal F})$ on the right-hand side; the equation is an identity. The estimation term $R(\hat f) - R(f_{\mathcal F})$ depends on $\hat f$, hence on the sample: random. The approximation term $R(f_{\mathcal F}) - R(f^\star)$ involves no sample: fixed once $\mathcal F$ is chosen. $\blacksquare$
+
+(c) $R(f_{\mathcal F}) - R(f^\star) = \mathbb E\big[(f_{\mathcal F}(X) - f^\star(X))^2\big]$, the mean squared distance from the class's best member to the truth.
+
+(d) $R(c) = \mathrm{Var}(Y) + (c - \mathbb E Y)^2$ is minimized at $c = \mathbb E Y$, so $f_{\mathcal F} \equiv \mathbb E Y$. By (c) the approximation error is $\mathbb E[(\mathbb E Y - f^\star(X))^2] = \mathrm{Var}(f^\star(X))$, since $\mathbb E f^\star(X) = \mathbb E Y$: a constant cannot follow the part of $Y$ that moves with $X$. The estimation error is $R(\bar y) - R(\mathbb E Y) = (\bar y - \mathbb E Y)^2$, whose expectation over the sample is $\mathrm{Var}(\bar y) = \mathrm{Var}(Y)/n$. One term shrinks with $n$ and does not know $\mathcal F$; the other is fixed by $\mathcal F$ and does not know $n$.
+
+Common errors: calling the estimation term "the variance" (here it happens to be one; for a biased $\hat f$ in a larger class it holds bias too); taking $R(f^\star) = 0$ (it is the noise, $\mathbb E[\mathrm{Var}(Y \mid X)]$ for squared loss).
+:::
+
+**Exercise 3 (score equations, Hessian, Newton-Raphson).** Logistic regression with design matrix $\mathbf X$ ($n$ rows $\mathbf x_i^T$), labels $y_i \in \{0, 1\}$, and $p_i(\beta) = 1/(1 + e^{-\mathbf x_i^T\beta})$.
+
+(a) Show that the log-likelihood can be written $\ell(\beta) = \sum_i \big[y_i\,\mathbf x_i^T\beta - \log(1 + e^{\mathbf x_i^T\beta})\big]$, and that its gradient is $\nabla\ell(\beta) = \sum_i \mathbf x_i\,(y_i - p_i(\beta)) = \mathbf X^T(\mathbf y - \mathbf p(\beta))$.
+
+(b) Differentiate once more to get the Hessian $\nabla^2\ell(\beta) = -\sum_i p_i(1 - p_i)\,\mathbf x_i\mathbf x_i^T = -\mathbf X^T\mathbf W\mathbf X$ with $\mathbf W = \mathrm{diag}(p_i(1 - p_i))$.
+
+(c) Show that $v^T\nabla^2\ell(\beta)\,v \le 0$ for every $v$, so $\ell$ is concave, and say when the inequality is strict for every $v \ne 0$.
+
+(d) Newton-Raphson finds a root of $\nabla\ell$ by solving the linear approximation $\nabla\ell(\beta_t) + \nabla^2\ell(\beta_t)(\beta - \beta_t) = \mathbf 0$ for $\beta$. Write the update $\beta_{t+1}$ in terms of $\mathbf X$, $\mathbf W_t$, $\mathbf y$ and $\mathbf p_t$.
+
+::: {.callout-note collapse="true" title="Hint 1"}
+(a) $\log p_i = -\log(1 + e^{-\mathbf x_i^T\beta})$ and $\log(1 - p_i) = -\mathbf x_i^T\beta - \log(1 + e^{-\mathbf x_i^T\beta})$. For the gradient, $\tfrac{d}{dz}\log(1 + e^z) = e^z/(1 + e^z)$, which is $p_i$ at $z = \mathbf x_i^T\beta$.
+:::
+
+::: {.callout-note collapse="true" title="Hint 2"}
+(b) $\tfrac{\partial}{\partial\beta} p_i(\beta) = p_i(1 - p_i)\,\mathbf x_i$. (c) $v^T\mathbf x_i\mathbf x_i^T v = (\mathbf x_i^T v)^2$.
+:::
+
+::: {.callout-tip .answer collapse="true" title="Reveal solution"}
+(a) $\ell = \sum_i [y_i\log p_i + (1 - y_i)\log(1 - p_i)]$. With $z_i = \mathbf x_i^T\beta$: $\log p_i = -\log(1 + e^{-z_i})$ and $\log(1 - p_i) = -z_i - \log(1 + e^{-z_i})$, so the $i$th term is $-(1 - y_i)z_i - \log(1 + e^{-z_i}) = y_i z_i - z_i - \log(1 + e^{-z_i}) = y_i z_i - \log(1 + e^{z_i})$, using $z + \log(1 + e^{-z}) = \log(e^z + 1)$. Differentiating, $\nabla\ell = \sum_i \mathbf x_i\,[y_i - e^{z_i}/(1 + e^{z_i})] = \sum_i \mathbf x_i\,(y_i - p_i)$, which stacks to $\mathbf X^T(\mathbf y - \mathbf p)$: the score equations of the lecture.
+
+(b) $\tfrac{\partial}{\partial\beta}(y_i - p_i) = -p_i(1 - p_i)\,\mathbf x_i^T$, so $\nabla^2\ell = -\sum_i p_i(1 - p_i)\,\mathbf x_i\mathbf x_i^T = -\mathbf X^T\mathbf W\mathbf X$.
+
+(c) $v^T\nabla^2\ell\, v = -\sum_i p_i(1 - p_i)(\mathbf x_i^T v)^2 \le 0$, since every $p_i(1 - p_i) > 0$. Strict for every $v \ne 0$ exactly when no nonzero $v$ has $\mathbf x_i^T v = 0$ for all $i$, that is, when $\mathbf X$ has full column rank; then $\ell$ is strictly concave and a finite maximizer is unique.
+
+(d) $\beta_{t+1} = \beta_t - [\nabla^2\ell(\beta_t)]^{-1}\nabla\ell(\beta_t) = \beta_t + (\mathbf X^T\mathbf W_t\mathbf X)^{-1}\mathbf X^T(\mathbf y - \mathbf p_t)$. This is the lecture's IRLS step: with the working response $\hat{\mathbf y}_t = \mathbf X\beta_t + \mathbf W_t^{-1}(\mathbf y - \mathbf p_t)$ it is $\beta_{t+1} = (\mathbf X^T\mathbf W_t\mathbf X)^{-1}\mathbf X^T\mathbf W_t\hat{\mathbf y}_t$, a weighted least-squares fit.
+
+Common errors: a sign slip in (a) that gives $\sum_i \mathbf x_i(p_i - y_i)$ as the gradient of $\ell$ (that is the gradient of $-\ell$, the loss gradient descent uses); forgetting the weights in the Newton update.
+:::
+
+**Exercise 4 (no free lunch on a finite domain).** A finite set $\mathcal X$ has $N$ points. A **labeling** is a function $f: \mathcal X \to \{0, 1\}$. A method sees the labels on a fixed training set $S \subset \mathcal X$ of $n < N$ points and returns a classifier $\hat h$, which may be any function of those $n$ labels. Its error on the points it has not seen is
+$$
+\mathrm{err}(\hat h, f) = \frac{1}{N - n} \sum_{x \notin S} \mathbb 1\big[\hat h(x) \ne f(x)\big].
+$$
+
+(a) Draw $f$ uniformly at random from all $2^N$ labelings. Show that $\mathbb E\big[\mathrm{err}(\hat h, f)\big] = \tfrac12$ for every method.
+
+(b) Two methods, $A$ and $B$. Suppose $A$'s error on the unseen points is smaller than $B$'s for some labeling. Show that $B$'s is smaller than $A$'s for another labeling.
+
+(c) What would have to be true of the world for some method to do better than $\tfrac12$ on average? Where does that assumption sit in the ERM form of exercise 2?
+
+::: {.callout-note collapse="true" title="Hint 1"}
+Uniform over all $2^N$ labelings means that the $N$ labels $f(x)$ are independent fair coin flips.
+:::
+
+::: {.callout-note collapse="true" title="Hint 2"}
+Fix $x \notin S$. $\hat h(x)$ depends only on the labels on $S$, and $f(x)$ is independent of them. Condition on the labels on $S$: what is $P\big(\hat h(x) \ne f(x)\big)$?
+:::
+
+::: {.callout-note collapse="true" title="Hint 3"}
+(b) Average $\mathrm{err}(\hat h_A, f) - \mathrm{err}(\hat h_B, f)$ over all $2^N$ labelings.
+:::
+
+::: {.callout-tip .answer collapse="true" title="Reveal solution"}
+(a) Under the uniform distribution the $N$ labels are independent fair coin flips. Fix $x \notin S$. Given the labels on $S$, $\hat h(x)$ is a fixed number, $0$ or $1$, and $f(x)$ is still a fair coin flip, independent of those labels, so $P(\hat h(x) \ne f(x) \mid \text{labels on } S) = \tfrac12$, and so $P(\hat h(x) \ne f(x)) = \tfrac12$. Averaging over the $N - n$ unseen points, $\mathbb E[\mathrm{err}(\hat h, f)] = \tfrac12$. $\blacksquare$
+
+(b) By (a), the average of $\mathrm{err}(\hat h_A, f) - \mathrm{err}(\hat h_B, f)$ over all labelings is $\tfrac12 - \tfrac12 = 0$. A difference that averages to zero and is negative for one labeling must be positive for another.
+
+(c) The labelings must not all be equally likely: the labels on $S$ have to carry information about the labels off $S$, for example because nearby points tend to share a label, or because $f$ is a threshold of a linear score. Every method bets on some such structure (nearest neighbors on the first, logistic regression on the second), and the bet pays off only on the labelings that have it. In the ERM form the bet is the class $\mathcal F$, chosen before the data: on the labelings that have the structure its approximation error is small, and on the others it is not.
+
+Common errors: forgetting that the claim is about the points the method has not seen (on $S$ itself a method can be perfect); reading it as "all methods are equally good on the problems we meet", which it does not say, because those problems are not uniformly random labelings.
+:::
+
+## Problems
+
+<!-- About 20 min: problems 1 to 4, pen and paper. Hints are revealed in order after a few minutes, the solution last. -->
+
+**Problem 1 (three observations).** Three observations, $(x_i, y_i) = (-1, 0), (0, 1), (1, 3)$, a line $\beta_0 + \beta_1 x$, and the objective $\hat R_n(\beta) = \tfrac13\sum_i (y_i - \beta_0 - \beta_1 x_i)^2$.
+
+(a) Compute the gradient of $\hat R_n$ at $\beta = (0, 0)$ and take one gradient-descent step with $\gamma = 0.1$.
+
+(b) At what $\beta$ does the iteration stop moving, and which equations does that point satisfy?
+
+(c) The curvatures of $\hat R_n$ are the eigenvalues of $2\mathbf X^T\mathbf X/n$. Compute them. What is the largest step size for which gradient descent converges from every start, and is $\gamma = 0.5$ safe?
+
+(d) Which coordinate converges more slowly with $\gamma = 0.5$, and by what factor does its error shrink per step?
+
+::: {.callout-note .answer collapse="true" title="Hint 1"}
+(a) In matrix form, $\nabla\hat R_n(\beta) = -\tfrac2n\mathbf X^T(\mathbf y - \mathbf X\beta)$, with $\mathbf X$ the $3 \times 2$ matrix whose rows are $(1, x_i)$. At $\beta = 0$ the residual is $\mathbf y$ itself.
+:::
+
+::: {.callout-note .answer collapse="true" title="Hint 2"}
+(c) $\mathbf X^T\mathbf X$ is diagonal here, because $\sum_i x_i = 0$. Then exercise-style: one direction with curvature $a$ converges iff $\gamma < 2/a$.
+:::
+
+::: {.callout-tip .answer collapse="true" title="Reveal answer"}
+(a) $\mathbf X^T\mathbf y = (\sum y_i, \sum x_i y_i) = (4, 3)$, so $\nabla\hat R_n(0) = -\tfrac23(4, 3) = (-8/3, -2)$. One step: $\beta_1 = (0, 0) - 0.1\,(-8/3, -2) = (0.267, 0.2)$.
+
+(b) It stops where the gradient is zero: $\mathbf X^T(\mathbf y - \mathbf X\beta) = \mathbf 0$, the normal equations of week 2. Here $\mathbf X^T\mathbf X = \mathrm{diag}(3, 2)$, so $\hat\beta = (4/3, 3/2)$.
+
+(c) $2\mathbf X^T\mathbf X/n = \mathrm{diag}(2, 4/3)$: curvatures $2$ (the intercept direction) and $4/3$ (the slope). Convergence from every start needs $\gamma < 2/a_{\max} = 1$, so $\gamma = 0.5$ is safe.
+
+(d) With $\gamma = 0.5$ the intercept error is multiplied by $1 - 0.5 \cdot 2 = 0$ (one step lands it) and the slope error by $1 - 0.5 \cdot 4/3 = 1/3$ per step: the slope, the flatter direction, is the slow one.
+
+Common errors: dropping the factor $2/n$ in the gradient (the fixed point is the same, the safe step is not); reading "largest safe step" off the smaller curvature.
+:::
+
+**Problem 2 (one direction, then two).** One direction with curvature $a > 0$: $f(\beta) = \tfrac12 a\beta^2$.
+
+(a) Show that gradient descent with step $\gamma$ gives $\beta_t = (1 - \gamma a)^t\beta_0$, and find all $\gamma$ for which it converges.
+
+(b) Which $\gamma$ reaches the minimum in one step?
+
+(c) Two directions with curvatures $10$ and $1$ and one shared step size. Which $\gamma$ makes the slower of the two directions shrink fastest, and what is the shrinkage factor per step then?
+
+::: {.callout-note .answer collapse="true" title="Hint 1"}
+(c) The per-step factors are $|1 - 10\gamma|$ and $|1 - \gamma|$; the slower direction has the larger one. Sketch both against $\gamma$ and find where they cross.
+:::
+
+::: {.callout-tip .answer collapse="true" title="Reveal answer"}
+(a) $\nabla f = a\beta$, so $\beta_{t+1} = \beta_t - \gamma a\beta_t = (1 - \gamma a)\beta_t$ and $\beta_t = (1 - \gamma a)^t\beta_0$. Converges iff $|1 - \gamma a| < 1$, i.e. $0 < \gamma < 2/a$.
+
+(b) $\gamma = 1/a$: the factor is $0$.
+
+(c) The slower direction's factor is $\max(|1 - 10\gamma|, |1 - \gamma|)$. For small $\gamma$ the second is larger; the two are equal when $10\gamma - 1 = 1 - \gamma$, at $\gamma = 2/11$, and beyond that the first grows. So $\gamma = 2/11 \approx 0.18$ is best, with factor $9/11 \approx 0.82$ per step: this is why $0.18$ was the good choice on the lecture's valley. Even at the best step, the flat direction needs about $\log(0.01)/\log(9/11) \approx 23$ steps to shrink its error a hundredfold.
+
+Common errors: choosing $\gamma = 1/10$ (which lands the steep direction in one step but leaves the flat one at factor $0.9$); forgetting the absolute value, which hides the zigzag.
+:::
+
+**Problem 3 (a random row).** $\hat R_n(\beta) = \tfrac1n\sum_{i=1}^n \ell_i(\beta)$. Pick an index $I$ uniformly at random from $\{1, \dots, n\}$, with the data and $\beta$ held fixed.
+
+(a) Show that $\mathbb E_I[\nabla\ell_I(\beta)] = \nabla\hat R_n(\beta)$. Which assumption about where the data came from did you use?
+
+(b) A batch of $b$ indices drawn independently with replacement, gradient averaged: give its mean and its variance in terms of $\sigma^2(\beta) = \mathrm{Var}_I[\nabla\ell_I(\beta)]$ (one coordinate at a time is fine).
+
+(c) If the batch is drawn without replacement, is the variance larger or smaller, and what is it when $b = n$?
+
+(d) The descent lemma says a full gradient step of size $1/L$ decreases $\hat R_n$. Does a step of size $1/L$ along $\nabla\ell_I(\beta)$ decrease $\hat R_n$? Give a reason or a counterexample.
+
+::: {.callout-note .answer collapse="true" title="Hint 1"}
+(a) $P(I = i) = 1/n$ for each $i$; write out $\mathbb E_I$ as a sum. (b) The $b$ draws are independent copies of the single-row gradient.
+:::
+
+::: {.callout-note .answer collapse="true" title="Hint 2"}
+(d) Take $n = 2$ with $\ell_1(\beta) = (\beta - 1)^2$ and $\ell_2(\beta) = (\beta + 1)^2$, and stand at the minimizer of $\hat R_n$.
+:::
+
+::: {.callout-tip .answer collapse="true" title="Reveal answer"}
+(a) $\mathbb E_I[\nabla\ell_I(\beta)] = \sum_{i=1}^n P(I = i)\,\nabla\ell_i(\beta) = \tfrac1n\sum_i \nabla\ell_i(\beta) = \nabla\hat R_n(\beta)$. No assumption about the data at all: the only randomness is the index, and the $n$ rows could be anything. $\blacksquare$
+
+(b) The batch gradient is the mean of $b$ independent copies of $\nabla\ell_I(\beta)$: mean $\nabla\hat R_n(\beta)$, still unbiased, variance $\sigma^2(\beta)/b$, coordinate by coordinate.
+
+(c) Smaller: without replacement the variance carries the finite-population factor $(n - b)/(n - 1)$, the factor week 2's seminar met in the spread of the slope. At $b = n$ it is zero: the batch is the whole sample and the gradient is exact.
+
+(d) No. With $\ell_1 = (\beta - 1)^2$ and $\ell_2 = (\beta + 1)^2$, $\hat R_n(\beta) = \beta^2 + 1$ is minimized at $\beta = 0$, where $\nabla\hat R_n = 0$ but $\nabla\ell_1(0) = -2$: a step along it moves away from the minimizer and increases $\hat R_n$. The lemma is about the full gradient; a stochastic step is right on average and wrong on any given draw, which is why the step size has to shrink.
+
+Common errors: invoking "the rows are i.i.d." in (a), which is not needed; $\sigma^2/\sqrt b$ for the variance.
+:::
+
+**Problem 4 (the valley with shrinking steps).** Gradient descent on the lecture's valley, $f(\beta) = \tfrac12(\beta_1^2 + 10\beta_2^2)$, from $\beta_0 = (-4, 1.2)$ with the step sizes $\gamma_t = 0.3 \cdot 0.6^t$, $t = 1, 2, \dots$ (panel C of the lecture).
+
+(a) Show that each coordinate obeys $\beta_{j, t} = \beta_{j, 0}\prod_{s=1}^t (1 - a_j\gamma_s)$ with $a_1 = 1$, $a_2 = 10$.
+
+(b) For the first coordinate, compute the first four factors and say what $\beta_{1, t}$ converges to (two decimals are enough). Is it the minimizer?
+
+(c) Compute $\sum_{t \ge 1}\gamma_t$. Which of the two conditions on step sizes from the lecture does this schedule violate, and what does the sum say about how far the iterate can travel?
+
+::: {.callout-note .answer collapse="true" title="Hint 1"}
+(a) Problem 2(a), one coordinate at a time, with a different $\gamma$ at each step. (b) The factors are $1 - 0.3 \cdot 0.6^t$; the product converges because its logarithm is a convergent series. For a two-decimal answer, multiply the first eight factors.
+:::
+
+::: {.callout-tip .answer collapse="true" title="Reveal answer"}
+(a) The coordinates do not interact: $\beta_{j, t+1} = \beta_{j, t} - \gamma_{t+1} a_j\beta_{j, t} = (1 - a_j\gamma_{t+1})\beta_{j, t}$, and the product follows by induction.
+
+(b) Factors $1 - 0.18 = 0.82$, $1 - 0.108 = 0.892$, $0.935$, $0.961$, then $0.977, 0.986, \dots$ The product converges to about $0.62$, so $\beta_{1, t} \to -4 \cdot 0.62 \approx -2.48$: not $0$. The iterate stops short, with its gradient still $2.48$ in size. (For the second coordinate the factors are $-0.8, -0.08, 0.35, 0.61, \dots$ and the limit is near $0.009$: the steep direction all but converges, the flat one does not.)
+
+(c) $\sum_t 0.3 \cdot 0.6^t = 0.3 \cdot 0.6/(1 - 0.6) = 0.45$. The schedule violates $\sum_t\gamma_t = \infty$ (the squares sum to a finite number too, which is the condition it does satisfy). With the gradient bounded along the path, the total distance traveled is at most $\sum_t\gamma_t$ times the largest gradient seen, a finite number: a schedule whose steps sum to something finite can only ever travel that far, wherever the minimum is.
+
+Common errors: reading a flat loss curve as convergence (the point of panel C); applying the $2/a$ bound to a shrinking schedule, which only matters for the first step or two (here the first step on the steep coordinate has factor $-0.8$ and is fine).
+:::
+
+## Coding
+
+<!-- About 40 min: part 1 22, part 2 18. Skeleton lines in comments are scaffolds: the statistical operation is what you write. Everything headed "Optional, can be done at home" is outside the seminar. -->
+
+### 1. Gradient descent, written once
+
+<!-- 22 min: steps 1 to 5, questions 1 to 3. -->
+
+Life expectancy on $\log_{10}$ GDP per capita in 2007, as in week 2. The input is centered; step 4 shows why.
+
+```{r}
+g07 <- gapminder |> filter(year == 2007) |> mutate(lgdp = log10(gdpPercap))
+y <- g07$lifeExp
+X <- cbind(1, g07$lgdp - mean(g07$lgdp))
+n <- nrow(X)
+```
+
+**Step 1.** Write the objective and its gradient as functions of `X`, `y` and `beta`: $\hat R_n(\beta) = \tfrac1n\|\mathbf y - \mathbf X\beta\|^2$ and $\nabla\hat R_n(\beta) = -\tfrac2n\mathbf X^T(\mathbf y - \mathbf X\beta)$.
+
+```{r}
+#| eval: false
+ls_loss <- function(X, y, beta) {
+  # ...
+}
+ls_grad <- function(X, y, beta) {
+  # ...
+}
+```
+
+::: {.callout-tip .answer collapse="true" title="Reveal solution"}
+```{r}
+ls_loss <- function(X, y, beta) mean((y - X %*% beta)^2)
+ls_grad <- function(X, y, beta) -2 / nrow(X) * t(X) %*% (y - X %*% beta)
+```
+:::
+
+**Step 2.** The loop, as a function you will reuse: start from `beta0`, take `steps` steps of size `gamma` along the negative gradient, and record the loss and the gradient norm after each step. It takes the loss and gradient *functions* as arguments, so that the same loop fits a different model when those two change.
+
+```{r}
+#| eval: false
+gradient_descent <- function(X, y, loss, grad, gamma, steps, beta0 = rep(0, ncol(X))) {
+  beta <- beta0
+  losses <- numeric(steps)
+  grad_norms <- numeric(steps)
+  for (t in 1:steps) {
+    g <- grad(X, y, beta)
+    # beta <- ____
+    losses[t] <- loss(X, y, beta)
+    grad_norms[t] <- sqrt(sum(g^2))
+  }
+  list(beta = as.vector(beta), losses = losses, grad_norms = grad_norms)
+}
+```
+
+::: {.callout-tip .answer collapse="true" title="Reveal solution"}
+```{r}
+gradient_descent <- function(X, y, loss, grad, gamma, steps, beta0 = rep(0, ncol(X))) {
+  beta <- beta0
+  losses <- numeric(steps)
+  grad_norms <- numeric(steps)
+  for (t in 1:steps) {
+    g <- grad(X, y, beta)
+    beta <- beta - gamma * g
+    losses[t] <- loss(X, y, beta)
+    grad_norms[t] <- sqrt(sum(g^2))
+  }
+  list(beta = as.vector(beta), losses = losses, grad_norms = grad_norms)
+}
+```
+:::
+
+Checkpoint (run it; if it stops, fix step 1 or 2 before going on):
+
+```{r}
+#| eval: !expr exists("gradient_descent")
+chk <- gradient_descent(X, y, ls_loss, ls_grad, gamma = 0.3, steps = 50)
+stopifnot(length(chk$losses) == 50, all(diff(chk$losses) <= 1e-8),
+          max(abs(chk$beta - coef(lm(y ~ X - 1)))) < 0.01)
+```
+
+**Step 3.** Run it with `gamma = 0.3` for 50 steps and compare `beta` with `coef(lm(y ~ X - 1))`. Then run `gamma = 0.05` and `gamma = 1.05`, and plot the three loss curves against the step (log scale on the vertical axis) and the three gradient norms.
+
+```{r}
+#| eval: false
+fits <- list(`0.05` = ____, `0.3` = ____, `1.05` = ____)
+# a data frame with one row per (gamma, step), then two plots
+# ...
+```
+
+::: {.callout-tip .answer collapse="true" title="Reveal solution"}
+```{r}
+gammas <- c(0.05, 0.3, 1.05)
+fits <- lapply(gammas, function(g) gradient_descent(X, y, ls_loss, ls_grad, gamma = g, steps = 50))
+names(fits) <- gammas
+rbind(gd_0.3 = fits[["0.3"]]$beta, lm = coef(lm(y ~ X - 1)))
+paths <- bind_rows(lapply(gammas, function(g) {
+  f <- fits[[as.character(g)]]
+  tibble(gamma = factor(g), step = 1:50, loss = f$losses, grad_norm = f$grad_norms)
+}))
+ggplot(paths, aes(step, loss, colour = gamma)) + geom_line() + scale_y_log10() + scale_colour_viridis_d(end = 0.8)
+ggplot(paths, aes(step, grad_norm, colour = gamma)) + geom_line() + scale_y_log10() + scale_colour_viridis_d(end = 0.8)
+```
+:::
+
+**Question 1.** The curvatures here, the eigenvalues of $2\mathbf X^T\mathbf X/n$, are $2$ and about $0.69$. Using problem 2, explain what each of the three runs did, and what the gradient norm shows that the loss does not.
+
+::: {.callout-tip .answer collapse="true" title="Reveal answer"}
+The safe range is $\gamma < 2/2 = 1$. At $\gamma = 1.05$ the intercept direction has factor $1 - 2.1 = -1.1$: it overshoots further at every step and the loss explodes (about $6 \times 10^7$ after 50 steps). At $\gamma = 0.3$ the factors are $0.4$ and $0.79$; after 50 steps the slope agrees with `lm` to four decimals and the gradient norm is about $10^{-4}$. At $\gamma = 0.05$ the factors are $0.9$ and $0.966$: the loss is still falling at step 50 (about $53$ against the minimum $50.0$) and the slope is $13.7$ against $16.6$. The gradient norm separates the last two cases, which the loss curve alone does not: for $0.3$ it has fallen by five orders of magnitude; for $0.05$ it is still about $2$, so the run has not converged, it is just slow.
+:::
+
+**Step 4.** Now *uncenter* the input, `X_raw <- cbind(1, g07$lgdp)`. The curvatures are now about $30.6$ and $0.045$. Choose a safe step (say $\gamma = 1/30$), run 300 steps, and compare with `lm` again.
+
+```{r}
+#| eval: false
+X_raw <- cbind(1, g07$lgdp)
+# ...
+```
+
+::: {.callout-tip .answer collapse="true" title="Reveal solution"}
+```{r}
+X_raw <- cbind(1, g07$lgdp)
+eigen(2 * t(X_raw) %*% X_raw / n)$values
+fit_raw <- gradient_descent(X_raw, y, ls_loss, ls_grad, gamma = 1 / 30, steps = 300)
+rbind(gd = fit_raw$beta, lm = coef(lm(y ~ X_raw - 1)))
+tail(fit_raw$grad_norms, 1)
+```
+:::
+
+**Question 2.** The fitted line is the same as before (the slope is unchanged; only the intercept's meaning moved). Why does gradient descent now need thousands of steps for the same problem, and what does that say about scaling inputs before descent?
+
+::: {.callout-tip .answer collapse="true" title="Reveal answer"}
+The ratio of curvatures went from $2/0.69 \approx 3$ to $30.6/0.045 \approx 680$. The step size has to be below $2/30.6$ for the steep direction, and at that step the flat direction shrinks by a factor $1 - 0.045/30 \approx 0.9985$ per step: after 300 steps the intercept is still $4.58$ against `lm`'s $4.95$, and it takes about 3,000 steps to get three decimals. The formula $(\mathbf X^T\mathbf X)^{-1}\mathbf X^T\mathbf y$ does not care how the input is scaled; the iteration does, because one step size serves every direction. Centering (and scaling) the inputs makes the valley round, and it is the first thing anyone does before gradient descent.
+:::
+
+**Step 5.** Logistic regression by the same loop. Chinstrap against Adelie from flipper length (standardized), as in the lecture's penguin fit. Write the negative log-likelihood per bird, $\hat R_n(\beta) = -\ell(\beta)/n$, and its gradient $-\tfrac1n\mathbf X^T(\mathbf y - \mathbf p(\beta))$, and run `gradient_descent` with `gamma = 4` for 40 steps. Compare with `glm`, and check the score equations at your answer: $\mathbf X^T(\mathbf y - \hat{\mathbf p})$ should be zero.
+
+```{r}
+#| eval: false
+pg <- palmerpenguins::penguins |>   # modeldata also has a penguins; be explicit
+  filter(species != "Gentoo") |>
+  drop_na(flipper_length_mm) |>
+  mutate(chinstrap = as.numeric(species == "Chinstrap"),
+         z = as.numeric(scale(flipper_length_mm)))
+X_pg <- cbind(1, pg$z)
+y_pg <- pg$chinstrap
+logit_loss <- function(X, y, beta) {
+  # ...
+}
+logit_grad <- function(X, y, beta) {
+  # ...
+}
+# fit_logit <- gradient_descent(____)
+# ...
+```
+
+::: {.callout-tip .answer collapse="true" title="Reveal solution"}
+```{r}
+pg <- palmerpenguins::penguins |>
+  filter(species != "Gentoo") |>
+  drop_na(flipper_length_mm) |>
+  mutate(chinstrap = as.numeric(species == "Chinstrap"),
+         z = as.numeric(scale(flipper_length_mm)))
+X_pg <- cbind(1, pg$z)
+y_pg <- pg$chinstrap
+logit_loss <- function(X, y, beta) {
+  z <- X %*% beta
+  mean((1 - y) * z + log1p(exp(-z)))   # -[y log p + (1 - y) log(1 - p)], written to avoid log(0)
+}
+logit_grad <- function(X, y, beta) {
+  p <- 1 / (1 + exp(-X %*% beta))
+  -t(X) %*% (y - p) / nrow(X)
+}
+fit_logit <- gradient_descent(X_pg, y_pg, logit_loss, logit_grad, gamma = 4, steps = 40)
+rbind(gd = fit_logit$beta, glm = coef(glm(chinstrap ~ z, family = binomial, data = pg)))
+p_hat <- 1 / (1 + exp(-X_pg %*% fit_logit$beta))
+t(X_pg) %*% (y_pg - p_hat)   # the score equations, numerically zero
+```
+:::
+
+Checkpoint:
+
+```{r}
+#| eval: !expr exists("fit_logit")
+stopifnot(max(abs(fit_logit$beta - coef(glm(chinstrap ~ z, family = binomial, data = pg)))) < 1e-3)
+```
+
+**Question 3.** Exactly two things changed between the least-squares run and this one. Name them. Why is a step of $4$ safe here when $1.05$ was not for least squares?
+
+::: {.callout-tip .answer collapse="true" title="Reveal answer"}
+The loss function and the gradient function; the loop, the data matrix's shape and the stopping rule are untouched. For least squares the curvature was $2\lambda_{\max}(\mathbf X^T\mathbf X)/n = 2$, so steps had to stay below $1$. For the logistic loss the Hessian is $\tfrac1n\sum_i p_i(1 - p_i)\mathbf x_i\mathbf x_i^T$ with every weight $p_i(1 - p_i) \le \tfrac14$, so the curvature is at most $\lambda_{\max}(\mathbf X^T\mathbf X)/4n = 0.25$ here and any step below $2/0.25 = 8$ is safe. The lecture's $\gamma = 12$ was not, and bounced.
+:::
+
+### 2. Many solutions, and stopping early
+
+<!-- 18 min: steps 1 and 2, questions 4 and 5. -->
+
+**Step 1.** More coefficients than observations: $n = 100$, $p = 400$. Implement mini-batch stochastic gradient descent for least squares from `beta <- rep(0, p)`: in each epoch, shuffle the rows (`sample(n)`) and, for each batch of 10 rows, take a step of size `gamma = 0.005` along the batch's gradient. Record after each epoch the training MSE and the distance $\|\beta_t - \beta\|$ to the true coefficients.
+
+```{r}
+set.seed(1)
+n_big <- 100
+p_big <- 400
+X_big <- matrix(rnorm(n_big * p_big), n_big, p_big)
+beta_true <- rpois(p_big, 1.5)
+y_big <- X_big %*% beta_true + rnorm(n_big, sd = 2)
+```
+
+```{r}
+#| eval: false
+epochs <- 40
+batch_size <- 10
+gamma <- 0.005
+beta_sgd <- rep(0, p_big)
+sgd_path <- tibble(epoch = 1:epochs, train_mse = NA_real_, dist_to_truth = NA_real_)
+for (e in 1:epochs) {
+  shuffled <- sample(n_big)
+  for (start in seq(1, n_big, by = batch_size)) {
+    rows <- shuffled[start:min(start + batch_size - 1, n_big)]
+    # g <- ____          # the gradient of the batch's mean squared error
+    # beta_sgd <- ____
+  }
+  sgd_path$train_mse[e] <- ls_loss(X_big, y_big, beta_sgd)
+  sgd_path$dist_to_truth[e] <- sqrt(sum((beta_sgd - beta_true)^2))
+}
+# ...
+```
+
+::: {.callout-tip .answer collapse="true" title="Reveal solution"}
+```{r}
+epochs <- 40
+batch_size <- 10
+gamma <- 0.005
+beta_sgd <- rep(0, p_big)
+sgd_path <- tibble(epoch = 1:epochs, train_mse = NA_real_, dist_to_truth = NA_real_)
+for (e in 1:epochs) {
+  shuffled <- sample(n_big)
+  for (start in seq(1, n_big, by = batch_size)) {
+    rows <- shuffled[start:min(start + batch_size - 1, n_big)]
+    g <- ls_grad(X_big[rows, , drop = FALSE], y_big[rows], beta_sgd)
+    beta_sgd <- beta_sgd - gamma * g
+  }
+  sgd_path$train_mse[e] <- ls_loss(X_big, y_big, beta_sgd)
+  sgd_path$dist_to_truth[e] <- sqrt(sum((beta_sgd - beta_true)^2))
+}
+sgd_path |>
+  pivot_longer(-epoch) |>
+  ggplot(aes(epoch, value)) + geom_line() + geom_point() +
+  facet_wrap(~ name, scales = "free_y") + scale_y_log10()
+```
+:::
+
+**Question 4.** The training MSE goes to zero. Why is that possible, and why should it worry you? The distance to the true coefficients levels off at about $33$, from a starting distance of $38$: what is it that the algorithm cannot learn from these data?
+
+::: {.callout-tip .answer collapse="true" title="Reveal answer"}
+With $p = 400 > n = 100$ there are infinitely many $\beta$ with $\mathbf X\beta = \mathbf y$ exactly (week 2: the normal equations have a whole affine space of solutions), so the training error can be driven to zero whatever the noise is: a zero training error says nothing about whether the coefficients are right. The distance to the truth stops falling because the data only determine $\beta$ in the $100$-dimensional row space of $\mathbf X$; the component of $\beta_{\text{true}}$ orthogonal to every row is invisible to the loss, and starting from zero the iterates never acquire any such component (every step adds a combination of rows). What is left is exactly that invisible part, about $33$ out of $38$. The optional step at the end checks that this is the minimum-norm solution of week 2.
+:::
+
+**Step 2.** The lecture's wide regression: $n = 80$, $p = 60$, noisy, and a held-out set of 2,000 rows from the same model. Run full-batch gradient descent from zero for 300 steps with step `0.5 / L`, where `L` is twice the largest eigenvalue of $\mathbf X^T\mathbf X/n$, and record the training and the held-out MSE after every step. Plot both against the step (log scale on the horizontal axis), and find the step at which the held-out MSE is smallest.
+
+```{r}
+set.seed(12)
+n_w <- 80
+p_w <- 60
+X_w <- matrix(rnorm(n_w * p_w), n_w, p_w)
+beta_w <- rnorm(p_w, sd = 0.5)
+y_w <- X_w %*% beta_w + rnorm(n_w, sd = 3)
+X_held <- matrix(rnorm(2000 * p_w), 2000, p_w)
+y_held <- X_held %*% beta_w + rnorm(2000, sd = 3)
+```
+
+```{r}
+#| eval: false
+L <- 2 * max(eigen(t(X_w) %*% X_w / n_w)$values)
+beta_gd <- rep(0, p_w)
+es_path <- tibble(step = 1:300, training = NA_real_, held_out = NA_real_)
+for (t in 1:300) {
+  # beta_gd <- ____
+  es_path$training[t] <- ls_loss(X_w, y_w, beta_gd)
+  es_path$held_out[t] <- ls_loss(X_held, y_held, beta_gd)
+}
+# ...
+```
+
+::: {.callout-tip .answer collapse="true" title="Reveal solution"}
+```{r}
+L <- 2 * max(eigen(t(X_w) %*% X_w / n_w)$values)
+beta_gd <- rep(0, p_w)
+es_path <- tibble(step = 1:300, training = NA_real_, held_out = NA_real_)
+for (t in 1:300) {
+  beta_gd <- beta_gd - (0.5 / L) * ls_grad(X_w, y_w, beta_gd)
+  es_path$training[t] <- ls_loss(X_w, y_w, beta_gd)
+  es_path$held_out[t] <- ls_loss(X_held, y_held, beta_gd)
+}
+es_path |>
+  pivot_longer(-step, names_to = "error") |>
+  ggplot(aes(step, value, colour = error)) + geom_line() + scale_x_log10() +
+  scale_colour_viridis_d(end = 0.7) + labs(y = "mean squared error")
+es_path$step[which.min(es_path$held_out)]
+range(es_path$held_out)
+```
+:::
+
+**Question 5.** The training error falls at every step, as the descent lemma says it must. Where would you have stopped if you had only seen it? You chose the number of steps by looking at the held-out MSE: can you now report that held-out MSE as an honest estimate of the chosen model's error? What would you need instead?
+
+::: {.callout-tip .answer collapse="true" title="Reveal answer"}
+Watching the training error alone, you would have run to the end: it is still falling at step 300, and every diagnostic from the lecture (loss, gradient norm) says "keep going". The held-out error is smallest at step 15 (about $15.7$) and ends at about $32$, worse than at step 1. The training loss is the number the algorithm minimizes, and minimizing it all the way was the wrong thing to do: that is early stopping, and the number of steps is a tuning parameter. Having used the held-out set to pick the step, its MSE at the chosen step is no longer an honest estimate of the chosen model's error: it was the minimum of 300 noisy numbers, selected because it was small, so it is biased downward (the 300 candidates are nearby iterates and far from independent, so the bias is smaller than for 300 unrelated models, but it is there). An honest estimate needs data that were used neither to fit nor to choose: a third set, or next week's cross-validation.
+:::
+
+### Optional, can be done at home: which of the many solutions
+
+Compare the stochastic gradient descent estimate from part 2, step 1, with week 2's minimum-norm least-squares solution, `MASS::ginv(X_big) %*% y_big`, and compute the norms of the two.
+
+```{r}
+#| eval: false
+beta_mn <- MASS::ginv(X_big) %*% y_big
+# ...
+```
+
+::: {.callout-tip .answer collapse="true" title="Reveal solution"}
+```{r}
+#| eval: !expr exists("beta_sgd")
+beta_mn <- MASS::ginv(X_big) %*% y_big
+c(distance = sqrt(sum((beta_sgd - beta_mn)^2)),
+  norm_sgd = sqrt(sum(beta_sgd^2)), norm_min_norm = sqrt(sum(beta_mn^2)))
+```
+
+Of the infinitely many exact fits, stochastic gradient descent from zero landed on the one of smallest norm, to two decimals. Every step adds a multiple of rows of $\mathbf X$, so an iterate that starts at $\mathbf 0$ stays in the row space, and the only exact fit in the row space is the minimum-norm one. The algorithm is part of the method: two algorithms for the same objective can return different fits, and this one carries a preference it was never told about. Week 7 writes that preference down as a penalty.
+:::

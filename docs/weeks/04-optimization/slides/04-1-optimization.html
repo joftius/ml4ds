@@ -153,9 +153,9 @@ Joshua Loftus
 <h3 id="week-4-optimization-and-model-fitting">Week 4: optimization and model fitting</h3>
 <p>Part 1: fitting logistic regression</p>
 <p>Part 2: gradient descent</p>
-<p>Part 3: what the gradient is telling you</p>
+<p>Part 3: gradient diagnostics</p>
 <p>Part 4: stochastic gradient descent</p>
-<p>Part 5: what the fitting leaves over</p>
+<p>Part 5: when to stop iterating?</p>
 </section>
 <section id="where-week-3-left-the-fitting" class="slide level2">
 <h2>Where week 3 left the fitting</h2>
@@ -329,22 +329,35 @@ L(\beta ; \mathbf y | \mathbf x) = \prod_{i=1}^n \left( \frac{1}{1+e^{-x_i \beta
 </section>
 <section id="three-step-sizes" class="slide level2">
 <h2>Three step sizes</h2>
-<div class="cell">
-<div class="cell-output-display">
-<div>
-<figure>
-<p><img data-src="04-1-optimization_files/figure-revealjs/three-steps-top-1.png" style="width:100.0%"></p>
-</figure>
-</div>
-</div>
-</div>
 <div class="columns">
 <div class="column" style="width:50%;">
 <div class="cell">
 <div class="cell-output-display">
 <div>
 <figure>
-<p><img data-src="04-1-optimization_files/figure-revealjs/three-steps-bottom-1.png" style="width:100.0%"></p>
+<p><img data-src="04-1-optimization_files/figure-revealjs/three-steps-a-1.png" style="width:100.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+</div><div class="column" style="width:50%;">
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure>
+<p><img data-src="04-1-optimization_files/figure-revealjs/three-steps-c-1.png" style="width:100.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+</div></div>
+<div class="columns">
+<div class="column" style="width:50%;">
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure>
+<p><img data-src="04-1-optimization_files/figure-revealjs/three-steps-b-1.png" style="width:100.0%"></p>
 </figure>
 </div>
 </div>
@@ -370,7 +383,7 @@ L(\beta ; \mathbf y | \mathbf x) = \prod_{i=1}^n \left( \frac{1}{1+e^{-x_i \beta
 </section>
 <section id="section-2" class="slide level2 inverse center">
 <h2></h2>
-<h3 id="part-3-what-the-gradient-is-telling-you">Part 3: what the gradient is telling you</h3>
+<h3 id="part-3-gradient-diagnostics">Part 3: gradient diagnostics</h3>
 </section>
 <section id="reading-the-gradient" class="slide level2">
 <h2>Reading the gradient</h2>
@@ -599,7 +612,7 @@ f(y) - f(x) &amp;\le \nabla f(x)^T v + \int_0^1 L\,t\,\|v\|^2\, dt
 </section>
 <section id="section-4" class="slide level2 inverse center">
 <h2></h2>
-<h3 id="part-5-what-the-fitting-leaves-over">Part 5: what the fitting leaves over</h3>
+<h3 id="part-5-when-to-stop-iterating">Part 5: when to stop iterating?</h3>
 </section>
 <section id="early-stopping" class="slide level2">
 <h2>Early stopping</h2>
