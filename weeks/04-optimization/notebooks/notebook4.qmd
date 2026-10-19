@@ -345,3 +345,37 @@ Compare the stochastic gradient descent estimate from part 2, step 1, with week 
 # ...
 ```
 
+### Optional, can be done at home: one direction out of $p$
+
+The lecture's saddle, $(u^2 - 1)^2 + v^2$, curves down along $u$ at the origin and up along $v$. Here every direction is like $u$: the loss on $\mathbb R^p$ is
+$$
+f(\beta) = \sum_{j=1}^p (\beta_j^2 - 1)^2.
+$$
+
+(a) Find the gradient and the Hessian of $f$. Show that the stationary points are the $3^p$ points with every $\beta_j \in \{-1, 0, 1\}$.
+
+(b) Classify them: how many are minima, how many maxima, how many saddle points? What fraction are minima when $p = 2$, $10$, $50$?
+
+(c) At a stationary point with $k$ zero coordinates, in how many independent directions does $f$ curve downward? Show that if gradient descent starts with $\beta_j = 0$, then $\beta_j = 0$ at every step, whatever the other coordinates do. Where can such a run end, and what does that say about the gradient and the other $p - 1$ directions?
+
+(d) Run your `gradient_descent` from coding part 1 on $f$ with $p = 5$, starting from $\beta_j = 10^{-3j}$ (tiny, but not zero), with $\gamma = 0.05$ for 250 steps; `X` and `y` are not needed, so pass `NULL` for both. Plot the loss and the gradient norm against the step. How many plateaus are there, and where is the iterate on each? Near $\beta_j = 0$ one step multiplies $\beta_j$ by about $1 + 4\gamma$: predict when each coordinate leaves zero.
+
+::: {.callout-note collapse="true" title="Hint 1"}
+(a) $f$ is a sum of functions of one coordinate each, so the gradient is coordinate by coordinate and the Hessian is diagonal.
+:::
+
+::: {.callout-note collapse="true" title="Hint 2"}
+(c) The $j$th coordinate of the gradient is $4\beta_j(\beta_j^2 - 1)$. What is it when $\beta_j = 0$?
+:::
+
+```{r}
+#| eval: false
+f_p <- function(X, y, beta) {
+  # ...
+}
+g_p <- function(X, y, beta) {
+  # ...
+}
+# ...
+```
+

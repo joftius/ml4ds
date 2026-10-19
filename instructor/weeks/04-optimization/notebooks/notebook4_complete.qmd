@@ -658,3 +658,57 @@ c(distance = sqrt(sum((beta_sgd - beta_mn)^2)),
 
 Of the infinitely many exact fits, stochastic gradient descent from zero landed on the one of smallest norm, to two decimals. Every step adds a multiple of rows of $\mathbf X$, so an iterate that starts at $\mathbf 0$ stays in the row space, and the only exact fit in the row space is the minimum-norm one. The algorithm is part of the method: two algorithms for the same objective can return different fits, and this one carries a preference it was never told about. Week 7 writes that preference down as a penalty.
 :::
+
+### Optional, can be done at home: one direction out of $p$
+
+The lecture's saddle, $(u^2 - 1)^2 + v^2$, curves down along $u$ at the origin and up along $v$. Here every direction is like $u$: the loss on $\mathbb R^p$ is
+$$
+f(\beta) = \sum_{j=1}^p (\beta_j^2 - 1)^2.
+$$
+
+(a) Find the gradient and the Hessian of $f$. Show that the stationary points are the $3^p$ points with every $\beta_j \in \{-1, 0, 1\}$.
+
+(b) Classify them: how many are minima, how many maxima, how many saddle points? What fraction are minima when $p = 2$, $10$, $50$?
+
+(c) At a stationary point with $k$ zero coordinates, in how many independent directions does $f$ curve downward? Show that if gradient descent starts with $\beta_j = 0$, then $\beta_j = 0$ at every step, whatever the other coordinates do. Where can such a run end, and what does that say about the gradient and the other $p - 1$ directions?
+
+(d) Run your `gradient_descent` from coding part 1 on $f$ with $p = 5$, starting from $\beta_j = 10^{-3j}$ (tiny, but not zero), with $\gamma = 0.05$ for 250 steps; `X` and `y` are not needed, so pass `NULL` for both. Plot the loss and the gradient norm against the step. How many plateaus are there, and where is the iterate on each? Near $\beta_j = 0$ one step multiplies $\beta_j$ by about $1 + 4\gamma$: predict when each coordinate leaves zero.
+
+::: {.callout-note collapse="true" title="Hint 1"}
+(a) $f$ is a sum of functions of one coordinate each, so the gradient is coordinate by coordinate and the Hessian is diagonal.
+:::
+
+::: {.callout-note collapse="true" title="Hint 2"}
+(c) The $j$th coordinate of the gradient is $4\beta_j(\beta_j^2 - 1)$. What is it when $\beta_j = 0$?
+:::
+
+```{r}
+#| eval: false
+f_p <- function(X, y, beta) {
+  # ...
+}
+g_p <- function(X, y, beta) {
+  # ...
+}
+# ...
+```
+
+::: {.callout-tip .answer collapse="true" title="Reveal solution"}
+(a) $\partial f/\partial\beta_j = 4\beta_j(\beta_j^2 - 1)$, which is zero exactly when $\beta_j \in \{-1, 0, 1\}$, for each coordinate separately: $3^p$ stationary points. The Hessian is diagonal with entries $12\beta_j^2 - 4$: $+8$ at $\beta_j = \pm 1$ and $-4$ at $\beta_j = 0$.
+
+(b) A minimum needs every curvature positive: no coordinate is zero, $2^p$ points, all with $f = 0$. A maximum needs every curvature negative: all coordinates zero, one point, $f = p$. The other $3^p - 2^p - 1$ are saddle points. The fraction of minima is $(2/3)^p$: $0.44$ at $p = 2$, $0.017$ at $p = 10$, $1.6 \times 10^{-9}$ at $p = 50$. For this function the count is exact; that most stationary points of a high-dimensional loss are saddle points is a heuristic, not a theorem, but it is the usual one for neural networks.
+
+(c) $k$: the Hessian is diagonal, so the directions of downward curvature are the $k$ coordinate directions with $\beta_j = 0$. If $\beta_j = 0$ then the $j$th coordinate of the gradient is $4 \cdot 0 \cdot (0 - 1) = 0$, so the step leaves $\beta_j$ at $0$, and by induction it stays there. The other coordinates go to $\pm 1$ or stay at $0$, so the run ends at a saddle point (or the maximum), with $k$ ways down that it never takes. Every gradient it computes is orthogonal to those $k$ directions: the gradient is one direction, and it points along the other $p - 1$ only as far as the loss already slopes that way. In exact arithmetic the run never escapes; any perturbation (rounding, or the noise of a stochastic gradient) lets it escape, slowly, which is (d).
+
+```{r}
+f_p <- function(X, y, beta) sum((beta^2 - 1)^2)
+g_p <- function(X, y, beta) 4 * beta * (beta^2 - 1)
+fit_p <- gradient_descent(NULL, NULL, f_p, g_p, gamma = 0.05, steps = 250, beta0 = 10^-(3 * (1:5)))
+path_p <- tibble(step = 1:250, loss = fit_p$losses, grad_norm = fit_p$grad_norms)
+ggplot(path_p, aes(step, loss)) + geom_line()
+ggplot(path_p, aes(step, grad_norm)) + geom_line() + scale_y_log10() + labs(y = "gradient norm")
+sapply(4.5:0.5, function(v) min(which(fit_p$losses < v)))   # when the loss passes 4.5, 3.5, ...
+```
+
+(d) Five plateaus, at loss $5, 4, 3, 2, 1$: the iterate starts next to the maximum at $\mathbf 0$, then sits near one saddle point after another, each with one fewer zero coordinate. Near zero $\beta_j$ grows by a factor $1.2$ per step, so from $10^{-3j}$ it reaches order one after about $3j \log 10/\log 1.2 \approx 38j$ steps; the loss passes $4.5, 3.5, \dots, 0.5$ at steps $36, 74, 112, 149, 187$. On each plateau the gradient norm dips to about $0.03$, and the loss looks flat for about 30 steps: the lecture's "has it converged?" four times over, and each time the way out is one direction out of five that the gradient barely sees.
+:::

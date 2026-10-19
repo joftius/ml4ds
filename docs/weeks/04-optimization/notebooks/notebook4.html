@@ -667,6 +667,63 @@ Note
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ...</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
+</section>
+<section id="optional-can-be-done-at-home-one-direction-out-of-p" class="level3">
+<h3 class="anchored" data-anchor-id="optional-can-be-done-at-home-one-direction-out-of-p">Optional, can be done at home: one direction out of <span class="math inline">\(p\)</span></h3>
+<p>The lecture’s saddle, <span class="math inline">\((u^2 - 1)^2 + v^2\)</span>, curves down along <span class="math inline">\(u\)</span> at the origin and up along <span class="math inline">\(v\)</span>. Here every direction is like <span class="math inline">\(u\)</span>: the loss on <span class="math inline">\(\mathbb R^p\)</span> is <span class="math display">\[
+f(\beta) = \sum_{j=1}^p (\beta_j^2 - 1)^2.
+\]</span></p>
+<ol type="a">
+<li><p>Find the gradient and the Hessian of <span class="math inline">\(f\)</span>. Show that the stationary points are the <span class="math inline">\(3^p\)</span> points with every <span class="math inline">\(\beta_j \in \{-1, 0, 1\}\)</span>.</p></li>
+<li><p>Classify them: how many are minima, how many maxima, how many saddle points? What fraction are minima when <span class="math inline">\(p = 2\)</span>, <span class="math inline">\(10\)</span>, <span class="math inline">\(50\)</span>?</p></li>
+<li><p>At a stationary point with <span class="math inline">\(k\)</span> zero coordinates, in how many independent directions does <span class="math inline">\(f\)</span> curve downward? Show that if gradient descent starts with <span class="math inline">\(\beta_j = 0\)</span>, then <span class="math inline">\(\beta_j = 0\)</span> at every step, whatever the other coordinates do. Where can such a run end, and what does that say about the gradient and the other <span class="math inline">\(p - 1\)</span> directions?</p></li>
+<li><p>Run your <code>gradient_descent</code> from coding part 1 on <span class="math inline">\(f\)</span> with <span class="math inline">\(p = 5\)</span>, starting from <span class="math inline">\(\beta_j = 10^{-3j}\)</span> (tiny, but not zero), with <span class="math inline">\(\gamma = 0.05\)</span> for 250 steps; <code>X</code> and <code>y</code> are not needed, so pass <code>NULL</code> for both. Plot the loss and the gradient norm against the step. How many plateaus are there, and where is the iterate on each? Near <span class="math inline">\(\beta_j = 0\)</span> one step multiplies <span class="math inline">\(\beta_j\)</span> by about <span class="math inline">\(1 + 4\gamma\)</span>: predict when each coordinate leaves zero.</p></li>
+</ol>
+<div class="callout callout-style-default callout-note callout-titled" title="Hint 1">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-14-contents" aria-controls="callout-14" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Hint 1
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-14" class="callout-14-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<ol type="a">
+<li><span class="math inline">\(f\)</span> is a sum of functions of one coordinate each, so the gradient is coordinate by coordinate and the Hessian is diagonal.</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled" title="Hint 2">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-15-contents" aria-controls="callout-15" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Hint 2
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-15" class="callout-15-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<ol start="3" type="a">
+<li>The <span class="math inline">\(j\)</span>th coordinate of the gradient is <span class="math inline">\(4\beta_j(\beta_j^2 - 1)\)</span>. What is it when <span class="math inline">\(\beta_j = 0\)</span>?</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>f_p <span class="ot">&lt;-</span> <span class="cf">function</span>(X, y, beta) {</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>  <span class="co"># ...</span></span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>g_p <span class="ot">&lt;-</span> <span class="cf">function</span>(X, y, beta) {</span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>  <span class="co"># ...</span></span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a><span class="co"># ...</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
 
 
 </section>
