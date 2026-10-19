@@ -1008,10 +1008,10 @@ Joshua Loftus
 <section id="section" class="slide level2 inverse">
 <h2></h2>
 <aside class="notes">
-<p><code>[--------------------]</code> 0%  0 of 78 min</p>
+<p><code>[--------------------]</code> 0%  0 of 91 min</p>
 <p>36 light slides and 8 dark after the title: about 81 at week 2’s rough pace (2 min a light slide, 1 a dark), so plan 78 of 90 with cut 1 made from the start; a planning estimate, not a rehearsed time. Dark = rush or skip; each dark slide’s note says skip or gives the compressed phrase.</p>
 <p>Cut order: (1) ImageNet, (2) the GLM FAQ to its last question, (3) Newton-IRLS to its one line, (4) “Reading the gradient” to its ask. The two paths figure and the descent lemma’s proof are last; the three substantial pauses (the normal equations, the step-200 diagnosis, the stopping point) are not cut.</p>
-<p>Pace: the first line of every note is a progress bar, the share of the deck’s estimated minutes done before that slide, at the same rough pace, computed when the deck is rendered.</p>
+<p>Pace: the first line of every note is a progress bar, the share of the deck’s estimated minutes done before that slide, computed when the deck is rendered. Estimates on the spine’s timing scale: 2 min a content slide, 3 a derivation or a slide with a substantial pause ({minutes=“3”} on its heading), 1 a dark slide.</p>
 <p>In the notebook: descent lemma redone (ex. 1), ERM form proved (ex. 2), score equations and the Hessian (ex. 3), no free lunch on a finite domain (ex. 4). Named examples: the valley, the hilly road, the saddle, the penguin fit, the wide regression.</p>
 <style type="text/css">
 span.MJX_Assistive_MathML {
@@ -1031,10 +1031,10 @@ display:block!important;
 <p>Part 4: stochastic gradient descent</p>
 <p>Part 5: when to stop iterating?</p>
 </section>
-<section id="where-week-3-left-the-fitting" class="slide level2">
+<section id="where-week-3-left-the-fitting" class="slide level2" data-minutes="3">
 <h2>Where week 3 left the fitting</h2>
 <aside class="notes">
-<p><code>[--------------------]</code> 1%  1 of 78 min</p>
+<p><code>[--------------------]</code> 1%  1 of 91 min</p>
 <p>Two minutes, written, then two people. Expected: X’(y - X beta-hat) = 0, revealed on the score-equations slide; and some guess at a logistic analogue. Do not give the score equations yet.</p>
 <style type="text/css">
 span.MJX_Assistive_MathML {
@@ -1056,7 +1056,7 @@ display:block!important;
 <section id="model-fitting-maximum-likelihood" class="slide level2">
 <h2>Model fitting: maximum likelihood</h2>
 <aside class="notes">
-<p><code>[#-------------------]</code> 4%  3 of 78 min</p>
+<p><code>[#-------------------]</code> 4%  4 of 91 min</p>
 <p>Legacy slide with the recall box. Fisher: the method and the word, 1912 to 1922. The log changes nothing about where the maximum is. Least squares is the Gaussian log-likelihood, so lm is glm with family gaussian.</p>
 <style type="text/css">
 span.MJX_Assistive_MathML {
@@ -1081,7 +1081,7 @@ display:block!important;
 <section id="mle-for-logistic-regression" class="slide level2">
 <h2>MLE for logistic regression</h2>
 <aside class="notes">
-<p><code>[#-------------------]</code> 6%  5 of 78 min</p>
+<p><code>[#-------------------]</code> 7%  6 of 91 min</p>
 <p>Legacy slide. Each factor is a Bernoulli probability with p_i = p(x_i’ beta); log turns the product into a sum.</p>
 <style type="text/css">
 span.MJX_Assistive_MathML {
@@ -1104,10 +1104,10 @@ L(\beta ; \mathbf y | \mathbf x) = \prod_{i=1}^n \left( \frac{1}{1+e^{-x_i \beta
 \]</span></p>
 </div>
 </section>
-<section id="mle-the-derivative" class="slide level2">
+<section id="mle-the-derivative" class="slide level2" data-minutes="3">
 <h2>MLE: the derivative</h2>
 <aside class="notes">
-<p><code>[##------------------]</code> 9%  7 of 78 min</p>
+<p><code>[##------------------]</code> 9%  8 of 91 min</p>
 <p>Legacy slide, continued. The last line is the one to remember: x times residual.</p>
 <style type="text/css">
 span.MJX_Assistive_MathML {
@@ -1126,10 +1126,10 @@ display:block!important;
 <p><span class="math display">\[= \sum_{i=1}^n x_i \left[ y_i - \left(\frac{1}{1+e^{- x_i \beta}} \right) \right] = \color{#b73779}{\sum_{i=1}^n x_i [y_i - \hat p_i(\beta)]}\]</span></p>
 <p>Set this equal to 0 and solve for <span class="math inline">\(\beta\)</span>. How: the rest of today</p>
 </section>
-<section id="the-score-equations-read-as-orthogonality" class="slide level2">
+<section id="the-score-equations-read-as-orthogonality" class="slide level2" data-minutes="3">
 <h2>The score equations, read as orthogonality</h2>
 <aside class="notes">
-<p><code>[##------------------]</code> 12%  9 of 78 min</p>
+<p><code>[##------------------]</code> 12%  11 of 91 min</p>
 <p>Derived, not proved: the derivative is on the previous slide, this slide reads it as a vector equation. Same shape as week 2.</p>
 <style type="text/css">
 span.MJX_Assistive_MathML {
@@ -1151,10 +1151,10 @@ display:block!important;
 <p>Same shape as least squares, with <span class="math inline">\(\mathbf X\hat\beta\)</span> replaced by the fitted probabilities: the residual <span class="math inline">\(\mathbf y - \hat{\mathbf p}\)</span> is orthogonal to every column of <span class="math inline">\(\mathbf X\)</span></p>
 <p>No closed form, because <span class="math inline">\(\mathbf p(\beta)\)</span> is not linear in <span class="math inline">\(\beta\)</span></p>
 </section>
-<section id="two-things-the-score-equations-say" class="slide level2">
+<section id="two-things-the-score-equations-say" class="slide level2" data-minutes="3">
 <h2>Two things the score equations say</h2>
 <aside class="notes">
-<p><code>[###-----------------]</code> 14%  11 of 78 min</p>
+<p><code>[###-----------------]</code> 15%  14 of 91 min</p>
 <p>Row one needs an intercept, no penalty, a finite solution. Concavity is a claim here; the Hessian is minus a positive-weighted sum of outer products, which is negative semidefinite; uniqueness needs full column rank; existence is the separable case from week 3. Exercise 3 computes the Hessian.</p>
 <style type="text/css">
 span.MJX_Assistive_MathML {
@@ -1176,7 +1176,7 @@ display:block!important;
 <section id="newton-raphson" class="slide level2">
 <h2>Newton-Raphson</h2>
 <aside class="notes">
-<p><code>[###-----------------]</code> 17%  13 of 78 min</p>
+<p><code>[####----------------]</code> 19%  17 of 91 min</p>
 <p>Legacy slide; the exercise now asks for the update, since the Hessian is on the previous slide.</p>
 <style type="text/css">
 span.MJX_Assistive_MathML {
@@ -1200,7 +1200,7 @@ display:block!important;
 <section id="logistic-regression-fitting-multivariate-case" class="slide level2">
 <h2>Logistic regression fitting: multivariate case</h2>
 <aside class="notes">
-<p><code>[####----------------]</code> 19%  15 of 78 min</p>
+<p><code>[####----------------]</code> 21%  19 of 91 min</p>
 <p>Legacy slide. Compress if short: each Newton step is a weighted least squares fit; the weights are largest near one half. g is the logit link from week 3. Recognize, not reconstruct: exercise 3 asks for the Newton update, not IRLS.</p>
 <style type="text/css">
 span.MJX_Assistive_MathML {
@@ -1232,7 +1232,7 @@ display:block!important;
 <section id="glms-in-r-what-you-should-know" class="slide level2 inverse">
 <h2>GLMs in <code>R</code>: what you should know</h2>
 <aside class="notes">
-<p><code>[####----------------]</code> 22%  17 of 78 min</p>
+<p><code>[#####---------------]</code> 23%  21 of 91 min</p>
 <p>Compress if short: glm fits every family by IRLS (Fisher scoring, which is Newton for these links), in a handful of iterations; a boundary warning means investigate, not necessarily that the MLE does not exist (a finite MLE with a huge slope triggers it too). The reason the rest of the world does not do this is the p by p Hessian: part 2.</p>
 <style type="text/css">
 span.MJX_Assistive_MathML {
@@ -1253,7 +1253,7 @@ display:block!important;
 <section id="section-1" class="slide level2 inverse center">
 <h2></h2>
 <aside class="notes">
-<p><code>[#####---------------]</code> 23%  18 of 78 min</p>
+<p><code>[#####---------------]</code> 24%  22 of 91 min</p>
 <p>Compress: every method so far is a loss, a class, and an algorithm. From here on the algorithm is gradient descent, and usually its stochastic version.</p>
 <style type="text/css">
 span.MJX_Assistive_MathML {
@@ -1272,7 +1272,7 @@ display:block!important;
 <section id="ml-tasks-as-optimization-problems" class="slide level2">
 <h2>ML tasks as optimization problems</h2>
 <aside class="notes">
-<p><code>[#####---------------]</code> 24%  19 of 78 min</p>
+<p><code>[#####---------------]</code> 25%  23 of 91 min</p>
 <p>Legacy slide in the course notation. Three choices: loss, class, algorithm.</p>
 <style type="text/css">
 span.MJX_Assistive_MathML {
@@ -1303,7 +1303,7 @@ display:block!important;
 <section id="examples-linear-regression-glm" class="slide level2">
 <h2>Examples: linear regression, GLM</h2>
 <aside class="notes">
-<p><code>[#####---------------]</code> 27%  21 of 78 min</p>
+<p><code>[#####---------------]</code> 27%  25 of 91 min</p>
 <p>Legacy slides, one slide. For a GLM the loss is the negative log-likelihood, so -l/n is the empirical risk.</p>
 <style type="text/css">
 span.MJX_Assistive_MathML {
@@ -1326,7 +1326,7 @@ display:block!important;
 <section id="iterative-optimization-algorithms" class="slide level2">
 <h2>(Iterative) optimization algorithms</h2>
 <aside class="notes">
-<p><code>[######--------------]</code> 29%  23 of 78 min</p>
+<p><code>[######--------------]</code> 30%  27 of 91 min</p>
 <p>Legacy slide. Hessian is p by p; gradient is p by 1.</p>
 <style type="text/css">
 span.MJX_Assistive_MathML {
@@ -1349,7 +1349,7 @@ display:block!important;
 <section id="gradient-steepest-descent" class="slide level2">
 <h2>Gradient (steepest) descent</h2>
 <aside class="notes">
-<p><code>[######--------------]</code> 32%  25 of 78 min</p>
+<p><code>[######--------------]</code> 32%  29 of 91 min</p>
 <p>Legacy slide, with the course symbols: beta_t for the iterates (n is the sample size), gamma the step size.</p>
 <style type="text/css">
 span.MJX_Assistive_MathML {
@@ -1379,7 +1379,7 @@ display:block!important;
 <section id="which-step-size" class="slide level2">
 <h2>Which step size?</h2>
 <aside class="notes">
-<p><code>[#######-------------]</code> 35%  27 of 78 min</p>
+<p><code>[#######-------------]</code> 34%  31 of 91 min</p>
 <p>Name the example: the valley; it comes back on the next slide and in part 3. One minute, a show of hands per option. Most get 0.05 right (slow) and are surprised that 0.18 converges through the zigzag and 0.21 blows up.</p>
 <style type="text/css">
 span.MJX_Assistive_MathML {
@@ -1414,7 +1414,7 @@ display:block!important;
 <section id="three-step-sizes" class="slide level2">
 <h2>Three step sizes</h2>
 <aside class="notes">
-<p><code>[#######-------------]</code> 37%  29 of 78 min</p>
+<p><code>[#######-------------]</code> 36%  33 of 91 min</p>
 <p>The 0.21 panel shows eight steps; the rest are off the page. Say it: the largest curvature sets the largest safe step, the smallest sets how long it takes.</p>
 <style type="text/css">
 span.MJX_Assistive_MathML {
@@ -1465,10 +1465,10 @@ display:block!important;
 <p>The largest curvature sets the largest safe step; the smallest sets how long it takes</p>
 </div></div>
 </section>
-<section id="the-quadratic-case-exactly" class="slide level2">
+<section id="the-quadratic-case-exactly" class="slide level2" data-minutes="3">
 <h2>The quadratic case, exactly</h2>
 <aside class="notes">
-<p><code>[########------------]</code> 40%  31 of 78 min</p>
+<p><code>[########------------]</code> 38%  35 of 91 min</p>
 <p>Read the slide. The ratio is the condition number, the word can be said. For gamma between 1/a_1 and 2/a_1 the steep direction can be the slow one (0.18 on the valley: factors 0.8 and 0.82). Least squares: the curvatures are the eigenvalues of 2 X’X / n.</p>
 <style type="text/css">
 span.MJX_Assistive_MathML {
@@ -1496,7 +1496,7 @@ display:block!important;
 <section id="section-2" class="slide level2 inverse center">
 <h2></h2>
 <aside class="notes">
-<p><code>[########------------]</code> 42%  33 of 78 min</p>
+<p><code>[########------------]</code> 42%  38 of 91 min</p>
 <p>Compress: the loop computes one number each step, the gradient; this part is about what that number can and cannot tell you.</p>
 <style type="text/css">
 span.MJX_Assistive_MathML {
@@ -1514,7 +1514,7 @@ display:block!important;
 <section id="reading-the-gradient" class="slide level2">
 <h2>Reading the gradient</h2>
 <aside class="notes">
-<p><code>[#########-----------]</code> 44%  34 of 78 min</p>
+<p><code>[#########-----------]</code> 43%  39 of 91 min</p>
 <p>Name the example: the hilly road, a one-parameter loss; it comes back on the next three slides. The gradient is zero at the minimum, but also at a local minimum, and small but not shrinking on a plateau (0.01 here). Large means steep, and a step may overshoot. The question for the part: when the loss stops falling, which of these are you at?</p>
 <style type="text/css">
 span.MJX_Assistive_MathML {
@@ -1540,10 +1540,10 @@ display:block!important;
 <p>Your loss has stopped falling. Which of the four places are you at, and how would you tell?</p>
 </div>
 </section>
-<section id="landscapes" class="slide level2">
+<section id="landscapes" class="slide level2" data-minutes="3">
 <h2>Landscapes</h2>
 <aside class="notes">
-<p><code>[#########-----------]</code> 46%  36 of 78 min</p>
+<p><code>[#########-----------]</code> 45%  41 of 91 min</p>
 <p>Left, the hilly road again: three starts, same step size, three places after 60 steps; the start at -1 barely moves on the plateau and reaches the global minimum only after about 450 steps (panel B later). Right, a second example, the saddle: a start on the line u = 0 runs into the saddle point and stays, because the u-gradient is zero on that whole line. Convex losses have none of this; most of what comes after week 7 has all of it.</p>
 <style type="text/css">
 span.MJX_Assistive_MathML {
@@ -1573,7 +1573,7 @@ display:block!important;
 <section id="too-big-too-small" class="slide level2">
 <h2>Too big, too small</h2>
 <aside class="notes">
-<p><code>[##########----------]</code> 49%  38 of 78 min</p>
+<p><code>[##########----------]</code> 48%  44 of 91 min</p>
 <p>Left, the penguin fit: Chinstrap against Adelie from flipper length (standardized), gradient descent on the negative log-likelihood from (0, 0), first eight steps, in the (intercept, slope) plane; the cross is glm’s answer. Step size 4 walks to it; 12, above 2/L = 8, overshoots and comes back, and goes on bouncing between two points for ever (the logistic gradient is bounded, so this is a step-size problem, not an exploding gradient). Right, the hilly road from beta = -1: the position creeps for 400 steps and then plunges to the global minimum (dotted). Exploding and vanishing gradients are a chain-rule phenomenon, named only.</p>
 <style type="text/css">
 span.MJX_Assistive_MathML {
@@ -1597,10 +1597,10 @@ display:block!important;
 </div>
 <p><strong>Too big</strong> a step (<span class="math inline">\(\gamma = 12 &gt; 2/L = 8\)</span>): overshoot and bounce. <strong>Too small</strong> a gradient (the plateau, <span class="math inline">\(0.01\)</span>): creep for hundreds of steps, then move all at once. In deep networks the chain rule can make gradients <strong>explode</strong> or <strong>vanish</strong></p>
 </section>
-<section id="has-it-converged" class="slide level2">
+<section id="has-it-converged" class="slide level2" data-minutes="3">
 <h2>Has it converged?</h2>
 <aside class="notes">
-<p><code>[##########----------]</code> 51%  40 of 78 min</p>
+<p><code>[##########----------]</code> 51%  46 of 91 min</p>
 <p>Simulated, first 200 steps only. Expected reading of the bottom row: A’s gradient norm falls geometrically to nothing (converged); B’s is small and constant (plateau: the gradient is 0.01 and not shrinking); C’s is large and constant (the gradient is not small at all; the step is). A is the valley; B the hilly road from beta = -1; C the valley with the geometric schedule 0.3 (0.6)^t. Take answers before the reveal.</p>
 <style type="text/css">
 span.MJX_Assistive_MathML {
@@ -1629,7 +1629,7 @@ display:block!important;
 <section id="has-it-converged-the-next-600-steps" class="slide level2">
 <h2>Has it converged? The next 600 steps</h2>
 <aside class="notes">
-<p><code>[###########---------]</code> 54%  42 of 78 min</p>
+<p><code>[###########---------]</code> 54%  49 of 91 min</p>
 <p>The reveal. A, the valley, was converged. B, the hilly road, was on the plateau and drops at about step 450. C, the valley with shrinking steps, never moves again. A flat loss was consistent with all three; the gradient norm was not. Say it now and again at the end: everything on this slide is the training loss, which the algorithm minimizes; whether that is the loss we care about is part 5.</p>
 <style type="text/css">
 span.MJX_Assistive_MathML {
@@ -1658,7 +1658,7 @@ display:block!important;
 <section id="directions-with-zero-slope" class="slide level2">
 <h2>Directions with zero slope</h2>
 <aside class="notes">
-<p><code>[###########---------]</code> 56%  44 of 78 min</p>
+<p><code>[###########---------]</code> 56%  51 of 91 min</p>
 <p>The gradient gives the slope in every direction v (grad f’v); away from a stationary point that slope is zero on the (p - 1)-dimensional subspace orthogonal to the gradient, and at a stationary point in all p directions. Whether the loss goes down along them is curvature, which the gradient does not give. The figure: plain gradient descent on sum_j a_j (z_j^2 - 1)^2 with z = Q beta, Q a random rotation, p = 5, unequal curvatures a_j in [0.5, 1.5], a tiny random start. Every flat stretch is a near-saddle: some z_j near 0, slope almost zero, curvature negative; the run waits until that coordinate is big enough to see. With the standard shrinking schedule 0.1/(1 + t/25), whose steps still sum to infinity (unlike panel C’s), each later saddle is met with a smaller step, so the waits grow: the escapes come at steps 19, 23, 49, 127 and 480, and the last wait holds the loss flat for about 300 steps, where every diagnostic from “has it converged?” would have said stop. Fixed step 0.05, dashed, is done by step 165. Answer to the ask: the curvature, the Hessian’s p eigenvalues (next slide); all positive, a strict local minimum; any negative, not a minimum; some zero, inconclusive. The saddle from “Landscapes” started on u = 0 is the two-dimensional case: u never changes. A constructed example; “long plateaus followed by rapid transitions” are also found in deep linear networks (Saxe, McClelland and Ganguli, ICLR 2014). The optional seminar problem works through a separable version by hand.</p>
 <style type="text/css">
 span.MJX_Assistive_MathML {
@@ -1685,10 +1685,10 @@ display:block!important;
 <p>The gradient is zero. What else would tell you a minimum from a saddle?</p>
 </div>
 </section>
-<section id="curvature" class="slide level2">
+<section id="curvature" class="slide level2" data-minutes="3">
 <h2>Curvature</h2>
 <aside class="notes">
-<p><code>[############--------]</code> 59%  46 of 78 min</p>
+<p><code>[############--------]</code> 58%  53 of 91 min</p>
 <p>The ingredient the lemma needs. We know the quadratic case exactly; a general f is quadratic to second order, so a step has a first-order term we like and a second-order term we do not control. Curvatures: +8 at the saddle’s two minima, -4 at its saddle point, about 0 on the hilly road’s plateau.</p>
 <style type="text/css">
 span.MJX_Assistive_MathML {
@@ -1709,10 +1709,10 @@ f(x - \gamma\nabla f(x)) \approx f(x) \;\underbrace{-\; \gamma\,\|\nabla f(x)\|^
 \]</span></p>
 <p>In the quadratic case the curvature was a fixed number <span class="math inline">\(a\)</span>. On the saddle it is <span class="math inline">\(+8\)</span> at the two minima and <span class="math inline">\(-4\)</span> at the saddle point; on the hilly road’s plateau it is about <span class="math inline">\(0\)</span></p>
 </section>
-<section id="curvature-at-most-l" class="slide level2">
+<section id="curvature-at-most-l" class="slide level2" data-minutes="3">
 <h2>Curvature at most <span class="math inline">\(L\)</span></h2>
 <aside class="notes">
-<p><code>[############--------]</code> 62%  48 of 78 min</p>
+<p><code>[############--------]</code> 62%  56 of 91 min</p>
 <p>If curvature is at most L everywhere, the push-back is bounded and the quadratic rule survives. “Curvature at most L” without a Hessian: the gradient changes at rate at most L. Least squares: L = 2 lambda_max(X’X)/n. The saddle has no global L: its curvature 12u^2 - 4 is unbounded.</p>
 <style type="text/css">
 span.MJX_Assistive_MathML {
@@ -1736,7 +1736,7 @@ f(x - \gamma\nabla f(x)) \lesssim f(x) - \gamma\underbrace{\big(1 - \tfrac12 L\g
 <section id="descent-lemma" class="slide level2">
 <h2>Descent lemma</h2>
 <aside class="notes">
-<p><code>[#############-------]</code> 64%  50 of 78 min</p>
+<p><code>[#############-------]</code> 65%  59 of 91 min</p>
 <p>The one positive result, and what it does and does not say. Needs no convexity. Says: each step helps, by at least the squared gradient over 2L, so more where the gradient is large. Does not say: that the steps converge (on f(x) = -x they walk off forever); where they end if they do (any stationary point of the landscape); that a small gradient means arrival (the next step gains little: the plateau). Proof: integrate the gradient along the step and let the Lipschitz bound do what the curvature bound did.</p>
 <style type="text/css">
 span.MJX_Assistive_MathML {
@@ -1757,10 +1757,10 @@ f\!\left(x - \tfrac1L\nabla f(x)\right) \le f(x) - \frac{\|\nabla f(x)\|^2}{2L}
 <p><em>Says</em>: each step helps, more where the gradient is large. No convexity needed</p>
 <p><em>Does not say</em>: where the steps end, or that they end</p>
 </section>
-<section id="descent-lemma-proof-1-of-2" class="slide level2">
+<section id="descent-lemma-proof-1-of-2" class="slide level2" data-minutes="3">
 <h2>Descent lemma, proof (1 of 2)</h2>
 <aside class="notes">
-<p><code>[#############-------]</code> 67%  52 of 78 min</p>
+<p><code>[#############-------]</code> 67%  61 of 91 min</p>
 <ol type="a">
 <li>We have f(y) - f(x); we want the gradient in it: integrate the gradient along the segment from x to y.</li>
 <li>We want the first-order term on its own: add and subtract the gradient at x.</li>
@@ -1791,10 +1791,10 @@ f(y) - f(x) &amp;= \int_0^1 \nabla f(x_t)^T v\, dt
 \end{alignedat}
 \]</span></p>
 </section>
-<section id="descent-lemma-proof-2-of-2" class="slide level2">
+<section id="descent-lemma-proof-2-of-2" class="slide level2" data-minutes="3">
 <h2>Descent lemma, proof (2 of 2)</h2>
 <aside class="notes">
-<p><code>[##############------]</code> 69%  54 of 78 min</p>
+<p><code>[##############------]</code> 70%  64 of 91 min</p>
 <ol start="5" type="a">
 <li>Integrate t. (f) Put the step in: v is minus gamma times the gradient. (g) Collect. Then read off the sign: at gamma = 1/L the right-hand side is minus the squared gradient over 2L, the lemma. For any 0 &lt; gamma &lt; 2/L it is negative unless the gradient is zero, so every such step decreases f, which is what the curvature heuristic said. The conclusion is the last row of the display, so that it reveals after (g); a text fragment below the display would reveal first.</li>
 </ol>
@@ -1827,7 +1827,7 @@ f(y) - f(x) &amp;\le \nabla f(x)^T v + \int_0^1 L\,t\,\|v\|^2\, dt
 <section id="section-3" class="slide level2 inverse center">
 <h2></h2>
 <aside class="notes">
-<p><code>[##############------]</code> 72%  56 of 78 min</p>
+<p><code>[###############-----]</code> 74%  67 of 91 min</p>
 <p>Compress: one exact gradient per step is too expensive at scale; a random row’s gradient is cheap and, on average, right.</p>
 <style type="text/css">
 span.MJX_Assistive_MathML {
@@ -1845,7 +1845,7 @@ display:block!important;
 <section id="what-a-step-costs" class="slide level2">
 <h2>What a step costs</h2>
 <aside class="notes">
-<p><code>[###############-----]</code> 73%  57 of 78 min</p>
+<p><code>[###############-----]</code> 75%  68 of 91 min</p>
 <p>With the linear cost model: full gradient at the 2012 scale about 7e13 operations, a batch of 128 about 8e9, ten thousand times cheaper. For a network the per-image cost is not p, but the ratio n/b is what matters. The formula’s p-cubed is not a computation anyone has done.</p>
 <style type="text/css">
 span.MJX_Assistive_MathML {
@@ -1897,7 +1897,7 @@ display:block!important;
 <section id="stochasticrandom-descent" class="slide level2">
 <h2>Stochastic/random descent</h2>
 <aside class="notes">
-<p><code>[###############-----]</code> 76%  59 of 78 min</p>
+<p><code>[###############-----]</code> 77%  70 of 91 min</p>
 <p>Legacy slide; the derivation is on the next slide, over the random index with the data fixed. Ask first, then reveal.</p>
 <style type="text/css">
 span.MJX_Assistive_MathML {
@@ -1917,10 +1917,10 @@ display:block!important;
 <p>Pick one row <span class="math inline">\(I\)</span> uniformly at random from <span class="math inline">\(\{1, \ldots, n\}\)</span> and use its gradient <span class="math inline">\(\nabla\ell_I(\beta)\)</span> in place of the average over all <span class="math inline">\(n\)</span> rows. Commit: is it biased for the full gradient <span class="math inline">\(\nabla\hat R_n(\beta)\)</span>, yes or no? And does the descent lemma’s guarantee carry over to a step along it?</p>
 </div>
 </section>
-<section id="the-stochastic-gradient-is-unbiased" class="slide level2">
+<section id="the-stochastic-gradient-is-unbiased" class="slide level2" data-minutes="3">
 <h2>The stochastic gradient is unbiased</h2>
 <aside class="notes">
-<p><code>[################----]</code> 78%  61 of 78 min</p>
+<p><code>[################----]</code> 79%  72 of 91 min</p>
 <p>Derived in one line. Only the index is random; the data and beta are fixed, so nothing about where the data came from is used. The batch variance is sigma^2(beta)/b, with sigma^2 the spread of the single-row gradients (seminar, problem 3). Without replacement the variance is smaller by the finite-population factor; week 2’s seminar met that factor.</p>
 <style type="text/css">
 span.MJX_Assistive_MathML {
@@ -1947,7 +1947,7 @@ display:block!important;
 <section id="the-two-paths" class="slide level2">
 <h2>The two paths</h2>
 <aside class="notes">
-<p><code>[################----]</code> 81%  63 of 78 min</p>
+<p><code>[################----]</code> 82%  75 of 91 min</p>
 <p>Simulated least squares. An epoch is one pass through the rows, 200 single-row steps, so the orange path is three epochs. Blue is exact and expensive; orange is cheap and noisy, and with a shrinking step the noise ball shrinks. Do not say “SGD is better”: say what each costs and what each buys. Cut 2 if short.</p>
 <style type="text/css">
 span.MJX_Assistive_MathML {
@@ -1980,7 +1980,7 @@ display:block!important;
 <section id="history-imagenet-2012" class="slide level2 inverse">
 <h2>History: ImageNet, 2012</h2>
 <aside class="notes">
-<p><code>[#################---]</code> 83%  65 of 78 min</p>
+<p><code>[#################---]</code> 85%  77 of 91 min</p>
 <p>Skip if behind. Krizhevsky, Sutskever and Hinton (2012): about 60 million parameters and 650,000 neurons per network; one network 18.2% top-5 on validation; the winning entry, an ensemble of seven, 15.3% on test against 26.2% for the runner-up; five to six days on two GTX 580 GPUs, SGD with batches of 128.</p>
 <style type="text/css">
 span.MJX_Assistive_MathML {
@@ -2001,7 +2001,7 @@ display:block!important;
 <section id="section-4" class="slide level2 inverse center">
 <h2></h2>
 <aside class="notes">
-<p><code>[#################---]</code> 85%  66 of 78 min</p>
+<p><code>[#################---]</code> 86%  78 of 91 min</p>
 <p>Compress: the algorithm is done; what is left over, and where does it come from?</p>
 <style type="text/css">
 span.MJX_Assistive_MathML {
@@ -2019,7 +2019,7 @@ display:block!important;
 <section id="early-stopping" class="slide level2">
 <h2>Early stopping</h2>
 <aside class="notes">
-<p><code>[#################---]</code> 86%  67 of 78 min</p>
+<p><code>[#################---]</code> 87%  79 of 91 min</p>
 <p>Legacy slide. Optimization time is a knob like k or the polynomial degree.</p>
 <style type="text/css">
 span.MJX_Assistive_MathML {
@@ -2047,10 +2047,10 @@ display:block!important;
 <p>This is <a href="https://en.wikipedia.org/wiki/Early_stopping">early stopping</a> – we’ll come back to it later</p>
 </div>
 </section>
-<section id="stopping-early-choose-a-stopping-point" class="slide level2">
+<section id="stopping-early-choose-a-stopping-point" class="slide level2" data-minutes="3">
 <h2>Stopping early: choose a stopping point</h2>
 <aside class="notes">
-<p><code>[##################--]</code> 88%  69 of 78 min</p>
+<p><code>[##################--]</code> 89%  81 of 91 min</p>
 <p>Simulated least squares, n = 80, p = 60, noisy, from zero. Show the training curve only and ask for a stopping step; most say “when it stops falling”, about step 100 or later. Then the reveal.</p>
 <style type="text/css">
 span.MJX_Assistive_MathML {
@@ -2085,7 +2085,7 @@ display:block!important;
 <section id="stopping-early-what-the-training-loss-did-not-show" class="slide level2">
 <h2>Stopping early: what the training loss did not show</h2>
 <aside class="notes">
-<p><code>[##################--]</code> 91%  71 of 78 min</p>
+<p><code>[##################--]</code> 92%  84 of 91 min</p>
 <p>The picture the whole week points at. The algorithm did what it was asked, minimize the training error, and the training error is the wrong thing to minimize all the way. Nothing in parts 2 to 4 could have shown this: they only ever saw the training loss. Say, do not show: next week measures by how much it lies; the number of steps is a tuning parameter like k or d; week 7 writes the penalty down.</p>
 <style type="text/css">
 span.MJX_Assistive_MathML {
@@ -2117,7 +2117,7 @@ display:block!important;
 <section id="where-the-error-comes-from-this-time" class="slide level2">
 <h2>Where the error comes from, this time</h2>
 <aside class="notes">
-<p><code>[###################-]</code> 94%  73 of 78 min</p>
+<p><code>[###################-]</code> 95%  86 of 91 min</p>
 <p>Stated; the two-line proof (add and subtract R(f_F); each bracket is nonnegative by the definitions of f_F and f*) is exercise 2. Say: the class was chosen before the data, and so was the approximation error; the estimation error is the sample’s, and can hold bias as well as variance; the same trade-off as week 1’s, for any method that minimizes over a class; next week starts here. Exercise 2 also shows that for squared loss the approximation term is E[(f_F - f*)^2] by the optimal model theorem. Three functions: the best of all, the best in the class, what the algorithm returns. The class is chosen before the data; so is the approximation error. Next week starts here.</p>
 <style type="text/css">
 span.MJX_Assistive_MathML {
@@ -2139,7 +2139,7 @@ R(\hat f) = R(f^\star) + \underbrace{\big[R(\hat f) - R(f_{\mathcal F})\big]}_{\
 <section id="no-free-lunch" class="slide level2">
 <h2>No free lunch</h2>
 <aside class="notes">
-<p><code>[###################-]</code> 96%  75 of 78 min</p>
+<p><code>[###################-]</code> 97%  88 of 91 min</p>
 <p>Stated (Shalev-Shwartz and Ben-David, Theorem 5.1, in expectation form); the finite-domain proof is exercise 4. Intuition to say: the sample says nothing about labels at points it has not seen; on a large domain those labels can be set against the method. Comes back in weeks 9 and 11.</p>
 <style type="text/css">
 span.MJX_Assistive_MathML {
@@ -2162,7 +2162,7 @@ display:block!important;
 <section id="conclusion-optimization-in-ml-is-a-big-topic" class="slide level2 inverse">
 <h2>Conclusion: optimization in ML is a big topic</h2>
 <aside class="notes">
-<p><code>[####################]</code> 99%  77 of 78 min</p>
+<p><code>[####################]</code> 99%  90 of 91 min</p>
 <p>Compress: the one guarantee and its price; training loss is not test loss; stopping at the right complexity is next week.</p>
 <style type="text/css">
 span.MJX_Assistive_MathML {
