@@ -350,9 +350,10 @@ gradient_descent <- function(X, y, loss, grad, gamma, steps, beta0 = rep(0, ncol
   beta <- beta0
   losses <- numeric(steps)
   grad_norms <- numeric(steps)
+  g <- grad(X, y, beta)
   for (t in 1:steps) {
-    g <- grad(X, y, beta)
     beta <- beta - gamma * g
+    g <- grad(X, y, beta)          # the gradient at the new beta: used for the record and for the next step
     losses[t] <- loss(X, y, beta)
     grad_norms[t] <- sqrt(sum(g^2))
   }
@@ -657,4 +658,71 @@ c(distance = sqrt(sum((beta_sgd - beta_mn)^2)),
 ```
 
 Of the infinitely many exact fits, stochastic gradient descent from zero landed on the one of smallest norm, to two decimals. Every step adds a multiple of rows of $\mathbf X$, so an iterate that starts at $\mathbf 0$ stays in the row space, and the only exact fit in the row space is the minimum-norm one. The algorithm is part of the method: two algorithms for the same objective can return different fits, and this one carries a preference it was never told about. Week 7 writes that preference down as a penalty.
+:::
+
+### Optional, can be done at home: saddle points in $p$ dimensions
+
+The lecture's saddle, $(u^2 - 1)^2 + v^2$, curves down along $u$ at the origin and up along $v$. Here every coordinate is like $u$: the loss on $\mathbb R^p$ is
+$$
+f(\beta) = \sum_{j=1}^p (\beta_j^2 - 1)^2.
+$$
+
+(a) Find the gradient and the Hessian of $f$. Show that the stationary points are the $3^p$ points with every $\beta_j \in \{-1, 0, 1\}$.
+
+(b) Classify them: how many are local minima, how many local maxima, how many saddle points? What fraction are minima when $p = 2$, $10$, $50$?
+
+(c) At a stationary point with $k$ zero coordinates, how many negative eigenvalues does the Hessian have, and which coordinate directions are eigenvectors for them? Show that if gradient descent starts with $\beta_j = 0$, then $\beta_j = 0$ at every step, whatever the other coordinates do. If such a run converges, where can its limit be?
+
+(d) Run your `gradient_descent` from coding part 1 on $f$ with $p = 5$, starting from $\beta_j = 10^{-3j}$ (tiny, but not zero), with $\gamma = 0.05$ for 250 steps; `X` and `y` are not needed, so pass `NULL` for both. Plot the loss and the gradient norm against the step. How many nearly flat stretches are there? Near $\beta_j = 0$ one step multiplies $\beta_j$ by about $1 + 4\gamma$: predict when each coordinate leaves a neighborhood of zero. Then write a short loop that records the iterate at every step, and plot the five coordinates against the step: where is the iterate on each flat stretch?
+
+::: {.callout-note collapse="true" title="Hint 1"}
+(a) $f$ is a sum of functions of one coordinate each, so the gradient is coordinate by coordinate and the Hessian is diagonal.
+:::
+
+::: {.callout-note collapse="true" title="Hint 2"}
+(c) The $j$th coordinate of the gradient is $4\beta_j(\beta_j^2 - 1)$. What is it when $\beta_j = 0$?
+:::
+
+```{r}
+#| eval: false
+f_p <- function(X, y, beta) {
+  # ...
+}
+g_p <- function(X, y, beta) {
+  # ...
+}
+# ...
+```
+
+::: {.callout-tip .answer collapse="true" title="Reveal solution"}
+(a) $\partial f/\partial\beta_j = 4\beta_j(\beta_j^2 - 1)$, which is zero exactly when $\beta_j \in \{-1, 0, 1\}$, for each coordinate separately: $3^p$ stationary points. The Hessian is diagonal with entries $12\beta_j^2 - 4$: $+8$ at $\beta_j = \pm 1$ and $-4$ at $\beta_j = 0$.
+
+(b) Local minima need every eigenvalue positive (sufficient here, since none is zero): no coordinate is zero, $2^p$ points, all global minima with $f = 0$. A local maximum needs every eigenvalue negative: the origin, a strict local maximum with $f = p$ (there is no global maximum; $f$ is unbounded). The other $3^p - 2^p - 1$ are saddle points. The fraction of minima is $(2/3)^p$: $0.44$ at $p = 2$, $0.017$ at $p = 10$, $1.6 \times 10^{-9}$ at $p = 50$.
+
+These are proportions of stationary points, not probabilities that gradient descent ends at one. With $\gamma = 0.05$ and a start drawn uniformly from $[-1, 1]^p$, every coordinate is nonzero with probability one and moves to $\pm 1$ with its own sign (on $(0, 1]$ the update $\beta \mapsto \beta(1.2 - 0.2\beta^2)$ is increasing and has $1$ as its only fixed point), so the run reaches a global minimum with probability one despite the saddle points. That most stationary points of high-dimensional losses are saddle points is a heuristic drawn from particular models (Dauphin et al., 2014, for neural networks), not something this example proves.
+
+(c) $k$ negative eigenvalues, each $-4$, with the coordinate directions $e_j$ for the zero coordinates as eigenvectors. If $\beta_j = 0$ then the $j$th coordinate of the gradient is $4 \cdot 0 \cdot (0 - 1) = 0$, so the step leaves $\beta_j$ at exactly $0$, and by induction it stays there; this holds in floating point too, since the product is exactly zero. So if the run converges, its limit has $\beta_j = 0$: a saddle point (or the origin), never a minimum, although the Hessian there has a negative eigenvalue along $e_j$. The gradient reported, correctly, a zero slope along $e_j$ at every step; what it cannot report is the curvature, and gradient descent uses only the slope. (With $\gamma = 0.05$ and the other coordinates started in $[-1, 1]$, they do converge, to $\pm 1$ or stay at $0$.) Noise does not rescue the run automatically: sampling one summand at a time, as stochastic gradient descent would, still gives a zero $j$th coordinate. A small nonzero perturbation in a negative-curvature coordinate is what allows escape, and (d) starts with such perturbations already present.
+
+```{r}
+f_p <- function(X, y, beta) sum((beta^2 - 1)^2)
+g_p <- function(X, y, beta) 4 * beta * (beta^2 - 1)
+fit_p <- gradient_descent(NULL, NULL, f_p, g_p, gamma = 0.05, steps = 250, beta0 = 10^-(3 * (1:5)))
+path_p <- tibble(step = 1:250, loss = fit_p$losses, grad_norm = fit_p$grad_norms)
+ggplot(path_p, aes(step, loss)) + geom_line()
+ggplot(path_p, aes(step, grad_norm)) + geom_line() + scale_y_log10() + labs(y = "gradient norm")
+sapply(4.5:0.5, function(v) min(which(fit_p$losses < v)))   # when the loss passes 4.5, 3.5, ...
+
+beta <- 10^-(3 * (1:5))
+coords <- matrix(NA, 250, 5)
+for (t in 1:250) {
+  beta <- beta - 0.05 * g_p(NULL, NULL, beta)
+  coords[t, ] <- beta
+}
+as_tibble(coords, .name_repair = ~ paste0("beta_", 1:5)) |>
+  mutate(step = 1:250) |>
+  pivot_longer(-step, names_to = "coordinate") |>
+  ggplot(aes(step, value, colour = coordinate)) + geom_line() + scale_colour_viridis_d(end = 0.9)
+```
+
+(d) Five nearly flat stretches, near loss $5, 4, 3, 2, 1$, then convergence to $0$. The coordinate plot says where the iterate is: near $(0, 0, 0, 0, 0)$, the strict local maximum, then near $(1, 0, 0, 0, 0)$, $(1, 1, 0, 0, 0)$, $(1, 1, 1, 0, 0)$ and $(1, 1, 1, 1, 0)$, saddle points with one fewer zero coordinate each time, and finally at the minimum $(1, 1, 1, 1, 1)$. Near zero $\beta_j$ grows by a factor of about $1.2$ per step, so it reaches a level $a$ after about $\log(a/10^{-3j})/\log 1.2$ steps, that is $3j\log 10/\log 1.2 \approx 38j$ steps to reach order one; the loss passes $4.5, 3.5, \dots, 0.5$ at steps $36, 74, 112, 149, 187$. The gradient norm starts at about $0.005$ next to the maximum, and on each of the four intermediate stretches it dips to about $0.03$; the loss stays within $0.05$ of each level for about 25 steps: "has it converged?" four more times, and each time the answer is no. Started instead with every coordinate at $10^{-3}$, all five leave together and the loss falls from $5$ to $0$ between steps 30 and 40, with no staircase: the plateaus come from the staggered start.
 :::

@@ -78,11 +78,11 @@ contour_plot <- function(path, title = NULL, axis_titles = TRUE) {
 ## {.inverse}
 
 ::: {.notes}
-35 light slides and 8 dark after the title: about 79 at week 2's rough pace (2 min a light slide, 1 a dark), so plan 76 of 90 with cut 1 made from the start; a planning estimate, not a rehearsed time. Dark = rush or skip; each dark slide's note says skip or gives the compressed phrase.
+36 light slides and 8 dark after the title: about 81 at week 2's rough pace (2 min a light slide, 1 a dark), so plan 78 of 90 with cut 1 made from the start; a planning estimate, not a rehearsed time. Dark = rush or skip; each dark slide's note says skip or gives the compressed phrase.
 
 Cut order: (1) ImageNet, (2) the GLM FAQ to its last question, (3) Newton-IRLS to its one line, (4) "Reading the gradient" to its ask. The two paths figure and the descent lemma's proof are last; the three substantial pauses (the normal equations, the step-200 diagnosis, the stopping point) are not cut.
 
-Pace: 0:18 GLM FAQ done, 0:32 the quadratic case, 0:46 has it converged (reveal), 0:56 descent lemma proved, 1:06 the two paths, 1:16 before the seminar.
+Pace: 0:18 GLM FAQ done, 0:32 the quadratic case, 0:46 has it converged (reveal), 0:48 directions with zero slope, 0:58 descent lemma proved, 1:08 the two paths, 1:18 before the seminar.
 
 In the notebook: descent lemma redone (ex. 1), ERM form proved (ex. 2), score equations and the Hessian (ex. 3), no free lunch on a finite domain (ex. 4). Named examples: the valley, the hilly road, the saddle, the penguin fit, the wide regression.
 :::
@@ -621,6 +621,42 @@ conv_plot(conv)
 
 ::: {.leave}
 A, the valley: converged. B, the hilly road: its loss fell by `r sprintf("%.3f", lb[1] - lb[200])` in 200 steps, its gradient is $0.01$ and not shrinking; the drop comes at step `r min(which(lb < 2))`. C, the valley with steps $0.3 \cdot 0.6^t$: stopped short
+:::
+
+## Directions with zero slope
+
+::: {.notes}
+The gradient gives the slope in every direction v (grad f'v); away from a stationary point that slope is zero on the (p - 1)-dimensional subspace orthogonal to the gradient, and at a stationary point in all p directions. Whether the loss goes down along them is curvature, which the gradient does not give. The figure: plain gradient descent on sum_j a_j (z_j^2 - 1)^2 with z = Q beta, Q a random rotation, p = 5, unequal curvatures a_j in [0.5, 1.5], a tiny random start. Every flat stretch is a near-saddle: some z_j near 0, slope almost zero, curvature negative; the run waits until that coordinate is big enough to see. With the standard shrinking schedule 0.1/(1 + t/25), whose steps still sum to infinity (unlike panel C's), each later saddle is met with a smaller step, so the waits grow: the escapes come at steps 19, 23, 49, 127 and 480, and the last wait holds the loss flat for about 300 steps, where every diagnostic from "has it converged?" would have said stop. Fixed step 0.05, dashed, is done by step 165. Answer to the ask: the curvature, the Hessian's p eigenvalues (next slide); all positive, a strict local minimum; any negative, not a minimum; some zero, inconclusive. The saddle from "Landscapes" started on u = 0 is the two-dimensional case: u never changes. A constructed example; "long plateaus followed by rapid transitions" are also found in deep linear networks (Saxe, McClelland and Ganguli, ICLR 2014). The optional seminar problem works through a separable version by hand.
+:::
+
+These are some of the issues that make optimization hard. What's more: in $\mathbb R^p$ the slope is zero in $p - 1$ directions; whether they lead down is a question of curvature
+
+```{r}
+#| label: zero-slope
+#| fig-height: 3.3
+#| fig-width: 12
+#| out-width: "100%"
+# Plain full-batch gradient descent on f(beta) = sum_j a_j (z_j^2 - 1)^2 with z = Q beta: Q a random
+# rotation (so the coordinates are coupled), unequal curvatures a_j, and a tiny random start. Each flat
+# stretch of the loss is a near-saddle. Shrinking schedule 0.1 / (1 + t/25) against a fixed step 0.05.
+set.seed(7); p_z <- 5
+a_z <- runif(p_z, 0.5, 1.5); z0 <- sample(c(-1, 1), p_z, TRUE) * 10^-runif(p_z, 2, 10)
+Q_z <- qr.Q(qr(matrix(rnorm(p_z^2), p_z)))
+f_z <- function(b) { z <- Q_z %*% b; sum(a_z * (z^2 - 1)^2) }
+g_z <- function(b) { z <- as.vector(Q_z %*% b); as.vector(t(Q_z) %*% (4 * a_z * z * (z^2 - 1))) }
+run_z <- function(gam, steps = 700) { b <- as.vector(t(Q_z) %*% z0); out <- numeric(steps)
+  for (t in 1:steps) { b <- b - gam(t) * g_z(b); out[t] <- f_z(b) }; out }
+zs <- bind_rows(tibble(step = 1:700, loss = run_z(function(t) 0.1 / (1 + t / 25)), run = "shrinking: \u03b3\u209c = 0.1 / (1 + t/25)"),
+                tibble(step = 1:700, loss = run_z(function(t) 0.05), run = "fixed: \u03b3 = 0.05"))
+ggplot(zs, aes(step, loss, colour = run, linetype = run)) + geom_line(linewidth = 1.2) +
+  annotate("text", x = 300, y = 0.95, label = "a saddle: 300 steps that look converged", size = 5.5, colour = v_blue) +
+  scale_colour_manual(values = c("grey55", v_blue)) + scale_linetype_manual(values = c("dashed", "solid")) +
+  labs(colour = NULL, linetype = NULL, title = "Gradient descent in 5 dimensions: unequal curvatures, tiny random start") +
+  theme(legend.position = "inside", legend.position.inside = c(0.78, 0.78), plot.title = element_text(size = 16))
+```
+
+::: {.ask}
+The gradient is zero. What else would tell you a minimum from a saddle?
 :::
 
 ## Curvature

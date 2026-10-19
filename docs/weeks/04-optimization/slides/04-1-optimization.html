@@ -459,6 +459,22 @@ L(\beta ; \mathbf y | \mathbf x) = \prod_{i=1}^n \left( \frac{1}{1+e^{-x_i \beta
 <p>A, the valley: converged. B, the hilly road: its loss fell by 0.005 in 200 steps, its gradient is <span class="math inline">\(0.01\)</span> and not shrinking; the drop comes at step 445. C, the valley with steps <span class="math inline">\(0.3 \cdot 0.6^t\)</span>: stopped short</p>
 </div>
 </section>
+<section id="directions-with-zero-slope" class="slide level2">
+<h2>Directions with zero slope</h2>
+<p>These are some of the issues that make optimization hard. What’s more: in <span class="math inline">\(\mathbb R^p\)</span> the slope is zero in <span class="math inline">\(p - 1\)</span> directions; whether they lead down is a question of curvature</p>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure>
+<p><img data-src="04-1-optimization_files/figure-revealjs/zero-slope-1.png" style="width:100.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="ask">
+<p>The gradient is zero. What else would tell you a minimum from a saddle?</p>
+</div>
+</section>
 <section id="curvature" class="slide level2">
 <h2>Curvature</h2>
 <div class="recall">
