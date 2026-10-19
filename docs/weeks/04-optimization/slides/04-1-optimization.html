@@ -459,14 +459,14 @@ L(\beta ; \mathbf y | \mathbf x) = \prod_{i=1}^n \left( \frac{1}{1+e^{-x_i \beta
 <p>A, the valley: converged. B, the hilly road: its loss fell by 0.005 in 200 steps, its gradient is <span class="math inline">\(0.01\)</span> and not shrinking; the drop comes at step 445. C, the valley with steps <span class="math inline">\(0.3 \cdot 0.6^t\)</span>: stopped short</p>
 </div>
 </section>
-<section id="one-direction-out-of-p" class="slide level2">
-<h2>One direction out of <span class="math inline">\(p\)</span></h2>
+<section id="directions-with-zero-slope" class="slide level2">
+<h2>Directions with zero slope</h2>
 <p>These are some of the issues that make optimization, and so model fitting, hard</p>
-<p>What’s more: the gradient is <strong>one</strong> direction. In <span class="math inline">\(\mathbb R^p\)</span> there are <span class="math inline">\(p - 1\)</span> other independent directions, and along each of them <span class="math inline">\(\nabla f^T v = 0\)</span>: to first order the loss does not change, so the gradient says nothing about which way along them is down</p>
-<p>The saddle, started on the line <span class="math inline">\(u = 0\)</span>: the gradient points along <span class="math inline">\(v\)</span> at every step, and the way down, along <span class="math inline">\(u\)</span>, is never taken</p>
+<p>What’s more: the gradient gives the slope <span class="math inline">\(\nabla f^T v\)</span> in every direction <span class="math inline">\(v\)</span>, and in <span class="math inline">\(\mathbb R^p\)</span> that slope is zero in <span class="math inline">\(p - 1\)</span> independent directions, all those orthogonal to the gradient; at a stationary point, in all <span class="math inline">\(p\)</span>. Whether the loss goes down along them is a question of curvature, which the gradient does not give</p>
+<p>The saddle, started on the line <span class="math inline">\(u = 0\)</span>: the gradient points along <span class="math inline">\(v\)</span> at every step, <span class="math inline">\(u\)</span> never changes, and the way down, along <span class="math inline">\(u\)</span>, is never taken</p>
 <div class="fragment">
 <div class="ask">
-<p>A stationary point in <span class="math inline">\(\mathbb R^p\)</span> is a minimum if the loss curves upward in every direction. How many curvatures do you have to check?</p>
+<p>The gradient is zero. What more would you need to know to tell a minimum from a saddle?</p>
 </div>
 </div>
 </section>

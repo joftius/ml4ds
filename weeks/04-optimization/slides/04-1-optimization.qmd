@@ -82,7 +82,7 @@ contour_plot <- function(path, title = NULL, axis_titles = TRUE) {
 
 Cut order: (1) ImageNet, (2) the GLM FAQ to its last question, (3) Newton-IRLS to its one line, (4) "Reading the gradient" to its ask. The two paths figure and the descent lemma's proof are last; the three substantial pauses (the normal equations, the step-200 diagnosis, the stopping point) are not cut.
 
-Pace: 0:18 GLM FAQ done, 0:32 the quadratic case, 0:46 has it converged (reveal), 0:48 one direction out of p, 0:58 descent lemma proved, 1:08 the two paths, 1:18 before the seminar.
+Pace: 0:18 GLM FAQ done, 0:32 the quadratic case, 0:46 has it converged (reveal), 0:48 directions with zero slope, 0:58 descent lemma proved, 1:08 the two paths, 1:18 before the seminar.
 
 In the notebook: descent lemma redone (ex. 1), ERM form proved (ex. 2), score equations and the Hessian (ex. 3), no free lunch on a finite domain (ex. 4). Named examples: the valley, the hilly road, the saddle, the penguin fit, the wide regression.
 :::
@@ -623,22 +623,22 @@ conv_plot(conv)
 A, the valley: converged. B, the hilly road: its loss fell by `r sprintf("%.3f", lb[1] - lb[200])` in 200 steps, its gradient is $0.01$ and not shrinking; the drop comes at step `r min(which(lb < 2))`. C, the valley with steps $0.3 \cdot 0.6^t$: stopped short
 :::
 
-## One direction out of $p$
+## Directions with zero slope
 
 ::: {.notes}
-Closes the catalogue of what can go wrong and opens the curvature slides. The gradient spans one direction; its orthogonal complement has dimension p - 1, and along every v in it the directional derivative is zero, so a gradient step neither sees nor moves along them. The saddle in two dimensions already shows it: started on u = 0, the gradient is (0, 2v) at every step, and the way down, along u (curvature -4), is never taken. Answer to the ask: p curvatures, the eigenvalues of the Hessian, which the next slide introduces. Say, do not show: on the sum over j of (beta_j^2 - 1)^2 there are 3^p stationary points and 2^p of them are minima, a fraction (2/3)^p, about 2% at p = 10; the optional seminar problem works it through and runs it. That most stationary points of high-dimensional losses are saddles is a heuristic, not a theorem.
+Closes the catalogue of what can go wrong and opens the curvature slides. The gradient gives the slope in every direction v, as the directional derivative grad f'v; it overlooks nothing to first order. What it cannot give is curvature. Away from a stationary point the slope is zero on the p - 1 dimensional subspace orthogonal to the gradient; at a stationary point it is zero in all p directions, and only curvature tells a minimum from a saddle. The saddle shows it: started on u = 0, the gradient is (0, 2v) at every step, so u never changes, and the curvature along u there is -4. Answer to the ask: the curvature, through the Hessian's p eigenvalues (next slide): all positive, a strict local minimum; any negative, not a minimum; some zero, inconclusive. Curvatures along p arbitrary independent directions are not enough: diag(-1, 10) curves upward along (1, 1) and (1, -1) and is a saddle. Say, do not show: on the sum over j of (beta_j^2 - 1)^2 there are 3^p stationary points and 2^p of them are minima, a fraction (2/3)^p, about 2% at p = 10; these are proportions of stationary points, not probabilities that gradient descent ends at one (from a random start in [-1, 1]^p it reaches a global minimum with probability one). The optional seminar problem works it through.
 :::
 
 These are some of the issues that make optimization, and so model fitting, hard
 
-What's more: the gradient is **one** direction. In $\mathbb R^p$ there are $p - 1$ other independent directions, and along each of them $\nabla f^T v = 0$: to first order the loss does not change, so the gradient says nothing about which way along them is down
+What's more: the gradient gives the slope $\nabla f^T v$ in every direction $v$, and in $\mathbb R^p$ that slope is zero in $p - 1$ independent directions, all those orthogonal to the gradient; at a stationary point, in all $p$. Whether the loss goes down along them is a question of curvature, which the gradient does not give
 
-The saddle, started on the line $u = 0$: the gradient points along $v$ at every step, and the way down, along $u$, is never taken
+The saddle, started on the line $u = 0$: the gradient points along $v$ at every step, $u$ never changes, and the way down, along $u$, is never taken
 
 . . .
 
 ::: {.ask}
-A stationary point in $\mathbb R^p$ is a minimum if the loss curves upward in every direction. How many curvatures do you have to check?
+The gradient is zero. What more would you need to know to tell a minimum from a saddle?
 :::
 
 ## Curvature

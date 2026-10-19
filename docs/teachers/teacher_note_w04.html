@@ -2454,6 +2454,7 @@ window.Quarto = {
 <ul>
 <li>The <span class="math inline">\(2/n\)</span> in the gradient: dropping it leaves the fixed point unchanged and makes every step-size statement wrong by a factor.</li>
 <li>Writing the update as <code>beta + gamma * g</code> (uphill), which the checkpoint catches as a rising loss.</li>
+<li>Recording the gradient norm from before the step next to the loss after it: the two records are then one step apart. The solution computes the gradient at the new <span class="math inline">\(\beta\)</span> and reuses it for the next step.</li>
 <li>In step 5, <code>log(p)</code> with <span class="math inline">\(p\)</span> numerically <span class="math inline">\(0\)</span>: the solution’s <code>log1p(exp(-z))</code> form avoids it; if a student’s own version gives <code>NaN</code> at a large step, that is the reason.</li>
 <li>In step 6, forgetting to reset <code>e</code> inside the loop (so that <span class="math inline">\(e\)</span> gains a second nonzero entry), or dividing by <code>h</code> instead of <code>2 * h</code>; the checkpoint catches both.</li>
 <li>In part 2, step 1, <code>X_big[rows, ]</code> on a one-row batch drops to a vector: <code>drop = FALSE</code>.</li>

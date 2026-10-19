@@ -52,6 +52,7 @@ Where they get stuck
 
 - The $2/n$ in the gradient: dropping it leaves the fixed point unchanged and makes every step-size statement wrong by a factor.
 - Writing the update as `beta + gamma * g` (uphill), which the checkpoint catches as a rising loss.
+- Recording the gradient norm from before the step next to the loss after it: the two records are then one step apart. The solution computes the gradient at the new $\beta$ and reuses it for the next step.
 - In step 5, `log(p)` with $p$ numerically $0$: the solution's `log1p(exp(-z))` form avoids it; if a student's own version gives `NaN` at a large step, that is the reason.
 - In step 6, forgetting to reset `e` inside the loop (so that $e$ gains a second nonzero entry), or dividing by `h` instead of `2 * h`; the checkpoint catches both.
 - In part 2, step 1, `X_big[rows, ]` on a one-row batch drops to a vector: `drop = FALSE`.
