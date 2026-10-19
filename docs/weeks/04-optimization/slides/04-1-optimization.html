@@ -157,7 +157,7 @@ Joshua Loftus
 <p>Part 4: stochastic gradient descent</p>
 <p>Part 5: when to stop iterating?</p>
 </section>
-<section id="where-week-3-left-the-fitting" class="slide level2">
+<section id="where-week-3-left-the-fitting" class="slide level2" data-minutes="3">
 <h2>Where week 3 left the fitting</h2>
 <p>Week 2: least squares has a formula for <span class="math inline">\(\hat\beta\)</span>, and <span class="math inline">\(\hat\beta\)</span> solves the normal equations. Week 3: logistic regression is fitted by maximum likelihood, and <code>glm</code> did it for us</p>
 <p>Today’s question, in three parts: <strong>what did <code>glm</code> do? how can we tell whether fitting is working? should we let it finish?</strong></p>
@@ -188,7 +188,7 @@ L(\beta ; \mathbf y | \mathbf x) = \prod_{i=1}^n \left( \frac{1}{1+e^{-x_i \beta
 \]</span></p>
 </div>
 </section>
-<section id="mle-the-derivative" class="slide level2">
+<section id="mle-the-derivative" class="slide level2" data-minutes="3">
 <h2>MLE: the derivative</h2>
 <p><span class="math display">\[
 \frac{\partial}{\partial \beta} \ell(\beta ; \mathbf y | \mathbf x) = \sum_{i=1}^n \left[ y_i  \left( \frac{x_i e^{-x_i \beta}}{1+e^{-x_i \beta}} \right) + (1-y_i) \left(\frac{-x_i}{1+e^{- x_i \beta}} \right) \right]
@@ -196,7 +196,7 @@ L(\beta ; \mathbf y | \mathbf x) = \prod_{i=1}^n \left( \frac{1}{1+e^{-x_i \beta
 <p><span class="math display">\[= \sum_{i=1}^n x_i \left[ y_i - \left(\frac{1}{1+e^{- x_i \beta}} \right) \right] = \color{#b73779}{\sum_{i=1}^n x_i [y_i - \hat p_i(\beta)]}\]</span></p>
 <p>Set this equal to 0 and solve for <span class="math inline">\(\beta\)</span>. How: the rest of today</p>
 </section>
-<section id="the-score-equations-read-as-orthogonality" class="slide level2">
+<section id="the-score-equations-read-as-orthogonality" class="slide level2" data-minutes="3">
 <h2>The score equations, read as orthogonality</h2>
 <div class="retrieval">
 <p>Week 2, least squares: <span class="math inline">\(\mathbf X^T(\mathbf y - \mathbf X\hat\beta) = \mathbf 0\)</span>. The residual is orthogonal to every column of <span class="math inline">\(\mathbf X\)</span>.</p>
@@ -207,7 +207,7 @@ L(\beta ; \mathbf y | \mathbf x) = \prod_{i=1}^n \left( \frac{1}{1+e^{-x_i \beta
 <p>Same shape as least squares, with <span class="math inline">\(\mathbf X\hat\beta\)</span> replaced by the fitted probabilities: the residual <span class="math inline">\(\mathbf y - \hat{\mathbf p}\)</span> is orthogonal to every column of <span class="math inline">\(\mathbf X\)</span></p>
 <p>No closed form, because <span class="math inline">\(\mathbf p(\beta)\)</span> is not linear in <span class="math inline">\(\beta\)</span></p>
 </section>
-<section id="two-things-the-score-equations-say" class="slide level2">
+<section id="two-things-the-score-equations-say" class="slide level2" data-minutes="3">
 <h2>Two things the score equations say</h2>
 <p><strong>Row one is the intercept.</strong> <span class="math inline">\(\sum_i (y_i - \hat p_i) = 0\)</span>: the fitted probabilities average to the observed proportion of 1s on the training rows.</p>
 <p><strong>The log-likelihood is concave.</strong> Differentiating once more, <span class="math display">\[
@@ -367,7 +367,7 @@ L(\beta ; \mathbf y | \mathbf x) = \prod_{i=1}^n \left( \frac{1}{1+e^{-x_i \beta
 <p>The largest curvature sets the largest safe step; the smallest sets how long it takes</p>
 </div></div>
 </section>
-<section id="the-quadratic-case-exactly" class="slide level2">
+<section id="the-quadratic-case-exactly" class="slide level2" data-minutes="3">
 <h2>The quadratic case, exactly</h2>
 <p>One direction with curvature <span class="math inline">\(a &gt; 0\)</span>: <span class="math inline">\(f(\beta) = \tfrac12 a\beta^2\)</span>, <span class="math inline">\(\nabla f = a\beta\)</span>, so</p>
 <p><span class="math display">\[
@@ -400,7 +400,7 @@ L(\beta ; \mathbf y | \mathbf x) = \prod_{i=1}^n \left( \frac{1}{1+e^{-x_i \beta
 <p>Your loss has stopped falling. Which of the four places are you at, and how would you tell?</p>
 </div>
 </section>
-<section id="landscapes" class="slide level2">
+<section id="landscapes" class="slide level2" data-minutes="3">
 <h2>Landscapes</h2>
 <div class="cell">
 <div class="cell-output-display">
@@ -429,7 +429,7 @@ L(\beta ; \mathbf y | \mathbf x) = \prod_{i=1}^n \left( \frac{1}{1+e^{-x_i \beta
 </div>
 <p><strong>Too big</strong> a step (<span class="math inline">\(\gamma = 12 &gt; 2/L = 8\)</span>): overshoot and bounce. <strong>Too small</strong> a gradient (the plateau, <span class="math inline">\(0.01\)</span>): creep for hundreds of steps, then move all at once. In deep networks the chain rule can make gradients <strong>explode</strong> or <strong>vanish</strong></p>
 </section>
-<section id="has-it-converged" class="slide level2">
+<section id="has-it-converged" class="slide level2" data-minutes="3">
 <h2>Has it converged?</h2>
 <div class="cell">
 <div class="cell-output-display">
@@ -475,7 +475,7 @@ L(\beta ; \mathbf y | \mathbf x) = \prod_{i=1}^n \left( \frac{1}{1+e^{-x_i \beta
 <p>The gradient is zero. What else would tell you a minimum from a saddle?</p>
 </div>
 </section>
-<section id="curvature" class="slide level2">
+<section id="curvature" class="slide level2" data-minutes="3">
 <h2>Curvature</h2>
 <div class="recall">
 <p>Taylor, to second order, with <span class="math inline">\(H = \nabla^2 f(x)\)</span> the Hessian: for a smooth <span class="math inline">\(f\)</span> and a small move <span class="math inline">\(\delta\)</span>, <span class="math inline">\(f(x + \delta) \approx f(x) + \nabla f(x)^T\delta + \tfrac12\,\delta^T H\,\delta\)</span>.</p>
@@ -485,7 +485,7 @@ f(x - \gamma\nabla f(x)) \approx f(x) \;\underbrace{-\; \gamma\,\|\nabla f(x)\|^
 \]</span></p>
 <p>In the quadratic case the curvature was a fixed number <span class="math inline">\(a\)</span>. On the saddle it is <span class="math inline">\(+8\)</span> at the two minima and <span class="math inline">\(-4\)</span> at the saddle point; on the hilly road’s plateau it is about <span class="math inline">\(0\)</span></p>
 </section>
-<section id="curvature-at-most-l" class="slide level2">
+<section id="curvature-at-most-l" class="slide level2" data-minutes="3">
 <h2>Curvature at most <span class="math inline">\(L\)</span></h2>
 <p>If the curvature in every direction is at most <span class="math inline">\(L\)</span> in size, the push-back is at most <span class="math inline">\(\tfrac12 L\gamma^2\|\nabla f(x)\|^2\)</span>, and then <span class="math display">\[
 f(x - \gamma\nabla f(x)) \lesssim f(x) - \gamma\underbrace{\big(1 - \tfrac12 L\gamma\big)}_{&gt; 0 \text{ for } \gamma &lt; 2/L}\|\nabla f(x)\|^2
@@ -505,7 +505,7 @@ f\!\left(x - \tfrac1L\nabla f(x)\right) \le f(x) - \frac{\|\nabla f(x)\|^2}{2L}
 <p><em>Says</em>: each step helps, more where the gradient is large. No convexity needed</p>
 <p><em>Does not say</em>: where the steps end, or that they end</p>
 </section>
-<section id="descent-lemma-proof-1-of-2" class="slide level2">
+<section id="descent-lemma-proof-1-of-2" class="slide level2" data-minutes="3">
 <h2>Descent lemma, proof (1 of 2)</h2>
 <p>Write <span class="math inline">\(v = y - x\)</span> for the step, so that <span class="math inline">\(y = x - \gamma\nabla f(x)\)</span> means <span class="math inline">\(v = -\gamma\nabla f(x)\)</span>, and <span class="math inline">\(x_t = x + tv\)</span> for the point a fraction <span class="math inline">\(t\)</span> of the way along it, so that <span class="math inline">\(\|x_t - x\| = t\|v\|\)</span></p>
 <p><span class="math display">\[
@@ -521,7 +521,7 @@ f(y) - f(x) &amp;= \int_0^1 \nabla f(x_t)^T v\, dt
 \end{alignedat}
 \]</span></p>
 </section>
-<section id="descent-lemma-proof-2-of-2" class="slide level2">
+<section id="descent-lemma-proof-2-of-2" class="slide level2" data-minutes="3">
 <h2>Descent lemma, proof (2 of 2)</h2>
 <p><span class="math display">\[
 \begin{alignedat}{2}
@@ -589,7 +589,7 @@ f(y) - f(x) &amp;\le \nabla f(x)^T v + \int_0^1 L\,t\,\|v\|^2\, dt
 <p>Pick one row <span class="math inline">\(I\)</span> uniformly at random from <span class="math inline">\(\{1, \ldots, n\}\)</span> and use its gradient <span class="math inline">\(\nabla\ell_I(\beta)\)</span> in place of the average over all <span class="math inline">\(n\)</span> rows. Commit: is it biased for the full gradient <span class="math inline">\(\nabla\hat R_n(\beta)\)</span>, yes or no? And does the descent lemma’s guarantee carry over to a step along it?</p>
 </div>
 </section>
-<section id="the-stochastic-gradient-is-unbiased" class="slide level2">
+<section id="the-stochastic-gradient-is-unbiased" class="slide level2" data-minutes="3">
 <h2>The stochastic gradient is unbiased</h2>
 <div class="ask">
 <p>How would you prove this?</p>
@@ -649,7 +649,7 @@ f(y) - f(x) &amp;\le \nabla f(x)^T v + \int_0^1 L\,t\,\|v\|^2\, dt
 <p>This is <a href="https://en.wikipedia.org/wiki/Early_stopping">early stopping</a> – we’ll come back to it later</p>
 </div>
 </section>
-<section id="stopping-early-choose-a-stopping-point" class="slide level2">
+<section id="stopping-early-choose-a-stopping-point" class="slide level2" data-minutes="3">
 <h2>Stopping early: choose a stopping point</h2>
 <div class="columns">
 <div class="column" style="width:55%;">

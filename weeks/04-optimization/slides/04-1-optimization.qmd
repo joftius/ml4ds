@@ -82,7 +82,7 @@ contour_plot <- function(path, title = NULL, axis_titles = TRUE) {
 
 Cut order: (1) ImageNet, (2) the GLM FAQ to its last question, (3) Newton-IRLS to its one line, (4) "Reading the gradient" to its ask. The two paths figure and the descent lemma's proof are last; the three substantial pauses (the normal equations, the step-200 diagnosis, the stopping point) are not cut.
 
-Pace: the first line of every note is a progress bar, the share of the deck's estimated minutes done before that slide, at the same rough pace, computed when the deck is rendered.
+Pace: the first line of every note is a progress bar, the share of the deck's estimated minutes done before that slide, computed when the deck is rendered. Estimates on the spine's timing scale: 2 min a content slide, 3 a derivation or a slide with a substantial pause ({minutes="3"} on its heading), 1 a dark slide.
 
 In the notebook: descent lemma redone (ex. 1), ERM form proved (ex. 2), score equations and the Hessian (ex. 3), no free lunch on a finite domain (ex. 4). Named examples: the valley, the hilly road, the saddle, the penguin fit, the wide regression.
 :::
@@ -99,7 +99,7 @@ Part 4: stochastic gradient descent
 
 Part 5: when to stop iterating?
 
-## Where week 3 left the fitting
+## Where week 3 left the fitting {minutes="3"}
 
 ::: {.notes}
 Two minutes, written, then two people. Expected: X'(y - X beta-hat) = 0, revealed on the score-equations slide; and some guess at a logistic analogue. Do not give the score equations yet.
@@ -150,7 +150,7 @@ $$
 \ell(\beta ; \mathbf y | \mathbf x) = \sum_{i=1}^n \left[ y_i \log \left( \frac{1}{1+e^{-x_i \beta}} \right) + (1-y_i) \log \left(1- \frac{1}{1+e^{- x_i \beta}} \right) \right]
 $$
 
-## MLE: the derivative
+## MLE: the derivative {minutes="3"}
 
 ::: {.notes}
 Legacy slide, continued. The last line is the one to remember: x times residual.
@@ -164,7 +164,7 @@ $$= \sum_{i=1}^n x_i \left[ y_i - \left(\frac{1}{1+e^{- x_i \beta}} \right) \rig
 
 Set this equal to 0 and solve for $\beta$. How: the rest of today
 
-## The score equations, read as orthogonality
+## The score equations, read as orthogonality {minutes="3"}
 
 ::: {.notes}
 Derived, not proved: the derivative is on the previous slide, this slide reads it as a vector equation. Same shape as week 2.
@@ -183,7 +183,7 @@ Same shape as least squares, with $\mathbf X\hat\beta$ replaced by the fitted pr
 
 No closed form, because $\mathbf p(\beta)$ is not linear in $\beta$
 
-## Two things the score equations say
+## Two things the score equations say {minutes="3"}
 
 ::: {.notes}
 Row one needs an intercept, no penalty, a finite solution. Concavity is a claim here; the Hessian is minus a positive-weighted sum of outer products, which is negative semidefinite; uniqueness needs full column rank; existence is the separable case from week 3. Exercise 3 computes the Hessian.
@@ -413,7 +413,7 @@ The largest curvature sets the largest safe step; the smallest sets how long it 
 :::
 :::
 
-## The quadratic case, exactly
+## The quadratic case, exactly {minutes="3"}
 
 ::: {.notes}
 Read the slide. The ratio is the condition number, the word can be said. For gamma between 1/a_1 and 2/a_1 the steep direction can be the slow one (0.18 on the valley: factors 0.8 and 0.82). Least squares: the curvatures are the eigenvalues of 2 X'X / n.
@@ -476,7 +476,7 @@ ggplot(curve1, aes(x, f)) + geom_line(linewidth = 1.1, colour = v_blue) +
 Your loss has stopped falling. Which of the four places are you at, and how would you tell?
 :::
 
-## Landscapes
+## Landscapes {minutes="3"}
 
 ::: {.notes}
 Left, the hilly road again: three starts, same step size, three places after 60 steps; the start at -1 barely moves on the plateau and reaches the global minimum only after about 450 steps (panel B later). Right, a second example, the saddle: a start on the line u = 0 runs into the saddle point and stays, because the u-gradient is zero on that whole line. Convex losses have none of this; most of what comes after week 7 has all of it.
@@ -555,7 +555,7 @@ pc + pd
 
 **Too big** a step ($\gamma = 12 > 2/L = 8$): overshoot and bounce. **Too small** a gradient (the plateau, $0.01$): creep for hundreds of steps, then move all at once. In deep networks the chain rule can make gradients **explode** or **vanish**
 
-## Has it converged?
+## Has it converged? {minutes="3"}
 
 ::: {.notes}
 Simulated, first 200 steps only. Expected reading of the bottom row: A's gradient norm falls geometrically to nothing (converged); B's is small and constant (plateau: the gradient is 0.01 and not shrinking); C's is large and constant (the gradient is not small at all; the step is). A is the valley; B the hilly road from beta = -1; C the valley with the geometric schedule 0.3 (0.6)^t. Take answers before the reveal.
@@ -659,7 +659,7 @@ ggplot(zs, aes(step, loss, colour = run, linetype = run)) + geom_line(linewidth 
 The gradient is zero. What else would tell you a minimum from a saddle?
 :::
 
-## Curvature
+## Curvature {minutes="3"}
 
 ::: {.notes}
 The ingredient the lemma needs. We know the quadratic case exactly; a general f is quadratic to second order, so a step has a first-order term we like and a second-order term we do not control. Curvatures: +8 at the saddle's two minima, -4 at its saddle point, about 0 on the hilly road's plateau.
@@ -676,7 +676,7 @@ $$
 
 In the quadratic case the curvature was a fixed number $a$. On the saddle it is $+8$ at the two minima and $-4$ at the saddle point; on the hilly road's plateau it is about $0$
 
-## Curvature at most $L$
+## Curvature at most $L$ {minutes="3"}
 
 ::: {.notes}
 If curvature is at most L everywhere, the push-back is bounded and the quadratic rule survives. "Curvature at most L" without a Hessian: the gradient changes at rate at most L. Least squares: L = 2 lambda_max(X'X)/n. The saddle has no global L: its curvature 12u^2 - 4 is unbounded.
@@ -712,7 +712,7 @@ Every step of size $1/L$ decreases $f$ by at least the squared gradient over $2L
 
 *Does not say*: where the steps end, or that they end
 
-## Descent lemma, proof (1 of 2)
+## Descent lemma, proof (1 of 2) {minutes="3"}
 
 ::: {.notes}
 (a) We have f(y) - f(x); we want the gradient in it: integrate the gradient along the segment from x to y.
@@ -735,7 +735,7 @@ f(y) - f(x) &= \int_0^1 \nabla f(x_t)^T v\, dt
 \end{alignedat}
 $$
 
-## Descent lemma, proof (2 of 2)
+## Descent lemma, proof (2 of 2) {minutes="3"}
 
 ::: {.notes}
 (e) Integrate t. (f) Put the step in: v is minus gamma times the gradient. (g) Collect. Then read off the sign: at gamma = 1/L the right-hand side is minus the squared gradient over 2L, the lemma. For any 0 < gamma < 2/L it is negative unless the gradient is zero, so every such step decreases f, which is what the curvature heuristic said. The conclusion is the last row of the display, so that it reveals after (g); a text fragment below the display would reveal first.
@@ -794,7 +794,7 @@ Legacy slide; the derivation is on the next slide, over the random index with th
 Pick one row $I$ uniformly at random from $\{1, \ldots, n\}$ and use its gradient $\nabla\ell_I(\beta)$ in place of the average over all $n$ rows. Commit: is it biased for the full gradient $\nabla\hat R_n(\beta)$, yes or no? And does the descent lemma's guarantee carry over to a step along it?
 :::
 
-## The stochastic gradient is unbiased
+## The stochastic gradient is unbiased {minutes="3"}
 
 ::: {.notes}
 Derived in one line. Only the index is random; the data and beta are fixed, so nothing about where the data came from is used. The batch variance is sigma^2(beta)/b, with sigma^2 the spread of the single-row gradients (seminar, problem 3). Without replacement the variance is smaller by the finite-population factor; week 2's seminar met that factor.
@@ -900,7 +900,7 @@ Legacy slide. Optimization time is a knob like k or the polynomial degree.
 
 This is [early stopping](https://en.wikipedia.org/wiki/Early_stopping) -- we'll come back to it later
 
-## Stopping early: choose a stopping point
+## Stopping early: choose a stopping point {minutes="3"}
 
 ::: {.notes}
 Simulated least squares, n = 80, p = 60, noisy, from zero. Show the training curve only and ask for a stopping step; most say "when it stops falling", about step 100 or later. Then the reveal.
