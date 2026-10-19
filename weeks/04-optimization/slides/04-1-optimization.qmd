@@ -82,7 +82,7 @@ contour_plot <- function(path, title = NULL, axis_titles = TRUE) {
 
 Cut order: (1) ImageNet, (2) the GLM FAQ to its last question, (3) Newton-IRLS to its one line, (4) "Reading the gradient" to its ask. The two paths figure and the descent lemma's proof are last; the three substantial pauses (the normal equations, the step-200 diagnosis, the stopping point) are not cut.
 
-Pace: the first line of every note gives the estimated time elapsed at the start of that slide and the time remaining, at the same rough pace, computed when the deck is rendered.
+Pace: the first line of every note is a progress bar, the share of the deck's estimated minutes done before that slide, at the same rough pace, computed when the deck is rendered.
 
 In the notebook: descent lemma redone (ex. 1), ERM form proved (ex. 2), score equations and the Hessian (ex. 3), no free lunch on a finite domain (ex. 4). Named examples: the valley, the hilly road, the saddle, the penguin fit, the wide regression.
 :::

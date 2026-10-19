@@ -24,12 +24,11 @@ function Div(el)
 end
 
 -- Time keeping (convenor, 19 October 2026). In the instructor's render, the speaker note of every slide
--- starts with one line, "Estimated time elapsed: E min, time remaining: R min": E is the estimate at the
--- start of the slide, R is the lecture length minus E. The estimate is week 2's rough pace: 2 minutes a
--- light slide, 1 a dark (.inverse) slide. A slide can override it with an attribute on its heading,
--- e.g.  ## Has it converged? {minutes="3"} . The lecture length is 90 minutes unless the deck's YAML
--- sets  st310-lecture-minutes: N . A slide without a note gets one holding only the line. Computed at
--- render time, so the numbers follow the deck as it changes. Not run for the public render (no notes).
+-- starts with one line, a progress bar: the share of the deck's estimated slide minutes completed before
+-- this slide, e.g.  [########------------] 40%  32 of 80 min . The estimate is week 2's rough pace:
+-- 2 minutes a light slide, 1 a dark (.inverse) slide. A slide can override it with an attribute on its
+-- heading, e.g.  ## Has it converged? {minutes="3"} . A slide without a note gets one holding only the
+-- bar. Computed at render time, so it follows the deck as it changes. Not run for the public render.
 
 local function slide_minutes(h)
   local m = h.attributes["minutes"]
@@ -38,23 +37,26 @@ local function slide_minutes(h)
   return 2
 end
 
+local function is_slide(b) return b.t == "Header" and b.level <= 2 end
+
 function Pandoc(doc)
   if keep == nil then return nil end
-  local total = 90
-  local meta_total = doc.meta["st310-lecture-minutes"]
-  if meta_total ~= nil and tonumber(pandoc.utils.stringify(meta_total)) ~= nil then
-    total = tonumber(pandoc.utils.stringify(meta_total))
-  end
   local blocks = doc.blocks
+  local total = 0
+  for _, b in ipairs(blocks) do if is_slide(b) then total = total + slide_minutes(b) end end
+  if total == 0 then return nil end
+  local width = 20
   local out = pandoc.List()
-  local elapsed = 0
+  local done = 0
   local i = 1
   while i <= #blocks do
     local b = blocks[i]
     out:insert(b)
-    if b.t == "Header" and b.level <= 2 then
-      local line = pandoc.Para({pandoc.Str(string.format(
-        "Estimated time elapsed: %d min, time remaining: %d min", elapsed, total - elapsed))})
+    if is_slide(b) then
+      local filled = math.floor(width * done / total + 0.5)
+      local bar = "[" .. string.rep("#", filled) .. string.rep("-", width - filled) .. "]"
+      local line = pandoc.Para({pandoc.Code(bar), pandoc.Space(),
+        pandoc.Str(string.format("%d%%  %d of %d min", math.floor(100 * done / total + 0.5), done, total))})
       local nxt = blocks[i + 1]
       if nxt ~= nil and nxt.t == "Div" and nxt.classes:includes("notes") then
         nxt.content:insert(1, line)
@@ -63,7 +65,7 @@ function Pandoc(doc)
       else
         out:insert(pandoc.Div({line}, pandoc.Attr("", {"notes"})))
       end
-      elapsed = elapsed + slide_minutes(b)
+      done = done + slide_minutes(b)
     end
     i = i + 1
   end
