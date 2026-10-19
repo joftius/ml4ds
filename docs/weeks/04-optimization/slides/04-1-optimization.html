@@ -461,13 +461,18 @@ L(\beta ; \mathbf y | \mathbf x) = \prod_{i=1}^n \left( \frac{1}{1+e^{-x_i \beta
 </section>
 <section id="directions-with-zero-slope" class="slide level2">
 <h2>Directions with zero slope</h2>
-<p>These are some of the issues that make optimization, and so model fitting, hard</p>
-<p>What’s more: the gradient gives the slope <span class="math inline">\(\nabla f^T v\)</span> in every direction <span class="math inline">\(v\)</span>, and in <span class="math inline">\(\mathbb R^p\)</span> that slope is zero in <span class="math inline">\(p - 1\)</span> independent directions, all those orthogonal to the gradient; at a stationary point, in all <span class="math inline">\(p\)</span>. Whether the loss goes down along them is a question of curvature, which the gradient does not give</p>
-<p>The saddle, started on the line <span class="math inline">\(u = 0\)</span>: the gradient points along <span class="math inline">\(v\)</span> at every step, <span class="math inline">\(u\)</span> never changes, and the way down, along <span class="math inline">\(u\)</span>, is never taken</p>
-<div class="fragment">
-<div class="ask">
-<p>The gradient is zero. What more would you need to know to tell a minimum from a saddle?</p>
+<p>These are some of the issues that make optimization hard. What’s more: in <span class="math inline">\(\mathbb R^p\)</span> the slope is zero in <span class="math inline">\(p - 1\)</span> directions; whether they lead down is a question of curvature</p>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure>
+<p><img data-src="04-1-optimization_files/figure-revealjs/zero-slope-1.png" style="width:100.0%"></p>
+</figure>
 </div>
+</div>
+</div>
+<div class="ask">
+<p>The gradient is zero. What else would tell you a minimum from a saddle?</p>
 </div>
 </section>
 <section id="curvature" class="slide level2">

@@ -1397,7 +1397,7 @@
     "href": "weeks/04-optimization/slides/04-1-optimization.html#directions-with-zero-slope",
     "title": "Machine learning",
     "section": "Directions with zero slope",
-    "text": "Directions with zero slope\nThese are some of the issues that make optimization, and so model fitting, hard\nWhat’s more: the gradient gives the slope \\(\\nabla f^T v\\) in every direction \\(v\\), and in \\(\\mathbb R^p\\) that slope is zero in \\(p - 1\\) independent directions, all those orthogonal to the gradient; at a stationary point, in all \\(p\\). Whether the loss goes down along them is a question of curvature, which the gradient does not give\nThe saddle, started on the line \\(u = 0\\): the gradient points along \\(v\\) at every step, \\(u\\) never changes, and the way down, along \\(u\\), is never taken\n\n\nThe gradient is zero. What more would you need to know to tell a minimum from a saddle?"
+    "text": "Directions with zero slope\nThese are some of the issues that make optimization hard. What’s more: in \\(\\mathbb R^p\\) the slope is zero in \\(p - 1\\) directions; whether they lead down is a question of curvature\n\n\n\n\n\n\n\n\n\n\nThe gradient is zero. What else would tell you a minimum from a saddle?"
   },
   {
     "objectID": "weeks/04-optimization/slides/04-1-optimization.html#curvature",
