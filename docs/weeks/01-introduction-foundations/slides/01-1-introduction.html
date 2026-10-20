@@ -611,7 +611,7 @@ X = (X_1, X_2, \ldots, X_p) \in \mathbb R^p
 </ol>
 <p>Winning model chosen by best score</p>
 </section>
-<section id="history-common-task-framework" class="slide level2">
+<section id="history-common-task-framework" class="slide level2" data-minutes="3">
 <h2>History: common task framework</h2>
 <div style="font-size: 1.25em">
 <table class="caption-top">
@@ -676,7 +676,7 @@ X = (X_1, X_2, \ldots, X_p) \in \mathbb R^p
 <p>Predict a patient’s readmission from the discharge letter written <em>after</em> readmission: not fine</p>
 <p>Predict a house’s sale price from its list price: fine. From the price it eventually sold for: that’s the answer, not an input</p>
 </section>
-<section id="your-first-task" class="slide level2">
+<section id="your-first-task" class="slide level2" data-minutes="3">
 <h2>Your first task</h2>
 <div class="columns">
 <div class="column" style="width:52%;">
@@ -726,7 +726,7 @@ X = (X_1, X_2, \ldots, X_p) \in \mathbb R^p
 
 <img data-src="01-1-introduction_files/figure-revealjs/unnamed-chunk-6-1.png" width="1500" class="r-stretch"><p>No formula, no parameters. One choice: <span class="math inline">\(k\)</span>.</p>
 </section>
-<section id="ctf-competition-which-k-would-you-submit" class="slide level2">
+<section id="ctf-competition-which-k-would-you-submit" class="slide level2" data-minutes="3">
 <h2>CTF competition: which <span class="math inline">\(k\)</span> would you submit?</h2>
 <div class="ask">
 <p>Look at the three panels again. Write down the <span class="math inline">\(k\)</span> you would enter in the competition, and one reason.</p>
@@ -738,7 +738,7 @@ X = (X_1, X_2, \ldots, X_p) \in \mathbb R^p
 
 <img data-src="01-1-introduction_files/figure-revealjs/unnamed-chunk-8-1.png" width="1350" class="r-stretch"><p>At <span class="math inline">\(k = 1\)</span> the training error is <strong>exactly zero</strong>. Is that good news?</p>
 </section>
-<section id="the-leaderboard" class="slide level2">
+<section id="the-leaderboard" class="slide level2" data-minutes="3">
 <h2>The leaderboard</h2>
 
 <img data-src="01-1-introduction_files/figure-revealjs/unnamed-chunk-9-1.png" width="1350" class="r-stretch"><p>Which model wins? What about those error bars?…</p>
@@ -773,7 +773,7 @@ X = (X_1, X_2, \ldots, X_p) \in \mathbb R^p
 <p>noise + bias² + variance. Variance falls in <span class="math inline">\(k\)</span>, always. Bias typically grows too, but it need not be monotonic (a constant <span class="math inline">\(f^\star\)</span> keeps it at zero for every <span class="math inline">\(k\)</span>).</p>
 </div>
 </section>
-<section id="biasvariance-decomposition-line-1" class="slide level2">
+<section id="biasvariance-decomposition-line-1" class="slide level2" data-minutes="3">
 <h2>Bias–variance decomposition, line 1</h2>
 <p><span class="math display">\[
 Y_0 - \hat f_k(x_0) = \varepsilon_0 + \big[f^\star(x_0) - \hat f_k(x_0)\big]
@@ -782,7 +782,7 @@ Y_0 - \hat f_k(x_0) = \varepsilon_0 + \big[f^\star(x_0) - \hat f_k(x_0)\big]
 \mathbb E\big[(Y_0 - \hat f_k(x_0))^2\big] = \mathbb E[\varepsilon_0^2] + 2\,\mathbb E\big[\varepsilon_0 \,(f^\star(x_0) - \hat f_k(x_0))\big] + \mathbb E\big[(f^\star(x_0) - \hat f_k(x_0))^2\big]
 \]</span></p>
 </section>
-<section id="biasvariance-decomposition-line-2" class="slide level2">
+<section id="biasvariance-decomposition-line-2" class="slide level2" data-minutes="3">
 <h2>Bias–variance decomposition, line 2</h2>
 <p><span class="math inline">\(\varepsilon_0\)</span> is independent of everything in <span class="math inline">\(\hat f_k(x_0)\)</span> and has mean <span class="math inline">\(0\)</span>: <span class="math display">\[
 \mathbb E\big[\varepsilon_0 \,(f^\star(x_0) - \hat f_k(x_0))\big] = \mathbb E[\varepsilon_0]\; \mathbb E\big[f^\star(x_0) - \hat f_k(x_0)\big] = 0
@@ -791,14 +791,14 @@ Y_0 - \hat f_k(x_0) = \varepsilon_0 + \big[f^\star(x_0) - \hat f_k(x_0)\big]
 \sigma^2 + \mathbb E\big[(f^\star(x_0) - \hat f_k(x_0))^2\big]
 \]</span></p>
 </section>
-<section id="biasvariance-decomposition-line-3" class="slide level2">
+<section id="biasvariance-decomposition-line-3" class="slide level2" data-minutes="3">
 <h2>Bias–variance decomposition, line 3</h2>
 <p>Add and subtract <span class="math inline">\(\mathbb E \hat f_k(x_0)\)</span> inside the square: <span class="math display">\[
 \mathbb E\big[(f^\star(x_0) - \hat f_k(x_0))^2\big] = \big[f^\star(x_0) - \mathbb E\hat f_k(x_0)\big]^2 + \mathrm{Var}\big(\hat f_k(x_0)\big)
 \]</span></p>
 <p>(The cross term is <span class="math inline">\(2[f^\star(x_0) - \mathbb E\hat f_k(x_0)]\,\mathbb E[\mathbb E\hat f_k(x_0) - \hat f_k(x_0)] = 0\)</span>.)</p>
 </section>
-<section id="biasvariance-decomposition-lines-4-and-5" class="slide level2">
+<section id="biasvariance-decomposition-lines-4-and-5" class="slide level2" data-minutes="3">
 <h2>Bias–variance decomposition, lines 4 and 5</h2>
 <p>The neighborhood is fixed, so <span class="math display">\[
 \mathbb E\hat f_k(x_0) = \frac{1}{k}\sum_{l=1}^k f^\star(x_{(l)}),
@@ -827,7 +827,7 @@ Y_0 - \hat f_k(x_0) = \varepsilon_0 + \big[f^\star(x_0) - \hat f_k(x_0)\big]
 <p>How long must the edge be, to hold a fraction <span class="math inline">\(r\)</span> of the population, in <span class="math inline">\(d\)</span> dimensions?</p>
 
 <img data-src="01-1-introduction_files/figure-revealjs/unnamed-chunk-12-1.png" width="1050" class="r-stretch"></section>
-<section id="far-away-in-many-directions" class="slide level2">
+<section id="far-away-in-many-directions" class="slide level2" data-minutes="3">
 <h2>Far away, in many directions</h2>
 <table class="caption-top">
 <thead>

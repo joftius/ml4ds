@@ -1074,6 +1074,7 @@ Joshua Loftus
 <section id="section" class="slide level2 inverse center">
 <h2></h2>
 <aside class="notes">
+<p><code>[--------------------]</code> 0%  0 of 87 min</p>
 <p>Plan about 76 of 90 with cuts 1 and 2 made from the start; about 81 without them, at week 2’s rough pace (2 min a light slide, 1 a dark one; 34 light, 13 dark). Dark = rush or skip; each dark slide’s note says skip or gives the compressed phrase.</p>
 <p>Cut order: (1) ROC in one sentence, (2) Yule history in one line (both planned), (3) contours and boundaries narrated, (4) the confounding gap in one sentence (exercise 2 derives it).</p>
 <p>Pace, with cuts 1 and 2: 0:28 threshold theorem, 0:30 end of part 1, 0:40 Yule’s regressions, 0:58 the adjustment question, 1:04 the propensity question, 1:10 proof done.</p>
@@ -1091,9 +1092,10 @@ display:block!important;
 }</style></aside>
 <h3 id="part-1-classification-logistic-regression-and-asymmetric-costs">Part 1: classification, logistic regression, and asymmetric costs</h3>
 </section>
-<section id="where-week-2-left-the-target" class="slide level2">
+<section id="where-week-2-left-the-target" class="slide level2" data-minutes="3">
 <h2>Where week 2 left the target</h2>
 <aside class="notes">
+<p><code>[--------------------]</code> 1%  1 of 87 min</p>
 <p>Two minutes, written, then two people. Expected: a probability; a line leaves [0, 1]. Do not say “probability” first.</p>
 <style type="text/css">
 span.MJX_Assistive_MathML {
@@ -1117,6 +1119,7 @@ display:block!important;
 <section id="the-target-is-a-probability" class="slide level2">
 <h2>The target is a probability</h2>
 <aside class="notes">
+<p><code>[#-------------------]</code> 5%  4 of 87 min</p>
 <p>Predicting a label is two steps: a probability, then a threshold. The threshold is the first theorem today.</p>
 <style type="text/css">
 span.MJX_Assistive_MathML {
@@ -1139,6 +1142,7 @@ p(x) = P(Y = 1 \mid X = x) = \mathbb E[Y \mid X = x]
 <section id="classification" class="slide level2 inverse">
 <h2>Classification</h2>
 <aside class="notes">
+<p><code>[#-------------------]</code> 7%  6 of 87 min</p>
 <p>Compress: labels instead of numbers; K classes; today K = 2.</p>
 <style type="text/css">
 span.MJX_Assistive_MathML {
@@ -1169,6 +1173,19 @@ display:block!important;
 </section>
 <section id="interpretable-classification" class="slide level2">
 <h2>Interpretable classification</h2>
+<aside class="notes">
+<p><code>[##------------------]</code> 8%  7 of 87 min</p>
+<style type="text/css">
+span.MJX_Assistive_MathML {
+position:absolute!important;
+clip: rect(1px, 1px, 1px, 1px);
+padding: 1px 0 0 0!important;
+border: 0!important;
+height: 1px!important;
+width: 1px!important;
+overflow: hidden!important;
+display:block!important;
+}</style></aside>
 <h3 id="logistic-regression">Logistic regression</h3>
 <p><span class="math display">\[\mathbb E(Y| \mathbf X = \mathbf x) =  g^{-1}(\mathbf x^T \beta)\]</span> <span class="math display">\[g(p) = \log{\left(\frac{p}{1-p}\right)}\]</span></p>
 <h3 id="generalized-linear-models-glms">Generalized linear models (GLMs)</h3>
@@ -1181,6 +1198,19 @@ display:block!important;
 </section>
 <section id="one-predictor-s-curve" class="slide level2">
 <h2>One predictor, “S curve”</h2>
+<aside class="notes">
+<p><code>[##------------------]</code> 10%  9 of 87 min</p>
+<style type="text/css">
+span.MJX_Assistive_MathML {
+position:absolute!important;
+clip: rect(1px, 1px, 1px, 1px);
+padding: 1px 0 0 0!important;
+border: 0!important;
+height: 1px!important;
+width: 1px!important;
+overflow: hidden!important;
+display:block!important;
+}</style></aside>
 <div class="cell" data-layout-align="center">
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
@@ -1193,6 +1223,19 @@ display:block!important;
 </section>
 <section id="classificationsdecisions-threshold-probability" class="slide level2">
 <h2>Classifications/decisions: threshold probability</h2>
+<aside class="notes">
+<p><code>[###-----------------]</code> 13%  11 of 87 min</p>
+<style type="text/css">
+span.MJX_Assistive_MathML {
+position:absolute!important;
+clip: rect(1px, 1px, 1px, 1px);
+padding: 1px 0 0 0!important;
+border: 0!important;
+height: 1px!important;
+width: 1px!important;
+overflow: hidden!important;
+display:block!important;
+}</style></aside>
 <div class="cell" data-layout-align="center">
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
@@ -1206,6 +1249,7 @@ display:block!important;
 <section id="contours-of-glm-predicted-class-probabilities" class="slide level2">
 <h2>Contours of GLM-predicted class probabilities</h2>
 <aside class="notes">
+<p><code>[###-----------------]</code> 15%  13 of 87 min</p>
 <p>Two predictors now. Shading: fitted probability. Dashed line: where it crosses 1/2. Pink: the training points it gets wrong.</p>
 <style type="text/css">
 span.MJX_Assistive_MathML {
@@ -1230,6 +1274,19 @@ display:block!important;
 </section>
 <section id="classification-boundaries" class="slide level2 center">
 <h2>Classification boundaries</h2>
+<aside class="notes">
+<p><code>[###-----------------]</code> 17%  15 of 87 min</p>
+<style type="text/css">
+span.MJX_Assistive_MathML {
+position:absolute!important;
+clip: rect(1px, 1px, 1px, 1px);
+padding: 1px 0 0 0!important;
+border: 0!important;
+height: 1px!important;
+width: 1px!important;
+overflow: hidden!important;
+display:block!important;
+}</style></aside>
 <div style="font-size: 1.15em">
 <p><strong>Classification boundaries</strong> with</p>
 <h3 id="p-3-predictors"><span class="math inline">\(p = 3\)</span> predictors</h3>
@@ -1241,6 +1298,19 @@ display:block!important;
 </section>
 <section id="interpretation-coefficients" class="slide level2">
 <h2>Interpretation: coefficients</h2>
+<aside class="notes">
+<p><code>[####----------------]</code> 20%  17 of 87 min</p>
+<style type="text/css">
+span.MJX_Assistive_MathML {
+position:absolute!important;
+clip: rect(1px, 1px, 1px, 1px);
+padding: 1px 0 0 0!important;
+border: 0!important;
+height: 1px!important;
+width: 1px!important;
+overflow: hidden!important;
+display:block!important;
+}</style></aside>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a aria-hidden="true" tabindex="-1"></a>model_fit <span class="ot">&lt;-</span> <span class="fu">glm</span>(y <span class="sc">~</span> x1 <span class="sc">+</span> x2, <span class="at">family =</span> <span class="st">&quot;binomial&quot;</span>, <span class="at">data =</span> train)</span>
 <span id="cb1-2"><a aria-hidden="true" tabindex="-1"></a>broom<span class="sc">::</span><span class="fu">tidy</span>(model_fit)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -1269,6 +1339,7 @@ display:block!important;
 <section id="interpretation-inference-and-diagnostics" class="slide level2">
 <h2>Interpretation: inference and diagnostics</h2>
 <aside class="notes">
+<p><code>[####----------------]</code> 22%  19 of 87 min</p>
 <p>How glm finds the MLE (likelihood, score equations) is week 4’s opener.</p>
 <style type="text/css">
 span.MJX_Assistive_MathML {
@@ -1305,6 +1376,7 @@ display:block!important;
 <section id="challenges" class="slide level2">
 <h2>Challenges</h2>
 <aside class="notes">
+<p><code>[#####---------------]</code> 24%  21 of 87 min</p>
 <p>Why there is no finite MLE when the classes separate: week 4.</p>
 <style type="text/css">
 span.MJX_Assistive_MathML {
@@ -1327,6 +1399,7 @@ display:block!important;
 <section id="two-kinds-of-mistake" class="slide level2">
 <h2>Two kinds of mistake</h2>
 <aside class="notes">
+<p><code>[#####---------------]</code> 26%  23 of 87 min</p>
 <p>All on the training points: apparent performance; week 5 says what that flatters. The accuracy line is about baselines.</p>
 <style type="text/css">
 span.MJX_Assistive_MathML {
@@ -1354,6 +1427,7 @@ display:block!important;
 <section id="roc-the-curve-invented-for-radar" class="slide level2">
 <h2>ROC: the curve invented for radar</h2>
 <aside class="notes">
+<p><code>[######--------------]</code> 29%  25 of 87 min</p>
 <p>First on the cut order: say “one point per threshold” and move on. The seminar builds this curve with a loop.</p>
 <style type="text/css">
 span.MJX_Assistive_MathML {
@@ -1384,9 +1458,10 @@ display:block!important;
 <p>Named for radar receivers in the 1940s. It does not answer the operator’s question: <em>which</em> point?</p>
 </div></div>
 </section>
-<section id="what-does-a-mistake-cost" class="slide level2">
+<section id="what-does-a-mistake-cost" class="slide level2" data-minutes="3">
 <h2>What does a mistake cost?</h2>
 <aside class="notes">
+<p><code>[######--------------]</code> 31%  27 of 87 min</p>
 <p>Show of hands for 1 and for 0 before saying anything. Dashed lines: the next slide’s formula.</p>
 <style type="text/css">
 span.MJX_Assistive_MathML {
@@ -1416,6 +1491,7 @@ display:block!important;
 <section id="optimal-threshold-theorem" class="slide level2">
 <h2>Optimal threshold theorem</h2>
 <aside class="notes">
+<p><code>[#######-------------]</code> 34%  30 of 87 min</p>
 <p>2 min. Ten to one: 1/11, about 0.09, so p-hat = 0.3 is “predict 1”. The threshold was never a statistical question.</p>
 <style type="text/css">
 span.MJX_Assistive_MathML {
@@ -1439,6 +1515,7 @@ p(x) &gt; c^\star = \frac{c_{FP}}{c_{FP} + c_{FN}},
 <section id="classification-summary" class="slide level2 inverse">
 <h2>Classification summary</h2>
 <aside class="notes">
+<p><code>[#######-------------]</code> 37%  32 of 87 min</p>
 <p>Compress: threshold p-hat at c, with c from the costs; more classes, curved boundaries.</p>
 <style type="text/css">
 span.MJX_Assistive_MathML {
@@ -1470,6 +1547,7 @@ display:block!important;
 <section id="causality-part-1" class="slide level2 center">
 <h2>Causality, part 1</h2>
 <aside class="notes">
+<p><code>[########------------]</code> 38%  33 of 87 min</p>
 <p>Collect two or three answers. Today: why the model’s answer can be wrong, and when we can do better.</p>
 <style type="text/css">
 span.MJX_Assistive_MathML {
@@ -1492,6 +1570,7 @@ display:block!important;
 <section id="history-from-the-stars-to-poor-law-statistics" class="slide level2 inverse">
 <h2>History: from the stars to “Poor Law Statistics”</h2>
 <aside class="notes">
+<p><code>[########------------]</code> 40%  35 of 87 min</p>
 <p>Compress: a century after Gauss, regressing anything; but why?</p>
 <style type="text/css">
 span.MJX_Assistive_MathML {
@@ -1517,6 +1596,7 @@ display:block!important;
 <section id="history-origin-of-multiple-regression" class="slide level2 inverse">
 <h2>History: origin of multiple regression</h2>
 <aside class="notes">
+<p><code>[########------------]</code> 41%  36 of 87 min</p>
 <p>Compress: Yule, 1897 and 1899, multiple regression “controlling for” age.</p>
 <style type="text/css">
 span.MJX_Assistive_MathML {
@@ -1544,6 +1624,7 @@ display:block!important;
 <section id="history-yule-1897-and-1899" class="slide level2 inverse">
 <h2>History: Yule, 1897 and 1899</h2>
 <aside class="notes">
+<p><code>[#########-----------]</code> 43%  37 of 87 min</p>
 <p>Compress: welfare, poverty, age; is the association “due to” age?</p>
 <style type="text/css">
 span.MJX_Assistive_MathML {
@@ -1584,6 +1665,7 @@ display:block!important;
 <section id="history-yule-in-1897" class="slide level2 inverse">
 <h2>History: Yule, in 1897</h2>
 <aside class="notes">
+<p><code>[#########-----------]</code> 44%  38 of 87 min</p>
 <p>Skip if behind; the next slide quotes the line that matters.</p>
 <style type="text/css">
 span.MJX_Assistive_MathML {
@@ -1605,6 +1687,19 @@ display:block!important;
 </section>
 <section id="section-1" class="slide level2 center">
 <h2></h2>
+<aside class="notes">
+<p><code>[#########-----------]</code> 45%  39 of 87 min</p>
+<style type="text/css">
+span.MJX_Assistive_MathML {
+position:absolute!important;
+clip: rect(1px, 1px, 1px, 1px);
+padding: 1px 0 0 0!important;
+border: 0!important;
+height: 1px!important;
+width: 1px!important;
+overflow: hidden!important;
+display:block!important;
+}</style></aside>
 <div style="font-size: 1.5em; font-weight: 600; color: #440154">
 <p>[We] cannot […] narrow down the issue to the effect of <strong>one variation at a time</strong></p>
 </div>
@@ -1618,6 +1713,19 @@ display:block!important;
 </section>
 <section id="misinterpreting-regression-coefficients" class="slide level2">
 <h2>Misinterpreting regression coefficients</h2>
+<aside class="notes">
+<p><code>[#########-----------]</code> 47%  41 of 87 min</p>
+<style type="text/css">
+span.MJX_Assistive_MathML {
+position:absolute!important;
+clip: rect(1px, 1px, 1px, 1px);
+padding: 1px 0 0 0!important;
+border: 0!important;
+height: 1px!important;
+width: 1px!important;
+overflow: hidden!important;
+display:block!important;
+}</style></aside>
 <p>People <em>want</em> these things to be true:</p>
 <ul>
 <li>“The linear <strong>model</strong> and our <strong>estimates</strong> are both good”</li>
@@ -1633,6 +1741,19 @@ display:block!important;
 </section>
 <section id="ceteris-paribus" class="slide level2">
 <h2>Ceteris paribus</h2>
+<aside class="notes">
+<p><code>[##########----------]</code> 49%  43 of 87 min</p>
+<style type="text/css">
+span.MJX_Assistive_MathML {
+position:absolute!important;
+clip: rect(1px, 1px, 1px, 1px);
+padding: 1px 0 0 0!important;
+border: 0!important;
+height: 1px!important;
+width: 1px!important;
+overflow: hidden!important;
+display:block!important;
+}</style></aside>
 <p>Many textbooks tell us something like:</p>
 <blockquote>
 <p>“The coefficient <span class="math inline">\(\hat \beta_j\)</span> estimates the relationship between the (conditional mean of the) outcome variable and <span class="math inline">\(x_j\)</span> <em>while holding all other predictors constant</em>”</p>
@@ -1646,6 +1767,19 @@ display:block!important;
 </section>
 <section id="interpreting-causality" class="slide level2">
 <h2>Interpreting causality</h2>
+<aside class="notes">
+<p><code>[##########----------]</code> 52%  45 of 87 min</p>
+<style type="text/css">
+span.MJX_Assistive_MathML {
+position:absolute!important;
+clip: rect(1px, 1px, 1px, 1px);
+padding: 1px 0 0 0!important;
+border: 0!important;
+height: 1px!important;
+width: 1px!important;
+overflow: hidden!important;
+display:block!important;
+}</style></aside>
 <p>Back to Yule. What does <span class="math inline">\(\hat \beta_\text{welfare}\)</span> mean? (Simulated data below, not Yule’s.)</p>
 <div class="panel-tabset">
 <ul id="tabset-1" class="panel-tabset-tabby"><li><a data-tabby-default href="#tabset-1-1">Poverty</a></li><li><a href="#tabset-1-2">Welfare</a></li></ul>
@@ -1738,6 +1872,7 @@ display:block!important;
 <section id="are-these-associations-causal" class="slide level2 inverse">
 <h2>Are these associations “causal”?</h2>
 <aside class="notes">
+<p><code>[###########---------]</code> 54%  47 of 87 min</p>
 <p>Compress: which is the cause, which the effect? Both? Neither? Fisher next.</p>
 <style type="text/css">
 span.MJX_Assistive_MathML {
@@ -1757,6 +1892,7 @@ display:block!important;
 <section id="history-another-important-historic-example" class="slide level2 inverse">
 <h2>History: another important historic example</h2>
 <aside class="notes">
+<p><code>[###########---------]</code> 55%  48 of 87 min</p>
 <p>Compress: smoking and lung cancer, the 1950s; Fisher objected.</p>
 <style type="text/css">
 span.MJX_Assistive_MathML {
@@ -1781,6 +1917,7 @@ display:block!important;
 <section id="section-2" class="slide level2 inverse">
 <h2></h2>
 <aside class="notes">
+<p><code>[###########---------]</code> 56%  49 of 87 min</p>
 <p>Compress: two alternatives, reverse causation and a common cause (genotype).</p>
 <style type="text/css">
 span.MJX_Assistive_MathML {
@@ -1800,6 +1937,19 @@ display:block!important;
 </section>
 <section id="graphical-notation-for-causality" class="slide level2">
 <h2>Graphical notation for causality</h2>
+<aside class="notes">
+<p><code>[###########---------]</code> 57%  50 of 87 min</p>
+<style type="text/css">
+span.MJX_Assistive_MathML {
+position:absolute!important;
+clip: rect(1px, 1px, 1px, 1px);
+padding: 1px 0 0 0!important;
+border: 0!important;
+height: 1px!important;
+width: 1px!important;
+overflow: hidden!important;
+display:block!important;
+}</style></aside>
 <div class="cell" data-layout-align="center">
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
@@ -1815,6 +1965,19 @@ display:block!important;
 </section>
 <section id="two-of-fishers-theories" class="slide level2">
 <h2>Two of Fisher’s theories</h2>
+<aside class="notes">
+<p><code>[############--------]</code> 60%  52 of 87 min</p>
+<style type="text/css">
+span.MJX_Assistive_MathML {
+position:absolute!important;
+clip: rect(1px, 1px, 1px, 1px);
+padding: 1px 0 0 0!important;
+border: 0!important;
+height: 1px!important;
+width: 1px!important;
+overflow: hidden!important;
+display:block!important;
+}</style></aside>
 <div class="columns">
 <div class="column" style="width:50%;">
 <p>Cancer causes smoking?</p>
@@ -1843,6 +2006,7 @@ display:block!important;
 <section id="section-3" class="slide level2 inverse center">
 <h2></h2>
 <aside class="notes">
+<p><code>[############--------]</code> 62%  54 of 87 min</p>
 <p>Compress: neither would say “causes”; so what can we say? (Fisher did not use graphs like these.)</p>
 <style type="text/css">
 span.MJX_Assistive_MathML {
@@ -1861,6 +2025,19 @@ display:block!important;
 </section>
 <section id="idea-adjusting-for-confounders" class="slide level2">
 <h2>Idea: adjusting for confounders</h2>
+<aside class="notes">
+<p><code>[#############-------]</code> 63%  55 of 87 min</p>
+<style type="text/css">
+span.MJX_Assistive_MathML {
+position:absolute!important;
+clip: rect(1px, 1px, 1px, 1px);
+padding: 1px 0 0 0!important;
+border: 0!important;
+height: 1px!important;
+width: 1px!important;
+overflow: hidden!important;
+display:block!important;
+}</style></aside>
 <p><strong>Confounders</strong>: other variables that obscure the (causal) relationship from <span class="math inline">\(X\)</span> to <span class="math inline">\(Y\)</span>, e.g.</p>
 <ul>
 <li><span class="math inline">\(Y\)</span>: health outcome</li>
@@ -1876,6 +2053,7 @@ display:block!important;
 <section id="section-4" class="slide level2 center">
 <h2></h2>
 <aside class="notes">
+<p><code>[#############-------]</code> 66%  57 of 87 min</p>
 <p>Expected: the same association, with Z a common cause in one DAG and a consequence of X in the other; adjusting helps in the first and hurts in the second.</p>
 <style type="text/css">
 span.MJX_Assistive_MathML {
@@ -1896,6 +2074,19 @@ display:block!important;
 </section>
 <section id="simple-models-for-causality" class="slide level2">
 <h2>Simple models for causality</h2>
+<aside class="notes">
+<p><code>[##############------]</code> 68%  59 of 87 min</p>
+<style type="text/css">
+span.MJX_Assistive_MathML {
+position:absolute!important;
+clip: rect(1px, 1px, 1px, 1px);
+padding: 1px 0 0 0!important;
+border: 0!important;
+height: 1px!important;
+width: 1px!important;
+overflow: hidden!important;
+display:block!important;
+}</style></aside>
 <p><strong>Interventions</strong> are a new type of operation we may use in probability models. Consider an intervention that changes some target variable <span class="math inline">\(T\)</span></p>
 <ul>
 <li><p>Forget about the arrows pointing into <span class="math inline">\(T\)</span> (intervention makes them irrelevant)</p></li>
@@ -1906,6 +2097,7 @@ display:block!important;
 <section id="writing-an-intervention-down" class="slide level2">
 <h2>Writing an intervention down</h2>
 <aside class="notes">
+<p><code>[##############------]</code> 70%  61 of 87 min</p>
 <p>Only the distribution of the noise matters here; nothing upstream of T changes.</p>
 <style type="text/css">
 span.MJX_Assistive_MathML {
@@ -1932,9 +2124,10 @@ T = h(Z, \varepsilon_T), \qquad Y = g(T, Z, \varepsilon_Y), \qquad Z,\ \varepsil
 </div>
 </div>
 </section>
-<section id="recovering-the-effect-from-what-we-observe" class="slide level2">
+<section id="recovering-the-effect-from-what-we-observe" class="slide level2" data-minutes="3">
 <h2>Recovering the effect from what we observe</h2>
 <aside class="notes">
+<p><code>[##############------]</code> 72%  63 of 87 min</p>
 <p>Collect two or three answers; most say “regress Y on T and Z”, some “average over Z”. Both are half of it.</p>
 <style type="text/css">
 span.MJX_Assistive_MathML {
@@ -1964,6 +2157,7 @@ display:block!important;
 <section id="the-confounding-gap" class="slide level2">
 <h2>The confounding gap</h2>
 <aside class="notes">
+<p><code>[###############-----]</code> 76%  66 of 87 min</p>
 <p>State, do not derive: exercise 2.</p>
 <style type="text/css">
 span.MJX_Assistive_MathML {
@@ -1991,6 +2185,7 @@ display:block!important;
 <section id="adjustment-theorem" class="slide level2">
 <h2>Adjustment theorem</h2>
 <aside class="notes">
+<p><code>[################----]</code> 78%  68 of 87 min</p>
 <p>Stated; proof is exercise 3. The condition in words is the point. Same DAG in weeks 8 and 10. Continuous T (exercise 3): also a positive continuous density of (T, Z), and E g(t, z, eps_Y) continuous in (t, z).</p>
 <style type="text/css">
 span.MJX_Assistive_MathML {
@@ -2025,9 +2220,10 @@ display:block!important;
 </div>
 <p><strong>Proof</strong>: exercise 3 in the notebook, before the seminar.</p>
 </section>
-<section id="the-propensity-score" class="slide level2">
+<section id="the-propensity-score" class="slide level2" data-minutes="3">
 <h2>The propensity score</h2>
 <aside class="notes">
+<p><code>[################----]</code> 80%  70 of 87 min</p>
 <p>pi is the first half’s class probability, with T as the label. Collect two or three answers.</p>
 <style type="text/css">
 span.MJX_Assistive_MathML {
@@ -2054,6 +2250,7 @@ display:block!important;
 <section id="inverse-propensity-weighting-theorem" class="slide level2">
 <h2>Inverse propensity weighting theorem</h2>
 <aside class="notes">
+<p><code>[#################---]</code> 84%  73 of 87 min</p>
 <p>Proof on the next slide, the lecture’s one proof.</p>
 <style type="text/css">
 span.MJX_Assistive_MathML {
@@ -2073,9 +2270,10 @@ display:block!important;
 <p>Weight each treated unit by <span class="math inline">\(1/\pi(Z)\)</span>: it stands in for <span class="math inline">\(1/\pi(Z)\)</span> units with the same <span class="math inline">\(Z\)</span>. The adjustment theorem needs a regression model for <span class="math inline">\(Y\)</span>. This one needs a regression model for <span class="math inline">\(T\)</span>, and logistic regression gives one.</p>
 </div>
 </section>
-<section id="inverse-propensity-weighting-theorem-proof-1-of-2" class="slide level2">
+<section id="inverse-propensity-weighting-theorem-proof-1-of-2" class="slide level2" data-minutes="3">
 <h2>Inverse propensity weighting theorem, proof (1 of 2)</h2>
 <aside class="notes">
+<p><code>[#################---]</code> 86%  75 of 87 min</p>
 <ol type="a">
 <li>We have the intervened world, not observed for everyone. Its Y is g(1, Z, eps_Y); the average is over (Z, eps_Y), which keep their distribution.</li>
 <li>We want T in it (the observed treatment h(Z, eps_T), not the 1 we set), but T enters only through its chance pi(Z): multiply and divide by pi(Z). Allowed because pi(Z) &gt; 0.</li>
@@ -2105,9 +2303,10 @@ display:block!important;
 \end{alignedat}
 \]</span></p>
 </section>
-<section id="inverse-propensity-weighting-theorem-proof-2-of-2" class="slide level2">
+<section id="inverse-propensity-weighting-theorem-proof-2-of-2" class="slide level2" data-minutes="3">
 <h2>Inverse propensity weighting theorem, proof (2 of 2)</h2>
 <aside class="notes">
+<p><code>[##################--]</code> 90%  78 of 87 min</p>
 <ol start="4" type="a">
 <li>We have a conditional expectation over eps_T times a factor fixed once (Z, eps_Y) is given, g(1, Z, eps_Y)/pi(Z); we want it next to T: take the fixed factor inside.</li>
 <li>We have an average over eps_T inside an average over (Z, eps_Y); we want one average: the tower property, over Z and both noises.</li>
@@ -2142,6 +2341,7 @@ display:block!important;
 <section id="where-inverse-propensity-weighting-fails" class="slide level2">
 <h2>Where inverse propensity weighting fails</h2>
 <aside class="notes">
+<p><code>[###################-]</code> 93%  81 of 87 min</p>
 <p>The seminar fits pi-hat with glm and looks at the largest weights.</p>
 <style type="text/css">
 span.MJX_Assistive_MathML {
@@ -2164,6 +2364,7 @@ display:block!important;
 <section id="section-5" class="slide level2 inverse center">
 <h2></h2>
 <aside class="notes">
+<p><code>[###################-]</code> 95%  83 of 87 min</p>
 <p>Compress: experiments intervene; observational studies need assumptions.</p>
 <style type="text/css">
 span.MJX_Assistive_MathML {
@@ -2186,6 +2387,7 @@ display:block!important;
 <section id="before-the-seminar" class="slide level2">
 <h2>Before the seminar</h2>
 <aside class="notes">
+<p><code>[###################-]</code> 97%  84 of 87 min</p>
 <p>Exercise 4 is today’s proof with the slides closed; exercise 3 is the adjustment proof.</p>
 <style type="text/css">
 span.MJX_Assistive_MathML {
@@ -2205,6 +2407,7 @@ display:block!important;
 <section id="conclusions" class="slide level2 inverse">
 <h2>Conclusions</h2>
 <aside class="notes">
+<p><code>[####################]</code> 99%  86 of 87 min</p>
 <p>Compress: measuring something else and forgetting the difference; the point is to change it.</p>
 <style type="text/css">
 span.MJX_Assistive_MathML {

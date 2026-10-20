@@ -218,7 +218,7 @@ Joshua Loftus
 <h2></h2>
 <h3 id="part-1-classification-logistic-regression-and-asymmetric-costs">Part 1: classification, logistic regression, and asymmetric costs</h3>
 </section>
-<section id="where-week-2-left-the-target" class="slide level2">
+<section id="where-week-2-left-the-target" class="slide level2" data-minutes="3">
 <h2>Where week 2 left the target</h2>
 <div class="retrieval">
 <p>Week 2, the optimal model theorem: under squared loss the best predictor of <span class="math inline">\(Y\)</span> from <span class="math inline">\(X\)</span> is the conditional mean, <span class="math inline">\(f^\star(x) = \mathbb E[Y \mid X = x]\)</span>, and any other <span class="math inline">\(f\)</span> pays <span class="math inline">\(\mathbb E[(f^\star(X) - f(X))^2]\)</span> on top of it.</p>
@@ -407,7 +407,7 @@ p(x) = P(Y = 1 \mid X = x) = \mathbb E[Y \mid X = x]
 <p>Named for radar receivers in the 1940s. It does not answer the operator’s question: <em>which</em> point?</p>
 </div></div>
 </section>
-<section id="what-does-a-mistake-cost" class="slide level2">
+<section id="what-does-a-mistake-cost" class="slide level2" data-minutes="3">
 <h2>What does a mistake cost?</h2>
 <p>Predicting <span class="math inline">\(1\)</span> when the truth is <span class="math inline">\(0\)</span> costs <span class="math inline">\(c_{FP}\)</span>; predicting <span class="math inline">\(0\)</span> when the truth is <span class="math inline">\(1\)</span> costs <span class="math inline">\(c_{FN}\)</span>; a correct prediction costs nothing</p>
 <div class="cell" data-layout-align="center">
@@ -773,7 +773,7 @@ T = h(Z, \varepsilon_T), \qquad Y = g(T, Z, \varepsilon_Y), \qquad Z,\ \varepsil
 </div>
 </div>
 </section>
-<section id="recovering-the-effect-from-what-we-observe" class="slide level2">
+<section id="recovering-the-effect-from-what-we-observe" class="slide level2" data-minutes="3">
 <h2>Recovering the effect from what we observe</h2>
 <p>Under <span class="math inline">\(do(T = t)\)</span>, <span class="math inline">\(Y = g(t, Z, \varepsilon_Y)\)</span> with <span class="math inline">\((Z, \varepsilon_Y)\)</span> distributed as before, so <span class="math inline">\(\mathbb E[Y \mid do(T = t)] = \mathbb E\, g(t, Z, \varepsilon_Y)\)</span>. Compare <span class="math inline">\(\mathbb E[Y \mid T = t]\)</span>, the average over the units that <em>happened</em> to have <span class="math inline">\(T = t\)</span></p>
 <div class="cell" data-layout-align="center">
@@ -827,7 +827,7 @@ T = h(Z, \varepsilon_T), \qquad Y = g(T, Z, \varepsilon_Y), \qquad Z,\ \varepsil
 </div>
 <p><strong>Proof</strong>: exercise 3 in the notebook, before the seminar.</p>
 </section>
-<section id="the-propensity-score" class="slide level2">
+<section id="the-propensity-score" class="slide level2" data-minutes="3">
 <h2>The propensity score</h2>
 <p>From here on <span class="math inline">\(T \in \{0, 1\}\)</span>: treated or not. The <strong>propensity score</strong> is the class probability from the first half of the lecture, with <span class="math inline">\(T\)</span> as the label and <span class="math inline">\(Z\)</span> as the input: <span class="math display">\[
 \pi(z) = P(T = 1 \mid Z = z)
@@ -849,7 +849,7 @@ T = h(Z, \varepsilon_T), \qquad Y = g(T, Z, \varepsilon_Y), \qquad Z,\ \varepsil
 <p>Weight each treated unit by <span class="math inline">\(1/\pi(Z)\)</span>: it stands in for <span class="math inline">\(1/\pi(Z)\)</span> units with the same <span class="math inline">\(Z\)</span>. The adjustment theorem needs a regression model for <span class="math inline">\(Y\)</span>. This one needs a regression model for <span class="math inline">\(T\)</span>, and logistic regression gives one.</p>
 </div>
 </section>
-<section id="inverse-propensity-weighting-theorem-proof-1-of-2" class="slide level2">
+<section id="inverse-propensity-weighting-theorem-proof-1-of-2" class="slide level2" data-minutes="3">
 <h2>Inverse propensity weighting theorem, proof (1 of 2)</h2>
 <p>Start from what we want, and change one term at a time</p>
 <p><span class="math display">\[
@@ -864,7 +864,7 @@ T = h(Z, \varepsilon_T), \qquad Y = g(T, Z, \varepsilon_Y), \qquad Z,\ \varepsil
 \end{alignedat}
 \]</span></p>
 </section>
-<section id="inverse-propensity-weighting-theorem-proof-2-of-2" class="slide level2">
+<section id="inverse-propensity-weighting-theorem-proof-2-of-2" class="slide level2" data-minutes="3">
 <h2>Inverse propensity weighting theorem, proof (2 of 2)</h2>
 <p><span class="math display">\[
 \begin{alignedat}{2}
