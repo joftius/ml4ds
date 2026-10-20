@@ -402,7 +402,7 @@ Empirical Risk Minimization (ERM)
 
 Algorithms can leverage LLN, CLT, subsampling, etc...
 
-## Three errors, three names
+## Three errors, three names {minutes="1"}
 
 ::: {.notes}
 One minute: the three names. Plug-in = minimize R-hat. Optimism is week 5, not here.
@@ -417,7 +417,7 @@ $$\hat R_n(f) = \tfrac{1}{n}\textstyle\sum_{i=1}^n \ell(y_i, f(x_i))$$
 **Test error**, last week's leaderboard, over held-out data:
 $$\widehat{\text{Err}} = \tfrac{1}{m}\textstyle\sum_{j=1}^m \ell(y_j^{\text{test}}, \hat f(x_j^{\text{test}}))$$
 
-## Optimal model theorem
+## Optimal model theorem {minutes="4"}
 
 ::: {.notes}
 4 min. Statement, leave box, exercise. Do not give the method. Loss chooses the target: median for absolute loss (stated), 0-1 next week.
@@ -579,7 +579,7 @@ We'll use common conventions in this course
 - Roman letters that usually denote functions with hats, like $\hat f$ are also estimates
 - Other Roman letters with hats like $\hat y$ are predictions
 
-## Least-squares solutions in matrix notation
+## Least-squares solutions in matrix notation {minutes="3"}
 
 With matrix-vector notation we can always write very simply:
 
@@ -660,7 +660,7 @@ Exactly the same, they proved. Lovell (1963) generalized it to any set of column
 Why care: it relates multiple regression coefficients to an intuitive univariate regression
 :::
 
-## Partialling-out theorem (Frisch--Waugh--Lovell)
+## Partialling-out theorem (Frisch--Waugh--Lovell) {minutes="3"}
 
 ::: {.notes}
 Statement, picture, proof. Two facts do the work: normal equations (r orthogonal to columns); projection symmetric + idempotent. Full rank: denominator > 0, else NA. Gram-Schmidt column by column; backfitting, boosting, causal ML reuse it.
@@ -742,7 +742,7 @@ g
 
 Project everything onto the orthogonal complement of $\mathrm{col}(\mathbf X_1)$, the grey plane. There, regress $\tilde{\mathbf y}$ on $\tilde{\mathbf x}_2$ through the origin: the slope is $\hat\beta_2$ and $\mathbf r$ is the full regression's residual
 
-## Partialling-out theorem, lines 1--2
+## Partialling-out theorem, lines 1--2 {minutes="3"}
 
 ::: {.notes}
 Q1 (before click 1): multiply by what to kill X1? (M1)
@@ -769,7 +769,7 @@ $$
 \mathbf M_1 \mathbf y = \tilde{\mathbf x}_2 \,\hat\beta_2 + \mathbf r
 $$
 
-## Partialling-out theorem, lines 3--4
+## Partialling-out theorem, lines 3--4 {minutes="3"}
 
 ::: {.notes}
 Q1: one unknown number; multiply by what for a scalar equation with a positive coefficient? (x2-tilde transpose)
@@ -790,7 +790,7 @@ $$
 
 The last term: $\tilde{\mathbf x}_2^T \mathbf r = \mathbf x_2^T \mathbf M_1 \mathbf r = \mathbf x_2^T \mathbf r = 0$
 
-## Partialling-out theorem, lines 5--6
+## Partialling-out theorem, lines 5--6 {minutes="3"}
 
 ::: {.notes}
 Q1: two M1's; which property drops one, which gave x2-tilde transpose = x2 transpose M1? (idempotent; symmetric)

@@ -1250,14 +1250,14 @@
     "href": "weeks/04-optimization/slides/04-1-optimization.html#mle-for-logistic-regression",
     "title": "Machine learning",
     "section": "MLE for logistic regression",
-    "text": "MLE for logistic regression\nEach factor is a Bernoulli (binomial, one trial) probability, \\(P(y_i \\mid \\mathbf x_i) = p_i^{y_i}(1 - p_i)^{1 - y_i}\\) with \\(p_i = p(\\mathbf x_i^T\\beta) = 1/(1 + e^{-\\mathbf x_i^T\\beta})\\):\n\\[\nL(\\beta ; \\mathbf y | \\mathbf x) = \\prod_{i=1}^n \\left( \\frac{1}{1+e^{-x_i \\beta}} \\right)^{y_i} \\left(1- \\frac{1}{1+e^{-x_i \\beta}} \\right)^{1-y_i}\n\\]\n\n\\[\n\\ell(\\beta ; \\mathbf y | \\mathbf x) = \\sum_{i=1}^n \\left[ y_i \\log \\left( \\frac{1}{1+e^{-x_i \\beta}} \\right) + (1-y_i) \\log \\left(1- \\frac{1}{1+e^{- x_i \\beta}} \\right) \\right]\n\\]"
+    "text": "MLE for logistic regression\nEach factor is a Bernoulli (binomial, one trial) probability, \\(P(y_i \\mid \\mathbf x_i) = p_i^{y_i}(1 - p_i)^{1 - y_i}\\) with \\(p_i = p(\\mathbf x_i^T\\beta) = 1/(1 + e^{-\\mathbf x_i^T\\beta})\\):\n\\[\nL(\\beta ; \\mathbf y | \\mathbf X) = \\prod_{i=1}^n \\left( \\frac{1}{1+e^{-\\mathbf x_i^T\\beta}} \\right)^{y_i} \\left(1- \\frac{1}{1+e^{-\\mathbf x_i^T\\beta}} \\right)^{1-y_i}\n\\]\n\n\\[\n\\ell(\\beta ; \\mathbf y | \\mathbf X) = \\sum_{i=1}^n \\left[ y_i \\log \\left( \\frac{1}{1+e^{-\\mathbf x_i^T\\beta}} \\right) + (1-y_i) \\log \\left(1- \\frac{1}{1+e^{- \\mathbf x_i^T\\beta}} \\right) \\right]\n\\]"
   },
   {
     "objectID": "weeks/04-optimization/slides/04-1-optimization.html#mle-the-derivative",
     "href": "weeks/04-optimization/slides/04-1-optimization.html#mle-the-derivative",
     "title": "Machine learning",
     "section": "MLE: the derivative",
-    "text": "MLE: the derivative\n\\[\n\\frac{\\partial}{\\partial \\beta} \\ell(\\beta ; \\mathbf y | \\mathbf x) = \\sum_{i=1}^n \\left[ y_i  \\left( \\frac{x_i e^{-x_i \\beta}}{1+e^{-x_i \\beta}} \\right) + (1-y_i) \\left(\\frac{-x_i}{1+e^{- x_i \\beta}} \\right) \\right]\n\\]\n\\[= \\sum_{i=1}^n x_i \\left[ y_i - \\left(\\frac{1}{1+e^{- x_i \\beta}} \\right) \\right] = \\color{#b73779}{\\sum_{i=1}^n x_i [y_i - \\hat p_i(\\beta)]}\\]\nSet this equal to 0 and solve for \\(\\beta\\). How: the rest of today"
+    "text": "MLE: the derivative\n\\[\n\\frac{\\partial}{\\partial \\beta} \\ell(\\beta ; \\mathbf y | \\mathbf X) = \\sum_{i=1}^n \\left[ y_i  \\left( \\frac{\\mathbf x_i e^{-\\mathbf x_i^T\\beta}}{1+e^{-\\mathbf x_i^T\\beta}} \\right) + (1-y_i) \\left(\\frac{-\\mathbf x_i}{1+e^{- \\mathbf x_i^T\\beta}} \\right) \\right]\n\\]\n\\[= \\sum_{i=1}^n \\mathbf x_i \\left[ y_i - \\left(\\frac{1}{1+e^{- \\mathbf x_i^T\\beta}} \\right) \\right] = \\color{#b73779}{\\sum_{i=1}^n \\mathbf x_i [y_i - \\hat p_i(\\beta)]}\\]\nSet this equal to 0 and solve for \\(\\beta\\). How: the rest of today"
   },
   {
     "objectID": "weeks/04-optimization/slides/04-1-optimization.html#the-score-equations-read-as-orthogonality",
@@ -1271,7 +1271,7 @@
     "href": "weeks/04-optimization/slides/04-1-optimization.html#two-things-the-score-equations-say",
     "title": "Machine learning",
     "section": "Two things the score equations say",
-    "text": "Two things the score equations say\nRow one is the intercept. \\(\\sum_i (y_i - \\hat p_i) = 0\\): the fitted probabilities average to the observed proportion of 1s on the training rows.\nThe log-likelihood is concave. Differentiating once more, \\[\n\\frac{\\partial^2 \\ell}{\\partial\\beta\\,\\partial\\beta^T} = -\\sum_{i=1}^n w_i\\, x_i x_i^T, \\qquad w_i = \\hat p_i(\\beta)\\,\\big(1 - \\hat p_i(\\beta)\\big) &gt; 0\n\\] Each term is \\(-w_i\\, x_i x_i^T\\) with \\(w_i &gt; 0\\). In any direction \\(v\\), \\(v^T x_i x_i^T v = (x_i^T v)^2 \\ge 0\\), so the sum curves downward, or is flat, in every direction: the log-likelihood is concave, and any finite solution of the score equations is its global maximum\nWhat concavity does not give: existence (week 3’s separable case has no finite solution). So how do we solve the score equations?"
+    "text": "Two things the score equations say\nRow one is the intercept. \\(\\sum_i (y_i - \\hat p_i) = 0\\): the fitted probabilities average to the observed proportion of 1s on the training rows.\nThe log-likelihood is concave. Differentiating once more, \\[\n\\frac{\\partial^2 \\ell}{\\partial\\beta\\,\\partial\\beta^T} = -\\sum_{i=1}^n w_i\\, \\mathbf x_i\\mathbf x_i^T, \\qquad w_i = \\hat p_i(\\beta)\\,\\big(1 - \\hat p_i(\\beta)\\big) &gt; 0\n\\] Each term is \\(-w_i\\, \\mathbf x_i\\mathbf x_i^T\\) with \\(w_i &gt; 0\\). In any direction \\(v\\), \\(v^T \\mathbf x_i\\mathbf x_i^T v = (\\mathbf x_i^T v)^2 \\ge 0\\), so the sum curves downward, or is flat, in every direction: the log-likelihood is concave, and any finite solution of the score equations is its global maximum\nWhat concavity does not give: existence (week 3’s separable case has no finite solution). So how do we solve the score equations?"
   },
   {
     "objectID": "weeks/04-optimization/slides/04-1-optimization.html#newton-raphson",
@@ -1348,7 +1348,7 @@
     "href": "weeks/04-optimization/slides/04-1-optimization.html#the-quadratic-case-exactly",
     "title": "Machine learning",
     "section": "The quadratic case, exactly",
-    "text": "The quadratic case, exactly\nOne direction with curvature \\(a &gt; 0\\): \\(f(\\beta) = \\tfrac12 a\\beta^2\\), \\(\\nabla f = a\\beta\\), so\n\\[\n\\beta_{t+1} = \\beta_t - \\gamma a\\beta_t = (1 - \\gamma a)\\,\\beta_t, \\qquad \\beta_t = (1 - \\gamma a)^t \\beta_0\n\\]\nConverges iff \\(|1 - \\gamma a| &lt; 1\\), i.e. \\(0 &lt; \\gamma &lt; 2/a\\). The step \\(\\gamma = 1/a\\) lands in one move\n\nSeveral directions with curvatures \\(a_1 \\ge \\dots \\ge a_p &gt; 0\\), one step size for all of them: \\(\\gamma &lt; 2/a_1\\) to converge, and the slowest direction shrinks like \\(\\max_j |1 - \\gamma a_j|^t\\), which for \\(\\gamma \\le 1/a_1\\) is \\((1 - \\gamma a_p)^t\\)\n\nThe largest curvature sets the safe step; the ratio \\(a_1/a_p\\), the shape of the valley, sets the speed (a direction with \\(a_j = 0\\), as in least squares with \\(p &gt; n\\), never moves). For least squares, \\(\\hat R_n(\\beta) = \\frac1n\\|\\mathbf y - \\mathbf X\\beta\\|^2\\), the \\(a_j\\) are the eigenvalues of \\(2\\mathbf X^T\\mathbf X/n\\)"
+    "text": "The quadratic case, exactly\nOne direction with curvature \\(a &gt; 0\\): \\(f(\\beta) = \\tfrac12 a\\beta^2\\), \\(\\nabla f = a\\beta\\), so\n\\[\n\\beta_{t+1} = \\beta_t - \\gamma a\\beta_t = (1 - \\gamma a)\\,\\beta_t, \\qquad \\beta_t = (1 - \\gamma a)^t \\beta_0\n\\]\nConverges iff \\(|1 - \\gamma a| &lt; 1\\), i.e. \\(0 &lt; \\gamma &lt; 2/a\\). The step \\(\\gamma = 1/a\\) lands in one move\n\nSeveral directions with curvatures \\(a_1 \\ge \\dots \\ge a_d &gt; 0\\), one step size for all of them: \\(\\gamma &lt; 2/a_1\\) to converge, and the slowest direction shrinks like \\(\\max_j |1 - \\gamma a_j|^t\\), which for \\(\\gamma \\le 1/a_1\\) is \\((1 - \\gamma a_d)^t\\)\n\nThe largest curvature sets the safe step; the ratio \\(a_1/a_d\\), the shape of the valley, sets the speed (a direction with \\(a_j = 0\\), as in least squares with \\(p &gt; n\\), never moves). For least squares, \\(\\hat R_n(\\beta) = \\frac1n\\|\\mathbf y - \\mathbf X\\beta\\|^2\\), the \\(a_j\\) are the eigenvalues of \\(2\\mathbf X^T\\mathbf X/n\\)"
   },
   {
     "objectID": "weeks/04-optimization/slides/04-1-optimization.html#section-2",
@@ -1397,7 +1397,7 @@
     "href": "weeks/04-optimization/slides/04-1-optimization.html#directions-with-zero-slope",
     "title": "Machine learning",
     "section": "Directions with zero slope",
-    "text": "Directions with zero slope\nThese are some of the issues that make optimization hard. What’s more: in \\(\\mathbb R^p\\) the slope is zero in \\(p - 1\\) directions; whether they lead down is a question of curvature\n\n\n\n\n\n\n\n\n\n\nThe gradient is zero. What else would tell you a minimum from a saddle?"
+    "text": "Directions with zero slope\nThese are some of the issues that make optimization hard. What’s more: in \\(\\mathbb R^d\\) the slope is zero in \\(d - 1\\) directions; whether they lead down is a question of curvature\n\n\n\n\n\n\n\n\n\n\nThe gradient is zero. What else would tell you a minimum from a saddle?"
   },
   {
     "objectID": "weeks/04-optimization/slides/04-1-optimization.html#curvature",

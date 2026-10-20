@@ -141,13 +141,13 @@ Legacy slide. Each factor is a Bernoulli probability with p_i = p(x_i' beta); lo
 Each factor is a Bernoulli (binomial, one trial) probability, $P(y_i \mid \mathbf x_i) = p_i^{y_i}(1 - p_i)^{1 - y_i}$ with $p_i = p(\mathbf x_i^T\beta) = 1/(1 + e^{-\mathbf x_i^T\beta})$:
 
 $$
-L(\beta ; \mathbf y | \mathbf x) = \prod_{i=1}^n \left( \frac{1}{1+e^{-x_i \beta}} \right)^{y_i} \left(1- \frac{1}{1+e^{-x_i \beta}} \right)^{1-y_i}
+L(\beta ; \mathbf y | \mathbf X) = \prod_{i=1}^n \left( \frac{1}{1+e^{-\mathbf x_i^T\beta}} \right)^{y_i} \left(1- \frac{1}{1+e^{-\mathbf x_i^T\beta}} \right)^{1-y_i}
 $$
 
 . . .
 
 $$
-\ell(\beta ; \mathbf y | \mathbf x) = \sum_{i=1}^n \left[ y_i \log \left( \frac{1}{1+e^{-x_i \beta}} \right) + (1-y_i) \log \left(1- \frac{1}{1+e^{- x_i \beta}} \right) \right]
+\ell(\beta ; \mathbf y | \mathbf X) = \sum_{i=1}^n \left[ y_i \log \left( \frac{1}{1+e^{-\mathbf x_i^T\beta}} \right) + (1-y_i) \log \left(1- \frac{1}{1+e^{- \mathbf x_i^T\beta}} \right) \right]
 $$
 
 ## MLE: the derivative {minutes="3"}
@@ -157,10 +157,10 @@ Legacy slide, continued. The last line is the one to remember: x times residual.
 :::
 
 $$
-\frac{\partial}{\partial \beta} \ell(\beta ; \mathbf y | \mathbf x) = \sum_{i=1}^n \left[ y_i  \left( \frac{x_i e^{-x_i \beta}}{1+e^{-x_i \beta}} \right) + (1-y_i) \left(\frac{-x_i}{1+e^{- x_i \beta}} \right) \right]
+\frac{\partial}{\partial \beta} \ell(\beta ; \mathbf y | \mathbf X) = \sum_{i=1}^n \left[ y_i  \left( \frac{\mathbf x_i e^{-\mathbf x_i^T\beta}}{1+e^{-\mathbf x_i^T\beta}} \right) + (1-y_i) \left(\frac{-\mathbf x_i}{1+e^{- \mathbf x_i^T\beta}} \right) \right]
 $$
 
-$$= \sum_{i=1}^n x_i \left[ y_i - \left(\frac{1}{1+e^{- x_i \beta}} \right) \right] = \color{#b73779}{\sum_{i=1}^n x_i [y_i - \hat p_i(\beta)]}$$
+$$= \sum_{i=1}^n \mathbf x_i \left[ y_i - \left(\frac{1}{1+e^{- \mathbf x_i^T\beta}} \right) \right] = \color{#b73779}{\sum_{i=1}^n \mathbf x_i [y_i - \hat p_i(\beta)]}$$
 
 Set this equal to 0 and solve for $\beta$. How: the rest of today
 
@@ -193,9 +193,9 @@ Row one needs an intercept, no penalty, a finite solution. Concavity is a claim 
 
 **The log-likelihood is concave.** Differentiating once more,
 $$
-\frac{\partial^2 \ell}{\partial\beta\,\partial\beta^T} = -\sum_{i=1}^n w_i\, x_i x_i^T, \qquad w_i = \hat p_i(\beta)\,\big(1 - \hat p_i(\beta)\big) > 0
+\frac{\partial^2 \ell}{\partial\beta\,\partial\beta^T} = -\sum_{i=1}^n w_i\, \mathbf x_i\mathbf x_i^T, \qquad w_i = \hat p_i(\beta)\,\big(1 - \hat p_i(\beta)\big) > 0
 $$
-Each term is $-w_i\, x_i x_i^T$ with $w_i > 0$. In any direction $v$, $v^T x_i x_i^T v = (x_i^T v)^2 \ge 0$, so the sum curves downward, or is flat, in every direction: the log-likelihood is concave, and any finite solution of the score equations is its global maximum
+Each term is $-w_i\, \mathbf x_i\mathbf x_i^T$ with $w_i > 0$. In any direction $v$, $v^T \mathbf x_i\mathbf x_i^T v = (\mathbf x_i^T v)^2 \ge 0$, so the sum curves downward, or is flat, in every direction: the log-likelihood is concave, and any finite solution of the score equations is its global maximum
 
 What concavity does not give: existence (week 3's separable case has no finite solution). **So how do we solve the score equations?**
 
@@ -429,10 +429,10 @@ Converges iff $|1 - \gamma a| < 1$, i.e. $0 < \gamma < 2/a$. The step $\gamma = 
 
 . . .
 
-Several directions with curvatures $a_1 \ge \dots \ge a_p > 0$, one step size for all of them: $\gamma < 2/a_1$ to converge, and the slowest direction shrinks like $\max_j |1 - \gamma a_j|^t$, which for $\gamma \le 1/a_1$ is $(1 - \gamma a_p)^t$
+Several directions with curvatures $a_1 \ge \dots \ge a_d > 0$, one step size for all of them: $\gamma < 2/a_1$ to converge, and the slowest direction shrinks like $\max_j |1 - \gamma a_j|^t$, which for $\gamma \le 1/a_1$ is $(1 - \gamma a_d)^t$
 
 ::: {.leave}
-The largest curvature sets the safe step; the ratio $a_1/a_p$, the shape of the valley, sets the speed (a direction with $a_j = 0$, as in least squares with $p > n$, never moves). For least squares, $\hat R_n(\beta) = \frac1n\|\mathbf y - \mathbf X\beta\|^2$, the $a_j$ are the eigenvalues of $2\mathbf X^T\mathbf X/n$
+The largest curvature sets the safe step; the ratio $a_1/a_d$, the shape of the valley, sets the speed (a direction with $a_j = 0$, as in least squares with $p > n$, never moves). For least squares, $\hat R_n(\beta) = \frac1n\|\mathbf y - \mathbf X\beta\|^2$, the $a_j$ are the eigenvalues of $2\mathbf X^T\mathbf X/n$
 :::
 
 ## {.inverse .center}
@@ -626,10 +626,10 @@ A, the valley: converged. B, the hilly road: its loss fell by `r sprintf("%.3f",
 ## Directions with zero slope
 
 ::: {.notes}
-The gradient gives the slope in every direction v (grad f'v); away from a stationary point that slope is zero on the (p - 1)-dimensional subspace orthogonal to the gradient, and at a stationary point in all p directions. Whether the loss goes down along them is curvature, which the gradient does not give. The figure: plain gradient descent on sum_j a_j (z_j^2 - 1)^2 with z = Q beta, Q a random rotation, p = 5, unequal curvatures a_j in [0.5, 1.5], a tiny random start. Every flat stretch is a near-saddle: some z_j near 0, slope almost zero, curvature negative; the run waits until that coordinate is big enough to see. With the standard shrinking schedule 0.1/(1 + t/25), whose steps still sum to infinity (unlike panel C's), each later saddle is met with a smaller step, so the waits grow: the escapes come at steps 19, 23, 49, 127 and 480, and the last wait holds the loss flat for about 300 steps, where every diagnostic from "has it converged?" would have said stop. Fixed step 0.05, dashed, is done by step 165. Answer to the ask: the curvature, the Hessian's p eigenvalues (next slide); all positive, a strict local minimum; any negative, not a minimum; some zero, inconclusive. The saddle from "Landscapes" started on u = 0 is the two-dimensional case: u never changes. A constructed example; "long plateaus followed by rapid transitions" are also found in deep linear networks (Saxe, McClelland and Ganguli, ICLR 2014). The optional seminar problem works through a separable version by hand.
+The gradient gives the slope in every direction v (grad f'v); away from a stationary point that slope is zero on the (d - 1)-dimensional subspace orthogonal to the gradient, and at a stationary point in all d directions. Whether the loss goes down along them is curvature, which the gradient does not give. The figure: plain gradient descent on sum_j a_j (z_j^2 - 1)^2 with z = Q beta, Q a random rotation, p = 5, unequal curvatures a_j in [0.5, 1.5], a tiny random start. Every flat stretch is a near-saddle: some z_j near 0, slope almost zero, curvature negative; the run waits until that coordinate is big enough to see. With the standard shrinking schedule 0.1/(1 + t/25), whose steps still sum to infinity (unlike panel C's), each later saddle is met with a smaller step, so the waits grow: the escapes come at steps 19, 23, 49, 127 and 480, and the last wait holds the loss flat for about 300 steps, where every diagnostic from "has it converged?" would have said stop. Fixed step 0.05, dashed, is done by step 165. Answer to the ask: the curvature, the Hessian's d eigenvalues (next slide); all positive, a strict local minimum; any negative, not a minimum; some zero, inconclusive. The saddle from "Landscapes" started on u = 0 is the two-dimensional case: u never changes. A constructed example; "long plateaus followed by rapid transitions" are also found in deep linear networks (Saxe, McClelland and Ganguli, ICLR 2014). The optional seminar problem works through a separable version by hand.
 :::
 
-These are some of the issues that make optimization hard. What's more: in $\mathbb R^p$ the slope is zero in $p - 1$ directions; whether they lead down is a question of curvature
+These are some of the issues that make optimization hard. What's more: in $\mathbb R^d$ the slope is zero in $d - 1$ directions; whether they lead down is a question of curvature
 
 ```{r}
 #| label: zero-slope

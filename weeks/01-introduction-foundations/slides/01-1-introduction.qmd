@@ -501,7 +501,7 @@ A **prediction competition**:
 
 Winning model chosen by best score
 
-## History: common task framework
+## History: common task framework {minutes="3"}
 
 ::: {.notes}
 Three minutes; this buys the name. DARPA speech, mid-1980s, NIST as referee. Donoho (2017): the secret sauce.
@@ -587,7 +587,7 @@ Predict a patient's readmission from the discharge letter written *after* readmi
 
 Predict a house's sale price from its list price: fine. From the price it eventually sold for: that's the answer, not an input
 
-## Your first task
+## Your first task {minutes="3"}
 
 ::: {.notes}
 Collect three or four answers: a line, similar countries, an average. Come back to them at the leaderboard.
@@ -677,7 +677,7 @@ ggplot(train, aes(lgdp, lifeExp)) +
 
 No formula, no parameters. One choice: $k$.
 
-## CTF competition: which $k$ would you submit?
+## CTF competition: which $k$ would you submit? {minutes="3"}
 
 ::: {.notes}
 Show of hands for 1, 5, 20. Remember who chose 1.
@@ -725,7 +725,7 @@ ggplot(err, aes(k, MSE, colour = set)) +
 
 At $k = 1$ the training error is **exactly zero**. Is that good news?
 
-## The leaderboard
+## The leaderboard {minutes="3"}
 
 ::: {.notes}
 Bars: each competitor's own standard error, the 42 losses treated as independent. Point at the bars and say Netflix. The seminar computes them.
@@ -818,7 +818,7 @@ $$
 noise + bias² + variance. Variance falls in $k$, always. Bias typically grows too, but it need not be monotonic (a constant $f^\star$ keeps it at zero for every $k$).
 :::
 
-## Bias--variance decomposition, line 1
+## Bias--variance decomposition, line 1 {minutes="3"}
 
 $$
 Y_0 - \hat f_k(x_0) = \varepsilon_0 + \big[f^\star(x_0) - \hat f_k(x_0)\big]
@@ -829,7 +829,7 @@ $$
 \mathbb E\big[(Y_0 - \hat f_k(x_0))^2\big] = \mathbb E[\varepsilon_0^2] + 2\,\mathbb E\big[\varepsilon_0 \,(f^\star(x_0) - \hat f_k(x_0))\big] + \mathbb E\big[(f^\star(x_0) - \hat f_k(x_0))^2\big]
 $$
 
-## Bias--variance decomposition, line 2
+## Bias--variance decomposition, line 2 {minutes="3"}
 
 $\varepsilon_0$ is independent of everything in $\hat f_k(x_0)$ and has mean $0$:
 $$
@@ -841,7 +841,7 @@ $$
 \sigma^2 + \mathbb E\big[(f^\star(x_0) - \hat f_k(x_0))^2\big]
 $$
 
-## Bias--variance decomposition, line 3
+## Bias--variance decomposition, line 3 {minutes="3"}
 
 Add and subtract $\mathbb E \hat f_k(x_0)$ inside the square:
 $$
@@ -850,7 +850,7 @@ $$
 
 (The cross term is $2[f^\star(x_0) - \mathbb E\hat f_k(x_0)]\,\mathbb E[\mathbb E\hat f_k(x_0) - \hat f_k(x_0)] = 0$.)
 
-## Bias--variance decomposition, lines 4 and 5
+## Bias--variance decomposition, lines 4 and 5 {minutes="3"}
 
 The neighborhood is fixed, so
 $$
@@ -921,7 +921,7 @@ ggplot(cd, aes(r, edge, colour = d)) + geom_line(linewidth = 1) +
   theme(legend.position = "right")
 ```
 
-## Far away, in many directions
+## Far away, in many directions {minutes="3"}
 
 ::: {.notes}
 Ask who got 0.63 first. It describes a cube inside the support, not the k nearest points. ESL 2.5.

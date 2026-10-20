@@ -98,7 +98,7 @@ In the notebook: threshold proof (ex. 1), confounding gap (ex. 2), adjustment pr
 
 ### Part 1: classification, logistic regression, and asymmetric costs
 
-## Where week 2 left the target
+## Where week 2 left the target {minutes="3"}
 
 ::: {.notes}
 Two minutes, written, then two people. Expected: a probability; a line leaves [0, 1]. Do not say "probability" first.
@@ -431,7 +431,7 @@ Named for radar receivers in the 1940s. It does not answer the operator's questi
 :::
 :::
 
-## What does a mistake cost?
+## What does a mistake cost? {minutes="3"}
 
 ::: {.notes}
 Show of hands for 1 and for 0 before saying anything. Dashed lines: the next slide's formula.
@@ -854,7 +854,7 @@ $$
 dag_adjust(FALSE, "as observed") + dag_adjust(TRUE, "under do(T = t)")
 ```
 
-## Recovering the effect from what we observe
+## Recovering the effect from what we observe {minutes="3"}
 
 ::: {.notes}
 Collect two or three answers; most say "regress Y on T and Z", some "average over Z". Both are half of it.
@@ -951,7 +951,7 @@ Fix $T$ at $t$, average the conditional mean over the population's $Z$. In this 
 
 **Proof**: exercise 3 in the notebook, before the seminar.
 
-## The propensity score
+## The propensity score {minutes="3"}
 
 ::: {.notes}
 pi is the first half's class probability, with T as the label. Collect two or three answers.
@@ -987,7 +987,7 @@ $$
 Weight each treated unit by $1/\pi(Z)$: it stands in for $1/\pi(Z)$ units with the same $Z$. The adjustment theorem needs a regression model for $Y$. This one needs a regression model for $T$, and logistic regression gives one.
 :::
 
-## Inverse propensity weighting theorem, proof (1 of 2)
+## Inverse propensity weighting theorem, proof (1 of 2) {minutes="3"}
 
 ::: {.notes}
 (a) We have the intervened world, not observed for everyone. Its Y is g(1, Z, eps_Y); the average is over (Z, eps_Y), which keep their distribution.
@@ -1009,7 +1009,7 @@ $$
 \end{alignedat}
 $$
 
-## Inverse propensity weighting theorem, proof (2 of 2)
+## Inverse propensity weighting theorem, proof (2 of 2) {minutes="3"}
 
 ::: {.notes}
 (d) We have a conditional expectation over eps_T times a factor fixed once (Z, eps_Y) is given, g(1, Z, eps_Y)/pi(Z); we want it next to T: take the fixed factor inside.

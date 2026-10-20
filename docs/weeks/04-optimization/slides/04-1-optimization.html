@@ -180,20 +180,20 @@ Joshua Loftus
 <h2>MLE for logistic regression</h2>
 <p>Each factor is a Bernoulli (binomial, one trial) probability, <span class="math inline">\(P(y_i \mid \mathbf x_i) = p_i^{y_i}(1 - p_i)^{1 - y_i}\)</span> with <span class="math inline">\(p_i = p(\mathbf x_i^T\beta) = 1/(1 + e^{-\mathbf x_i^T\beta})\)</span>:</p>
 <p><span class="math display">\[
-L(\beta ; \mathbf y | \mathbf x) = \prod_{i=1}^n \left( \frac{1}{1+e^{-x_i \beta}} \right)^{y_i} \left(1- \frac{1}{1+e^{-x_i \beta}} \right)^{1-y_i}
+L(\beta ; \mathbf y | \mathbf X) = \prod_{i=1}^n \left( \frac{1}{1+e^{-\mathbf x_i^T\beta}} \right)^{y_i} \left(1- \frac{1}{1+e^{-\mathbf x_i^T\beta}} \right)^{1-y_i}
 \]</span></p>
 <div class="fragment">
 <p><span class="math display">\[
-\ell(\beta ; \mathbf y | \mathbf x) = \sum_{i=1}^n \left[ y_i \log \left( \frac{1}{1+e^{-x_i \beta}} \right) + (1-y_i) \log \left(1- \frac{1}{1+e^{- x_i \beta}} \right) \right]
+\ell(\beta ; \mathbf y | \mathbf X) = \sum_{i=1}^n \left[ y_i \log \left( \frac{1}{1+e^{-\mathbf x_i^T\beta}} \right) + (1-y_i) \log \left(1- \frac{1}{1+e^{- \mathbf x_i^T\beta}} \right) \right]
 \]</span></p>
 </div>
 </section>
 <section id="mle-the-derivative" class="slide level2" data-minutes="3">
 <h2>MLE: the derivative</h2>
 <p><span class="math display">\[
-\frac{\partial}{\partial \beta} \ell(\beta ; \mathbf y | \mathbf x) = \sum_{i=1}^n \left[ y_i  \left( \frac{x_i e^{-x_i \beta}}{1+e^{-x_i \beta}} \right) + (1-y_i) \left(\frac{-x_i}{1+e^{- x_i \beta}} \right) \right]
+\frac{\partial}{\partial \beta} \ell(\beta ; \mathbf y | \mathbf X) = \sum_{i=1}^n \left[ y_i  \left( \frac{\mathbf x_i e^{-\mathbf x_i^T\beta}}{1+e^{-\mathbf x_i^T\beta}} \right) + (1-y_i) \left(\frac{-\mathbf x_i}{1+e^{- \mathbf x_i^T\beta}} \right) \right]
 \]</span></p>
-<p><span class="math display">\[= \sum_{i=1}^n x_i \left[ y_i - \left(\frac{1}{1+e^{- x_i \beta}} \right) \right] = \color{#b73779}{\sum_{i=1}^n x_i [y_i - \hat p_i(\beta)]}\]</span></p>
+<p><span class="math display">\[= \sum_{i=1}^n \mathbf x_i \left[ y_i - \left(\frac{1}{1+e^{- \mathbf x_i^T\beta}} \right) \right] = \color{#b73779}{\sum_{i=1}^n \mathbf x_i [y_i - \hat p_i(\beta)]}\]</span></p>
 <p>Set this equal to 0 and solve for <span class="math inline">\(\beta\)</span>. How: the rest of today</p>
 </section>
 <section id="the-score-equations-read-as-orthogonality" class="slide level2" data-minutes="3">
@@ -211,8 +211,8 @@ L(\beta ; \mathbf y | \mathbf x) = \prod_{i=1}^n \left( \frac{1}{1+e^{-x_i \beta
 <h2>Two things the score equations say</h2>
 <p><strong>Row one is the intercept.</strong> <span class="math inline">\(\sum_i (y_i - \hat p_i) = 0\)</span>: the fitted probabilities average to the observed proportion of 1s on the training rows.</p>
 <p><strong>The log-likelihood is concave.</strong> Differentiating once more, <span class="math display">\[
-\frac{\partial^2 \ell}{\partial\beta\,\partial\beta^T} = -\sum_{i=1}^n w_i\, x_i x_i^T, \qquad w_i = \hat p_i(\beta)\,\big(1 - \hat p_i(\beta)\big) &gt; 0
-\]</span> Each term is <span class="math inline">\(-w_i\, x_i x_i^T\)</span> with <span class="math inline">\(w_i &gt; 0\)</span>. In any direction <span class="math inline">\(v\)</span>, <span class="math inline">\(v^T x_i x_i^T v = (x_i^T v)^2 \ge 0\)</span>, so the sum curves downward, or is flat, in every direction: the log-likelihood is concave, and any finite solution of the score equations is its global maximum</p>
+\frac{\partial^2 \ell}{\partial\beta\,\partial\beta^T} = -\sum_{i=1}^n w_i\, \mathbf x_i\mathbf x_i^T, \qquad w_i = \hat p_i(\beta)\,\big(1 - \hat p_i(\beta)\big) &gt; 0
+\]</span> Each term is <span class="math inline">\(-w_i\, \mathbf x_i\mathbf x_i^T\)</span> with <span class="math inline">\(w_i &gt; 0\)</span>. In any direction <span class="math inline">\(v\)</span>, <span class="math inline">\(v^T \mathbf x_i\mathbf x_i^T v = (\mathbf x_i^T v)^2 \ge 0\)</span>, so the sum curves downward, or is flat, in every direction: the log-likelihood is concave, and any finite solution of the score equations is its global maximum</p>
 <p>What concavity does not give: existence (week 3’s separable case has no finite solution). <strong>So how do we solve the score equations?</strong></p>
 </section>
 <section id="newton-raphson" class="slide level2">
@@ -375,9 +375,9 @@ L(\beta ; \mathbf y | \mathbf x) = \prod_{i=1}^n \left( \frac{1}{1+e^{-x_i \beta
 \]</span></p>
 <p>Converges iff <span class="math inline">\(|1 - \gamma a| &lt; 1\)</span>, i.e.&nbsp;<span class="math inline">\(0 &lt; \gamma &lt; 2/a\)</span>. The step <span class="math inline">\(\gamma = 1/a\)</span> lands in one move</p>
 <div class="fragment">
-<p>Several directions with curvatures <span class="math inline">\(a_1 \ge \dots \ge a_p &gt; 0\)</span>, one step size for all of them: <span class="math inline">\(\gamma &lt; 2/a_1\)</span> to converge, and the slowest direction shrinks like <span class="math inline">\(\max_j |1 - \gamma a_j|^t\)</span>, which for <span class="math inline">\(\gamma \le 1/a_1\)</span> is <span class="math inline">\((1 - \gamma a_p)^t\)</span></p>
+<p>Several directions with curvatures <span class="math inline">\(a_1 \ge \dots \ge a_d &gt; 0\)</span>, one step size for all of them: <span class="math inline">\(\gamma &lt; 2/a_1\)</span> to converge, and the slowest direction shrinks like <span class="math inline">\(\max_j |1 - \gamma a_j|^t\)</span>, which for <span class="math inline">\(\gamma \le 1/a_1\)</span> is <span class="math inline">\((1 - \gamma a_d)^t\)</span></p>
 <div class="leave">
-<p>The largest curvature sets the safe step; the ratio <span class="math inline">\(a_1/a_p\)</span>, the shape of the valley, sets the speed (a direction with <span class="math inline">\(a_j = 0\)</span>, as in least squares with <span class="math inline">\(p &gt; n\)</span>, never moves). For least squares, <span class="math inline">\(\hat R_n(\beta) = \frac1n\|\mathbf y - \mathbf X\beta\|^2\)</span>, the <span class="math inline">\(a_j\)</span> are the eigenvalues of <span class="math inline">\(2\mathbf X^T\mathbf X/n\)</span></p>
+<p>The largest curvature sets the safe step; the ratio <span class="math inline">\(a_1/a_d\)</span>, the shape of the valley, sets the speed (a direction with <span class="math inline">\(a_j = 0\)</span>, as in least squares with <span class="math inline">\(p &gt; n\)</span>, never moves). For least squares, <span class="math inline">\(\hat R_n(\beta) = \frac1n\|\mathbf y - \mathbf X\beta\|^2\)</span>, the <span class="math inline">\(a_j\)</span> are the eigenvalues of <span class="math inline">\(2\mathbf X^T\mathbf X/n\)</span></p>
 </div>
 </div>
 </section>
@@ -461,7 +461,7 @@ L(\beta ; \mathbf y | \mathbf x) = \prod_{i=1}^n \left( \frac{1}{1+e^{-x_i \beta
 </section>
 <section id="directions-with-zero-slope" class="slide level2">
 <h2>Directions with zero slope</h2>
-<p>These are some of the issues that make optimization hard. What’s more: in <span class="math inline">\(\mathbb R^p\)</span> the slope is zero in <span class="math inline">\(p - 1\)</span> directions; whether they lead down is a question of curvature</p>
+<p>These are some of the issues that make optimization hard. What’s more: in <span class="math inline">\(\mathbb R^d\)</span> the slope is zero in <span class="math inline">\(d - 1\)</span> directions; whether they lead down is a question of curvature</p>
 <div class="cell">
 <div class="cell-output-display">
 <div>

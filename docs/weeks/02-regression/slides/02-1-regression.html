@@ -402,13 +402,13 @@ R(f) = \mathbb E_{X,Y}\big[\ell(Y, f(X))\big], \qquad f^\star = \arg \min_f R(f)
 <p>Algorithms can leverage LLN, CLT, subsampling, etc…</p>
 </div>
 </section>
-<section id="three-errors-three-names" class="slide level2">
+<section id="three-errors-three-names" class="slide level2" data-minutes="1">
 <h2>Three errors, three names</h2>
 <p><strong>Population risk</strong> of a predictor <span class="math inline">\(f\)</span>, an expectation over new data, the thing we want small: <span class="math display">\[R(f) = \mathbb E\,\ell(Y, f(X))\]</span></p>
 <p><strong>Training error</strong> (empirical risk), the same average over the data we fit on: <span class="math display">\[\hat R_n(f) = \tfrac{1}{n}\textstyle\sum_{i=1}^n \ell(y_i, f(x_i))\]</span></p>
 <p><strong>Test error</strong>, last week’s leaderboard, over held-out data: <span class="math display">\[\widehat{\text{Err}} = \tfrac{1}{m}\textstyle\sum_{j=1}^m \ell(y_j^{\text{test}}, \hat f(x_j^{\text{test}}))\]</span></p>
 </section>
-<section id="optimal-model-theorem" class="slide level2">
+<section id="optimal-model-theorem" class="slide level2" data-minutes="4">
 <h2>Optimal model theorem</h2>
 <p>Squared loss, any function of <span class="math inline">\(X\)</span> allowed, not only lines:</p>
 <p><span class="math inline">\(\mathbb E Y^2 &lt; \infty\)</span> and <span class="math inline">\(f^\star(x) = \mathbb E[Y \mid X = x]\)</span>. For every <span class="math inline">\(f\)</span> with <span class="math inline">\(\mathbb E f(X)^2 &lt; \infty\)</span>, <span class="math display">\[
@@ -542,7 +542,7 @@ y_n
 <li>Other Roman letters with hats like <span class="math inline">\(\hat y\)</span> are predictions</li>
 </ul>
 </section>
-<section id="least-squares-solutions-in-matrix-notation" class="slide level2">
+<section id="least-squares-solutions-in-matrix-notation" class="slide level2" data-minutes="3">
 <h2>Least-squares solutions in matrix notation</h2>
 <p>With matrix-vector notation we can always write very simply:</p>
 <p><span class="math display">\[
@@ -601,7 +601,7 @@ y_n
 <p>Why care: it relates multiple regression coefficients to an intuitive univariate regression</p>
 </div>
 </section>
-<section id="partialling-out-theorem-frischwaughlovell" class="slide level2">
+<section id="partialling-out-theorem-frischwaughlovell" class="slide level2" data-minutes="3">
 <h2>Partialling-out theorem (Frisch–Waugh–Lovell)</h2>
 <p><span class="math inline">\(\mathbf X = [\mathbf X_1 \;\; \mathbf x_2]\)</span>, full column rank, the intercept column inside <span class="math inline">\(\mathbf X_1\)</span>. <span class="math inline">\(\mathbf M_1 = \mathbf I - \mathbf X_1(\mathbf X_1^T\mathbf X_1)^{-1}\mathbf X_1^T\)</span> projects onto the orthogonal complement of <span class="math inline">\(\mathrm{col}(\mathbf X_1)\)</span>, so <span class="math inline">\(\tilde{\mathbf x}_2 = \mathbf M_1 \mathbf x_2\)</span> is the residual of <span class="math inline">\(\mathbf x_2\)</span> after regressing it on <span class="math inline">\(\mathbf X_1\)</span>. The coefficient on <span class="math inline">\(\mathbf x_2\)</span> in the regression of <span class="math inline">\(\mathbf y\)</span> on <span class="math inline">\(\mathbf X\)</span> is <span class="math display">\[
 \hat\beta_2 = \frac{\tilde{\mathbf x}_2^T \mathbf y}{\tilde{\mathbf x}_2^T \tilde{\mathbf x}_2}
@@ -623,7 +623,7 @@ y_n
 </div>
 <p>Project everything onto the orthogonal complement of <span class="math inline">\(\mathrm{col}(\mathbf X_1)\)</span>, the grey plane. There, regress <span class="math inline">\(\tilde{\mathbf y}\)</span> on <span class="math inline">\(\tilde{\mathbf x}_2\)</span> through the origin: the slope is <span class="math inline">\(\hat\beta_2\)</span> and <span class="math inline">\(\mathbf r\)</span> is the full regression’s residual</p>
 </section>
-<section id="partialling-out-theorem-lines-12" class="slide level2">
+<section id="partialling-out-theorem-lines-12" class="slide level2" data-minutes="3">
 <h2>Partialling-out theorem, lines 1–2</h2>
 <p>The full regression, with the normal equations read column by column: the residual is orthogonal to every column <span class="math display">\[
 \mathbf y = \mathbf X_1 \hat{\boldsymbol\beta}_1 + \mathbf x_2 \hat\beta_2 + \mathbf r, \qquad \mathbf X_1^T \mathbf r = \mathbf 0,\ \ \mathbf x_2^T \mathbf r = 0
@@ -639,7 +639,7 @@ y_n
 \]</span></p>
 </div>
 </section>
-<section id="partialling-out-theorem-lines-34" class="slide level2">
+<section id="partialling-out-theorem-lines-34" class="slide level2" data-minutes="3">
 <h2>Partialling-out theorem, lines 3–4</h2>
 <p><span class="math inline">\(\mathbf M_1 \mathbf y = \tilde{\mathbf x}_2 \,\hat\beta_2 + \mathbf r\)</span> is a vector equation with one unknown number, <span class="math inline">\(\hat\beta_2\)</span></p>
 <div class="fragment">
@@ -651,7 +651,7 @@ y_n
 <p>The last term: <span class="math inline">\(\tilde{\mathbf x}_2^T \mathbf r = \mathbf x_2^T \mathbf M_1 \mathbf r = \mathbf x_2^T \mathbf r = 0\)</span></p>
 </div>
 </section>
-<section id="partialling-out-theorem-lines-56" class="slide level2">
+<section id="partialling-out-theorem-lines-56" class="slide level2" data-minutes="3">
 <h2>Partialling-out theorem, lines 5–6</h2>
 <p>Left side: <span class="math inline">\(\tilde{\mathbf x}_2^T \mathbf M_1 \mathbf y = \mathbf x_2^T \mathbf M_1 \mathbf M_1 \mathbf y\)</span></p>
 <div class="fragment">
