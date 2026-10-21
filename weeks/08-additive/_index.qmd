@@ -1,13 +1,13 @@
-## Week 8: additive models and interpretation
+## Week 8: how are flexible models constructed and improved?
 
-One curve per predictor: how an additive model is fitted (each component to what the others leave), why it escapes the curse of dimensionality, and when it is wrong. Then a curve on any fitted model: partial dependence and ICE, computed by hand, and the question they answer. Causal block 2: direct against total dependence on a simulation where the two curves disagree, and when a model's response is also an effect.
+How the fits of week 5 are built, and what makes them better. An additive model by backfitting: each component fitted to what the others leave, which is week 2's partialling-out theorem one input at a time; and an interaction that no additive fit can see. A tree: one split found by hand, then greedy recursion, depth and pruning, and why a tree is unstable. Bagging: the variance of an average of correlated predictions, proved, and why it stops short of $1/B$; random forests as the way to lower the correlation; the out-of-bag error as a held-out score that comes free. Boosting as gradient descent one small tree at a time (week 4's method on week 2's residuals), its three knobs, and why a sum of trees is additive in trees and not in the predictors. Two slides on kernels: a locally weighted average with a bandwidth, and ridge on features you never write down.
 
 **Reading [PROVISIONAL]**
 
-- ISLR Chapter 7, section 7.7, pp. 306–311 (generalized additive models). The lab in section 7.8.3 goes with the seminar.
-- ESL Chapter 9, the opening pages of section 9.1, pp. 295–298 (additive models and the backfitting algorithm, Algorithm 9.1).
-- IML, the chapters "Individual conditional expectation (ICE)" and "Partial dependence plot (PDP)": the definitions and the pictures, for recognition.
+- ESL Chapter 9, the opening of section 9.1, pp. 295–298 (additive models and the backfitting algorithm, Algorithm 9.1). ISLR section 7.7, pp. 306–310, read in week 5, describes the same model.
+- ISLR Chapter 8 (Tree-Based Methods), section 8.1, pp. 327–340, in full this time (recursive binary splitting and pruning; classification trees; trees against linear models), and sections 8.2.1–8.2.3, pp. 340–348 (bagging, random forests, boosting). Section 8.2.4, Bayesian additive regression trees, is not part of this course. The lab in section 8.3 goes with the seminar.
+- ESL Chapter 15, section 15.4, pp. 597–602 (why random forests work: the variance of a correlated average, which is the lecture's proof).
 
-Deeper, optional: Hastie and Tibshirani, *Generalized Additive Models* (1990), Chapter 4; Zhao and Hastie, "Causal interpretations of black-box models", *Journal of Business and Economic Statistics* 2021.
+Deeper, optional: ESL sections 10.9–10.10, pp. 353–361 (boosting trees as gradient descent); ESL Chapter 6, section 6.1 (one-dimensional kernel smoothers), for the kernel slides; Breiman, "Random forests", *Machine Learning* 45, 2001; Friedman, "Greedy function approximation: a gradient boosting machine", *Annals of Statistics* 29(5), 2001.
 
-**Lecture and seminar:** released here at the start of the week. Backfitting in ten lines against `mgcv` on the movies data, a random split against a split in time; partial dependence and ICE by hand on a simulation whose truth is known, against the total-effect curve. Data: IMDb films via `ggplot2movies`, and a supplied simulation.
+**Lecture and seminar:** released here at the start of the week. One split by hand, then a recursive tree; backfitting in ten lines against `mgcv`; bagging by hand with its variance measured against the theorem and an out-of-bag error; one boosting update by hand, then `xgboost`. Data: the penguins, the movies, gapminder, simulated data.
