@@ -177,11 +177,11 @@ window.Quarto = {
   <li><a href="#week-4-optimization-and-model-fitting" id="toc-week-4-optimization-and-model-fitting" class="nav-link" data-scroll-target="#week-4-optimization-and-model-fitting">Week 4: optimization and model fitting</a></li>
   <li><a href="#week-5-what-structures-can-we-model" id="toc-week-5-what-structures-can-we-model" class="nav-link" data-scroll-target="#week-5-what-structures-can-we-model">Week 5: what structures can we model?</a></li>
   <li><a href="#week-6-reading-week" id="toc-week-6-reading-week" class="nav-link" data-scroll-target="#week-6-reading-week">Week 6: reading week</a></li>
-  <li><a href="#week-7-regularization-and-high-dimensions" id="toc-week-7-regularization-and-high-dimensions" class="nav-link" data-scroll-target="#week-7-regularization-and-high-dimensions">Week 7: regularization and high-dimensions</a></li>
-  <li><a href="#week-8-additive-models-and-interpretation" id="toc-week-8-additive-models-and-interpretation" class="nav-link" data-scroll-target="#week-8-additive-models-and-interpretation">Week 8: additive models and interpretation</a></li>
-  <li><a href="#week-9-trees-and-ensembles" id="toc-week-9-trees-and-ensembles" class="nav-link" data-scroll-target="#week-9-trees-and-ensembles">Week 9: trees and ensembles</a></li>
-  <li><a href="#week-10-explaining-intervening-shifting" id="toc-week-10-explaining-intervening-shifting" class="nav-link" data-scroll-target="#week-10-explaining-intervening-shifting">Week 10: explaining, intervening, shifting</a></li>
-  <li><a href="#week-11-what-does-winning-mean" id="toc-week-11-what-does-winning-mean" class="nav-link" data-scroll-target="#week-11-what-does-winning-mean">Week 11: what does winning mean?</a></li>
+  <li><a href="#week-7-how-much-flexibility-should-we-allow" id="toc-week-7-how-much-flexibility-should-we-allow" class="nav-link" data-scroll-target="#week-7-how-much-flexibility-should-we-allow">Week 7: how much flexibility should we allow?</a></li>
+  <li><a href="#week-8-how-are-flexible-models-constructed-and-improved" id="toc-week-8-how-are-flexible-models-constructed-and-improved" class="nav-link" data-scroll-target="#week-8-how-are-flexible-models-constructed-and-improved">Week 8: how are flexible models constructed and improved?</a></li>
+  <li><a href="#week-9-what-can-we-learn-from-a-fitted-prediction" id="toc-week-9-what-can-we-learn-from-a-fitted-prediction" class="nav-link" data-scroll-target="#week-9-what-can-we-learn-from-a-fitted-prediction">Week 9: what can we learn from a fitted prediction?</a></li>
+  <li><a href="#week-10-how-do-prediction-methods-support-other-statistical-tasks" id="toc-week-10-how-do-prediction-methods-support-other-statistical-tasks" class="nav-link" data-scroll-target="#week-10-how-do-prediction-methods-support-other-statistical-tasks">Week 10: how do prediction methods support other statistical tasks?</a></li>
+  <li><a href="#week-11-what-changes-when-the-representation-is-learned" id="toc-week-11-what-changes-when-the-representation-is-learned" class="nav-link" data-scroll-target="#week-11-what-changes-when-the-representation-is-learned">Week 11: what changes when the representation is learned?</a></li>
   </ul>
 </nav>
     </div>
@@ -212,7 +212,7 @@ window.Quarto = {
 </header>
 
 
-<p>Readings and lectures are complementary so do both, and bring a laptop with R and RStudio to the seminar (see <a href="about.html">about</a> for setup). The seminar notebook for each week is linked below; the <code>.qmd</code> link downloads the source file to open in RStudio, the other link is the same notebook rendered so you can read it in a browser.</p>
+<p>Readings and lectures are complementary so do both, and bring a laptop with R and RStudio to the seminar (see <a href="about.html">about</a> for setup). The seminar notebook for each week is linked below; the <code>.qmd</code> link downloads the source file to open in RStudio, the other link is the same notebook rendered so you can read it in a browser. Click a week’s heading, or its entry in the contents, to open it.</p>
 <!-- One block per week, each in weeks/NN-<name>/_index.qmd (title, summary, reading,
 links). Include paths and the links inside the blocks are relative to this file.
 A week's delivery edits only its own block; nothing here changes. -->
@@ -278,71 +278,157 @@ A week's delivery edits only its own block; nothing here changes. -->
 </section>
 <section id="week-6-reading-week" class="level2">
 <h2 class="anchored" data-anchor-id="week-6-reading-week">Week 6: reading week</h2>
-<p>No lecture or seminar. Read ISLR section 6.2, pp.&nbsp;237–252 (ridge regression and the lasso), for week 7.</p>
+<p>No lecture or seminar. Start week 7’s reading: ISLR section 5.1, pp.&nbsp;197–209 (cross-validation), which week 7 opens with.</p>
 </section>
-<section id="week-7-regularization-and-high-dimensions" class="level2">
-<h2 class="anchored" data-anchor-id="week-7-regularization-and-high-dimensions">Week 7: regularization and high-dimensions</h2>
-<p>Many predictors: ridge regression and the lasso, their bias and variance against the tuning parameter (the bias–variance decomposition in its third form, with ridge written in the SVD basis), soft thresholding, and what changes when <span class="math inline">\(p &gt; n\)</span>. Then the held-out protocol under stress: the same evaluation set used many times, adaptive overfitting, and what the CIFAR-10 and ImageNet replications found.</p>
+<section id="week-7-how-much-flexibility-should-we-allow" class="level2">
+<h2 class="anchored" data-anchor-id="week-7-how-much-flexibility-should-we-allow">Week 7: how much flexibility should we allow?</h2>
+<p>Every method of week 5 had a knob. This week chooses it, and asks what the choice costs. <span class="math inline">\(K\)</span>-fold cross-validation and the curve it draws against <span class="math inline">\(\lambda\)</span>, <span class="math inline">\(k\)</span> and tree depth. Why a flexible method needs data: from week 1’s decomposition, the error of <span class="math inline">\(k\)</span>-nearest neighbors in <span class="math inline">\(d\)</span> dimensions, the rate <span class="math inline">\(n^{-2/(d+2)}\)</span>, and what an assumption buys (an additive truth, a sparse one). Ridge and lasso side by side in the simplest design: shrinkage against soft thresholding, prediction against selection; the smoothing penalty on a spline as ridge on its coefficients. What changes when <span class="math inline">\(p &gt; n\)</span>: the minimum-norm interpolant, why one interpolant rather than another, and the double-descent curve that the bias–variance picture does not predict. The standard error of a held-out score.</p>
 <p><strong>Reading [PROVISIONAL]</strong></p>
 <ul>
-<li>ISLR Chapter 6, section 6.2, pp.&nbsp;237–252 (ridge regression and the lasso, choosing the tuning parameter), and section 6.4, from p.&nbsp;261 (what changes when <span class="math inline">\(p &gt; n\)</span>). The lab in section 6.5 goes with the seminar. Section 6.3 (principal components and partial least squares), which sits between them, is not part of this course.</li>
-<li>PPA Chapter 8, pp.&nbsp;158–167 (adaptivity: what happens when the same held-out set is used many times, and the CIFAR-10 and ImageNet replications).</li>
+<li>ISLR Chapter 5 (Resampling Methods), section 5.1, pp.&nbsp;197–209 (the validation set, leave-one-out and <span class="math inline">\(K\)</span>-fold cross-validation, and the bias–variance trade-off in choosing <span class="math inline">\(K\)</span>). Section 5.2, the bootstrap, is not part of this course.</li>
+<li>ISLR Chapter 6, section 6.2.3, pp.&nbsp;250–252 (choosing the tuning parameter by cross-validation), and section 6.4, from p.&nbsp;261 (what changes when <span class="math inline">\(p &gt; n\)</span>). Section 6.3, which sits between them, is not part of this course.</li>
+<li>ISLR Chapter 7, section 7.5, pp.&nbsp;301–304 (smoothing splines: the roughness penalty, and <span class="math inline">\(\lambda\)</span> chosen from the data).</li>
+<li>PPA Chapter 6 (Generalization), “Generalization gap” and “Overparameterization: empirical phenomena”, pp.&nbsp;100–106 (what over-parameterized models do in practice; double descent).</li>
 </ul>
-<p>Deeper, optional: ESL section 3.4, pp.&nbsp;61–79 (ridge in the SVD basis; the lasso); CASI Chapter 7 (James–Stein) and Chapter 16 (the lasso).</p>
-<p><strong>Lecture and seminar:</strong> released here at the start of the week. Bias and variance of ridge and the lasso against <span class="math inline">\(\lambda\)</span>, by simulation; tuning with <code>glmnet</code> on the Hitters data with a test set reserved first; the evaluation set reused, and what it does to a score. Data: simulated, and ISLR’s Hitters (baseball salaries, 1987).</p>
+<p>Deeper, optional: Belkin, Hsu, Ma and Mandal, “Reconciling modern machine-learning practice and the classical bias–variance trade-off”, <em>PNAS</em> 116(32), 2019 (the double-descent curve); ESL section 3.4, pp.&nbsp;61–73 (ridge and the lasso in general designs); Györfi, Kohler, Krzyżak and Walk, <em>A Distribution-Free Theory of Nonparametric Regression</em> (2002), Chapter 6, for the rigorous form of the nearest-neighbor rate the lecture derives from a stated lemma.</p>
+<p><strong>Lecture and seminar:</strong> released here at the start of the week. A cross-validation pipeline on week 5’s data; learning curves for <span class="math inline">\(k\)</span>-nearest neighbors in one, two, five and ten dimensions read against the rate; then, after cross-validation has worked for you, two ways it goes wrong: standardizing before the split against inside the folds, and a random split against a split in time. Data: week 5’s datasets, ISLR’s Hitters (baseball salaries, 1987), simulated data.</p>
 </section>
-<section id="week-8-additive-models-and-interpretation" class="level2">
-<h2 class="anchored" data-anchor-id="week-8-additive-models-and-interpretation">Week 8: additive models and interpretation</h2>
-<p>One curve per predictor: how an additive model is fitted (each component to what the others leave), why it escapes the curse of dimensionality, and when it is wrong. Then a curve on any fitted model: partial dependence and ICE, computed by hand, and the question they answer. Causal block 2: direct against total dependence on a simulation where the two curves disagree, and when a model’s response is also an effect.</p>
+<section id="week-8-how-are-flexible-models-constructed-and-improved" class="level2">
+<h2 class="anchored" data-anchor-id="week-8-how-are-flexible-models-constructed-and-improved">Week 8: how are flexible models constructed and improved?</h2>
+<p>How the fits of week 5 are built, and what makes them better. An additive model by backfitting: each component fitted to what the others leave, which is week 2’s partialling-out theorem one input at a time; and an interaction that no additive fit can see. A tree: one split found by hand, then greedy recursion, depth and pruning, and why a tree is unstable. Bagging: the variance of an average of correlated predictions, proved, and why it stops short of <span class="math inline">\(1/B\)</span>; random forests as the way to lower the correlation; the out-of-bag error as a held-out score that comes free. Boosting as gradient descent one small tree at a time (week 4’s method on week 2’s residuals), its three knobs, and why a sum of trees is additive in trees and not in the predictors. Two slides on kernels: a locally weighted average with a bandwidth, and ridge on features you never write down.</p>
 <p><strong>Reading [PROVISIONAL]</strong></p>
 <ul>
-<li>ISLR Chapter 7, section 7.7, pp.&nbsp;306–311 (generalized additive models). The lab in section 7.8.3 goes with the seminar.</li>
-<li>ESL Chapter 9, the opening pages of section 9.1, pp.&nbsp;295–298 (additive models and the backfitting algorithm, Algorithm 9.1).</li>
-<li>IML, the chapters “Individual conditional expectation (ICE)” and “Partial dependence plot (PDP)”: the definitions and the pictures, for recognition.</li>
+<li>ESL Chapter 9, the opening of section 9.1, pp.&nbsp;295–298 (additive models and the backfitting algorithm, Algorithm 9.1). ISLR section 7.7, pp.&nbsp;306–310, read in week 5, describes the same model.</li>
+<li>ISLR Chapter 8 (Tree-Based Methods), section 8.1, pp.&nbsp;327–340, in full this time (recursive binary splitting and pruning; classification trees; trees against linear models), and sections 8.2.1–8.2.3, pp.&nbsp;340–348 (bagging, random forests, boosting). Section 8.2.4, Bayesian additive regression trees, is not part of this course. The lab in section 8.3 goes with the seminar.</li>
+<li>ESL Chapter 15, section 15.4, pp.&nbsp;597–602 (why random forests work: the variance of a correlated average, which is the lecture’s proof).</li>
 </ul>
-<p>Deeper, optional: Hastie and Tibshirani, <em>Generalized Additive Models</em> (1990), Chapter 4; Zhao and Hastie, “Causal interpretations of black-box models”, <em>Journal of Business and Economic Statistics</em> 2021.</p>
-<p><strong>Lecture and seminar:</strong> released here at the start of the week. Backfitting in ten lines against <code>mgcv</code> on the movies data, a random split against a split in time; partial dependence and ICE by hand on a simulation whose truth is known, against the total-effect curve. Data: IMDb films via <code>ggplot2movies</code>, and a supplied simulation.</p>
+<p>Deeper, optional: ESL sections 10.9–10.10, pp.&nbsp;353–361 (boosting trees as gradient descent); ESL Chapter 6, section 6.1 (one-dimensional kernel smoothers), for the kernel slides; Breiman, “Random forests”, <em>Machine Learning</em> 45, 2001; Friedman, “Greedy function approximation: a gradient boosting machine”, <em>Annals of Statistics</em> 29(5), 2001.</p>
+<p><strong>Lecture and seminar:</strong> released here at the start of the week. One split by hand, then a recursive tree; backfitting in ten lines against <code>mgcv</code>; bagging by hand with its variance measured against the theorem and an out-of-bag error; one boosting update by hand, then <code>xgboost</code>. Data: the penguins, the movies, gapminder, simulated data.</p>
 </section>
-<section id="week-9-trees-and-ensembles" class="level2">
-<h2 class="anchored" data-anchor-id="week-9-trees-and-ensembles">Week 9: trees and ensembles</h2>
-<p>A machine that asks the data one question at a time: how a split is found, why a tree is local averaging with the neighborhoods chosen by the data, and how big to grow one. Then two ways to use many trees: bagging and random forests, with the variance of an average of correlated predictions derived at the board and the out-of-bag error as a built-in estimate of held-out error; boosting as gradient descent one small tree at a time, with its three knobs. Permutation importance in the loss-difference convention, and no free lunch retrieved on four entrants.</p>
+<section id="week-9-what-can-we-learn-from-a-fitted-prediction" class="level2">
+<h2 class="anchored" data-anchor-id="week-9-what-can-we-learn-from-a-fitted-prediction">Week 9: what can we learn from a fitted prediction?</h2>
+<p>What a forecast is for. The decision principle: choose the action that minimizes expected loss given the inputs. The mean, the median and week 3’s threshold were three cases of it; the conditional quantile is the fourth, and the lecture proves it. Uncertainty about a future outcome, which is not uncertainty about a score: a prediction interval from estimated quantiles, by linear quantile regression and then by a method of week 5, with a Gaussian mean-and-variance model as the comparison; coverage checked on fresh data across the range of the inputs, as a diagnostic and not a certificate; why no distribution-free method can guarantee coverage at every <span class="math inline">\(x\)</span>, and what conformal prediction guarantees instead; a calibration check for a classifier. Then interpretation of the models you can now fit: a coefficient under correlated inputs, a GAM’s components, permutation importance and where it fails, partial dependence and ICE as questions put to the model (SHAP named in one slide), and why a model’s response curve is not an effect.</p>
 <p><strong>Reading [PROVISIONAL]</strong></p>
 <ul>
-<li>ISLR Chapter 8, sections 8.1 and 8.2, pp.&nbsp;327–353 (trees; bagging, random forests and boosting). The lab in section 8.3 goes with the seminar.</li>
-<li>IML, the chapter “Permutation feature importance”: the definition and the pictures, for recognition.</li>
-<li>ESL Chapter 15, section 15.4, pp.&nbsp;597–602 (why random forests work), and Chapter 10, sections 10.9–10.10, pp.&nbsp;353–361 (boosting trees as gradient descent), for the two board derivations.</li>
+<li>Koenker and Hallock, “Quantile regression”, <em>Journal of Economic Perspectives</em> 15(4), 2001, pp.&nbsp;143–156: the first half, for what a conditional quantile is and the loss that finds it.</li>
+<li>ISLR Chapter 3, section 3.2.2, the passage on confidence and prediction intervals (p.&nbsp;82): the distinction the lecture starts from.</li>
+<li>IML, the chapters “Partial dependence plot (PDP)”, “Individual conditional expectation (ICE)” and “Permutation feature importance”: the definitions and the pictures. The chapter “SHAP” is for recognition only.</li>
 </ul>
-<p>Deeper, optional: CausalML Chapter 8, “Predictive inference via modern nonlinear regression”, pp.&nbsp;200–208; Breiman, “Random forests”, <em>Machine Learning</em> 2001; Friedman, “Greedy function approximation: a gradient boosting machine”, <em>Annals of Statistics</em> 2001.</p>
-<p><strong>Lecture and seminar:</strong> released here at the start of the week. Split search implemented with running sums, then a recursive tree; training against test error along the pruning path; bagging by hand with an out-of-bag error, random forests by <code>mtry</code>, boosting by hand against <code>xgboost</code>; permutation importance by hand, on three inputs and then five. Data: the penguins and gapminder (<a href="data/gapminder.html">note</a>).</p>
+<p>Deeper, optional: Angelopoulos and Bates, “Conformal prediction: a gentle introduction”, <em>Foundations and Trends in Machine Learning</em> 16(4), 2023, sections 1–2; Barber, Candès, Ramdas and Tibshirani, “The limits of distribution-free conditional predictive inference”, <em>Information and Inference</em> 10(2), 2021 (the impossibility result the lecture states); Zhao and Hastie, “Causal interpretations of black-box models”, <em>Journal of Business and Economic Statistics</em> 39(1), 2021.</p>
+<p><strong>Lecture and seminar:</strong> released here at the start of the week. A simulation whose noise grows with one input: quantile fits, interval widths and coverage by range on fresh data; the calibration of week 3’s logistic fit; partial dependence, ICE and permutation importance by hand on week 8’s models. Data: supplied simulations, the penguins, the movies.</p>
 </section>
-<section id="week-10-explaining-intervening-shifting" class="level2">
-<h2 class="anchored" data-anchor-id="week-10-explaining-intervening-shifting">Week 10: explaining, intervening, shifting</h2>
-<p>What an explanation computes: SHAP shown and explained in three sentences; one theorem saying what every partial dependence, ICE and SHAP number is (the model’s response with some inputs set and the rest left where one unit had them), and when that is also an effect; four methods, four questions, one takeaway. Causal block 3: one effect estimated with machine learning in the nuisances, residual on residual with cross-fitting, and what that does not do. Then the data move: covariate shift, reweighting and its condition, and the shift no reweighting fixes.</p>
+<section id="week-10-how-do-prediction-methods-support-other-statistical-tasks" class="level2">
+<h2 class="anchored" data-anchor-id="week-10-how-do-prediction-methods-support-other-statistical-tasks">Week 10: how do prediction methods support other statistical tasks?</h2>
+<p>A fitted model put to a use other than predicting. A partial dependence curve as an estimate of week 3’s interventional mean, exact at the population level when the adjustment condition holds and the model is right, and an estimate otherwise. One effect estimated with machine learning doing the nuisance work: residual on residual, the two lines that show why residualizing the treatment makes the nuisance error second order (the lecture’s derivation), what cross-fitting does, a standard error that can be trusted, and honest trees as the same split-sample idea; nothing in any of it makes the effect causal without week 3’s condition. Then the data move: covariate shift and reweighting by a ratio of probabilities (week 3’s inverse propensity weighting again), label shift and which factorization of the joint distribution you believe, and adaptive drift when the model has been tuned to the score it is judged by.</p>
 <p><strong>Reading [PROVISIONAL]</strong></p>
 <ul>
-<li>IML, the chapters “Shapley values”, “SHAP” and “Leave one feature out (LOFO) importance”: the plots and the vocabulary, for recognition.</li>
-<li>PPA Chapter 10, pp.&nbsp;204–217 (causal inference in practice: adjustment, double machine learning in a page, quasi-experiments) and Chapter 13, pp.&nbsp;268–271 (the epilogue: when patterns stop guiding action).</li>
-<li>Zhao and Hastie, “Causal interpretations of black-box models”, <em>Journal of Business and Economic Statistics</em> 2021 (the back-door statement in the theorem).</li>
+<li>PPA Chapter 10 (Causal inference in practice), pp.&nbsp;204–217: design and inference, adjustment and controls, reductions to model fitting (double machine learning in a page), quasi-experiments, and the limitations.</li>
+<li>PPA Chapter 8 (Datasets), “Longevity of benchmarks”, pp.&nbsp;158–167 (what happens when the same held-out set is used many times, and the CIFAR-10 and ImageNet replications).</li>
+<li>Zhao and Hastie, “Causal interpretations of black-box models”, <em>Journal of Business and Economic Statistics</em> 39(1), 2021 (the back-door statement behind the lecture’s corollary).</li>
 </ul>
-<p>Deeper, optional: Chernozhukov et al., “Double/debiased machine learning for treatment and structural parameters”, <em>Econometrics Journal</em> 2018, sections 1–2; Shimodaira, “Improving predictive inference under covariate shift by weighting the log-likelihood function”, <em>Journal of Statistical Planning and Inference</em> 2000.</p>
-<p><strong>Lecture and seminar:</strong> released here at the start of the week. SHAP by hand on a three-unit table, then by software on the penguins forest with the identity checked; permutation importance against leave-one-covariate-out on one fit; one effect estimated by residual on residual with cross-fitting, two wrong versions and a hidden confounder; a shift diagnosed on gapminder 1952 against 2007. Data: penguins, gapminder, and supplied simulations.</p>
+<p>Deeper, optional: Chernozhukov, Chetverikov, Demirer, Duflo, Hansen, Newey and Robins, “Double/debiased machine learning for treatment and structural parameters”, <em>Econometrics Journal</em> 21(1), 2018, sections 1–2; Shimodaira, “Improving predictive inference under covariate shift by weighting the log-likelihood function”, <em>Journal of Statistical Planning and Inference</em> 90(2), 2000; Lipton, Wang and Smola, “Detecting and correcting for label shift with black box predictors”, <em>ICML</em> 2018 (the setting; the correction itself is not taught); PPA Chapter 13 (Epilogue), pp.&nbsp;268–271.</p>
+<p><strong>Lecture and seminar:</strong> released here at the start of the week. One effect estimated by residual on residual with cross-fitting, two wrong versions and a hidden confounder; a partial dependence curve against the true interventional mean on a simulation; reweighting under covariate shift and under label shift, and a shift diagnosed on gapminder 1952 against 2007. Data: supplied simulations, gapminder.</p>
 </section>
-<section id="week-11-what-does-winning-mean" class="level2">
-<h2 class="anchored" data-anchor-id="week-11-what-does-winning-mean">Week 11: what does winning mean?</h2>
-<p>The competition re-read with everything since: outcome reasoning against model reasoning, the four MARA(s) questions a deployment has to answer and for whom, and the seven recurring flaws of systems that predict something about a person and decide about them. The week-1 task re-run with every entrant the term taught you. One unfamiliar case diagnosed live. The theorems and results in one view. If time allows, the last method: a neural network as composition, fitted by hand.</p>
+<section id="week-11-what-changes-when-the-representation-is-learned" class="level2">
+<h2 class="anchored" data-anchor-id="week-11-what-changes-when-the-representation-is-learned">Week 11: what changes when the representation is learned?</h2>
+<p>Every method in this course was a predictor on features someone chose. What changes when the features are built by hand (week 8’s bases and kernels), learned together with the task (a network with one hidden layer as a basis the data chooses, fitted by week 4’s stochastic gradient descent; everything beyond that is ST311’s), or transferred from a model trained on something else (embeddings, with week 1’s nearest neighbors and week 5’s ridge run on them). Then the course’s frame read again with everything since: what the held-out leaderboard delivered, and where it stops, each limit being a result from the term. The theorems in one view, as a reference sheet.</p>
 <p><strong>Reading [PROVISIONAL]</strong></p>
+<ul>
+<li>PPA Chapter 4 (Representations and features), pp.&nbsp;49–67: measurement, and “Nonlinear predictors” (polynomials, kernels and random features, and a neural network as a learned representation).</li>
+<li>ISLR Chapter 10, sections 10.1–10.2, pp.&nbsp;404–411 (single- and multilayer neural networks), for the one network the lecture builds. The rest of Chapter 10 is ST311’s.</li>
+</ul>
 <p>Delivered in lecture, for reference rather than preparation:</p>
 <ul>
-<li>Rodu and Baiocchi, “When black box algorithms are (not) appropriate”, <em>Observational Studies</em> 2023 (arXiv 2001.07648): the common task framework, outcome and model reasoning, MARA(s).</li>
-<li>Wang, Kapoor, Barocas and Narayanan, “Against predictive optimization”, <em>ACM Journal on Responsible Computing</em> 2024, and the rubric at <a href="https://predictive-optimization.cs.princeton.edu/">predictive-optimization.cs.princeton.edu</a>: the project’s justification section uses it.</li>
+<li>Rodu and Baiocchi, “When black box algorithms are (not) appropriate”, <em>Observational Studies</em> 9(2), 2023 (arXiv 2001.07648): the common task framework and what it does and does not establish.</li>
+<li>Wang, Kapoor, Barocas and Narayanan, “Against predictive optimization”, <em>ACM Journal on Responsible Computing</em> 1(1), 2024.</li>
 </ul>
-<p>Optional: ISLR Chapter 10, sections 10.1–10.2, pp.&nbsp;404–411 (single- and multilayer neural networks), for the optional segment; ISLR Chapter 12, section 12.1, from p.&nbsp;497, for the reader who wants to see what unsupervised learning is.</p>
-<p><strong>Lecture and seminar:</strong> released here at the start of the week, together with the theorems in one view (statements only, with the week each was proved or derived; bring it to the seminar and try to reproduce each statement from memory first, checking second). One unfamiliar case on paper; a simulated lender in R on which a partial dependence curve, an intervention claim and a SHAP value are checked against a known truth; your own project against MARA(s) and the rubric. Data: a supplied simulation, and your project data.</p>
+<p>Optional: ISLR Chapter 12, section 12.2, from p.&nbsp;498 (principal components, the simplest learned representation); Belkin, Hsu, Ma and Mandal, <em>PNAS</em> 2019, if not read in week 7.</p>
+<p><strong>Lecture and seminar:</strong> released here at the start of the week, together with the theorems in one view (statements only, with the week each was proved or derived; bring it to the seminar and try to reproduce each statement from memory first, checking second). Supplied text embeddings in R: <span class="math inline">\(k\)</span>-nearest neighbors, ridge and logistic regression fitted on them, what the representation preserves and where evaluation fails; then one unfamiliar problem taken from target to evaluation. Data: a supplied embedding file, and your project data.</p>
 
 
 </section>
 
 </main> <!-- /main -->
+<!-- Collapsible week blocks on the course page (index.qmd includes this file after the body).
+     Each level-2 section (one per week, from weeks/NN-<name>/_index.qmd) is collapsed
+     when the page loads; its heading toggles it. A link to a week's heading (the table of
+     contents, or a URL with the week's id in the hash) opens that week. Without JavaScript
+     the page is unchanged: every week is shown in full. -->
+<style>
+  .week-block > h2 { cursor: pointer; user-select: none; }
+  .week-block > h2::before {
+    content: "\25B8";            /* ▸ */
+    display: inline-block; width: 1.1em; margin-left: -1.1em;
+    font-size: 0.8em; color: #6c757d;
+  }
+  .week-block.open > h2::before { content: "\25BE"; }   /* ▾ */
+  .week-controls { font-size: 0.9em; color: #6c757d; margin: 0 0 1rem 0; }
+  .week-controls a { cursor: pointer; }
+  @media (max-width: 767px) { .week-block > h2::before { margin-left: 0; } }
+  @media print {
+    .week-body[hidden] { display: block !important; }
+    .week-block > h2::before, .week-controls { display: none; }
+  }
+</style>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  var main = document.querySelector("#quarto-document-content") || document.body;
+  var sections = Array.prototype.slice.call(main.querySelectorAll("section.level2"));
+  if (!sections.length) return;
+
+  sections.forEach(function (sec) {
+    var h = sec.querySelector(":scope > h2");
+    if (!h) return;
+    var body = document.createElement("div");
+    body.className = "week-body";
+    var node = h.nextSibling;
+    while (node) { var next = node.nextSibling; body.appendChild(node); node = next; }
+    sec.appendChild(body);
+    sec.classList.add("week-block");
+    h.setAttribute("role", "button");
+    h.setAttribute("tabindex", "0");
+    sec.setOpen = function (open) {
+      sec.classList.toggle("open", open);
+      h.setAttribute("aria-expanded", open ? "true" : "false");
+      body.hidden = !open;
+    };
+    sec.setOpen(false);
+    h.addEventListener("click", function (e) {
+      if (e.target.closest("a.anchorjs-link")) return;   /* the heading's own # link */
+      sec.setOpen(!sec.classList.contains("open"));
+    });
+    h.addEventListener("keydown", function (e) {
+      if (e.key === "Enter" || e.key === " ") { e.preventDefault(); h.click(); }
+    });
+  });
+
+  function openFromHash() {
+    var id = decodeURIComponent(location.hash.slice(1));
+    if (!id) return;
+    var el = document.getElementById(id);
+    var sec = el && el.closest("section.level2");
+    if (sec && sec.setOpen) {
+      sec.setOpen(true);
+      el.scrollIntoView({ block: "start" });
+    }
+  }
+  openFromHash();
+  window.addEventListener("hashchange", openFromHash);
+
+  var controls = document.createElement("p");
+  controls.className = "week-controls";
+  var expand = document.createElement("a");
+  expand.textContent = "Expand all weeks";
+  var collapse = document.createElement("a");
+  collapse.textContent = "Collapse all";
+  expand.addEventListener("click", function (e) { e.preventDefault(); sections.forEach(function (s) { s.setOpen && s.setOpen(true); }); });
+  collapse.addEventListener("click", function (e) { e.preventDefault(); sections.forEach(function (s) { s.setOpen && s.setOpen(false); }); });
+  controls.appendChild(expand);
+  controls.appendChild(document.createTextNode(" · "));
+  controls.appendChild(collapse);
+  sections[0].parentNode.insertBefore(controls, sections[0]);
+});
+</script>
 <script id="quarto-html-after-body" type="application/javascript">
   window.document.addEventListener("DOMContentLoaded", function (event) {
     const icon = "";
