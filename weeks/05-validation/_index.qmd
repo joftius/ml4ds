@@ -1,10 +1,13 @@
-## Week 5: validation and honest evaluation
+## Week 5: what structures can we model?
 
-Why training error flatters a model (the optimism theorem), the standard error of a held-out score, and cross-validation written out. Then the ways an honest-looking evaluation goes wrong: a leak between training and evaluation data, two leaderboards that disagree, and a score computed on data the model will never meet again (in-distribution against out-of-distribution).
+The methods, introduced together and compared under one protocol. Ridge and lasso: what a penalty changes, what $\lambda$ controls, fitting when $p > n$. Additive models: a spline as regression on basis functions, one curve per input, the basis size as the knob. Trees and forests: how a small tree predicts, why it is unstable, what averaging does. Then one simulated dataset for each kind of truth (sparse linear, additive smooth, thresholds with an interaction), every family fitted to each, and the four dimensions on which a method bets: wide or tall, sparse or dense, smooth or discontinuous, additive or interactive. Training error flatters every one of them (the optimism theorem, stated; its proof is yours before the seminar). The three-way split, training, selection and a test set opened once, is used from the first slide.
 
-**Reading [PROVISIONAL]**
+**Reading**
 
-- ISLR Chapter 5, section 5.1, pp. 197–209 (the validation set, leave-one-out and $K$-fold cross-validation, and the bias–variance trade-off in choosing $K$). Section 5.2, the bootstrap, is not part of this course.
-- PPA Chapter 6, pp. 100–106 (the generalization gap; what happens empirically with over-parameterized models), and Chapter 8, pp. 146–148 (the holdout method and Kaggle's secret holdout).
+- ISLR Chapter 6 (Linear Model Selection and Regularization), sections 6.2.1–6.2.2, pp. 237–250: ridge regression and the lasso, and what each penalty does to the coefficients. Stop before 6.2.3; choosing $\lambda$ by cross-validation is week 7.
+- ISLR Chapter 7 (Moving Beyond Linearity), sections 7.3–7.4, pp. 294–301 (basis functions and regression splines), and section 7.7, pp. 306–310 (generalized additive models; 7.7.1 fits one by least squares on spline basis functions, as the lecture does, and the GAM part of the lab in 7.8 has the `lm` and `ns()` code). Section 7.5, smoothing splines, is week 7. Skim 7.6, pp. 304–306: local regression is named in the lecture and not examined.
+- ISLR Chapter 8 (Tree-Based Methods), section 8.1.1, pp. 328–335 (regression trees), and sections 8.2.1–8.2.2, pp. 340–345 (bagging and random forests). Skim 8.1.2–8.1.4, pp. 335–340. Section 8.2.3, boosting, is week 8.
 
-**Lecture and seminar:** released here at the start of the week. Cross-validation written out, with and without a leak; a competition run cleanly; a held-out score under three kinds of shift. Data: the (fictional) attrition outcome, the penguins, simulated data.
+Optional: PPA Chapter 6 (Generalization), "Generalization gap", pp. 100–101, the setting of the optimism theorem.
+
+**Lecture and seminar:** released here at the start of the week. All three families and the baselines on one dataset, one leaderboard, the three-way split enforced. Data: Spotify tracks (what makes a song popular; a data note comes with the notebook), the penguins, the movies, simulated data.
