@@ -4,7 +4,7 @@
     "href": "data/spotify.html",
     "title": "Spotify tracks",
     "section": "",
-    "text": "Provenance and license\nCollected from the Spotify Web API by Kaylin Pavlik in January 2020 (the R package spotifyr, playlists of six genres and 24 subgenres) and published as the TidyTuesday dataset of 21 January 2020 (rfordatascience/tidytuesday, data/2020/2020-01-21/spotify_songs.csv, 32,833 rows). Spotify’s developer terms restrict commercial use of API data; this is teaching, as with the IMDb data in the movies note. The course file is a subsample: 10,000 tracks drawn at random (Python, seed 310) from the 28,356 distinct track_id values, with every playlist row of each kept, 11,554 rows.\n\n\nR access\nreadr::read_csv(\"https://ml4ds.com/files/spotify_tracks.csv\"); the repository file is files/spotify_tracks.csv (1.8 MB).\n\n\nUnit of observation\nA track in a playlist. 1,101 of the 10,000 tracks appear in more than one playlist (up to ten in the full data), so the course’s unit is the track and the loader keeps one row per track_id. Columns: track_id, track_name, track_artist, track_popularity (Spotify’s score, 0 to 100), release_date (of the album; 1,855 rows in the full data have a year only), release_year, playlist_genre (six), playlist_subgenre (24), and the API’s audio features danceability, energy, key, loudness, mode, speechiness, acousticness, instrumentalness, liveness, valence, tempo, duration_ms.\n\n\nTarget and loss\ntrack_popularity with squared error. Its variance is about 560 (standard deviation 24), and about a tenth of the tracks score exactly 0, a value Spotify gives tracks that are rarely played (re-releases and obscure uploads among them).\n\n\nAvailable at prediction time\nThe audio features and the release date are properties of the recording. The genre is a property of the playlist, not the track: 1,687 tracks in the full data sit in playlists of more than one genre, so the loader’s genre is that of the first playlist listing. Popularity is Spotify’s score at collection time (January 2020) and rewards recent plays, so release_year carries recency as well as era; a model fitted here predicts the 2020 score of a track, not a timeless quality.\n\n\nPermitted predictors\nWeek 5: the eleven numeric features (ten audio features, duration_ms in minutes, and release_year) and playlist_genre. key and mode are categorical and are left out of the splines; instrumentalness is exactly 0 for over a third of the tracks and is used as a linear term or on a log scale.\n\n\nMissingness\nFive tracks in the full data lack a name; no feature is missing.\n\n\nSplit unit and seed\nTracks. The seminar splits the 10,000 tracks three ways with set.seed(5) into 5,000 training, 2,000 selection and 3,000 test tracks, so every student sees the same numbers. A split by row instead of by track puts the same track on both sides for about a tenth of the tracks (the leakage example of week 7).\n\n\nBaseline\nPredict the mean (39.1 on the training tracks): mean squared error 581 on the 2,000 selection tracks, where least squares on the eleven numeric features reaches about 541 and \\(k\\) nearest neighbors on the same inputs about 528 (the lecture’s baselines). The test scores of every family are the seminar’s leaderboard, opened once there and reported with the seminar’s solutions.\n\n\nMethods that use it\nWeek 5: the three-way split and the baselines in the lecture; the seminar’s leaderboard with least squares, k-NN, the lasso, an additive spline model, a tree and a forest. Week 7 reuses it for the cross-validation pipeline and the leakage check.\n\n\nComplication it carries\nThe popularity score is a snapshot of plays, not a judgment of the music, and the playlists were chosen by one person in one month. The genre labels belong to playlists, which is why a track can carry two. The spike at 0 is a property of Spotify’s scoring.\n\n\nLimitations\nSix genres, English and Spanish language playlists, no lyrics, no artist history, no play counts. Fine for the mechanism, which is the point in week 5, and for the question of which structure helps; not for a claim about music.\n\n\nFictional?\nNo."
+    "text": "Provenance and license\nCollected from the Spotify Web API by Kaylin Pavlik (January 2020) and published as the TidyTuesday dataset of 21 January 2020, 32,833 rows. Spotify’s developer terms restrict commercial use; this is teaching. The course file is 10,000 tracks drawn at random from the 28,356 distinct tracks.\n\n\nR access\nreadr::read_csv(\"https://ml4ds.com/files/spotify_tracks.csv\"), then one row per track_id (the loader below).\n\n\nUnit of observation\nA track. The file has a row per track and playlist (11,554 rows), since 1,101 tracks are in more than one playlist. Columns: track_id, track_name, track_artist, track_popularity (0 to 100), release_date, release_year, playlist_genre, playlist_subgenre, and the audio features danceability, energy, key, loudness, mode, speechiness, acousticness, instrumentalness, liveness, valence, tempo, duration_ms.\n\n\nTarget and loss\ntrack_popularity with squared error. Variance about 560; a tenth of the tracks score exactly 0.\n\n\nAvailable at prediction time\nThe audio features and the release date are properties of the recording. The genre is the playlist’s, not the track’s. Popularity is Spotify’s score in January 2020 and rewards recent plays, so release_year carries recency as well as era.\n\n\nPermitted predictors\nWeek 5: the ten audio features (duration_ms in minutes), release_year and playlist_genre.\n\n\nMissingness\nNone in the features; five tracks lack a name.\n\n\nSplit unit and seed\nTracks, with set.seed(5): 5,000 training, 2,000 selection, 3,000 test. A split by row puts the same track on both sides (week 7’s leakage example).\n\n\nBaseline\nThe training mean, 39.1: MSE 581 on the selection tracks, where least squares on the eleven numeric inputs scores about 541 and \\(k\\) nearest neighbors on the same inputs about 528. The test scores are the seminar’s.\n\n\nMethods that use it\nWeek 5: the lecture’s demonstrations and the seminar’s leaderboard. Week 7: cross-validation and the leakage check.\n\n\nComplication it carries\nThe score is a snapshot of plays, not a judgment of the music; the playlists were one person’s choice in one month.\n\n\nLimitations\nSix genres, no lyrics, no artist history, no play counts. Fine for the mechanism, not for a claim about music.\n\n\nFictional?\nNo."
   },
   {
     "objectID": "data/spotify.html#loader",
@@ -1551,7 +1551,7 @@
     "href": "weeks/05-validation/slides/05-1-structures.html#where-week-4-left-it",
     "title": "Machine learning",
     "section": "Where week 4 left it",
-    "text": "Where week 4 left it\nWeek 4’s wide regression: the training error fell at every step, the held-out error turned at step 15, and the number of steps was chosen on the held-out rows\nWeek 1’s seminar asked it first: “you are about to report the same held-out score you chose on”. Week 4’s asked it again\n\nYou chose the number of steps on the held-out rows. Which number do you report as the model’s error, and what would make it honest?\n\nToday’s question: what structures can we model? Four new families, each a bet on the shape of \\(f^\\star\\), and one protocol to compare them on"
+    "text": "Where week 4 left it\nLast week: optimization, the general concepts and the methods that fit a model. Every method so far was a loss, a class and an algorithm\nThis week: a few specific families of supervised models, each introduced briefly. Each gets more detail later: how to choose its knob (week 7), how its fit is constructed and improved (week 8), what it can tell you (week 9)\nToday’s question: what structures can we model? Each family is a bet on the shape of \\(f^\\star\\), and we need one protocol to compare the bets\nWeek 4’s seminar ended on a question: the held-out score you chose the stopping step on is not the model’s error. The protocol answers it"
   },
   {
     "objectID": "weeks/05-validation/slides/05-1-structures.html#the-task-10000-spotify-tracks",
@@ -1565,7 +1565,7 @@
     "href": "weeks/05-validation/slides/05-1-structures.html#three-kinds-of-data-one-rule-each",
     "title": "Machine learning",
     "section": "Three kinds of data, one rule each",
-    "text": "Three kinds of data, one rule each\n\n\n\n\n\n\n\n\n\n\nUsed for\nHow often\n\n\n\n\nTraining\nfitting\nas much as you like\n\n\nSelection (books: validation)\nchoosing among fits: \\(\\lambda\\), \\(k\\), \\(J\\), a depth, a method\nas much as you like; the winner’s score is a selected minimum, so optimistic\n\n\nTest, reserved\none number for the model you chose, with its standard error\nonce\n\n\n\n\nESL’s word for the third: a vault. Split once, at random, before looking (today 5,000, 2,000 and 3,000 tracks); refit the chosen model on training plus selection; open the vault once. A test set may score several competitors fixed in advance; nothing is chosen on it\n\nWeek 1’s one rule, now for evaluation data: a row is fair game for scoring only if nothing about the model was chosen on it."
+    "text": "Three kinds of data, one rule each\n\n\n\n\n\n\n\n\n\n\nUsed for\nHow often\n\n\n\n\nTraining\nfitting\nas much as you like\n\n\nSelection (books: validation)\nchoosing among fits: a method, its knob\nas much as you like\n\n\nTest, reserved\none number for the model you chose, with its standard error\nonce\n\n\n\n\nESL’s word for the third: a vault. Split once, at random, before looking (today 5,000, 2,000 and 3,000 tracks); refit the chosen model on training plus selection; open the vault once. A test set may score several competitors fixed in advance; nothing is chosen on it\n\nWeek 1’s one rule, now for evaluation data: a row is fair game for scoring only if nothing about the model was chosen on it."
   },
   {
     "objectID": "weeks/05-validation/slides/05-1-structures.html#ctf-competition-the-baselines",
@@ -1600,7 +1600,7 @@
     "href": "weeks/05-validation/slides/05-1-structures.html#what-lambda-controls",
     "title": "Machine learning",
     "section": "What \\(\\lambda\\) controls",
-    "text": "What \\(\\lambda\\) controls\n\n\nSet the gradient of \\(\\| \\mathbf y - \\mathbf X \\beta \\|^2 + \\lambda \\| \\beta \\|^2\\) to zero (exercise 2): \\[\n(\\mathbf X^T\\mathbf X + \\lambda I)\\,\\hat\\beta_\\lambda = \\mathbf X^T\\mathbf y\n\\] \\[\n\\hat\\beta_\\lambda = (\\mathbf X^T\\mathbf X + \\lambda I)^{-1}\\mathbf X^T\\mathbf y\n\\]\n\\(\\mathbf X^T\\mathbf X + \\lambda I\\) is invertible for every \\(\\lambda &gt; 0\\), whatever \\(n\\) and \\(p\\): one solution even when \\(p &gt; n\\)\n\\(\\lambda \\to 0\\): least squares (when it exists). \\(\\lambda \\to \\infty\\): \\(\\hat\\beta_\\lambda \\to \\mathbf 0\\). In between, one knob\n\n\n\n\n\n\n\n\n\n\nRidge paths: \\(\\hat\\beta_\\lambda\\) against \\(-\\log\\lambda\\) (large \\(\\lambda\\) on the left), simulated data, \\(n = 100\\), \\(p = 20\\), 8 true coefficients nonzero"
+    "text": "What \\(\\lambda\\) controls\n\n\nSet the gradient of \\(\\| \\mathbf y - \\mathbf X \\beta \\|^2 + \\lambda \\| \\beta \\|^2\\) to zero (exercise 2): \\[\n(\\mathbf X^T\\mathbf X + \\lambda I)\\,\\hat\\beta_\\lambda = \\mathbf X^T\\mathbf y\n\\] \\[\n\\hat\\beta_\\lambda = (\\mathbf X^T\\mathbf X + \\lambda I)^{-1}\\mathbf X^T\\mathbf y\n\\]\n\\(\\mathbf X^T\\mathbf X + \\lambda I\\) is invertible for every \\(\\lambda &gt; 0\\), whatever \\(n\\) and \\(p\\): one solution even when \\(p &gt; n\\)\n\\(\\lambda \\to 0\\): least squares (when it exists). \\(\\lambda \\to \\infty\\): \\(\\hat\\beta_\\lambda \\to \\mathbf 0\\). In between, one knob\n\n\n\n\n\n\n\n\n\n\n\\(\\hat\\beta_\\lambda\\) against \\(-\\log\\lambda\\): the 16 standardized inputs (eleven numeric, five genre dummies), six named"
   },
   {
     "objectID": "weeks/05-validation/slides/05-1-structures.html#lasso-vs-ridge-l1-vs-l2-norm-penalties",
@@ -1614,21 +1614,21 @@
     "href": "weeks/05-validation/slides/05-1-structures.html#lasso-vs-ridge-solution-paths-of-hat-beta",
     "title": "Machine learning",
     "section": "Lasso vs ridge: solution paths of \\(\\hat \\beta\\)",
-    "text": "Lasso vs ridge: solution paths of \\(\\hat \\beta\\)\n\n\n\nplot(ridge_fit, xvar = \"lambda\")\n\n\n\n\n\n\n\n\n\n\nplot(lasso_fit, xvar = \"lambda\")\n\n\n\n\n\n\n\n\n\nSame simulated data, large \\(\\lambda\\) on the left: \\(n = 100\\), \\(p = 20\\), 8 nonzero coefficients. The lasso’s coefficients are exactly zero over whole ranges of \\(\\lambda\\); ridge’s never are"
+    "text": "Lasso vs ridge: solution paths of \\(\\hat \\beta\\)\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nSpotify, the same 16 inputs, large \\(\\lambda\\) on the left. The lasso’s coefficients are exactly zero over whole ranges of \\(\\lambda\\) and enter one at a time; ridge’s are never zero"
   },
   {
     "objectID": "weeks/05-validation/slides/05-1-structures.html#high-dimensional-example",
     "href": "weeks/05-validation/slides/05-1-structures.html#high-dimensional-example",
     "title": "Machine learning",
     "section": "High dimensional example",
-    "text": "High dimensional example\n\\(p = 200\\) inputs, \\(n = 100\\) rows, 21 true coefficients nonzero; least squares has no unique fit. Ridge and lasso at the \\(\\lambda\\) chosen on 100 fresh rows\n\n\n\n\n\n\n\n\n\nBlack dots the truth, hollow pink circles the lasso, blue crosses ridge. The lasso keeps 71 of 200 (17 of the 21 true ones; its extras are below 0.22); ridge keeps all 200"
+    "text": "High dimensional example\nSimulated (\\(p &gt; n\\) needs it): \\(p = 200\\) inputs, \\(n = 100\\) rows, 21 true coefficients nonzero; least squares has no unique fit. Ridge and lasso at the \\(\\lambda\\) chosen on 100 fresh rows\n\n\n\n\n\n\n\n\n\nBlack dots the truth, hollow pink circles the lasso, blue crosses ridge. The lasso keeps 71 of 200 (17 of the 21 true ones; its extras are below 0.22); ridge keeps all 200"
   },
   {
     "objectID": "weeks/05-validation/slides/05-1-structures.html#lasso-cool-or-extremely-cool",
     "href": "weeks/05-validation/slides/05-1-structures.html#lasso-cool-or-extremely-cool",
     "title": "Machine learning",
     "section": "Lasso: cool or extremely cool?",
-    "text": "Lasso: cool or extremely cool?\n\nHigh-dimensional: \\(p &gt; n\\) means we can’t fit OLS\n\nBut all is not lost! Penalized regression to the rescue\n\nTrue model is sparse\n\nOnly 21 of 200 variables have nonzero coefficients\n\nRidge estimates are dense\n\nAll coefficients nonzero 😰\n\nLasso estimates are sparse\n\nNonzero estimates include most of the true model, plus many small extras 😎"
+    "text": "Lasso: cool or extremely cool?\n\nHigh-dimensional: \\(p &gt; n\\) means OLS has no unique fit\n\nBut all is not lost! Penalized regression to the rescue\n\nTrue model is sparse\n\n21 of 200 nonzero; the lasso kept 71, 17 of the true 21 among them\n\nRidge estimates are dense\n\nAll coefficients nonzero 😰\n\nLasso estimates are sparse\n\nNonzero estimates include most of the true model, plus many small extras 😎"
   },
   {
     "objectID": "weeks/05-validation/slides/05-1-structures.html#section-2",
@@ -1642,14 +1642,14 @@
     "href": "weeks/05-validation/slides/05-1-structures.html#three-ways-to-estimate-a-curve",
     "title": "Machine learning",
     "section": "Three ways to estimate a curve",
-    "text": "Three ways to estimate a curve\nWeek 1’s data: life expectancy on \\(\\log_{10}\\) GDP per capita, 142 countries. Three ways to turn a line into a curve\n\n\n\n\n\n\n\n\n\nAverage nearby (\\(k\\)-NN; a kernel weights by distance instead of cutting at \\(k\\)). Fit a line nearby (loess). Fit a basis: fixed curves, combined by least squares. The course examines the third"
+    "text": "Three ways to estimate a curve\nWeek 1’s data, life expectancy on GDP per capita, 142 countries (no log this time). Three ways to turn a line into a curve\n\n\n\n\n\n\n\n\n\nAverage nearby (\\(k\\)-NN; a kernel weights by distance instead of cutting at \\(k\\)). Fit a line nearby (loess). Fit a basis: fixed curves, combined by least squares. The course examines the third"
   },
   {
     "objectID": "weeks/05-validation/slides/05-1-structures.html#a-spline-is-regression-on-basis-functions",
     "href": "weeks/05-validation/slides/05-1-structures.html#a-spline-is-regression-on-basis-functions",
     "title": "Machine learning",
     "section": "A spline is regression on basis functions",
-    "text": "A spline is regression on basis functions\n\n\n\n\n\n\n\n\n\n\n\n\nA basis: fixed functions \\(b_1(x), \\ldots, b_J(x)\\) of one input, combined by least squares: \\[\nf(x) = \\beta_0 + \\sum_{j=1}^J \\beta_j\\, b_j(x)\n\\] linear in \\(\\beta\\): lm(lifeExp ~ ns(lgdp, df = J)), where ns() builds the \\(J\\) columns\nA natural cubic spline: cubic pieces joined smoothly at knots, linear beyond the ends. The basis functions are the bends the knots allow; lm adds \\(\\beta_0\\)"
+    "text": "A spline is regression on basis functions\n\n\n\n\n\n\n\n\n\n\n\n\nA basis: fixed functions \\(b_1(x), \\ldots, b_J(x)\\) of one input, combined by least squares: \\[\nf(x) = \\beta_0 + \\sum_{j=1}^J \\beta_j\\, b_j(x)\n\\] linear in \\(\\beta\\): lm(lifeExp ~ ns(gdp, df = J)), ns() building the \\(J\\) columns\nA natural cubic spline: cubic pieces joined smoothly at knots, linear beyond the ends. The basis functions are the bends the knots allow; lm adds \\(\\beta_0\\)"
   },
   {
     "objectID": "weeks/05-validation/slides/05-1-structures.html#the-basis-size-is-the-knob",
@@ -1663,28 +1663,14 @@
     "href": "weeks/05-validation/slides/05-1-structures.html#additive-modeling-assumption",
     "title": "Machine learning",
     "section": "Additive modeling assumption",
-    "text": "Additive modeling assumption\n\nLinearity assumption: each predictor has a coefficient\n\n\\[g(\\mathbb E[\\mathbf y | \\mathbf X]) = \\beta_0 + \\beta_1 \\mathbf x_1 + \\beta_2 \\mathbf x_2 + \\cdots + \\beta_p \\mathbf x_p\\]\n\nAdditivity assumption: each predictor has a function\n\n\\[g(\\mathbb E[\\mathbf y | \\mathbf X]) = \\beta_0 + f_1( \\mathbf x_1) + f_2( \\mathbf x_2) + \\cdots + f_p(\\mathbf x_p)\\]\nIncludes linear models as special case if \\(f_j(\\mathbf x_j) = \\beta_j \\mathbf x_j\\)\nToday each \\(f_j\\) is a spline with \\(J\\) basis functions, so the whole model is one least-squares fit on \\(pJ\\) columns: lm(y ~ ns(x1, J) + ns(x2, J) + ns(x3, J)). The GAM in the reading is this model, with a link"
+    "text": "Additive modeling assumption\n\nLinearity assumption: each predictor has a coefficient\n\n\\[g(\\mathbb E[\\mathbf y | \\mathbf X]) = \\beta_0 + \\beta_1 \\mathbf x_1 + \\beta_2 \\mathbf x_2 + \\cdots + \\beta_p \\mathbf x_p\\]\n\nAdditivity assumption: each predictor has a function\n\n\\[g(\\mathbb E[\\mathbf y | \\mathbf X]) = \\beta_0 + f_1( \\mathbf x_1) + f_2( \\mathbf x_2) + \\cdots + f_p(\\mathbf x_p)\\]\nIncludes linear models as special case if \\(f_j(\\mathbf x_j) = \\beta_j \\mathbf x_j\\)\nToday each \\(f_j\\) is a spline with \\(J\\) basis functions, so the whole model is one least-squares fit on \\(pJ\\) columns: lm(y ~ ns(x1, J) + ns(x2, J) + ...). The GAM in the reading is this model, with a link"
   },
   {
-    "objectID": "weeks/05-validation/slides/05-1-structures.html#component-plots",
-    "href": "weeks/05-validation/slides/05-1-structures.html#component-plots",
+    "objectID": "weeks/05-validation/slides/05-1-structures.html#an-additive-model-for-popularity",
+    "href": "weeks/05-validation/slides/05-1-structures.html#an-additive-model-for-popularity",
     "title": "Machine learning",
-    "section": "Component plots",
-    "text": "Component plots\n\\(f_1(x) = -1 + 2x - x^2\\), \\(\\quad f_2(x) = \\sin(\\pi x)\\), \\(\\quad f_3(x) = e^{-5(x - 1/2)^2}\\); \\(\\quad y = f_1(x_1) + f_2(x_2) + f_3(x_3) + \\varepsilon\\), \\(\\ n = 400\\)\n\n\n\n\n\n\n\n\n\nlm(y ~ ns(x1, 4) + ns(x2, 4) + ns(x3, 4)): one fit, twelve columns, and a curve per input to look at. The curve is a “coefficient” with a shape"
-  },
-  {
-    "objectID": "weeks/05-validation/slides/05-1-structures.html#additive-combination-of-non-linear-predictors",
-    "href": "weeks/05-validation/slides/05-1-structures.html#additive-combination-of-non-linear-predictors",
-    "title": "Machine learning",
-    "section": "Additive combination of non-linear predictors",
-    "text": "Additive combination of non-linear predictors\n\nlibrary(ggplot2movies)\nmv &lt;- movies |&gt;\n  filter(length &lt;= 200, length &gt; 10,\n         year &gt; 1918, votes &gt;= 5)\n\nI asked on Twitter what was missing from the plot of movie length vs movie rating and Thomas Lumley suggested confounding by year\n\nfit_mv &lt;- lm(rating ~ ns(length, 8) + ns(year, 8), mv)\n\nOne least-squares fit, 17 coefficients, 53,388 films (data note). No coefficient to read, so how do we interpret?"
-  },
-  {
-    "objectID": "weeks/05-validation/slides/05-1-structures.html#replace-each-linear-coefficient-with-a-2d-plot",
-    "href": "weeks/05-validation/slides/05-1-structures.html#replace-each-linear-coefficient-with-a-2d-plot",
-    "title": "Machine learning",
-    "section": "Replace each linear coefficient with a 2d plot",
-    "text": "Replace each linear coefficient with a 2d plot\n\n\n\n\n\n\n\n\n\nEach curve is what the model adds to a film’s rating for that input, with the other held fixed: a coefficient’s job, done by a shape. The model is the sum of the two curves plus a constant"
+    "section": "An additive model for popularity",
+    "text": "An additive model for popularity\n\nfit_add &lt;- lm(track_popularity ~ ns(loudness, 4) + ns(release_year, 4) +\n                ns(danceability, 4) + ns(duration_min, 4) + ns(energy, 4) +\n                ns(acousticness, 4) + genre, data = sp_train)\n\n\n\n\n\n\n\n\n\n\nOne fit, 30 coefficients, and a curve per input to read instead of a coefficient: what the model adds for that input with the others held fixed"
   },
   {
     "objectID": "weeks/05-validation/slides/05-1-structures.html#section-3",
@@ -1701,32 +1687,39 @@
     "text": "Decision trees\nAre you eligible for the COVID-19 vaccine?\n\nIf Age &gt;= 50 then yes, otherwise continue\nIf HighRisk == TRUE then yes, otherwise continue\nIf Job == CareWorker then yes, otherwise no\n\nThis is (arguably) more interpretable than a linear model with multiple predictors\n(Note: this is not the real vaccination criteria, but it was close to this in early 2021)"
   },
   {
-    "objectID": "weeks/05-validation/slides/05-1-structures.html#regression-tree-to-predict-penguin-massiveness",
-    "href": "weeks/05-validation/slides/05-1-structures.html#regression-tree-to-predict-penguin-massiveness",
+    "objectID": "weeks/05-validation/slides/05-1-structures.html#a-regression-tree-for-popularity",
+    "href": "weeks/05-validation/slides/05-1-structures.html#a-regression-tree-for-popularity",
     "title": "Machine learning",
-    "section": "Regression tree to predict penguin massiveness",
-    "text": "Regression tree to predict penguin massiveness\n\npg &lt;- penguins |&gt; drop_na()\nfit_tree &lt;- rpart(body_mass_g ~ flipper_length_mm + bill_length_mm,\n                  control = rpart.control(cp = 0.007), data = pg)\nplot(fit_tree, uniform = TRUE, margin = 0.1)\ntext(fit_tree, pretty = 0, cex = 1.7)"
+    "section": "A regression tree for popularity",
+    "text": "A regression tree for popularity\n\nfit_tree &lt;- rpart(track_popularity ~ release_year + energy, sp_train,\n                  control = rpart.control(maxdepth = 3, cp = 0, minbucket = 250))\nplot(fit_tree, uniform = TRUE, margin = 0.1)\ntext(fit_tree, pretty = 0, cex = 1.9, digits = 3)"
   },
   {
     "objectID": "weeks/05-validation/slides/05-1-structures.html#regression-tree-predictions",
     "href": "weeks/05-validation/slides/05-1-structures.html#regression-tree-predictions",
     "title": "Machine learning",
     "section": "Regression tree predictions",
-    "text": "Regression tree predictions"
+    "text": "Regression tree predictions\n\n\n\n\n\n\n\n\n\nEach leaf is a rectangle with one value; the training tracks in white. The three narrow strips on the right are the leaves for 2018 and for 2019 to 2020, split again by energy"
+  },
+  {
+    "objectID": "weeks/05-validation/slides/05-1-structures.html#one-predictor-every-cutoff",
+    "href": "weeks/05-validation/slides/05-1-structures.html#one-predictor-every-cutoff",
+    "title": "Machine learning",
+    "section": "One predictor, every cutoff",
+    "text": "One predictor, every cutoff\n\n\n\n\n\n\n\n\n\nFor one input: try every cutoff, predict each side’s mean, keep the cutoff with the smallest training MSE. One question, two leaves"
   },
   {
     "objectID": "weeks/05-validation/slides/05-1-structures.html#recursive-rectangular-splitting-on-predictors",
     "href": "weeks/05-validation/slides/05-1-structures.html#recursive-rectangular-splitting-on-predictors",
     "title": "Machine learning",
     "section": "Recursive rectangular splitting on predictors",
-    "text": "Recursive rectangular splitting on predictors\n“Stratification of the feature space”\nInput: subset of data\n  For each predictor variable x_j in subset\n    Split left: observations with x_j &lt; cutoff\n    Split right: observations with x_j &gt;= cutoff\n    Predict constants in each split\n    Compute model improvement\n    Scan cutoff value to find best split for x_j\nOutput: predictor and split with best improvement\n\nStarting from full dataset, compute first split as above\nRecurse: take the two subsets of data from each side of the split and plug them both back into the same function\nUntil some stopping rule prevents more splitting"
+    "text": "Recursive rectangular splitting on predictors\n“Stratification of the feature space”\nInput: subset of data\n  For each predictor variable x_j in subset\n    Scan cutoff values to find the best split for x_j (last slide)\nOutput: the predictor and cutoff with the best improvement\n\nStarting from the full dataset, compute the first split as above\nRecurse: take the two subsets of data from each side of the split and plug them both back into the same function\nUntil some stopping rule prevents more splitting (today: a maximum depth, the tree’s knob; growing deep and pruning back is week 8)"
   },
   {
-    "objectID": "weeks/05-validation/slides/05-1-structures.html#aggregating-is-smoothing",
-    "href": "weeks/05-validation/slides/05-1-structures.html#aggregating-is-smoothing",
+    "objectID": "weeks/05-validation/slides/05-1-structures.html#a-tree-is-unstable",
+    "href": "weeks/05-validation/slides/05-1-structures.html#a-tree-is-unstable",
     "title": "Machine learning",
-    "section": "Aggregating is… smoothing?",
-    "text": "Aggregating is… smoothing?\n\n\n\n\n\n\n\n\n\n\n\n\nOne tree on all the data, three on resamples of it. Predictions for one penguin\n\n\n species flipper bill_len bill_dep\n  Adelie     197     42.5     20.7\n\n\n\n\n  Adelie Chinstrap Gentoo\n1  1.000     0.000  0.000\n2  1.000     0.000  0.000\n3  0.123     0.863  0.014\n4  0.875     0.125  0.000"
+    "section": "A tree is unstable",
+    "text": "A tree is unstable\n\n\n\n\n\n\n\n\n\nWeek 1’s countries, resampled eight times (blue, one fit per resample). The trees’ cutoffs move with the sample and the steps move with them; the splines barely move. Orange: the average of the eight trees"
   },
   {
     "objectID": "weeks/05-validation/slides/05-1-structures.html#bagging-bootstrap-aggregating",
@@ -1754,7 +1747,7 @@
     "href": "weeks/05-validation/slides/05-1-structures.html#three-truths-one-protocol",
     "title": "Machine learning",
     "section": "Three truths, one protocol",
-    "text": "Three truths, one protocol\n\\(p = 10\\) inputs, each uniform on \\([-1, 1]\\); \\(y = f^\\star(x) + \\varepsilon\\), noise variance \\(\\sigma^2 = 1\\). Three truths, each using two or three of the ten inputs:\n\nA, sparse linear: \\(f^\\star(x) = 2x_1 - 1.5x_2 + x_3\\)\nB, additive smooth: \\(f^\\star(x) = 1.5\\,[f_1(x_1) + f_2(x_2) + f_3(x_3)]\\), part 3’s curves\nC, a threshold in two inputs at once: \\(f^\\star(x) = 4 \\cdot \\mathbf 1\\{x_1 &gt; 0,\\ x_2 &gt; 0\\}\\)\n\nOne protocol. 300 training, 100 selection, 2,000 test rows. Six competitors: least squares; lasso (\\(\\lambda\\)); \\(k\\)-NN (\\(k\\)); additive splines (\\(J\\)); a tree (depth); a forest (defaults). Knobs chosen on the selection rows, the chosen fit refitted on training plus selection, then scored once\n\nFor each truth: which family wins, which loses, and why?"
+    "text": "Three truths, one protocol\n\\(p = 10\\) inputs, uniform on \\([-1, 1]\\); \\(y = f^\\star(x) + \\varepsilon\\), noise variance \\(\\sigma^2 = 1\\). Three truths, each using two or three inputs:\n\nA, sparse linear: \\(f^\\star(x) = 2x_1 - 1.5x_2 + x_3\\)\nB, additive smooth: \\(f^\\star(x) = 1.5\\,[f_1(x_1) + f_2(x_2) + f_3(x_3)]\\), smooth \\(f_j\\)\nC, one step, two inputs at once: \\(f^\\star(x) = 4 \\cdot \\mathbf 1\\{x_1 &gt; 0,\\ x_2 &gt; 0\\}\\)\n\nOne protocol. 300 training, 100 selection, 2,000 test rows. Six competitors: least squares; lasso (\\(\\lambda\\)); \\(k\\)-NN (\\(k\\)); additive splines (\\(J\\)); a tree (depth); a forest. Knobs chosen on the selection rows, the fit refitted on training plus selection, scored once\n\nFor each truth: which family wins, which loses, and why?"
   },
   {
     "objectID": "weeks/05-validation/slides/05-1-structures.html#truth-a-sparse-linear-tall-and-then-wide",
@@ -1778,18 +1771,25 @@
     "text": "Truth C: thresholds with an interaction\n\n\n\n\n\n\n\n\n\nA sum of one-input functions can hold each input’s share of this step, two thirds of the signal at best, and not the product. Two questions in a row hold all of it"
   },
   {
+    "objectID": "weeks/05-validation/slides/05-1-structures.html#ctf-competition-the-six-on-spotify",
+    "href": "weeks/05-validation/slides/05-1-structures.html#ctf-competition-the-six-on-spotify",
+    "title": "Machine learning",
+    "section": "CTF competition: the six on Spotify",
+    "text": "CTF competition: the six on Spotify\n\n\n\n\n\n\n\n\n\nKnobs chosen on the selection tracks, scored there. The curves beat the plane by about four standard errors; the forest’s training score is 87. The vault stays shut: the seminar refits and opens it once"
+  },
+  {
     "objectID": "weeks/05-validation/slides/05-1-structures.html#four-dimensions-not-one",
     "href": "weeks/05-validation/slides/05-1-structures.html#four-dimensions-not-one",
     "title": "Machine learning",
     "section": "Four dimensions, not one",
-    "text": "Four dimensions, not one\n\n\n\n\n\n\n\n\n\nAxis\nThe question about \\(f^\\star\\)\nWho bets which way\n\n\n\n\nwide or tall\nhow \\(p\\) compares with \\(n\\)\nleast squares and the additive fit need \\(n \\gg\\) columns; ridge and the lasso fit at any \\(p\\)\n\n\nsparse or dense\nhow many inputs matter\nthe lasso bets few; least squares and ridge spread the fit over all; a forest tolerates idle inputs, \\(k\\)-NN does not\n\n\nsmooth or discontinuous\nhow \\(f^\\star\\) moves with each input\nsplines and \\(k\\)-NN bet smooth; trees bet on steps\n\n\nadditive or interactive\nwhether inputs act separately\nthe additive fit bets separately; trees, forests and \\(k\\)-NN allow interactions\n\n\n\n\nFour separate questions, not one scale from simple to complex. A family is a bet on the answers; a selection set says which bet paid on these data\n\nWeek 1’s curse: \\(k\\)-NN lost on every truth, with ten inputs and 300 points. Week 4’s no free lunch: no family won every truth, and none can."
+    "text": "Four dimensions, not one\n\n\n\n\n\n\n\n\n\nAxis\nThe question about \\(f^\\star\\)\nWho bets which way\n\n\n\n\nwide or tall\nhow \\(p\\) compares with \\(n\\)\nleast squares and the additive fit need \\(n \\gg\\) columns; ridge and the lasso fit at any \\(p\\)\n\n\nsparse or dense\nhow many inputs matter\nthe lasso bets few; least squares and ridge spread the fit over all; a forest tolerates idle inputs, \\(k\\)-NN pays for them\n\n\nsmooth or discontinuous\nhow \\(f^\\star\\) moves with each input\nsplines and \\(k\\)-NN bet smooth; trees bet on steps\n\n\nadditive or interactive\nwhether inputs act separately\nthe additive fit bets separately; trees, forests and \\(k\\)-NN allow interactions\n\n\n\n\nFour separate questions, not one scale from simple to complex. A family is a bet on the answers; a selection set says which bet paid on these data\n\nWeek 1’s curse: \\(k\\)-NN lost on every truth, ten inputs and 300 points. Week 4’s no free lunch: no family won every truth, and none can."
   },
   {
     "objectID": "weeks/05-validation/slides/05-1-structures.html#what-the-training-error-hides",
     "href": "weeks/05-validation/slides/05-1-structures.html#what-the-training-error-hides",
     "title": "Machine learning",
     "section": "What the training error hides",
-    "text": "What the training error hides\nOn most rows of the leaderboards the training MSE sat below the test MSE, the forest’s by a factor of four; on a few it sat above. Luck, or a law, and what are the exceptions?\nTraining data \\((x_i, y_i)\\), \\(i = 1, \\ldots, n\\), independent draws from the population; a class \\(\\mathcal F\\) fixed before the data (the planes; the spline fits with a given basis); \\(f_{\\mathcal F}\\) the best in \\(\\mathcal F\\), the minimizer of \\(R\\) over it; \\(\\hat f\\) the empirical risk minimizer, the minimizer of \\(\\hat R_n\\) over \\(\\mathcal F\\) (week 4)\n\nThree numbers: \\(\\mathbb E[\\hat R_n(\\hat f)]\\), \\(R(f_{\\mathcal F})\\), \\(\\mathbb E[R(\\hat f)]\\). Put them in order, and write down what you used to do it."
+    "text": "What the training error hides\nOn most rows of the leaderboards the training MSE sat below the test or selection MSE, the forest’s by a factor of four on the truths and of six on Spotify; on a few rows it sat above. Luck, or a law, and what are the exceptions?\nTraining data \\((x_i, y_i)\\), \\(i = 1, \\ldots, n\\), independent draws from the population; a class \\(\\mathcal F\\) fixed before the data (the planes; the spline fits with a given basis); \\(f_{\\mathcal F}\\) the best in \\(\\mathcal F\\), the minimizer of \\(R\\) over it; \\(\\hat f\\) the empirical risk minimizer, the minimizer of \\(\\hat R_n\\) over \\(\\mathcal F\\) (week 4)\n\nThree numbers: \\(\\mathbb E[\\hat R_n(\\hat f)]\\), \\(R(f_{\\mathcal F})\\), \\(\\mathbb E[R(\\hat f)]\\). Put them in order, and write down what you used to do it."
   },
   {
     "objectID": "weeks/05-validation/slides/05-1-structures.html#optimism-theorem",

@@ -1,22 +1,22 @@
 ---
 title: "Spotify tracks"
-description: "10,000 tracks from Spotify playlists of six genres with twelve audio features, a release date and Spotify's popularity score. The week-5 task: what makes a song popular?"
+description: "10,000 tracks from Spotify playlists of six genres, with audio features, a release date and Spotify's popularity score. The week-5 task: what makes a song popular?"
 ---
 
 | | |
 |---|---|
-| **Provenance and license** | Collected from the Spotify Web API by Kaylin Pavlik in January 2020 (the R package `spotifyr`, playlists of six genres and 24 subgenres) and published as the TidyTuesday dataset of 21 January 2020 (`rfordatascience/tidytuesday`, `data/2020/2020-01-21/spotify_songs.csv`, 32,833 rows). Spotify's developer terms restrict commercial use of API data; this is teaching, as with the IMDb data in the movies note. The course file is a subsample: 10,000 tracks drawn at random (Python, seed 310) from the 28,356 distinct `track_id` values, with every playlist row of each kept, 11,554 rows. |
-| **R access** | `readr::read_csv("https://ml4ds.com/files/spotify_tracks.csv")`; the repository file is `files/spotify_tracks.csv` (1.8 MB). |
-| **Unit of observation** | A track in a playlist. 1,101 of the 10,000 tracks appear in more than one playlist (up to ten in the full data), so the course's unit is the track and the loader keeps one row per `track_id`. Columns: `track_id`, `track_name`, `track_artist`, `track_popularity` (Spotify's score, 0 to 100), `release_date` (of the album; 1,855 rows in the full data have a year only), `release_year`, `playlist_genre` (six), `playlist_subgenre` (24), and the API's audio features `danceability`, `energy`, `key`, `loudness`, `mode`, `speechiness`, `acousticness`, `instrumentalness`, `liveness`, `valence`, `tempo`, `duration_ms`. |
-| **Target and loss** | `track_popularity` with squared error. Its variance is about 560 (standard deviation 24), and about a tenth of the tracks score exactly 0, a value Spotify gives tracks that are rarely played (re-releases and obscure uploads among them). |
-| **Available at prediction time** | The audio features and the release date are properties of the recording. The genre is a property of the playlist, not the track: 1,687 tracks in the full data sit in playlists of more than one genre, so the loader's genre is that of the first playlist listing. Popularity is Spotify's score at collection time (January 2020) and rewards recent plays, so `release_year` carries recency as well as era; a model fitted here predicts the 2020 score of a track, not a timeless quality. |
-| **Permitted predictors** | Week 5: the eleven numeric features (ten audio features, `duration_ms` in minutes, and `release_year`) and `playlist_genre`. `key` and `mode` are categorical and are left out of the splines; `instrumentalness` is exactly 0 for over a third of the tracks and is used as a linear term or on a log scale. |
-| **Missingness** | Five tracks in the full data lack a name; no feature is missing. |
-| **Split unit and seed** | Tracks. The seminar splits the 10,000 tracks three ways with `set.seed(5)` into 5,000 training, 2,000 selection and 3,000 test tracks, so every student sees the same numbers. A split by row instead of by track puts the same track on both sides for about a tenth of the tracks (the leakage example of week 7). |
-| **Baseline** | Predict the mean (39.1 on the training tracks): mean squared error 581 on the 2,000 selection tracks, where least squares on the eleven numeric features reaches about 541 and $k$ nearest neighbors on the same inputs about 528 (the lecture's baselines). The test scores of every family are the seminar's leaderboard, opened once there and reported with the seminar's solutions. |
-| **Methods that use it** | Week 5: the three-way split and the baselines in the lecture; the seminar's leaderboard with least squares, k-NN, the lasso, an additive spline model, a tree and a forest. Week 7 reuses it for the cross-validation pipeline and the leakage check. |
-| **Complication it carries** | The popularity score is a snapshot of plays, not a judgment of the music, and the playlists were chosen by one person in one month. The genre labels belong to playlists, which is why a track can carry two. The spike at 0 is a property of Spotify's scoring. |
-| **Limitations** | Six genres, English and Spanish language playlists, no lyrics, no artist history, no play counts. Fine for the mechanism, which is the point in week 5, and for the question of which structure helps; not for a claim about music. |
+| **Provenance and license** | Collected from the Spotify Web API by Kaylin Pavlik (January 2020) and published as the TidyTuesday dataset of 21 January 2020, 32,833 rows. Spotify's developer terms restrict commercial use; this is teaching. The course file is 10,000 tracks drawn at random from the 28,356 distinct tracks. |
+| **R access** | `readr::read_csv("https://ml4ds.com/files/spotify_tracks.csv")`, then one row per `track_id` (the loader below). |
+| **Unit of observation** | A track. The file has a row per track and playlist (11,554 rows), since 1,101 tracks are in more than one playlist. Columns: `track_id`, `track_name`, `track_artist`, `track_popularity` (0 to 100), `release_date`, `release_year`, `playlist_genre`, `playlist_subgenre`, and the audio features `danceability`, `energy`, `key`, `loudness`, `mode`, `speechiness`, `acousticness`, `instrumentalness`, `liveness`, `valence`, `tempo`, `duration_ms`. |
+| **Target and loss** | `track_popularity` with squared error. Variance about 560; a tenth of the tracks score exactly 0. |
+| **Available at prediction time** | The audio features and the release date are properties of the recording. The genre is the playlist's, not the track's. Popularity is Spotify's score in January 2020 and rewards recent plays, so `release_year` carries recency as well as era. |
+| **Permitted predictors** | Week 5: the ten audio features (`duration_ms` in minutes), `release_year` and `playlist_genre`. |
+| **Missingness** | None in the features; five tracks lack a name. |
+| **Split unit and seed** | Tracks, with `set.seed(5)`: 5,000 training, 2,000 selection, 3,000 test. A split by row puts the same track on both sides (week 7's leakage example). |
+| **Baseline** | The training mean, 39.1: MSE 581 on the selection tracks, where least squares on the eleven numeric inputs scores about 541 and $k$ nearest neighbors on the same inputs about 528. The test scores are the seminar's. |
+| **Methods that use it** | Week 5: the lecture's demonstrations and the seminar's leaderboard. Week 7: cross-validation and the leakage check. |
+| **Complication it carries** | The score is a snapshot of plays, not a judgment of the music; the playlists were one person's choice in one month. |
+| **Limitations** | Six genres, no lyrics, no artist history, no play counts. Fine for the mechanism, not for a claim about music. |
 | **Fictional?** | No. |
 
 ## Loader
