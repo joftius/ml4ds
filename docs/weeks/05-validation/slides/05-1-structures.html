@@ -223,18 +223,16 @@ Joshua Loftus
 <p>Part 4: trees and forests</p>
 <p>Part 5: which structure?</p>
 </section>
-<section id="where-week-4-left-it" class="slide level2" data-minutes="3">
+<section id="where-week-4-left-it" class="slide level2">
 <h2>Where week 4 left it</h2>
-<p>Week 4’s wide regression: the training error fell at every step, the held-out error turned at step 15, and the number of steps was chosen on the held-out rows</p>
-<p>Week 1’s seminar asked it first: “you are about to report the same held-out score you chose on”. Week 4’s asked it again</p>
-<div class="ask">
-<p>You chose the number of steps on the held-out rows. Which number do you report as the model’s error, and what would make it honest?</p>
-</div>
-<p>Today’s question: what structures can we model? Four new families, each a bet on the shape of <span class="math inline">\(f^\star\)</span>, and one protocol to compare them on</p>
+<p>Last week: optimization, the general concepts and the methods that fit a model. Every method so far was a loss, a class and an algorithm</p>
+<p>This week: a few specific families of supervised models, each introduced briefly. Each gets more detail later: how to choose its knob (week 7), how its fit is constructed and improved (week 8), what it can tell you (week 9)</p>
+<p>Today’s question: <strong>what structures can we model?</strong> Each family is a bet on the shape of <span class="math inline">\(f^\star\)</span>, and we need one protocol to compare the bets</p>
+<p>Week 4’s seminar ended on a question: the held-out score you chose the stopping step on is not the model’s error. The protocol answers it</p>
 </section>
 <section id="the-task-10000-spotify-tracks" class="slide level2">
 <h2>The task: 10,000 Spotify tracks</h2>
-<p>Predict a track’s <strong>popularity</strong> (Spotify’s score, 0 to 100) from eleven audio features (danceability, energy, loudness, valence, tempo, duration, …), its genre and its release year. Loss: squared error</p>
+<p>Predict a track’s <strong>popularity</strong> (Spotify’s score, 0 to 100) from ten audio features (danceability, energy, loudness, valence, tempo, …), its release year and its genre. Loss: squared error</p>
 <div class="cell">
 <div class="cell-output-display">
 <div>
@@ -244,7 +242,7 @@ Joshua Loftus
 </div>
 </div>
 </div>
-<p>10,000 tracks from playlists of six genres (<a href="https://ml4ds.com/data/spotify.html">data note</a>). The variance of popularity is 564, the MSE of the model that predicts the mean for everyone</p>
+<p>10,000 tracks from playlists of six genres (<a href="https://ml4ds.com/data/spotify.html">data note</a>); the 5,000 training tracks plotted. Their popularity has variance 559: the MSE of predicting the mean for everyone</p>
 </section>
 <section id="three-kinds-of-data-one-rule-each" class="slide level2">
 <h2>Three kinds of data, one rule each</h2>
@@ -270,8 +268,8 @@ Joshua Loftus
 </tr>
 <tr class="even">
 <td><strong>Selection</strong> (books: validation)</td>
-<td>choosing among fits: <span class="math inline">\(\lambda\)</span>, <span class="math inline">\(k\)</span>, <span class="math inline">\(J\)</span>, a depth, a method</td>
-<td>as much as you like; the winner’s score is a selected minimum, so optimistic</td>
+<td>choosing among fits: a method, its knob</td>
+<td>as much as you like</td>
 </tr>
 <tr class="odd">
 <td><strong>Test</strong>, reserved</td>
@@ -281,14 +279,14 @@ Joshua Loftus
 </tbody>
 </table>
 </div>
-<p>ESL’s word for the third: a <strong>vault</strong>. Split once, at random, before looking (today 5,000, 2,000 and 3,000 tracks); refit the chosen model on training plus selection; open the vault once; report that number and no other</p>
+<p>ESL’s word for the third: a <strong>vault</strong>. Split once, at random, before looking (today 5,000, 2,000 and 3,000 tracks); refit the chosen model on training plus selection; open the vault once. A test set may score several competitors fixed in advance; nothing is chosen on it</p>
 <div class="retrieval">
 <p>Week 1’s one rule, now for evaluation data: a row is fair game for scoring only if nothing about the model was chosen on it.</p>
 </div>
 </section>
 <section id="ctf-competition-the-baselines" class="slide level2" data-minutes="3">
 <h2>CTF competition: the baselines</h2>
-<p>What we can fit so far, each a bet on <span class="math inline">\(f^\star\)</span>: <strong>least squares</strong>, a plane (every input a slope); <strong>logistic regression</strong>, a plane for a probability (for a label, not today); <strong><span class="math inline">\(k\)</span> nearest neighbors</strong>, a local average, its <span class="math inline">\(k\)</span> the knob</p>
+<p>What we can fit so far, each a bet on <span class="math inline">\(f^\star\)</span>: <strong>least squares</strong>, a plane (every input a slope); <strong>logistic regression</strong>, a plane for the log-odds (for a label, not today); <strong><span class="math inline">\(k\)</span> nearest neighbors</strong>, a local average, its <span class="math inline">\(k\)</span> the knob</p>
 <div class="cell">
 <div class="cell-output-display">
 <div>
@@ -298,7 +296,7 @@ Joshua Loftus
 </div>
 </div>
 </div>
-<p>Eleven inputs and 5,000 training tracks: the local average (<span class="math inline">\(k = 100\)</span>) does no better than a plane. Can a different shape beat 525? The test set stays shut until the seminar</p>
+<p>The local average (<span class="math inline">\(k = 100\)</span>) and the plane, one standard error apart. Can a different shape beat both? The test set stays shut</p>
 </section>
 <section id="section-1" class="slide level2 inverse center">
 <h2></h2>
@@ -346,7 +344,7 @@ Joshua Loftus
 </div>
 </div>
 </div>
-<p>Ridge paths: <span class="math inline">\(\hat\beta_\lambda\)</span> against <span class="math inline">\(-\log\lambda\)</span> (large <span class="math inline">\(\lambda\)</span> on the left), simulated data, <span class="math inline">\(n = 100\)</span>, <span class="math inline">\(p = 20\)</span>, 8 true coefficients nonzero</p>
+<p><span class="math inline">\(\hat\beta_\lambda\)</span> against <span class="math inline">\(-\log\lambda\)</span>: the 16 standardized inputs (eleven numeric, five genre dummies), six named</p>
 </div></div>
 </section>
 <section id="lasso-vs-ridge-l1-vs-l2-norm-penalties" class="slide level2">
@@ -360,7 +358,6 @@ Joshua Loftus
 <div class="columns">
 <div class="column" style="width:50%;">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(ridge_fit, <span class="at">xvar =</span> <span class="st">"lambda"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <div>
 <figure>
@@ -371,7 +368,6 @@ Joshua Loftus
 </div>
 </div><div class="column" style="width:50%;">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(lasso_fit, <span class="at">xvar =</span> <span class="st">"lambda"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <div>
 <figure>
@@ -381,11 +377,11 @@ Joshua Loftus
 </div>
 </div>
 </div></div>
-<p>Same simulated data, large <span class="math inline">\(\lambda\)</span> on the left: <span class="math inline">\(n = 100\)</span>, <span class="math inline">\(p = 20\)</span>, 8 nonzero coefficients. The lasso’s coefficients are exactly zero over whole ranges of <span class="math inline">\(\lambda\)</span>; ridge’s never are</p>
+<p>Spotify, the same 16 inputs, large <span class="math inline">\(\lambda\)</span> on the left. The lasso’s coefficients are exactly zero over whole ranges of <span class="math inline">\(\lambda\)</span> and enter one at a time; ridge’s are never zero</p>
 </section>
 <section id="high-dimensional-example" class="slide level2">
 <h2>High dimensional example</h2>
-<p><span class="math inline">\(p = 200\)</span> inputs, <span class="math inline">\(n = 100\)</span> rows, 21 true coefficients nonzero; least squares has no unique fit. Ridge and lasso at the <span class="math inline">\(\lambda\)</span> chosen on 100 fresh rows</p>
+<p>Simulated (<span class="math inline">\(p &gt; n\)</span> needs it): <span class="math inline">\(p = 200\)</span> inputs, <span class="math inline">\(n = 100\)</span> rows, 21 true coefficients nonzero; least squares has no unique fit. Ridge and lasso at the <span class="math inline">\(\lambda\)</span> chosen on 100 fresh rows</p>
 <div class="cell" data-layout-align="center">
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
@@ -400,13 +396,13 @@ Joshua Loftus
 <section id="lasso-cool-or-extremely-cool" class="slide level2 inverse">
 <h2>Lasso: cool or extremely cool?</h2>
 <ul>
-<li>High-dimensional: <span class="math inline">\(p &gt; n\)</span> means we can’t fit OLS</li>
+<li>High-dimensional: <span class="math inline">\(p &gt; n\)</span> means OLS has no unique fit</li>
 </ul>
 <p>But all is not lost! Penalized regression to the rescue</p>
 <ul>
 <li>True model is sparse</li>
 </ul>
-<p>Only 21 of 200 variables have nonzero coefficients</p>
+<p>21 of 200 nonzero; the lasso kept 71, 17 of the true 21 among them</p>
 <ul>
 <li>Ridge estimates are dense</li>
 </ul>
@@ -414,7 +410,7 @@ Joshua Loftus
 <ul>
 <li>Lasso estimates are sparse</li>
 </ul>
-<p>Nonzero estimates largely coincide with true model 😎</p>
+<p>Nonzero estimates include most of the true model, plus many small extras 😎</p>
 </section>
 <section id="section-2" class="slide level2 inverse center">
 <h2></h2>
@@ -422,7 +418,7 @@ Joshua Loftus
 </section>
 <section id="three-ways-to-estimate-a-curve" class="slide level2" data-minutes="3">
 <h2>Three ways to estimate a curve</h2>
-<p>Week 1’s data: life expectancy on <span class="math inline">\(\log_{10}\)</span> GDP per capita, 142 countries. Three ways to turn a line into a curve</p>
+<p>Week 1’s data, life expectancy on GDP per capita, 142 countries (no log this time). Three ways to turn a line into a curve</p>
 <div class="cell">
 <div class="cell-output-display">
 <div>
@@ -448,10 +444,10 @@ Joshua Loftus
 </div>
 </div>
 </div><div class="column" style="width:52%;">
-<p>A <strong>basis</strong>: fixed functions <span class="math inline">\(b_1(x), \ldots, b_J(x)\)</span> of one input. The fit is their combination, <span class="math display">\[
-f(x) = \sum_{j=1}^J \beta_j\, b_j(x)
-\]</span> linear in <span class="math inline">\(\beta\)</span>, so least squares fits it: <code>lm(lifeExp ~ ns(lgdp, df = J))</code>, where <code>ns()</code> builds the <span class="math inline">\(J\)</span> columns</p>
-<p>A <strong>natural cubic spline</strong>: cubic pieces joined smoothly at knots, linear beyond the ends. Each <span class="math inline">\(b_j\)</span> is local: it is zero far from its knots</p>
+<p>A <strong>basis</strong>: fixed functions <span class="math inline">\(b_1(x), \ldots, b_J(x)\)</span> of one input, combined by least squares: <span class="math display">\[
+f(x) = \beta_0 + \sum_{j=1}^J \beta_j\, b_j(x)
+\]</span> linear in <span class="math inline">\(\beta\)</span>: <code>lm(lifeExp ~ ns(gdp, df = J))</code>, <code>ns()</code> building the <span class="math inline">\(J\)</span> columns</p>
+<p>A <strong>natural cubic spline</strong>: cubic pieces joined smoothly at knots, linear beyond the ends. The basis functions are the bends the knots allow; <code>lm</code> adds <span class="math inline">\(\beta_0\)</span></p>
 </div></div>
 </section>
 <section id="the-basis-size-is-the-knob" class="slide level2">
@@ -478,48 +474,25 @@ f(x) = \sum_{j=1}^J \beta_j\, b_j(x)
 </ul>
 <p><span class="math display">\[g(\mathbb E[\mathbf y | \mathbf X]) = \beta_0 + f_1( \mathbf x_1) + f_2( \mathbf x_2) + \cdots + f_p(\mathbf x_p)\]</span></p>
 <p>Includes linear models as special case if <span class="math inline">\(f_j(\mathbf x_j) = \beta_j \mathbf x_j\)</span></p>
-<p>Today each <span class="math inline">\(f_j\)</span> is a spline with <span class="math inline">\(J\)</span> basis functions, so the whole model is one least-squares fit on <span class="math inline">\(pJ\)</span> columns: <code>lm(y ~ ns(x1, J) + ns(x2, J) + ns(x3, J))</code>. The GAM in the reading is this model, with a link</p>
+<p>Today each <span class="math inline">\(f_j\)</span> is a spline with <span class="math inline">\(J\)</span> basis functions, so the whole model is one least-squares fit on <span class="math inline">\(pJ\)</span> columns: <code>lm(y ~ ns(x1, J) + ns(x2, J) + ...)</code>. The GAM in the reading is this model, with a link</p>
 </section>
-<section id="component-plots" class="slide level2">
-<h2>Component plots</h2>
-<p><span class="math inline">\(f_1(x) = -1 + 2x - x^2\)</span>, <span class="math inline">\(\quad f_2(x) = \sin(\pi x)\)</span>, <span class="math inline">\(\quad f_3(x) = e^{-5(x - 1/2)^2}\)</span>; <span class="math inline">\(\quad y = f_1(x_1) + f_2(x_2) + f_3(x_3) + \varepsilon\)</span>, <span class="math inline">\(\ n = 400\)</span></p>
+<section id="an-additive-model-for-popularity" class="slide level2">
+<h2>An additive model for popularity</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a aria-hidden="true" tabindex="-1"></a>fit_add <span class="ot">&lt;-</span> <span class="fu">lm</span>(track_popularity <span class="sc">~</span> <span class="fu">ns</span>(loudness, <span class="dv">4</span>) <span class="sc">+</span> <span class="fu">ns</span>(release_year, <span class="dv">4</span>) <span class="sc">+</span></span>
+<span id="cb1-2"><a aria-hidden="true" tabindex="-1"></a>                <span class="fu">ns</span>(danceability, <span class="dv">4</span>) <span class="sc">+</span> <span class="fu">ns</span>(duration_min, <span class="dv">4</span>) <span class="sc">+</span> <span class="fu">ns</span>(energy, <span class="dv">4</span>) <span class="sc">+</span></span>
+<span id="cb1-3"><a aria-hidden="true" tabindex="-1"></a>                <span class="fu">ns</span>(acousticness, <span class="dv">4</span>) <span class="sc">+</span> genre, <span class="at">data =</span> sp_train)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
 <div class="cell">
 <div class="cell-output-display">
 <div>
 <figure>
-<p><img data-src="05-1-structures_files/figure-revealjs/additive-sim-1.png" width="1800"></p>
+<p><img data-src="05-1-structures_files/figure-revealjs/spotify-components-1.png" width="1800"></p>
 </figure>
 </div>
 </div>
 </div>
-<p><code>lm(y ~ ns(x1, 4) + ns(x2, 4) + ns(x3, 4))</code>: one fit, twelve columns, and a curve per input to look at. The curve is a “coefficient” with a shape</p>
-</section>
-<section id="additive-combination-of-non-linear-predictors" class="slide level2">
-<h2>Additive combination of non-linear predictors</h2>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2movies)</span>
-<span id="cb3-2"><a aria-hidden="true" tabindex="-1"></a>mv <span class="ot">&lt;-</span> movies <span class="sc">|&gt;</span></span>
-<span id="cb3-3"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(length <span class="sc">&lt;=</span> <span class="dv">200</span>, length <span class="sc">&gt;</span> <span class="dv">10</span>,</span>
-<span id="cb3-4"><a aria-hidden="true" tabindex="-1"></a>         year <span class="sc">&gt;</span> <span class="dv">1918</span>, votes <span class="sc">&gt;=</span> <span class="dv">5</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
-<p>I asked on <a href="https://twitter.com/tslumley/status/1361789344118284288">Twitter</a> what was missing from the plot of movie length vs movie rating and Thomas Lumley suggested confounding by <strong>year</strong></p>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a aria-hidden="true" tabindex="-1"></a>fit_mv <span class="ot">&lt;-</span> <span class="fu">lm</span>(rating <span class="sc">~</span> <span class="fu">ns</span>(length, <span class="dv">8</span>) <span class="sc">+</span> <span class="fu">ns</span>(year, <span class="dv">8</span>), mv)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
-<p>One least-squares fit, 17 coefficients, 53,388 films (<a href="https://ml4ds.com/data/movies.html">data note</a>). No coefficient to read, so how do we interpret?</p>
-</section>
-<section id="replace-each-linear-coefficient-with-a-2d-plot" class="slide level2">
-<h2>Replace each linear coefficient with a 2d plot</h2>
-<div class="cell">
-<div class="cell-output-display">
-<div>
-<figure>
-<p><img data-src="05-1-structures_files/figure-revealjs/movies-components-1.png" width="1800"></p>
-</figure>
-</div>
-</div>
-</div>
-<p>Each curve is what the model adds to a film’s rating for that input, with the other held fixed: a coefficient’s job, done by a shape. The model is the sum of the two curves plus a constant</p>
+<p>One fit, 30 coefficients, and a curve per input to read instead of a coefficient: what the model adds for that input with the others held fixed</p>
 </section>
 <section id="section-3" class="slide level2 inverse center">
 <h2></h2>
@@ -536,18 +509,17 @@ f(x) = \sum_{j=1}^J \beta_j\, b_j(x)
 <p>This is (arguably) more interpretable than a linear model with multiple predictors</p>
 <p>(Note: this is not the real vaccination criteria, but it was close to this in early 2021)</p>
 </section>
-<section id="regression-tree-to-predict-penguin-massiveness" class="slide level2">
-<h2>Regression tree to predict penguin massiveness</h2>
+<section id="a-regression-tree-for-popularity" class="slide level2">
+<h2>A regression tree for popularity</h2>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5" data-code-line-numbers="1-3"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a aria-label="1"></a>pg <span class="ot">&lt;-</span> penguins <span class="sc">|&gt;</span> <span class="fu">drop_na</span>()</span>
-<span id="cb5-2"><a aria-label="2"></a>fit_tree <span class="ot">&lt;-</span> <span class="fu">rpart</span>(body_mass_g <span class="sc">~</span> flipper_length_mm <span class="sc">+</span> bill_length_mm,</span>
-<span id="cb5-3"><a aria-label="3"></a>                  <span class="at">control =</span> <span class="fu">rpart.control</span>(<span class="at">cp =</span> <span class="fl">0.007</span>), <span class="at">data =</span> pg)</span>
-<span id="cb5-4"><a aria-label="4"></a><span class="fu">plot</span>(fit_tree, <span class="at">uniform =</span> <span class="cn">TRUE</span>, <span class="at">margin =</span> <span class="fl">0.1</span>)</span>
-<span id="cb5-5"><a aria-label="5"></a><span class="fu">text</span>(fit_tree, <span class="at">pretty =</span> <span class="dv">0</span>, <span class="at">cex =</span> <span class="fl">1.7</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2" data-code-line-numbers="1-2"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a aria-label="1"></a>fit_tree <span class="ot">&lt;-</span> <span class="fu">rpart</span>(track_popularity <span class="sc">~</span> release_year <span class="sc">+</span> energy, sp_train,</span>
+<span id="cb2-2"><a aria-label="2"></a>                  <span class="at">control =</span> <span class="fu">rpart.control</span>(<span class="at">maxdepth =</span> <span class="dv">3</span>, <span class="at">cp =</span> <span class="dv">0</span>, <span class="at">minbucket =</span> <span class="dv">250</span>))</span>
+<span id="cb2-3"><a aria-label="3"></a><span class="fu">plot</span>(fit_tree, <span class="at">uniform =</span> <span class="cn">TRUE</span>, <span class="at">margin =</span> <span class="fl">0.1</span>)</span>
+<span id="cb2-4"><a aria-label="4"></a><span class="fu">text</span>(fit_tree, <span class="at">pretty =</span> <span class="dv">0</span>, <span class="at">cex =</span> <span class="fl">1.9</span>, <span class="at">digits =</span> <span class="dv">3</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
-<p><img data-src="05-1-structures_files/figure-revealjs/penguin-tree-1.png" class="quarto-figure quarto-figure-center" style="width:80.0%"></p>
+<p><img data-src="05-1-structures_files/figure-revealjs/spotify-tree-1.png" class="quarto-figure quarto-figure-center" style="width:96.0%"></p>
 </figure>
 </div>
 </div>
@@ -559,64 +531,51 @@ f(x) = \sum_{j=1}^J \beta_j\, b_j(x)
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
-<p><img data-src="05-1-structures_files/figure-revealjs/penguin-rectangles-1.png" class="quarto-figure quarto-figure-center" style="width:78.0%"></p>
+<p><img data-src="05-1-structures_files/figure-revealjs/spotify-rectangles-1.png" class="quarto-figure quarto-figure-center" style="width:78.0%"></p>
 </figure>
 </div>
 </div>
 </div>
+<p>Each leaf is a rectangle with one value; the training tracks in white. The three narrow strips on the right are the leaves for 2018 and for 2019 to 2020, split again by energy</p>
+</section>
+<section id="one-predictor-every-cutoff" class="slide level2">
+<h2>One predictor, every cutoff</h2>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure>
+<p><img data-src="05-1-structures_files/figure-revealjs/best-cutoff-1.png" width="1800"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>For one input: try every cutoff, predict each side’s mean, keep the cutoff with the smallest training MSE. One question, two leaves</p>
 </section>
 <section id="recursive-rectangular-splitting-on-predictors" class="slide level2">
 <h2>Recursive rectangular splitting on predictors</h2>
 <p>“Stratification of the feature space”</p>
 <pre><code>Input: subset of data
   For each predictor variable x_j in subset
-    Split left: observations with x_j &lt; cutoff
-    Split right: observations with x_j &gt;= cutoff
-    Predict constants in each split
-    Compute model improvement
-    Scan cutoff value to find best split for x_j
-Output: predictor and split with best improvement</code></pre>
+    Scan cutoff values to find the best split for x_j (last slide)
+Output: the predictor and cutoff with the best improvement</code></pre>
 <div class="fragment">
-<p>Starting from full dataset, compute first split as above</p>
+<p>Starting from the full dataset, compute the first split as above</p>
 <p><strong>Recurse</strong>: take the two subsets of data from each side of the split and plug them both back into the same function</p>
-<p>Until some <strong>stopping rule</strong> prevents more splitting</p>
+<p>Until some <strong>stopping rule</strong> prevents more splitting (today: a maximum depth, the tree’s knob; growing deep and pruning back is week 8)</p>
 </div>
 </section>
-<section id="aggregating-is-smoothing" class="slide level2">
-<h2>Aggregating is… smoothing?</h2>
-<div class="columns">
-<div class="column" style="width:58%;">
+<section id="a-tree-is-unstable" class="slide level2">
+<h2>A tree is unstable</h2>
 <div class="cell">
 <div class="cell-output-display">
 <div>
 <figure>
-<p><img data-src="05-1-structures_files/figure-revealjs/bootstrap-trees-1.png" style="width:100.0%"></p>
+<p><img data-src="05-1-structures_files/figure-revealjs/tree-variance-1.png" width="1800"></p>
 </figure>
 </div>
 </div>
 </div>
-</div><div class="column" style="width:42%;">
-<p>One tree on all the data, three on resamples of it. Predictions for one penguin</p>
-<div class="cell">
-<div class="cell-output cell-output-stdout">
-<pre><code> species flipper_length_mm
-  Adelie               197</code></pre>
-</div>
-<div class="cell-output cell-output-stdout">
-<pre><code> bill_length_mm bill_depth_mm
-           42.5          20.7</code></pre>
-</div>
-</div>
-<div class="cell">
-<div class="cell-output cell-output-stdout">
-<pre><code>  Adelie Chinstrap Gentoo
-1  1.000     0.000  0.000
-2  1.000     0.000  0.000
-3  0.123     0.863  0.014
-4  0.875     0.125  0.000</code></pre>
-</div>
-</div>
-</div></div>
+<p>Week 1’s countries, resampled eight times (blue, one fit per resample). The trees’ cutoffs move with the sample and the steps move with them; the splines barely move. Orange: the average of the eight trees</p>
 </section>
 <section id="bagging-bootstrap-aggregating" class="slide level2">
 <h2>Bagging: bootstrap aggregating</h2>
@@ -649,13 +608,16 @@ Output: predictor and split with best improvement</code></pre>
 </section>
 <section id="three-truths-one-protocol" class="slide level2" data-minutes="3">
 <h2>Three truths, one protocol</h2>
-<p><span class="math inline">\(p = 10\)</span> inputs, each uniform on <span class="math inline">\([-1, 1]\)</span>; <span class="math inline">\(y = f^\star(x) + \varepsilon\)</span>, noise variance <span class="math inline">\(\sigma^2 = 1\)</span>. Three truths, each using three (or two) of the ten inputs:</p>
+<p><span class="math inline">\(p = 10\)</span> inputs, uniform on <span class="math inline">\([-1, 1]\)</span>; <span class="math inline">\(y = f^\star(x) + \varepsilon\)</span>, noise variance <span class="math inline">\(\sigma^2 = 1\)</span>. Three truths, each using two or three inputs:</p>
 <ul>
 <li><strong>A, sparse linear:</strong> <span class="math inline">\(f^\star(x) = 2x_1 - 1.5x_2 + x_3\)</span></li>
-<li><strong>B, additive smooth:</strong> <span class="math inline">\(f^\star(x) = 1.5\,[f_1(x_1) + f_2(x_2) + f_3(x_3)]\)</span>, part 3’s three curves</li>
-<li><strong>C, thresholds with an interaction:</strong> <span class="math inline">\(f^\star(x) = 2 \cdot \mathbf 1\{x_1 &gt; 0,\ x_2 &gt; 0\} - 2 \cdot \mathbf 1\{x_1 \le 0,\ x_2 \le 0\}\)</span></li>
+<li><strong>B, additive smooth:</strong> <span class="math inline">\(f^\star(x) = 1.5\,[f_1(x_1) + f_2(x_2) + f_3(x_3)]\)</span>, smooth <span class="math inline">\(f_j\)</span></li>
+<li><strong>C, one step, two inputs at once:</strong> <span class="math inline">\(f^\star(x) = 4 \cdot \mathbf 1\{x_1 &gt; 0,\ x_2 &gt; 0\}\)</span></li>
 </ul>
-<p><strong>One protocol.</strong> 300 training rows, 100 selection rows, 2,000 test rows. Six competitors: least squares; the lasso (<span class="math inline">\(\lambda\)</span>); <span class="math inline">\(k\)</span>-NN (<span class="math inline">\(k\)</span>); the additive spline fit (<span class="math inline">\(J\)</span>); a tree (depth); a forest (defaults). Every knob chosen on the selection rows, then scored once on the test rows, with the training MSE recorded beside it</p>
+<p><strong>One protocol.</strong> 300 training, 100 selection, 2,000 test rows. Six competitors: least squares; lasso (<span class="math inline">\(\lambda\)</span>); <span class="math inline">\(k\)</span>-NN (<span class="math inline">\(k\)</span>); additive splines (<span class="math inline">\(J\)</span>); a tree (depth); a forest. Knobs chosen on the selection rows, the fit refitted on training plus selection, scored once</p>
+<div class="ask">
+<p>For each truth: which family wins, which loses, and why?</p>
+</div>
 </section>
 <section id="truth-a-sparse-linear-tall-and-then-wide" class="slide level2">
 <h2>Truth A: sparse linear, tall and then wide</h2>
@@ -668,7 +630,7 @@ Output: predictor and split with best improvement</code></pre>
 </div>
 </div>
 </div>
-<p>Dotted line: the noise variance, the best any predictor can do. Sparsity costs nothing when <span class="math inline">\(n \gg p\)</span> and is the only thing that works when <span class="math inline">\(p &gt; n\)</span></p>
+<p>Dotted line: the noise variance, the smallest population MSE. For this sparse truth the lasso ties least squares when <span class="math inline">\(n \gg p\)</span>, and alone stays near the floor when <span class="math inline">\(p &gt; n\)</span></p>
 </section>
 <section id="truth-b-additive-smooth" class="slide level2">
 <h2>Truth B: additive smooth</h2>
@@ -694,11 +656,24 @@ Output: predictor and split with best improvement</code></pre>
 </div>
 </div>
 </div>
-<p>A checkerboard: each input alone says nothing, so every additive model is blind to it. Two questions in a row see all of it</p>
+<p>A sum of one-input functions can hold each input’s share of this step, two thirds of the signal at best, and not the product. Two questions in a row hold all of it</p>
+</section>
+<section id="ctf-competition-the-six-on-spotify" class="slide level2">
+<h2>CTF competition: the six on Spotify</h2>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure>
+<p><img data-src="05-1-structures_files/figure-revealjs/spotify-six-1.png" width="1650"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Knobs chosen on the selection tracks, scored there. The curves beat the plane by about four standard errors; the forest’s training score is 87. The vault stays shut: the seminar refits and opens it once</p>
 </section>
 <section id="four-dimensions-not-one" class="slide level2" data-minutes="3">
 <h2>Four dimensions, not one</h2>
-<div style="font-size: 1.0em">
+<div style="font-size: 0.97em">
 <table class="caption-top">
 <colgroup>
 <col style="width: 22%">
@@ -721,7 +696,7 @@ Output: predictor and split with best improvement</code></pre>
 <tr class="even">
 <td><strong>sparse or dense</strong></td>
 <td>how many inputs matter</td>
-<td>the lasso bets few; least squares and ridge spread the fit over all; a forest tolerates idle inputs, <span class="math inline">\(k\)</span>-NN does not</td>
+<td>the lasso bets few; least squares and ridge spread the fit over all; a forest tolerates idle inputs, <span class="math inline">\(k\)</span>-NN pays for them</td>
 </tr>
 <tr class="odd">
 <td><strong>smooth or discontinuous</strong></td>
@@ -738,27 +713,27 @@ Output: predictor and split with best improvement</code></pre>
 </div>
 <p>Four separate questions, not one scale from simple to complex. A family is a bet on the answers; a selection set says which bet paid on these data</p>
 <div class="retrieval">
-<p>Week 1’s curse: <span class="math inline">\(k\)</span>-NN lost on every truth, with ten inputs and 300 points. Week 4’s no free lunch: no family won every truth, and none can.</p>
+<p>Week 1’s curse: <span class="math inline">\(k\)</span>-NN lost on every truth, ten inputs and 300 points. Week 4’s no free lunch: no family won every truth, and none can.</p>
 </div>
 </section>
 <section id="what-the-training-error-hides" class="slide level2" data-minutes="3">
 <h2>What the training error hides</h2>
-<p>On every leaderboard the training MSE sat below the test MSE, the forest’s by a factor of four. Luck, or a law?</p>
-<p>Training data <span class="math inline">\((x_i, y_i)\)</span>, <span class="math inline">\(i = 1, \ldots, n\)</span>, independent draws from the population; a class <span class="math inline">\(\mathcal F\)</span> (the planes; the additive fits with a given <span class="math inline">\(J\)</span>); <span class="math inline">\(f_{\mathcal F}\)</span> the best in <span class="math inline">\(\mathcal F\)</span>, the minimizer of <span class="math inline">\(R\)</span> over it; <span class="math inline">\(\hat f\)</span> the empirical risk minimizer, the minimizer of <span class="math inline">\(\hat R_n\)</span> over <span class="math inline">\(\mathcal F\)</span> (week 4)</p>
+<p>On most rows of the leaderboards the training MSE sat below the test or selection MSE, the forest’s by a factor of four on the truths and of six on Spotify; on a few rows it sat above. Luck, or a law, and what are the exceptions?</p>
+<p>Training data <span class="math inline">\((x_i, y_i)\)</span>, <span class="math inline">\(i = 1, \ldots, n\)</span>, independent draws from the population; a class <span class="math inline">\(\mathcal F\)</span> fixed before the data (the planes; the spline fits with a given basis); <span class="math inline">\(f_{\mathcal F}\)</span> the best in <span class="math inline">\(\mathcal F\)</span>, the minimizer of <span class="math inline">\(R\)</span> over it; <span class="math inline">\(\hat f\)</span> the empirical risk minimizer, the minimizer of <span class="math inline">\(\hat R_n\)</span> over <span class="math inline">\(\mathcal F\)</span> (week 4)</p>
 <div class="ask">
 <p>Three numbers: <span class="math inline">\(\mathbb E[\hat R_n(\hat f)]\)</span>, <span class="math inline">\(R(f_{\mathcal F})\)</span>, <span class="math inline">\(\mathbb E[R(\hat f)]\)</span>. Put them in order, and write down what you used to do it.</p>
 </div>
 </section>
 <section id="optimism-theorem" class="slide level2" data-minutes="3">
 <h2>Optimism theorem</h2>
-<p>A function fixed before the data has an unbiased training error. <span class="math inline">\(\hat f\)</span> beats every such function in <span class="math inline">\(\mathcal F\)</span> on the training data (it was chosen to) and cannot beat <span class="math inline">\(f_{\mathcal F}\)</span> on the population</p>
-<p>Training data i.i.d. from the population; <span class="math inline">\(\hat f\)</span> the empirical risk minimizer over <span class="math inline">\(\mathcal F\)</span>; <span class="math inline">\(f_{\mathcal F}\)</span> the best in <span class="math inline">\(\mathcal F\)</span> (risks finite, minimizers exist). Then <span class="math display">\[
+<p>A function fixed before the data has an unbiased training error; <span class="math inline">\(\hat f\)</span> was chosen to make its own small, and cannot beat <span class="math inline">\(f_{\mathcal F}\)</span> on the population</p>
+<p>Training data i.i.d.; <span class="math inline">\(\mathcal F\)</span> fixed before the data; <span class="math inline">\(\hat f\)</span> the empirical risk minimizer over <span class="math inline">\(\mathcal F\)</span>; <span class="math inline">\(f_{\mathcal F}\)</span> the best in <span class="math inline">\(\mathcal F\)</span> (risks finite, minimizers exist). Then <span class="math display">\[
 \mathbb E\big[\hat R_n(\hat f)\big] \;\le\; R(f_{\mathcal F}) \;\le\; \mathbb E\big[R(\hat f)\big]
 \]</span></p>
 <div class="leave">
-<p>Training error flatters the model: on average it sits below the best risk the class can reach, and the fitted model’s risk sits above it. The test set estimates the right end of this line.</p>
+<p>Training error flatters the model: on average it sits below the best risk the class can reach, and the fitted model’s risk above it. A test set estimates <span class="math inline">\(R(\hat f)\)</span>; its average is the right end.</p>
 </div>
-<p><strong>Proof</strong>: exercise 1, three lines. Covers the minimizer over a fixed class (least squares; splines and penalized fits at a fixed knob); not a tree, a forest, <span class="math inline">\(k\)</span>-NN, or a knob chosen on the data</p>
+<p><strong>Proof</strong>: exercise 1. Covers least squares, a fixed spline basis, ridge and lasso with a fixed radius; not a fixed <span class="math inline">\(\lambda\)</span>, a tree, a forest, <span class="math inline">\(k\)</span>-NN, or a knob chosen on the data</p>
 </section>
 <section id="before-the-seminar" class="slide level2">
 <h2>Before the seminar</h2>

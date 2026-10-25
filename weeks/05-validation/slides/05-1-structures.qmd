@@ -42,8 +42,6 @@ library(glmnet)
 library(rpart)
 library(randomForest)
 library(gapminder)
-library(palmerpenguins)
-library(ggplot2movies)
 theme_set(theme_minimal(base_size = 18))
 options(knitr.table.format = "html")
 options(digits = 5)
@@ -74,19 +72,46 @@ sp_id <- sample(nrow(sp))
 sp_train <- sp[sp_id[1:5000], ]
 sp_sel   <- sp[sp_id[5001:7000], ]
 sp_test  <- sp[sp_id[7001:10000], ]
-# Week 1's frame for the one-input curves: 142 countries in 2007.
-gm <- gapminder |> filter(year == 2007) |> mutate(lgdp = log10(gdpPercap))
-gm_grid <- tibble(lgdp = seq(min(gm$lgdp), max(gm$lgdp), length.out = 200))
+# Week 1's countries, 2007, for every one-input picture (a curve is visible with 142 points;
+# Spotify's one-input relations are too weak to draw a basis with). GDP per capita unlogged, so
+# that the relation is curved.
+gm <- gapminder |> filter(year == 2007)
+gm_grid <- tibble(gdpPercap = seq(min(gm$gdpPercap), max(gm$gdpPercap), length.out = 300))
+# Coefficient paths from a glmnet fit as a labeled ggplot: minus log lambda on the horizontal
+# axis (large lambda on the left), the named columns in color and labeled at the right.
+path_plot <- function(fit, highlight, title) {
+  B <- as.matrix(coef(fit))[-1, ]
+  paths <- as_tibble(t(B)) |> mutate(loglam = -log(fit$lambda)) |>
+    pivot_longer(-loglam, names_to = "variable", values_to = "coef") |>
+    mutate(named = variable %in% highlight)
+  # Labels at the right end, pushed apart vertically when two would overlap.
+  lab <- paths |> filter(loglam == max(loglam), named) |> arrange(coef)
+  gap <- 0.08 * diff(range(paths$coef)); y_lab <- lab$coef
+  for (i in seq_along(y_lab)[-1]) y_lab[i] <- max(y_lab[i], y_lab[i - 1] + gap)
+  lab$y_lab <- y_lab - (mean(y_lab) - mean(lab$coef))
+  ggplot(paths, aes(loglam, coef, group = variable)) +
+    geom_line(aes(colour = named), linewidth = 1) +
+    scale_colour_manual(values = c(`FALSE` = "grey70", `TRUE` = v_blue), guide = "none") +
+    geom_text(data = lab, aes(y = y_lab, label = variable), hjust = -0.08, size = 3.9, colour = v_dark) +
+    coord_cartesian(xlim = c(min(paths$loglam), max(paths$loglam) + 0.45 * diff(range(paths$loglam)))) +
+    labs(x = expression(-log(lambda) ~ "(large" ~ lambda ~ "on the left)"), y = "coefficient", title = title) +
+    theme(plot.title = element_text(size = 15))
+}
+# The Spotify design with genre as dummies, standardized, for the penalized fits.
+sp_X <- function(d) model.matrix(reformulate(c(feat, "genre"), "track_popularity"), d)[, -1]
+sp_mu <- colMeans(sp_X(sp_train)); sp_sd <- apply(sp_X(sp_train), 2, sd)
+sp_Xtr <- scale(sp_X(sp_train), sp_mu, sp_sd); sp_Xse <- scale(sp_X(sp_sel), sp_mu, sp_sd)
+colnames(sp_Xtr) <- colnames(sp_Xse) <- sub("^genre", "genre: ", colnames(sp_X(sp_train)))
 ```
 
 ## {.inverse}
 
 ::: {.notes}
-31 light slides and 8 dark after the title: 78 on the spine's scale (2 a content slide, 3 a slide with a pause for the room, 1 a dark slide); the bar at the top of each note is the share done. Dark = rush or skip; each dark slide's note says skip or gives the compressed phrase.
+The deck on the spine's scale (2 a content slide, 3 a slide with a pause for the room, 1 a dark slide); the bar at the top of each note is the share done and its denominator the total. Dark = rush or skip; each dark slide's note says skip or gives the compressed phrase. Datasets: Spotify for everything with several inputs; week 1's countries for the one-input pictures (the curves, the tree-variance picture); the three simulated truths in part 5; the p > n example is the one other simulation.
 
-Cut order: (1) "Recursive rectangular splitting" to one sentence, (2) the movies component plot, (3) "Random forest: dropping predictors" to its first line, (4) the high-dimensional example to the dark slide's line. The three leaderboards, the four-dimensions slide and the theorem do not move.
+Cut order: (1) "Recursive rectangular splitting" to one sentence, (2) "Random forest: dropping predictors" to its first line, (3) the high-dimensional example to the dark slide's line, (4) truth A's wide panel to a sentence. The Spotify leaderboard, the four-dimensions slide and the theorem do not move.
 
-In the notebook: the optimism theorem proved (ex. 1), ridge's normal equations (ex. 2). The seminar runs the Spotify leaderboard with every family and opens the test set once.
+In the notebook: the optimism theorem proved (ex. 1), ridge's normal equations (ex. 2). The seminar refits every family on training plus selection and opens the Spotify test set once.
 :::
 
 ### Week 5: what structures can we model?
@@ -101,68 +126,66 @@ Part 4: trees and forests
 
 Part 5: which structure?
 
-## Where week 4 left it {minutes="3"}
+## Where week 4 left it
 
 ::: {.notes}
-Two minutes written, then two people. Expected: "new data", "a test set"; someone will say cross-validation, which is week 7. The answer is two slides on: a third set, opened once. Do not give it yet.
+The bridge and the disclaimer, one minute. Say it plainly: four families, each briefly; the knobs (week 7) and the construction (week 8) come later. Week 4's seminar question is the hook for the protocol two slides on.
 :::
 
-Week 4's wide regression: the training error fell at every step, the held-out error turned at step 15, and the number of steps was chosen on the held-out rows
+Last week: optimization, the general concepts and the methods that fit a model. Every method so far was a loss, a class and an algorithm
 
-Week 1's seminar asked it first: "you are about to report the same held-out score you chose on". Week 4's asked it again
+This week: a few specific families of supervised models, each introduced briefly. Each gets more detail later: how to choose its knob (week 7), how its fit is constructed and improved (week 8), what it can tell you (week 9)
 
-::: {.ask}
-You chose the number of steps on the held-out rows. Which number do you report as the model's error, and what would make it honest?
-:::
+Today's question: **what structures can we model?** Each family is a bet on the shape of $f^\star$, and we need one protocol to compare the bets
 
-Today's question: what structures can we model? Four new families, each a bet on the shape of $f^\star$, and one protocol to compare them on
+Week 4's seminar ended on a question: the held-out score you chose the stopping step on is not the model's error. The protocol answers it
 
 ## The task: 10,000 Spotify tracks
 
 ::: {.notes}
-Data note: data/spotify. Popularity is Spotify's score in January 2020, so recency is in it; the tenth at zero are tracks nobody plays. Eleven features, a genre, a release year, squared loss. Nothing is fitted yet.
+Data note: data/spotify. Popularity is Spotify's score in January 2020, so recency is in it; the tenth at zero are tracks nobody plays. Ten audio features, the release year, a genre, squared loss. The plots use the 5,000 training tracks only: nothing from the other 5,000 is looked at before the split. Nothing is fitted yet.
 :::
 
-Predict a track's **popularity** (Spotify's score, 0 to 100) from eleven audio features (danceability, energy, loudness, valence, tempo, duration, ...), its genre and its release year. Loss: squared error
+Predict a track's **popularity** (Spotify's score, 0 to 100) from ten audio features (danceability, energy, loudness, valence, tempo, ...), its release year and its genre. Loss: squared error
 
 ```{r}
 #| label: spotify-task
-#| fig-height: 3.3
+#| fig-height: 3.0
 #| fig-width: 12
-p_hist <- ggplot(sp, aes(track_popularity)) +
+p_hist <- ggplot(sp_train, aes(track_popularity)) +
   geom_histogram(binwidth = 5, boundary = 0, fill = v_blue) +
   labs(x = "popularity", y = "tracks")
-p_loud <- ggplot(sp, aes(loudness, track_popularity)) +
+p_loud <- ggplot(sp_train, aes(loudness, track_popularity)) +
   geom_point(alpha = 0.12, size = 0.7, colour = "grey50") +
   geom_smooth(method = "loess", se = FALSE, colour = m_pink, linewidth = 1.2) +
   coord_cartesian(xlim = c(-25, 0)) +
   labs(x = "loudness (dB)", y = "popularity")
-p_year <- ggplot(sp, aes(release_year, track_popularity)) +
+p_year <- ggplot(sp_train, aes(release_year, track_popularity)) +
   geom_point(alpha = 0.12, size = 0.7, colour = "grey50") +
   geom_smooth(method = "loess", se = FALSE, colour = m_pink, linewidth = 1.2) +
   labs(x = "release year", y = NULL)
 p_hist + p_loud + p_year
 ```
 
-10,000 tracks from playlists of six genres ([data note](https://ml4ds.com/data/spotify.html)). The variance of popularity is `r round(var(sp$track_popularity))`, the MSE of the model that predicts the mean for everyone
+10,000 tracks from playlists of six genres ([data note](https://ml4ds.com/data/spotify.html)); the 5,000 training tracks plotted. Their popularity has variance `r round(var(sp_train$track_popularity))`: the MSE of predicting the mean for everyone
 
 ## Three kinds of data, one rule each
 
 ::: {.notes}
-The protocol in a table; "selection set" is the course's name, books and software say validation set. The middle row's caveat (a selected minimum is optimistic) is the seminar's problem 1 and week 7's topic. The third row is the one people break. ESL's word: the vault.
+The protocol in a table; "selection set" is the course's name, books and software say validation set. Not said today: the selection winner's score is itself optimistic (a selected minimum); that is the seminar's problem 1 and week 7's topic. The third row is the one people break. ESL's word: the vault.
 :::
 
 ::: {style="font-size: 1.05em"}
 | | Used for | How often |
 |---|---|---|
 | **Training** | fitting | as much as you like |
-| **Selection** (books: validation) | choosing among fits: $\lambda$, $k$, $J$, a depth, a method | as much as you like; the winner's score is a selected minimum, so optimistic |
+| **Selection** (books: validation) | choosing among fits: a method, its knob | as much as you like |
 | **Test**, reserved | one number for the model you chose, with its standard error | **once** |
 
 : {tbl-colwidths="[24,40,36]"}
 :::
 
-ESL's word for the third: a **vault**. Split once, at random, before looking (today 5,000, 2,000 and 3,000 tracks); refit the chosen model on training plus selection; open the vault once; report that number and no other
+ESL's word for the third: a **vault**. Split once, at random, before looking (today 5,000, 2,000 and 3,000 tracks); refit the chosen model on training plus selection; open the vault once. A test set may score several competitors fixed in advance; nothing is chosen on it
 
 ::: {.retrieval}
 Week 1's one rule, now for evaluation data: a row is fair game for scoring only if nothing about the model was chosen on it.
@@ -171,27 +194,27 @@ Week 1's one rule, now for evaluation data: a row is fair game for scoring only 
 ## CTF competition: the baselines {minutes="3"}
 
 ::: {.notes}
-What we can fit so far, scored on the selection tracks: the mean 581, least squares 525, k-NN 528 at k = 100 chosen on the selection rows (the standardized features). Say it: eleven inputs, 5,000 points, and the local average does no better than a plane; week 1's curse. The question for the rest of the lecture: can a different shape beat 525? The test set stays shut until the seminar.
+What we can fit so far, scored on the selection tracks, both on the same eleven numeric inputs (genre is a factor and joins in the seminar, where the distance on its dummies is the students' decision): the mean 581, least squares 541, k-NN 528 at k = 100 chosen on the selection rows, standardized inputs. About one standard error apart: neither is far from the other. The question for the rest of the lecture: can a different shape beat both? The test set stays shut until the seminar.
 :::
 
-What we can fit so far, each a bet on $f^\star$: **least squares**, a plane (every input a slope); **logistic regression**, a plane for a probability (for a label, not today); **$k$ nearest neighbors**, a local average, its $k$ the knob
+What we can fit so far, each a bet on $f^\star$: **least squares**, a plane (every input a slope); **logistic regression**, a plane for the log-odds (for a label, not today); **$k$ nearest neighbors**, a local average, its $k$ the knob
 
 ```{r}
 #| label: baselines
-#| fig-height: 2.5
+#| fig-height: 2.2
 #| fig-width: 9.5
 stdz <- function(d, mu, s) sweep(sweep(as.matrix(d[, feat]), 2, mu), 2, s, "/")
 mu_f <- colMeans(sp_train[, feat]); sd_f <- apply(sp_train[, feat], 2, sd)
 X_tr <- stdz(sp_train, mu_f, sd_f); X_se <- stdz(sp_sel, mu_f, sd_f)
-f_lin <- reformulate(c(feat, "genre"), "track_popularity")
+f_lin <- reformulate(feat, "track_popularity")   # the eleven numeric inputs; genre joins in the seminar
 fit_ls <- lm(f_lin, sp_train)
 ks_sp <- c(1, 5, 10, 20, 50, 100, 200)
 knn_sel <- sapply(ks_sp, function(k) mse(sp_sel$track_popularity, knn_predict(X_se, X_tr, sp_train$track_popularity, k)))
 k_sp <- ks_sp[which.min(knn_sel)]
 preds <- list(
   "baseline: the training mean" = rep(mean(sp_train$track_popularity), nrow(sp_sel)),
-  "least squares on the 11 features and genre" = predict(fit_ls, sp_sel),
-  "k nearest neighbors, k chosen here" = knn_predict(X_se, X_tr, sp_train$track_popularity, k_sp))
+  "least squares on the 11 numeric inputs" = predict(fit_ls, sp_sel),
+  "k nearest neighbors on the same 11, k chosen here" = knn_predict(X_se, X_tr, sp_train$track_popularity, k_sp))
 lb <- imap_dfr(preds, ~ tibble(competitor = .y, mse = mse(sp_sel$track_popularity, .x),
                                 se = se_loss(sp_sel$track_popularity, .x))) |>
   mutate(competitor = fct_reorder(competitor, -mse))
@@ -201,7 +224,7 @@ ggplot(lb, aes(mse, competitor)) +
   labs(x = "MSE on the 2,000 selection tracks", y = NULL, caption = "bars: one standard error")
 ```
 
-Eleven inputs and 5,000 training tracks: the local average ($k = `r k_sp`$) does no better than a plane. Can a different shape beat `r round(lb$mse[lb$competitor == "least squares on the 11 features and genre"])`? The test set stays shut until the seminar
+The local average ($k = `r k_sp`$) and the plane, one standard error apart. Can a different shape beat both? The test set stays shut
 
 ## {.inverse .center}
 
@@ -233,7 +256,7 @@ Many ML methods are optimizing "loss + penalty"
 ## Ridge (i.e. L2 penalized) regression
 
 ::: {.notes}
-Legacy slide, whole. This lambda is the course's lambda: the objective with the squared error not divided by n. glmnet divides the squared error by n and the ridge penalty by 2, so its lambda is this one over n up to that factor; the path figures' axes are glmnet's.
+Legacy slide, whole. This lambda is the course's lambda: the objective with the squared error not divided by n. glmnet divides the squared error by n and the ridge penalty by 2, so its lambda is this one over n up to that factor; the path figures' axes are glmnet's. Conventions, said once: the intercept is not penalized, and the columns are standardized before the penalty is applied (glmnet's default), since a penalty on beta_j depends on the units of x_j.
 :::
 
 - Originally motivated by problems where $\mathbf X^T \mathbf X$ is uninvertible (or badly conditioned, i.e. almost uninvertible)
@@ -251,20 +274,18 @@ Larger coefficients are penalized more (squared penalty)
 ## What $\lambda$ controls {minutes="3"}
 
 ::: {.notes}
-Exercise 2 derives the equations: the gradient of the penalized objective. Invertible for every positive lambda because X'X is positive semidefinite and lambda I adds lambda to every eigenvalue; that is "fitting when p > n". glmnet's own path plot, against minus log lambda on glmnet's scale: large lambda on the left, every coefficient near zero; lambda to zero on the right, least squares (here p < n).
+Exercise 2 derives the equations: the gradient of the penalized objective. Invertible for every positive lambda because X'X is positive semidefinite and lambda I adds lambda to every eigenvalue; that is "fitting when p > n". The figure: ridge on the Spotify training tracks, the eleven numeric inputs and five genre dummies, standardized; minus log lambda on glmnet's scale, so large lambda is on the left, every coefficient near zero; lambda to zero on the right, least squares (p = 16 < n here). Energy, duration and the pop and rap genres carry the largest coefficients.
 :::
 
 ```{r}
-#| label: lasso-data
+#| label: spotify-paths
 #| include: false
-# The legacy lasso deck's simulated data: n = 100, p = 20, coefficients drawn from {-1, 0, 0, 0, 1}.
-set.seed(1)
-n_l <- 100; p_l <- 20
-X_l <- matrix(rnorm(n_l * p_l), nrow = n_l)
-beta_l <- sample(c(-1, 0, 0, 0, 1), p_l, replace = TRUE)
-Y_l <- X_l %*% beta_l + rnorm(n_l)
-lasso_fit <- glmnet(X_l, Y_l)
-ridge_fit <- glmnet(X_l, Y_l, alpha = 0)
+# Ridge and lasso paths on the Spotify training tracks: the eleven numeric inputs and five genre
+# dummies, standardized (glmnet's default standardization is turned off because the columns are).
+ridge_sp <- glmnet(sp_Xtr, sp_train$track_popularity, alpha = 0, standardize = FALSE)
+lasso_sp <- glmnet(sp_Xtr, sp_train$track_popularity, alpha = 1, standardize = FALSE)
+B_l <- as.matrix(coef(lasso_sp))[-1, ]
+first_in <- names(sort(apply(B_l, 1, function(b) min(which(b != 0)))))[1:6]   # the first six to enter the lasso path
 ```
 
 ::: {.columns}
@@ -284,13 +305,12 @@ $\lambda \to 0$: least squares (when it exists). $\lambda \to \infty$: $\hat\bet
 ::: {.column width="48%"}
 ```{r}
 #| label: ridge-path
-#| fig-height: 3.5
-#| fig-width: 5.4
+#| fig-height: 3.6
+#| fig-width: 5.8
 #| out-width: "100%"
-par(mar = c(4, 4, 2, 1))
-plot(ridge_fit, xvar = "lambda", lwd = 2, cex.lab = 1.3, cex.axis = 1.2)
+path_plot(ridge_sp, first_in, "ridge on the Spotify training tracks")
 ```
-Ridge paths: $\hat\beta_\lambda$ against $-\log\lambda$ (large $\lambda$ on the left), simulated data, $n = 100$, $p = 20$, `r sum(beta_l != 0)` true coefficients nonzero
+$\hat\beta_\lambda$ against $-\log\lambda$: the 16 standardized inputs (eleven numeric, five genre dummies), six named
 :::
 :::
 
@@ -310,38 +330,36 @@ $$\text{minimize } \frac{1}{2n} \| \mathbf y - \mathbf X \beta \|_2^2 + \lambda 
 ## Lasso vs ridge: solution paths of $\hat \beta$
 
 ::: {.notes}
-Legacy figure, glmnet's own plot in place of plot_glmnet; the axis is minus log lambda, so large lambda is on the left. Right panel, read left to right: at large lambda everything is zero, coefficients enter one at a time as lambda falls, and some stay at exactly zero until the far right. Left panel: every path shrinks toward zero and none sits at zero over an interval. Same data as the ridge slide.
+The legacy figure's two panels, on the Spotify training tracks instead of the legacy simulation. Right panel, read left to right: at large lambda everything is zero, coefficients enter one at a time as lambda falls (energy and duration first, then instrumentalness and the pop genre), and several stay at exactly zero until far right. Left panel: every path shrinks toward zero and none sits at zero over an interval. Same inputs as the ridge slide.
 :::
 
 ::: {.columns}
 ::: {.column width="50%"}
 ```{r}
 #| label: ridge-path-again
-#| echo: true
 #| fig-width: 6
-#| fig-height: 4.3
+#| fig-height: 4.2
 #| out-width: "100%"
-plot(ridge_fit, xvar = "lambda")
+path_plot(ridge_sp, first_in, "ridge")
 ```
 :::
 ::: {.column width="50%"}
 ```{r}
 #| label: lasso-path
-#| echo: true
 #| fig-width: 6
-#| fig-height: 4.3
+#| fig-height: 4.2
 #| out-width: "100%"
-plot(lasso_fit, xvar = "lambda")
+path_plot(lasso_sp, first_in, "lasso")
 ```
 :::
 :::
 
-Same simulated data, large $\lambda$ on the left: $n = 100$, $p = 20$, `r sum(beta_l != 0)` nonzero coefficients. The lasso's coefficients are exactly zero over whole ranges of $\lambda$; ridge's never are
+Spotify, the same 16 inputs, large $\lambda$ on the left. The lasso's coefficients are exactly zero over whole ranges of $\lambda$ and enter one at a time; ridge's are never zero
 
 ## High dimensional example
 
 ::: {.notes}
-Legacy figure: p = 200 columns, n = 100 rows, a tenth of the coefficients nonzero. Least squares cannot be fitted. Lambda for each method chosen on 100 fresh rows (a selection set; how to choose it well is week 7). Hollow pink circles the lasso, blue crosses ridge, black dots the truth: ridge gives everything a small coefficient; the lasso zeroes most, keeps the large true ones and lets in small extras (71 nonzero for 21 true: a lambda chosen for prediction keeps more than the truth; selection against prediction is week 7).
+Legacy figure: p = 200 columns, n = 100 rows, a tenth of the coefficients nonzero. Least squares has no unique fit (week 4's seminar: infinitely many exact fits). Lambda for each method chosen on 100 fresh rows (a selection set; how to choose it well is week 7). Hollow pink circles the lasso, blue crosses ridge, black dots the truth: ridge gives everything a small coefficient; the lasso zeroes most, keeps the large true ones and lets in small extras (71 nonzero for 21 true: a lambda chosen for prediction keeps more than the truth; selection against prediction is week 7).
 :::
 
 ```{r}
@@ -363,7 +381,7 @@ high_dim <- tibble(variable = 1:p_h, true_beta = beta_h,
                    ridge = as.vector(coef(ridge_h, s = lamr_h))[-1])
 ```
 
-$p = 200$ inputs, $n = 100$ rows, `r sum(beta_h != 0)` true coefficients nonzero; least squares has no unique fit. Ridge and lasso at the $\lambda$ chosen on 100 fresh rows
+Simulated ($p > n$ needs it): $p = 200$ inputs, $n = 100$ rows, `r sum(beta_h != 0)` true coefficients nonzero; least squares has no unique fit. Ridge and lasso at the $\lambda$ chosen on 100 fresh rows
 
 ```{r}
 #| label: plot-highdim
@@ -386,13 +404,13 @@ Black dots the truth, hollow pink circles the lasso, blue crosses ridge. The las
 Compress: p > n and penalized regression still fits; the sparse truth was largely recovered because it was sparse (the extras are small; which to believe is week 7). Two penalties, two beliefs about beta; part 5 says which belief paid where.
 :::
 
-- High-dimensional: $p > n$ means we can't fit OLS
+- High-dimensional: $p > n$ means OLS has no unique fit
 
 But all is not lost! Penalized regression to the rescue
 
 - True model is sparse
 
-Only `r sum(beta_h != 0)` of `r p_h` variables have nonzero coefficients
+`r sum(beta_h != 0)` of `r p_h` nonzero; the lasso kept `r sum(high_dim$lasso != 0)`, `r sum(high_dim$lasso != 0 & high_dim$true_beta != 0)` of the true `r sum(beta_h != 0)` among them
 
 - Ridge estimates are dense
 
@@ -400,7 +418,7 @@ All coefficients nonzero 😰
 
 - Lasso estimates are sparse
 
-Nonzero estimates largely coincide with true model 😎
+Nonzero estimates include most of the true model, plus many small extras 😎
 
 ## {.inverse .center}
 
@@ -413,10 +431,10 @@ Compress: one input, a curve instead of a line, three ways to get one; then one 
 ## Three ways to estimate a curve {minutes="3"}
 
 ::: {.notes}
-Week 1's data and week 1's k-NN. Three ideas, named once: average nearby (k-NN; a kernel weights by distance instead of cutting at k), fit a line nearby (loess, geom_smooth's default), fit a basis (the next two slides; week 7 adds its penalty). The course examines the third; the others are names. All three are curves, and all three have a knob.
+Week 1's data and week 1's k-NN, GDP per capita unlogged so that the relation is curved. Three ideas, named once: average nearby (k-NN; a kernel weights by distance instead of cutting at k), fit a line nearby (loess with degree 1), fit a basis (the next two slides; week 7 adds its penalty). The course examines the third; the others are names. All three are curves, and all three have a knob.
 :::
 
-Week 1's data: life expectancy on $\log_{10}$ GDP per capita, 142 countries. Three ways to turn a line into a curve
+Week 1's data, life expectancy on GDP per capita, 142 countries (no log this time). Three ways to turn a line into a curve
 
 ```{r}
 #| label: three-ways
@@ -424,20 +442,20 @@ Week 1's data: life expectancy on $\log_{10}$ GDP per capita, 142 countries. Thr
 #| fig-width: 12
 knn_one <- function(x0, x, y, k) mean(y[order(abs(x - x0))[1:k]])
 three <- bind_rows(
-  tibble(lgdp = gm_grid$lgdp, fit = sapply(gm_grid$lgdp, knn_one, x = gm$lgdp, y = gm$lifeExp, k = 10),
+  tibble(gdpPercap = gm_grid$gdpPercap, fit = sapply(gm_grid$gdpPercap, knn_one, x = gm$gdpPercap, y = gm$lifeExp, k = 10),
          method = "average nearby: k = 10 nearest neighbors"),
-  tibble(lgdp = gm_grid$lgdp, fit = predict(loess(lifeExp ~ lgdp, gm), gm_grid),
+  tibble(gdpPercap = gm_grid$gdpPercap, fit = predict(loess(lifeExp ~ gdpPercap, gm, degree = 1), gm_grid),
          method = "fit a line nearby: loess"),
-  tibble(lgdp = gm_grid$lgdp, fit = predict(lm(lifeExp ~ ns(lgdp, df = 4), gm), gm_grid),
+  tibble(gdpPercap = gm_grid$gdpPercap, fit = predict(lm(lifeExp ~ ns(gdpPercap, df = 4), gm), gm_grid),
          method = "fit a basis: natural spline, J = 4")) |>
   mutate(method = fct_inorder(method))
-ggplot(gm, aes(lgdp, lifeExp)) +
+ggplot(gm, aes(gdpPercap, lifeExp)) +
   geom_point(colour = "grey55", size = 1.5) +
   geom_line(data = three, aes(y = fit, colour = method), linewidth = 1.3) +
   scale_colour_manual(values = c(v_teal, m_orange, v_dark)) +
   facet_wrap(~ method) +
   theme(legend.position = "none", strip.text = element_text(size = 14)) +
-  labs(x = "log10 GDP per capita", y = "life expectancy")
+  labs(x = "GDP per capita (dollars)", y = "life expectancy")
 ```
 
 **Average nearby** ($k$-NN; a *kernel* weights by distance instead of cutting at $k$). **Fit a line nearby** (*loess*). **Fit a basis**: fixed curves, combined by least squares. The course examines the third
@@ -455,25 +473,25 @@ ns() is in the splines package, which ships with R. Polynomials 1, x, x squared 
 #| fig-width: 5.6
 #| fig-height: 3.6
 #| out-width: "100%"
-basis_mat <- ns(gm_grid$lgdp, df = 6)
-tibble(lgdp = rep(gm_grid$lgdp, 6), b = as.vector(basis_mat),
+basis_mat <- ns(gm_grid$gdpPercap, df = 6)
+tibble(gdpPercap = rep(gm_grid$gdpPercap, 6), b = as.vector(basis_mat),
        j = factor(rep(1:6, each = nrow(gm_grid)))) |>
-  ggplot(aes(lgdp, b, colour = j)) +
+  ggplot(aes(gdpPercap, b, colour = j)) +
   geom_line(linewidth = 1.2) +
   scale_colour_viridis_d(end = 0.9) +
-  labs(x = "log10 GDP per capita", y = NULL, colour = "j",
+  labs(x = "GDP per capita (dollars)", y = NULL, colour = "j",
        title = "six natural-spline basis functions") +
   theme(plot.title = element_text(size = 16), legend.position = "none")
 ```
 :::
 ::: {.column width="52%"}
-A **basis**: fixed functions $b_1(x), \ldots, b_J(x)$ of one input. The fit is their combination,
+A **basis**: fixed functions $b_1(x), \ldots, b_J(x)$ of one input, combined by least squares:
 $$
-f(x) = \sum_{j=1}^J \beta_j\, b_j(x)
+f(x) = \beta_0 + \sum_{j=1}^J \beta_j\, b_j(x)
 $$
-linear in $\beta$, so least squares fits it: `lm(lifeExp ~ ns(lgdp, df = J))`, where `ns()` builds the $J$ columns
+linear in $\beta$: `lm(lifeExp ~ ns(gdp, df = J))`, `ns()` building the $J$ columns
 
-A **natural cubic spline**: cubic pieces joined smoothly at knots, linear beyond the ends. Each $b_j$ is local: it is zero far from its knots
+A **natural cubic spline**: cubic pieces joined smoothly at knots, linear beyond the ends. The basis functions are the bends the knots allow; `lm` adds $\beta_0$
 :::
 :::
 
@@ -488,16 +506,16 @@ Same data, J = 2, 5, 15. J small, nearly a line; J large, wiggles, and at J = n 
 #| fig-height: 3.6
 #| fig-width: 12
 fits_J <- map_dfr(c(2, 5, 15), function(J) {
-  fit_J <- predict(lm(lifeExp ~ ns(lgdp, df = J), gm), gm_grid)
-  tibble(size = paste("J =", J), lgdp = gm_grid$lgdp, fit = fit_J)
+  fit_J <- predict(lm(lifeExp ~ ns(gdpPercap, df = J), gm), gm_grid)
+  tibble(size = paste("J =", J), gdpPercap = gm_grid$gdpPercap, fit = fit_J)
 }) |>
   mutate(size = fct_inorder(size))
-ggplot(gm, aes(lgdp, lifeExp)) +
+ggplot(gm, aes(gdpPercap, lifeExp)) +
   geom_point(colour = "grey55", size = 1.5) +
   geom_line(data = fits_J, aes(y = fit), colour = v_dark, linewidth = 1.3) +
   facet_wrap(~ size) +
   theme(strip.text = element_text(size = 16)) +
-  labs(x = "log10 GDP per capita", y = "life expectancy")
+  labs(x = "GDP per capita (dollars)", y = "life expectancy")
 ```
 
 Small $J$: almost a line. Large $J$: the curve follows the points, and at $J = n$ it passes through every one (training error zero). Which $J$? The selection set, as for $k$ and $\lambda$. Week 7: a penalty on wiggliness instead, with $J$ as a ceiling
@@ -518,96 +536,44 @@ $$g(\mathbb E[\mathbf y | \mathbf X]) = \beta_0 + f_1( \mathbf x_1) + f_2( \math
 
 Includes linear models as special case if $f_j(\mathbf x_j) = \beta_j \mathbf x_j$
 
-Today each $f_j$ is a spline with $J$ basis functions, so the whole model is one least-squares fit on $pJ$ columns: `lm(y ~ ns(x1, J) + ns(x2, J) + ns(x3, J))`. The GAM in the reading is this model, with a link
+Today each $f_j$ is a spline with $J$ basis functions, so the whole model is one least-squares fit on $pJ$ columns: `lm(y ~ ns(x1, J) + ns(x2, J) + ...)`. The GAM in the reading is this model, with a link
 
-## Component plots
+## An additive model for popularity
 
 ::: {.notes}
-The legacy simulation: three functions, three inputs, n = 400, noise sd 1. The additive fit with J = 4 per input, one least-squares fit on 12 columns; each panel is the fitted f_j against the truth, both centered. The marginal smooths of the legacy slide, and why they are biased, are week 8's backfitting topic.
+Spotify, the training tracks: six of the numeric inputs as splines with J = 4, genre as a factor, one least-squares fit on 30 columns. R squared about 0.17: most of popularity is not in these inputs, which is the honest state of affairs. Each panel is a fitted component, centered, over the middle 98 percent of its input. Read two: loudness (louder tracks score higher, 20 points across the range), release year (the oldest tracks score high, a low around 2012, then the steep rise into 2019 and 2020: recency, as the data note says). Energy falls once loudness is in the model: the two are correlated, and the component is what energy adds with loudness held fixed, week 2's reading. Backfitting, week 8, is how these components are found when the one-input fits are not least squares.
 :::
 
-$f_1(x) = -1 + 2x - x^2$, $\quad f_2(x) = \sin(\pi x)$, $\quad f_3(x) = e^{-5(x - 1/2)^2}$; $\quad y = f_1(x_1) + f_2(x_2) + f_3(x_3) + \varepsilon$, $\ n = 400$
+```{r}
+#| label: spotify-additive-fit
+#| echo: true
+fit_add <- lm(track_popularity ~ ns(loudness, 4) + ns(release_year, 4) +
+                ns(danceability, 4) + ns(duration_min, 4) + ns(energy, 4) +
+                ns(acousticness, 4) + genre, data = sp_train)
+```
 
 ```{r}
-#| label: additive-sim
+#| label: spotify-components
 #| fig-height: 3.3
 #| fig-width: 12
-f1 <- function(x) -1 + 2 * x - x^2
-f2 <- function(x) sin(pi * x)
-f3 <- function(x) exp(-5 * (x - 1/2)^2)
-set.seed(1)
-n_a <- 400
-df_add <- data.frame(x1 = 2 * (runif(n_a) - 1/2),
-                     x2 = sample(1:100 / 50, n_a, replace = TRUE),
-                     x3 = runif(n_a)) |>
-  mutate(y = f1(x1) + f2(x2) + f3(x3) + rnorm(n_a))
-fit_add <- lm(y ~ ns(x1, 4) + ns(x2, 4) + ns(x3, 4), df_add)
-terms_add <- predict(fit_add, type = "terms")
-comp <- bind_rows(lapply(1:3, function(j) {
-  xj <- df_add[[paste0("x", j)]]; fj <- get(paste0("f", j))
-  tibble(input = paste0("x", j), x = xj, fitted = terms_add[, j], truth = fj(xj) - mean(fj(xj)))
-}))
-ggplot(comp, aes(x)) +
-  geom_line(aes(y = truth, colour = "truth"), linewidth = 1.6) +
-  geom_line(aes(y = fitted, colour = "fitted component, J = 4"), linewidth = 1.1) +
-  scale_colour_manual(values = c("fitted component, J = 4" = v_dark, truth = v_teal), name = NULL) +
-  facet_wrap(~ input, scales = "free_x") +
-  theme(legend.position = "top", strip.text = element_text(size = 16)) +
-  labs(x = NULL, y = "component (centered)")
+add_vars <- c("loudness", "release_year", "danceability", "duration_min", "energy", "acousticness")
+comp_grid <- function(v) {
+  g <- sp_train[rep(1, 200), ]
+  g[[v]] <- seq(quantile(sp_train[[v]], 0.01), quantile(sp_train[[v]], 0.99), length.out = 200)
+  g
+}
+comp <- bind_rows(lapply(seq_along(add_vars), function(j) {
+  g <- comp_grid(add_vars[j])
+  tibble(input = add_vars[j], x = g[[add_vars[j]]], component = predict(fit_add, g, type = "terms")[, j])
+})) |> mutate(input = fct_inorder(input))
+ggplot(comp, aes(x, component)) +
+  geom_line(colour = v_dark, linewidth = 1.3) +
+  facet_wrap(~ input, scales = "free_x", nrow = 2) +
+  theme(strip.text = element_text(size = 14)) +
+  labs(x = NULL, y = "component of popularity")
 ```
 
-`lm(y ~ ns(x1, 4) + ns(x2, 4) + ns(x3, 4))`: one fit, twelve columns, and a curve per input to look at. The curve is a "coefficient" with a shape
-
-## Additive combination of non-linear predictors
-
-::: {.notes}
-Legacy movies slides, merged. The gam package's lo() is now lm on ns() columns, the model of the last two slides; mgcv's penalized version returns in week 7. 53,388 films after the selection shown (data note: data/movies). The fit has 17 coefficients and nothing to read in them; the next slide is how to read it.
-:::
-
-```{r}
-#| label: movies-load
-#| echo: true
-library(ggplot2movies)
-mv <- movies |>
-  filter(length <= 200, length > 10,
-         year > 1918, votes >= 5)
-```
-
-I asked on [Twitter](https://twitter.com/tslumley/status/1361789344118284288) what was missing from the plot of movie length vs movie rating and Thomas Lumley suggested confounding by **year**
-
-```{r}
-#| label: movies-fit
-#| echo: true
-fit_mv <- lm(rating ~ ns(length, 8) + ns(year, 8), mv)
-```
-
-One least-squares fit, `r length(coef(fit_mv))` coefficients, `r format(nrow(mv), big.mark = ",")` films ([data note](https://ml4ds.com/data/movies.html)). No coefficient to read, so how do we interpret?
-
-## Replace each linear coefficient with a 2d plot
-
-::: {.notes}
-Each panel is one fitted component, centered. Length: ratings fall from the shorts to a low near 85 minutes, then rise steeply to feature length and level off; year: the oldest films rate highest here, the low is around 1990, then a rise after 2000. Why older films rate higher is the data note's complication (the old films still watched are the ones that survived); week 9 reads these plots as interpretation and says what they are not.
-:::
-
-```{r}
-#| label: movies-components
-#| fig-height: 3.8
-#| fig-width: 12
-grid_len <- tibble(length = seq(11, 200, by = 1), year = 1990)
-grid_yr  <- tibble(length = 100, year = seq(1919, 2005, by = 1))
-mv_comp <- bind_rows(
-  tibble(input = "length (minutes)", x = grid_len$length,
-         component = predict(fit_mv, grid_len, type = "terms")[, 1]),
-  tibble(input = "year", x = grid_yr$year,
-         component = predict(fit_mv, grid_yr, type = "terms")[, 2]))
-ggplot(mv_comp, aes(x, component)) +
-  geom_line(colour = v_dark, linewidth = 1.4) +
-  facet_wrap(~ input, scales = "free_x") +
-  theme(strip.text = element_text(size = 16)) +
-  labs(x = NULL, y = "fitted component of rating")
-```
-
-Each curve is what the model adds to a film's rating for that input, with the other held fixed: a coefficient's job, done by a shape. The model is the sum of the two curves plus a constant
+One fit, `r length(coef(fit_add))` coefficients, and a curve per input to read instead of a coefficient: what the model adds for that input with the others held fixed
 
 ## {.inverse .center}
 
@@ -633,55 +599,90 @@ This is (arguably) more interpretable than a linear model with multiple predicto
 
 (Note: this is not the real vaccination criteria, but it was close to this in early 2021)
 
-## Regression tree to predict penguin massiveness
+## A regression tree for popularity
 
 ::: {.notes}
-Legacy slide with rpart in place of the tree package (not on the install list); cp = 0.007 reproduces the legacy splits exactly (206.5, 193.5, 214.5 on flipper length; 38.15 and 48.55 on bill length). Read the tree from the top: one question per node, a number in each leaf. Week 3's penguins, all three species, 333 birds.
+The legacy penguin tree, on the Spotify training tracks: popularity on release year and energy (the first two inputs to enter the lasso path), depth 3, at least 250 tracks in a leaf. Read it from the top: one question per node, a number in each leaf. The 2018 cutoff splits first; energy matters on both sides, with different cutoffs. The leaf values are mean popularity in the leaf.
 :::
 
 ```{r}
-#| label: penguin-tree
+#| label: spotify-tree
 #| echo: true
-#| code-line-numbers: "1-3"
-#| fig-width: 10
-#| fig-height: 3.3
+#| code-line-numbers: "1-2"
+#| fig-width: 12
+#| fig-height: 3.8
 #| fig-align: center
-#| out-width: "80%"
-pg <- penguins |> drop_na()
-fit_tree <- rpart(body_mass_g ~ flipper_length_mm + bill_length_mm,
-                  control = rpart.control(cp = 0.007), data = pg)
+#| out-width: "96%"
+fit_tree <- rpart(track_popularity ~ release_year + energy, sp_train,
+                  control = rpart.control(maxdepth = 3, cp = 0, minbucket = 250))
 plot(fit_tree, uniform = TRUE, margin = 0.1)
-text(fit_tree, pretty = 0, cex = 1.7)
+text(fit_tree, pretty = 0, cex = 1.9, digits = 3)
 ```
 
 ## Regression tree predictions
 
 ::: {.notes}
-Legacy figure: the same tree drawn in the input plane. Each leaf is a rectangle, and the prediction is the mean mass of the training birds in it: a step function in two inputs, flat inside each rectangle. Nothing smooth, nothing additive: the bill-length question is asked only on the far right.
+The same tree drawn in the input plane: each leaf is a rectangle, and the prediction is the mean popularity of the training tracks in it. A step function in two inputs, flat inside each rectangle: nothing smooth, nothing additive. The energy question is asked on both sides of 2018 with different cutoffs, which an additive model could not do.
 :::
 
 ```{r}
-#| label: penguin-rectangles
+#| label: spotify-rectangles
 #| fig-width: 10
-#| fig-height: 5
+#| fig-height: 4.2
 #| fig-align: center
 #| out-width: "78%"
-pg |>
-  ggplot(aes(x = flipper_length_mm, y = bill_length_mm)) +
-  scale_color_viridis_d(end = .8, option = "D") +
-  geom_point(aes(color = as.factor(round(predict(fit_tree)))), alpha = .6) +
-  geom_vline(xintercept = 206.5, linewidth = 1.5) +
-  geom_vline(xintercept = 193.5, linewidth = 1.5, linetype = "dashed") +
-  geom_vline(xintercept = 214.5, linewidth = 1.5, linetype = "dashed") +
-  geom_segment(x = 214.5, y = 48.55, xend = 240, yend = 48.55, linewidth = 1.5, linetype = "dotdash") +
-  geom_segment(x = 170, y = 38.15, xend = 193.5, yend = 38.15, linewidth = 1.5, linetype = "dotdash") +
-  labs(color = "Predicted\nmass_g")
+# The tree's prediction on a grid of the input plane: each leaf is a rectangle with one value.
+leaf_grid <- expand_grid(release_year = seq(1957, 2020, by = 0.25), energy = seq(0, 1, by = 0.005)) |>
+  mutate(predicted = predict(fit_tree, pick(everything())))
+ggplot() +
+  geom_raster(data = leaf_grid, aes(release_year, energy, fill = predicted), alpha = 0.85) +
+  geom_point(data = sp_train, aes(release_year, energy), colour = "white", alpha = 0.25, size = 0.5) +
+  scale_fill_viridis_c(end = 0.95, name = "predicted\npopularity") +
+  coord_cartesian(expand = FALSE) +
+  labs(x = "release year", y = "energy")
 ```
+
+Each leaf is a rectangle with one value; the training tracks in white. The three narrow strips on the right are the leaves for 2018 and for 2019 to 2020, split again by energy
+
+## One predictor, every cutoff
+
+::: {.notes}
+New slide, before the loop. One input, release year: for every cutoff, split the training tracks in two, predict each side's mean, and record the training MSE; the best cutoff is where the curve is lowest, 2018 here (the recency effect). The right panel is the two-leaf fit that cutoff gives: one question. Week 8 does this by hand and scores every cutoff in one pass.
+:::
+
+```{r}
+#| label: best-cutoff
+#| fig-height: 3.6
+#| fig-width: 12
+cuts <- sort(unique(sp_train$release_year)); cuts <- cuts[-1]
+split_mse <- sapply(cuts, function(c) {
+  left <- sp_train$release_year < c
+  (sum((sp_train$track_popularity[left] - mean(sp_train$track_popularity[left]))^2) +
+   sum((sp_train$track_popularity[!left] - mean(sp_train$track_popularity[!left]))^2)) / nrow(sp_train)
+})
+best_cut <- cuts[which.min(split_mse)]
+left <- sp_train$release_year < best_cut
+step_df <- tibble(x = c(min(sp_train$release_year), best_cut, best_cut, max(sp_train$release_year)),
+                  y = c(rep(mean(sp_train$track_popularity[left]), 2), rep(mean(sp_train$track_popularity[!left]), 2)))
+p_cut <- ggplot(tibble(cut = cuts, mse = split_mse), aes(cut, mse)) +
+  geom_line(colour = v_blue, linewidth = 1.2) +
+  geom_point(data = tibble(cut = best_cut, mse = min(split_mse)), colour = m_orange, size = 4) +
+  labs(x = "cutoff on release year", y = "training MSE of the two-leaf fit", title = paste("every cutoff tried; the best is", best_cut)) +
+  theme(plot.title = element_text(size = 15))
+p_step <- ggplot(sp_train, aes(release_year, track_popularity)) +
+  geom_point(alpha = 0.1, size = 0.7, colour = "grey50") +
+  geom_path(data = step_df, aes(x, y), colour = m_orange, linewidth = 1.6) +
+  labs(x = "release year", y = "popularity", title = "the best two-leaf fit: one question") +
+  theme(plot.title = element_text(size = 15))
+p_cut + p_step
+```
+
+For one input: try every cutoff, predict each side's mean, keep the cutoff with the smallest training MSE. One question, two leaves
 
 ## Recursive rectangular splitting on predictors
 
 ::: {.notes}
-Legacy slide. How the questions are chosen: every input, every cutoff, the best split; then the same on each side. Greedy. The split search by hand, the stopping rules and pruning are week 8's; today only how a tree predicts.
+Legacy slide, now the loop around the last slide: every input, its best cutoff, the best of those; then the same on each side. Greedy. How deep to grow and how to prune back are week 8's; today a depth is the tree's knob, chosen like the others.
 :::
 
 "Stratification of the feature space"
@@ -689,82 +690,53 @@ Legacy slide. How the questions are chosen: every input, every cutoff, the best 
 ```
 Input: subset of data
   For each predictor variable x_j in subset
-    Split left: observations with x_j < cutoff
-    Split right: observations with x_j >= cutoff
-    Predict constants in each split
-    Compute model improvement
-    Scan cutoff value to find best split for x_j
-Output: predictor and split with best improvement
+    Scan cutoff values to find the best split for x_j (last slide)
+Output: the predictor and cutoff with the best improvement
 ```
 
 . . .
 
-Starting from full dataset, compute first split as above
+Starting from the full dataset, compute the first split as above
 
 **Recurse**: take the two subsets of data from each side of the split and plug them both back into the same function
 
-Until some **stopping rule** prevents more splitting
+Until some **stopping rule** prevents more splitting (today: a maximum depth, the tree's knob; growing deep and pruning back is week 8)
 
-## Aggregating is... smoothing?
+## A tree is unstable
 
 ::: {.notes}
-Top left is the tree on all 333 penguins; the other three are grown on bootstrap samples, draws with replacement of the same size. Different samples, different questions, different class probabilities for the same penguin (an Adelie with a bill of 42.5 mm, near the cutoffs: two trees are certain, one says Chinstrap): a tree is unstable. The average of the four rows is softer than any one of them, which is the next slide.
+New slide, before the fix. Gapminder, where 142 points make it visible: eight resamples of the countries (draws with replacement, the same size), a depth-3 tree and a J = 4 spline on each. The trees' cutoffs jump between resamples and their steps jump with them; the splines barely move. Across the grid the eight trees' predictions have an average standard deviation of about 1.6 years, the splines' about 0.9. A tree has high variance; the orange line, the average of the eight trees, is already smoother than any of them, which is the next slide.
 :::
 
-::: {.columns}
-::: {.column width="58%"}
 ```{r}
-#| label: bootstrap-trees
-#| fig-width: 7
-#| fig-height: 4.8
-#| out-width: "100%"
-fit_class <- rpart(species ~ ., method = "class", parms = list(split = "gini"),
-                   control = rpart.control(minbucket = 40, cp = -1), data = pg)
-boot_tree <- function() rpart(species ~ ., method = "class", parms = list(split = "gini"),
-                              control = rpart.control(minbucket = 40, cp = -1),
-                              data = slice_sample(pg, n = nrow(pg), replace = TRUE))
-set.seed(12)
-fit_tree2 <- boot_tree(); fit_tree3 <- boot_tree(); fit_tree4 <- boot_tree()
-par(mfrow = c(2, 2), mar = c(0.4, 0.4, 0.4, 0.4), xpd = NA)
-for (f in list(fit_class, fit_tree2, fit_tree3, fit_tree4)) {
-  plot(f, uniform = TRUE, margin = 0.06)
-  text(f, pretty = 0, cex = 1.05)
-}
-```
-:::
-::: {.column width="42%"}
-One tree on all the data, three on resamples of it. Predictions for one penguin
-
-```{r}
-#| label: one-penguin
-#| comment: ""
-i <- 13
-pg[i, ] |> as.data.frame() |>
-  select(species, flipper_length_mm) |>
-  print.data.frame(row.names = FALSE)
-pg[i, ] |> as.data.frame() |>
-  select(bill_length_mm, bill_depth_mm) |>
-  print.data.frame(row.names = FALSE)
+#| label: tree-variance
+#| fig-height: 3.9
+#| fig-width: 12
+set.seed(3)
+resamples <- map_dfr(1:8, function(b) {
+  d <- slice_sample(gm, n = nrow(gm), replace = TRUE)
+  t_b <- rpart(lifeExp ~ gdpPercap, d, control = rpart.control(maxdepth = 3, cp = 0, minbucket = 5))
+  s_b <- lm(lifeExp ~ ns(gdpPercap, df = 4), d)
+  bind_rows(tibble(b = b, method = "a depth-3 tree", gdpPercap = gm_grid$gdpPercap, fit = predict(t_b, gm_grid)),
+            tibble(b = b, method = "a natural spline, J = 4", gdpPercap = gm_grid$gdpPercap, fit = predict(s_b, gm_grid)))
+})
+tree_avg <- resamples |> filter(method == "a depth-3 tree") |>
+  group_by(gdpPercap) |> summarize(fit = mean(fit)) |> mutate(method = "a depth-3 tree")
+ggplot() +
+  geom_point(data = gm, aes(gdpPercap, lifeExp), colour = "grey60", size = 1.3) +
+  geom_line(data = resamples, aes(gdpPercap, fit, group = b), colour = v_blue, alpha = 0.6, linewidth = 0.8) +
+  geom_line(data = tree_avg, aes(gdpPercap, fit), colour = m_orange, linewidth = 2) +
+  facet_wrap(~ method) + coord_cartesian(ylim = c(40, 85)) +
+  theme(strip.text = element_text(size = 16)) +
+  labs(x = "GDP per capita (dollars)", y = "life expectancy")
 ```
 
-```{r}
-#| label: one-penguin-preds
-#| comment: ""
-predictions <- rbind(
-  predict(fit_class, newdata = pg[i, ]),
-  predict(fit_tree2, newdata = pg[i, ]),
-  predict(fit_tree3, newdata = pg[i, ]),
-  predict(fit_tree4, newdata = pg[i, ]))
-rownames(predictions) <- 1:4
-round(predictions, 3)
-```
-:::
-:::
+Week 1's countries, resampled eight times (blue, one fit per resample). The trees' cutoffs move with the sample and the steps move with them; the splines barely move. Orange: the average of the eight trees
 
 ## Bagging: bootstrap aggregating
 
 ::: {.notes}
-Legacy slide. Say what a bootstrap sample is, once, with rows 1 to 5: a draw might be 2, 2, 4, 5, 1, so row 3 is left out and row 2 counts twice. B trees, one average. Why averaging helps, and by how much when the trees are correlated, is week 8's theorem.
+Legacy slide. A bootstrap sample is what the last slide drew: rows 1 to 5, a draw might be 2, 2, 4, 5, 1, so row 3 is left out and row 2 counts twice. B trees, one average: the orange line. Why averaging helps, and by how much when the trees are correlated, is week 8's theorem.
 :::
 
 **Problem**: a single tree model can have high variance (like many non-smooth or non-regularized models)
@@ -807,68 +779,80 @@ Compress: four families, four bets; three truths, one protocol, and the training
 ## Three truths, one protocol {minutes="3"}
 
 ::: {.notes}
-Ten inputs, uniform on minus one to one, noise sd 1, so the floor is an MSE of 1. Truth A is a plane in three of the ten; B is the three curves of part 3, scaled by 1.5, in three of the ten; C is a checkerboard in two of them, with no additive part at all (each input alone tells you nothing). Every knob chosen on the 100 selection rows; the test set is 2,000 rows because the truth is simulated and we can afford it. Forest with its defaults, no knob.
+Ten inputs, uniform on minus one to one, noise sd 1, so the floor is an MSE of 1. Truth A is a plane in three of the ten; B is three smooth one-input curves (f1 = -1 + 2x - x^2, f2 = sin(pi x), f3 = exp(-5(x - 1/2)^2)), scaled by 1.5, in three of the ten; C is one step that needs two inputs at once (signal variance 3, of which the best sum of one-input functions holds 2 and the product the last 1). Every knob chosen on the 100 selection rows, then the chosen fit refitted on the 400 training-plus-selection rows; the test set is 2,000 rows because the truth is simulated and we can afford it. Forest with its defaults, no knob. The ask: two minutes, a show of hands per truth; take the reasons, not only the names.
 :::
 
-$p = 10$ inputs, each uniform on $[-1, 1]$; $y = f^\star(x) + \varepsilon$, noise variance $\sigma^2 = 1$. Three truths, each using three (or two) of the ten inputs:
+$p = 10$ inputs, uniform on $[-1, 1]$; $y = f^\star(x) + \varepsilon$, noise variance $\sigma^2 = 1$. Three truths, each using two or three inputs:
 
 - **A, sparse linear:** $f^\star(x) = 2x_1 - 1.5x_2 + x_3$
-- **B, additive smooth:** $f^\star(x) = 1.5\,[f_1(x_1) + f_2(x_2) + f_3(x_3)]$, part 3's three curves
-- **C, thresholds with an interaction:** $f^\star(x) = 2 \cdot \mathbf 1\{x_1 > 0,\ x_2 > 0\} - 2 \cdot \mathbf 1\{x_1 \le 0,\ x_2 \le 0\}$
+- **B, additive smooth:** $f^\star(x) = 1.5\,[f_1(x_1) + f_2(x_2) + f_3(x_3)]$, smooth $f_j$
+- **C, one step, two inputs at once:** $f^\star(x) = 4 \cdot \mathbf 1\{x_1 > 0,\ x_2 > 0\}$
 
-**One protocol.** 300 training rows, 100 selection rows, 2,000 test rows. Six competitors: least squares; the lasso ($\lambda$); $k$-NN ($k$); the additive spline fit ($J$); a tree (depth); a forest (defaults). Every knob chosen on the selection rows, then scored once on the test rows, with the training MSE recorded beside it
+**One protocol.** 300 training, 100 selection, 2,000 test rows. Six competitors: least squares; lasso ($\lambda$); $k$-NN ($k$); additive splines ($J$); a tree (depth); a forest. Knobs chosen on the selection rows, the fit refitted on training plus selection, scored once
+
+::: {.ask}
+For each truth: which family wins, which loses, and why?
+:::
 
 ```{r}
 #| label: compare-families
 #| include: false
-# Every family fitted to one simulated dataset under the protocol above; returns one row per
-# competitor with training MSE, test MSE and its standard error. wide = TRUE drops least squares
-# and the additive fit (more columns than rows) and adds ridge.
+# Every family fitted to one simulated dataset under the protocol above: each knob chosen on the
+# selection rows, the chosen fit refitted on training plus selection (k-NN uses those rows as its
+# neighbors), then scored on the test rows. Returns one row per competitor with training MSE (on
+# the refit rows), test MSE and its standard error. wide = TRUE drops least squares and the
+# additive fit (no unique fit with more columns than rows) and adds ridge.
 compare_families <- function(truth, p, n_train, n_sel, n_test, seed, wide = FALSE) {
   set.seed(seed)
   gen <- function(n) {
     X <- matrix(runif(n * p, -1, 1), n, p); colnames(X) <- paste0("x", 1:p)
     tibble(as.data.frame(X), y = truth(X) + rnorm(n))
   }
-  tr <- gen(n_train); se <- gen(n_sel); te <- gen(n_test)
-  Xtr <- as.matrix(tr[, 1:p]); Xse <- as.matrix(se[, 1:p]); Xte <- as.matrix(te[, 1:p])
-  score <- function(name, pred_tr, pred_te)
-    tibble(competitor = name, train = mse(tr$y, pred_tr), test = mse(te$y, pred_te), se = se_loss(te$y, pred_te))
+  tr <- gen(n_train); se <- gen(n_sel); te <- gen(n_test); all <- bind_rows(tr, se)
+  Xtr <- as.matrix(tr[, 1:p]); Xse <- as.matrix(se[, 1:p]); Xte <- as.matrix(te[, 1:p]); Xall <- as.matrix(all[, 1:p])
+  score <- function(name, pred_all, pred_te)
+    tibble(competitor = name, train = mse(all$y, pred_all), test = mse(te$y, pred_te), se = se_loss(te$y, pred_te))
   out <- list()
   if (!wide) {
-    fit <- lm(y ~ ., tr)
+    fit <- lm(y ~ ., all)
     out$ls <- score("least squares", fitted(fit), predict(fit, te))
   }
   las <- glmnet(Xtr, tr$y)
   lam <- las$lambda[which.min(apply(predict(las, Xse), 2, function(q) mse(se$y, q)))]
-  out$lasso <- score("lasso", predict(las, Xtr, s = lam), predict(las, Xte, s = lam))
+  las_all <- glmnet(Xall, all$y, lambda = lam)
+  out$lasso <- score("lasso", predict(las_all, Xall), predict(las_all, Xte))
   if (wide) {
     rid <- glmnet(Xtr, tr$y, alpha = 0)
     lamr <- rid$lambda[which.min(apply(predict(rid, Xse), 2, function(q) mse(se$y, q)))]
-    out$ridge <- score("ridge", predict(rid, Xtr, s = lamr), predict(rid, Xte, s = lamr))
+    rid_all <- glmnet(Xall, all$y, alpha = 0, lambda = lamr)
+    out$ridge <- score("ridge", predict(rid_all, Xall), predict(rid_all, Xte))
   }
   ks <- c(1, 2, 3, 5, 8, 12, 20, 30, 50)
   k <- ks[which.min(sapply(ks, function(k) mse(se$y, knn_predict(Xse, Xtr, tr$y, k))))]
-  out$knn <- score("k-NN", knn_predict(Xtr, Xtr, tr$y, k), knn_predict(Xte, Xtr, tr$y, k))
+  out$knn <- score("k-NN", knn_predict(Xall, Xall, all$y, k), knn_predict(Xte, Xall, all$y, k))
   if (!wide) {
     gam_f <- function(J) reformulate(sprintf("ns(x%d, df = %d)", 1:p, J), "y")
     Js <- c(2, 3, 4, 6, 8)
     J <- Js[which.min(sapply(Js, function(J) mse(se$y, predict(lm(gam_f(J), tr), se))))]
-    g <- lm(gam_f(J), tr)
+    g <- lm(gam_f(J), all)
     out$gam <- score("additive splines", fitted(g), predict(g, te))
   }
   ds <- 1:8
   d <- ds[which.min(sapply(ds, function(d) mse(se$y, predict(rpart(y ~ ., tr,
          control = rpart.control(maxdepth = d, cp = 0, minbucket = 5)), se))))]
-  t <- rpart(y ~ ., tr, control = rpart.control(maxdepth = d, cp = 0, minbucket = 5))
-  out$tree <- score("tree", predict(t, tr), predict(t, te))
-  rf <- randomForest(y ~ ., tr, ntree = 300)
-  out$forest <- score("forest", predict(rf, tr), predict(rf, te))
+  t <- rpart(y ~ ., all, control = rpart.control(maxdepth = d, cp = 0, minbucket = 5))
+  out$tree <- score("tree", predict(t, all), predict(t, te))
+  rf <- randomForest(y ~ ., all, ntree = 300)
+  out$forest <- score("forest", predict(rf, all), predict(rf, te))
   bind_rows(out) |> mutate(knob = paste0("lambda ", signif(lam, 2), ", k ", k, ", J ", if (wide) NA else J, ", depth ", d))
 }
+# Truth B's three curves: a parabola, a sine, a bump (the legacy GAM deck's simulation).
+f1 <- function(x) -1 + 2 * x - x^2
+f2 <- function(x) sin(pi * x)
+f3 <- function(x) exp(-5 * (x - 1/2)^2)
 truth_A <- function(X) 2 * X[, 1] - 1.5 * X[, 2] + X[, 3]
 truth_B <- function(X) 1.5 * (f1(X[, 1]) + f2(X[, 2]) + f3(X[, 3]))
-truth_C <- function(X) 2 * (X[, 1] > 0 & X[, 2] > 0) - 2 * (X[, 1] <= 0 & X[, 2] <= 0)
+truth_C <- function(X) 4 * (X[, 1] > 0 & X[, 2] > 0)
 res_A  <- compare_families(truth_A, p = 10, 300, 100, 2000, seed = 1)
 res_Aw <- compare_families(truth_A, p = 200, 100, 50, 2000, seed = 2, wide = TRUE)
 res_B  <- compare_families(truth_B, p = 10, 300, 100, 2000, seed = 1)
@@ -891,7 +875,7 @@ leaderboard <- function(res, title, xmax = NULL) {
 ## Truth A: sparse linear, tall and then wide
 
 ::: {.notes}
-Left, tall: n = 300, p = 10. Least squares and the lasso sit on the floor (dotted line, the noise variance); the additive fit is close, with 30 columns to estimate; the forest and the tree pay for a shape they do not need; k-NN in ten dimensions is last. Right, wide: n = 100, p = 200, the same truth. Least squares and the additive fit cannot be fitted; the lasso alone stays near the floor; ridge, the forest and k-NN are near the mean's score. The hollow points: the forest's training error is a quarter of its test error.
+Left, tall: n = 300, p = 10. Least squares and the lasso sit on the floor (dotted line, the noise variance, the smallest population MSE; a realized test MSE on 2,000 rows can sit a little below it); the additive fit is close, with 30 columns to estimate; the forest and the tree pay for a shape they do not need; k-NN in ten dimensions is last. Right, wide: n = 100, p = 200, the same truth. Least squares and the additive fit have no unique fit; the lasso alone stays near the floor; ridge, the forest and k-NN are near the mean's score. The hollow points: the forest's training error is a quarter of its test error; least squares' training error sits above its test error here (one realization; the theorem is about averages).
 :::
 
 ```{r}
@@ -901,7 +885,7 @@ Left, tall: n = 300, p = 10. Least squares and the lasso sit on the floor (dotte
 leaderboard(res_A, "tall: n = 300, p = 10") + leaderboard(res_Aw, "wide: n = 100, p = 200")
 ```
 
-Dotted line: the noise variance, the best any predictor can do. Sparsity costs nothing when $n \gg p$ and is the only thing that works when $p > n$
+Dotted line: the noise variance, the smallest population MSE. For this sparse truth the lasso ties least squares when $n \gg p$, and alone stays near the floor when $p > n$
 
 ## Truth B: additive smooth
 
@@ -923,7 +907,7 @@ The additive fit was built for this truth. A forest can bend, with rectangles; a
 ## Truth C: thresholds with an interaction
 
 ::: {.notes}
-The tree of depth 2 is the truth, so it sits on the floor; the forest close behind. The additive fit and least squares are stuck near the signal's variance plus 1: each input alone carries nothing (a checkerboard), so a sum of one-input curves cannot see it. k-NN last again.
+The tree of depth 2 is the truth, so it sits on the floor; the forest close behind. A sum of one-input functions can hold at most two thirds of this signal (each input's share) and the smooth splines hold less than that, so the additive fit and least squares are far from the floor; k-NN last again. The tree's training error sits above its test error: another one-realization exception.
 :::
 
 ```{r}
@@ -932,22 +916,66 @@ The tree of depth 2 is the truth, so it sits on the floor; the forest close behi
 #| fig-width: 8.5
 #| fig-align: center
 #| out-width: "75%"
-leaderboard(res_C, "n = 300, p = 10; a checkerboard in two inputs")
+leaderboard(res_C, "n = 300, p = 10; one step, two inputs at once")
 ```
 
-A checkerboard: each input alone says nothing, so every additive model is blind to it. Two questions in a row see all of it
+A sum of one-input functions can hold each input's share of this step, two thirds of the signal at best, and not the product. Two questions in a row hold all of it
+
+## CTF competition: the six on Spotify
+
+::: {.notes}
+The baselines slide asked whether a shape could beat both; this is the answer on the selection tracks, the knobs chosen there (the one-SE bars are the selection set's). Additive splines 490 and the forest 493 lead; the tree 512; the lasso with genre 525; k-NN 528; least squares 541; the mean 581. The hollow points are the training scores: the forest's is 86. The vault stays shut: the seminar refits on training plus selection and opens it once. What these data have: a nonlinear year effect and loudness, which the plane cannot bend to, and little else the inputs can see.
+:::
+
+```{r}
+#| label: spotify-six
+#| fig-height: 3.5
+#| fig-width: 11
+y_tr <- sp_train$track_popularity; y_se <- sp_sel$track_popularity
+sc_sp <- function(name, pred_tr, pred_se)
+  tibble(competitor = name, train = mse(y_tr, pred_tr), sel = mse(y_se, pred_se), se = se_loss(y_se, pred_se))
+f_gen <- reformulate(c(feat, "genre"), "track_popularity")
+lam_sp <- lasso_sp$lambda[which.min(apply(predict(lasso_sp, sp_Xse), 2, function(q) mse(y_se, q)))]
+gam_sp <- function(J) reformulate(c(sprintf("ns(%s, df = %d)", feat, J), "genre"), "track_popularity")
+Js_sp <- c(2, 3, 4, 6)
+J_sp <- Js_sp[which.min(sapply(Js_sp, function(J) mse(y_se, predict(lm(gam_sp(J), sp_train), sp_sel))))]
+fit_gam_sp <- lm(gam_sp(J_sp), sp_train)
+ds_sp <- c(2, 3, 4, 6, 8)
+d_sp <- ds_sp[which.min(sapply(ds_sp, function(d) mse(y_se, predict(rpart(f_gen, sp_train,
+          control = rpart.control(maxdepth = d, cp = 0, minbucket = 10)), sp_sel))))]
+fit_tree_sp <- rpart(f_gen, sp_train, control = rpart.control(maxdepth = d_sp, cp = 0, minbucket = 10))
+fit_rf_sp <- randomForest(f_gen, sp_train, ntree = 300)
+six <- bind_rows(
+  sc_sp("the training mean", rep(mean(y_tr), length(y_tr)), rep(mean(y_tr), length(y_se))),
+  sc_sp("least squares, 11 numeric inputs", fitted(fit_ls), predict(fit_ls, sp_sel)),
+  sc_sp(paste0("k-NN, same inputs, k = ", k_sp), knn_predict(X_tr, X_tr, y_tr, k_sp), knn_predict(X_se, X_tr, y_tr, k_sp)),
+  sc_sp("lasso, + genre", predict(lasso_sp, sp_Xtr, s = lam_sp), predict(lasso_sp, sp_Xse, s = lam_sp)),
+  sc_sp(paste0("additive splines, + genre, J = ", J_sp), fitted(fit_gam_sp), predict(fit_gam_sp, sp_sel)),
+  sc_sp(paste0("tree, + genre, depth ", d_sp), predict(fit_tree_sp, sp_train), predict(fit_tree_sp, sp_sel)),
+  sc_sp("forest, + genre, defaults", predict(fit_rf_sp, sp_train), predict(fit_rf_sp, sp_sel))) |>
+  mutate(competitor = fct_reorder(competitor, -sel))
+ggplot(six, aes(y = competitor)) +
+  geom_errorbar(aes(xmin = sel - se, xmax = sel + se), width = 0.25, colour = "grey60", orientation = "y") +
+  geom_point(aes(x = sel, shape = "selection MSE, 2,000 tracks"), size = 4, colour = v_dark) +
+  geom_point(aes(x = train, shape = "training MSE"), size = 3.5, colour = m_pink, stroke = 1.2) +
+  scale_shape_manual(values = c("selection MSE, 2,000 tracks" = 16, "training MSE" = 1), name = NULL) +
+  labs(x = "mean squared error", y = NULL) +
+  theme(legend.position = "top")
+```
+
+Knobs chosen on the selection tracks, scored there. The curves beat the plane by about four standard errors; the forest's training score is `r round(six$train[six$competitor == "forest, + genre, defaults"])`. The vault stays shut: the seminar refits and opens it once
 
 ## Four dimensions, not one {minutes="3"}
 
 ::: {.notes}
-Three minutes. Four questions about the world, not one scale from simple to complex: a truth can be tall and interactive, or wide and smooth. Each family is a bet on an answer; week 4's no free lunch says the bet is doing the work, and the selection set says which bet paid on these data. k-NN lost on every truth: ten inputs, 300 points, week 1's curse with a price on it. Week 7 puts a rate on that price.
+Three minutes. Four questions about the world, not one scale from simple to complex: a truth can be tall and interactive, or wide and smooth. Each family is a bet on an answer; week 4's no free lunch says the bet is doing the work, and the selection set says which bet paid on these data (Spotify: smooth in year and loudness, roughly additive, so the splines and the forest). k-NN lost on every simulated truth: ten inputs, 300 points, week 1's curse with a price on it. Week 7 puts a rate on that price.
 :::
 
-::: {style="font-size: 1.0em"}
+::: {style="font-size: 0.97em"}
 | Axis | The question about $f^\star$ | Who bets which way |
 |---|---|---|
 | **wide or tall** | how $p$ compares with $n$ | least squares and the additive fit need $n \gg$ columns; ridge and the lasso fit at any $p$ |
-| **sparse or dense** | how many inputs matter | the lasso bets few; least squares and ridge spread the fit over all; a forest tolerates idle inputs, $k$-NN does not |
+| **sparse or dense** | how many inputs matter | the lasso bets few; least squares and ridge spread the fit over all; a forest tolerates idle inputs, $k$-NN pays for them |
 | **smooth or discontinuous** | how $f^\star$ moves with each input | splines and $k$-NN bet smooth; trees bet on steps |
 | **additive or interactive** | whether inputs act separately | the additive fit bets separately; trees, forests and $k$-NN allow interactions |
 
@@ -957,18 +985,18 @@ Three minutes. Four questions about the world, not one scale from simple to comp
 Four separate questions, not one scale from simple to complex. A family is a bet on the answers; a selection set says which bet paid on these data
 
 ::: {.retrieval}
-Week 1's curse: $k$-NN lost on every truth, with ten inputs and 300 points. Week 4's no free lunch: no family won every truth, and none can.
+Week 1's curse: $k$-NN lost on every truth, ten inputs and 300 points. Week 4's no free lunch: no family won every truth, and none can.
 :::
 
 ## What the training error hides {minutes="3"}
 
 ::: {.notes}
-Two minutes for the ask; collect two orderings before the reveal. Why anyone cared: the training error is the only error you can compute without new data. The hollow points sat left of the filled ones on every leaderboard and the forest's by a factor of four; the question is whether that is a law. Week 4's symbols: a class, the best in it, what the data return.
+Two minutes for the ask; collect two orderings before the reveal. Why anyone cared: the training error is the only error you can compute without new data. The hollow points sat left of the filled ones on most rows, the forest's by a factor of four, and right of them on a few (least squares on truth A, the tree on truth C); the question is whether the usual direction is a law, and what the exceptions are. Expected answer after the theorem: it is a statement about averages over training sets, and one realization of 300 rows can go either way by a little; the test MSE is itself a noisy number. Week 4's symbols: a class, the best in it, what the data return.
 :::
 
-On every leaderboard the training MSE sat below the test MSE, the forest's by a factor of four. Luck, or a law?
+On most rows of the leaderboards the training MSE sat below the test or selection MSE, the forest's by a factor of four on the truths and of six on Spotify; on a few rows it sat above. Luck, or a law, and what are the exceptions?
 
-Training data $(x_i, y_i)$, $i = 1, \ldots, n$, independent draws from the population; a class $\mathcal F$ (the planes; the additive fits with a given $J$); $f_{\mathcal F}$ the best in $\mathcal F$, the minimizer of $R$ over it; $\hat f$ the empirical risk minimizer, the minimizer of $\hat R_n$ over $\mathcal F$ (week 4)
+Training data $(x_i, y_i)$, $i = 1, \ldots, n$, independent draws from the population; a class $\mathcal F$ fixed before the data (the planes; the spline fits with a given basis); $f_{\mathcal F}$ the best in $\mathcal F$, the minimizer of $R$ over it; $\hat f$ the empirical risk minimizer, the minimizer of $\hat R_n$ over $\mathcal F$ (week 4)
 
 ::: {.ask}
 Three numbers: $\mathbb E[\hat R_n(\hat f)]$, $R(f_{\mathcal F})$, $\mathbb E[R(\hat f)]$. Put them in order, and write down what you used to do it.
@@ -977,21 +1005,21 @@ Three numbers: $\mathbb E[\hat R_n(\hat f)]$, $R(f_{\mathcal F})$, $\mathbb E[R(
 ## Optimism theorem {minutes="3"}
 
 ::: {.notes}
-Stated; the three-line proof is exercise 1. The heuristic first: f-hat was chosen to make the training losses small, so it beats any fixed member of the class on the training data, and a fixed member's training error is unbiased for its risk (the one line that uses the sampling assumption); on the population f-hat cannot beat the best member. Chain the three. Covered: least squares, the spline fits at a fixed J, ridge and the lasso at a fixed lambda (minimizers over a constrained class). Not covered as stated: a tree (greedy), a forest, k-NN, and any knob chosen on the data; the direction was the same on the leaderboards, but the theorem is about the minimizer.
+Stated; the three-line proof is exercise 1. The heuristic first: f-hat was chosen to make the training losses small, so it beats any fixed member of the class on the training data, and a fixed member's training error is unbiased for its risk (the one line that uses the sampling assumption); on the population f-hat cannot beat the best member. Chain the three. Covered: least squares, and a spline basis whose knots are fixed in advance (ns() places them at sample quantiles, so strictly the class depends on the data). Ridge and the lasso in their constrained form with a fixed radius t are minimizers over a fixed class; at a fixed lambda they are not (noiseless Y = X: ridge has positive training error while the best line has risk zero, so the left inequality fails). Not covered: a tree (greedy), a forest, k-NN, and any knob chosen on the data. The direction was the usual one on the leaderboards, with exceptions, but the theorem is about the minimizer and about averages.
 :::
 
-A function fixed before the data has an unbiased training error. $\hat f$ beats every such function in $\mathcal F$ on the training data (it was chosen to) and cannot beat $f_{\mathcal F}$ on the population
+A function fixed before the data has an unbiased training error; $\hat f$ was chosen to make its own small, and cannot beat $f_{\mathcal F}$ on the population
 
-Training data i.i.d. from the population; $\hat f$ the empirical risk minimizer over $\mathcal F$; $f_{\mathcal F}$ the best in $\mathcal F$ (risks finite, minimizers exist). Then
+Training data i.i.d.; $\mathcal F$ fixed before the data; $\hat f$ the empirical risk minimizer over $\mathcal F$; $f_{\mathcal F}$ the best in $\mathcal F$ (risks finite, minimizers exist). Then
 $$
 \mathbb E\big[\hat R_n(\hat f)\big] \;\le\; R(f_{\mathcal F}) \;\le\; \mathbb E\big[R(\hat f)\big]
 $$
 
 ::: {.leave}
-Training error flatters the model: on average it sits below the best risk the class can reach, and the fitted model's risk sits above it. The test set estimates the right end of this line.
+Training error flatters the model: on average it sits below the best risk the class can reach, and the fitted model's risk above it. A test set estimates $R(\hat f)$; its average is the right end.
 :::
 
-**Proof**: exercise 1, three lines. Covers the minimizer over a fixed class (least squares; splines and penalized fits at a fixed knob); not a tree, a forest, $k$-NN, or a knob chosen on the data
+**Proof**: exercise 1. Covers least squares, a fixed spline basis, ridge and lasso with a fixed radius; not a fixed $\lambda$, a tree, a forest, $k$-NN, or a knob chosen on the data
 
 ## Before the seminar
 
