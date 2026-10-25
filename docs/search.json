@@ -1372,11 +1372,11 @@
     "text": "Week 4: optimization and model fitting\nHow a model actually gets fitted. Logistic regression first: maximum likelihood, the score equations read as week 2’s orthogonality, and why there is no closed form. Then the method that fits almost everything else: gradient descent, step sizes and the descent lemma, and its stochastic version, whose random steps are unbiased for the full gradient. Empirical risk minimization as the common form of every method so far, the bias–variance decomposition in that form, why no method is best on every problem, and early stopping as a first kind of regularization.\nReading\n\nPPA Chapter 5 (Optimization), from “Optimization basics” through “The SGD quick start guide”, pp. 70–86, stopping at “Analysis of the stochastic gradient method”: gradient descent, the quadratic case, and stochastic gradient descent in practice.\n\nOptional: PPA “Analysis of the stochastic gradient method”, pp. 86–88 (a convergence bound), and “Regularization” with “Implicit regularization by optimization”, pp. 92–94 (why gradient descent from zero lands on the minimum-norm solution, which the seminar meets); ESL section 4.4.1 for Newton-IRLS in full; the Wikipedia pages on Newton’s method and gradient descent for pictures and animations.\nLecture: slides\nSeminar: notebook (.qmd). Before the seminar, do exercises 1 to 4 at the top of the notebook (the lecture’s descent lemma again with the slides closed, the ERM form of the bias–variance decomposition, the logistic Hessian and the Newton-Raphson update, and no free lunch on a finite domain); the seminar’s problems start from them. You write gradient descent once, as a function, and use it for least squares, logistic regression and random batches. Data: gapminder and the Palmer penguins (data note), then simulated data."
   },
   {
-    "objectID": "index.html#week-5-what-structures-can-we-model",
-    "href": "index.html#week-5-what-structures-can-we-model",
+    "objectID": "index.html#week-5-functional-structures",
+    "href": "index.html#week-5-functional-structures",
     "title": "ST310 course page",
-    "section": "Week 5: what structures can we model?",
-    "text": "Week 5: what structures can we model?\nThe methods, introduced together and compared under one protocol. Ridge and lasso: what a penalty changes, what \\(\\lambda\\) controls, fitting when \\(p &gt; n\\). Additive models: a spline as regression on basis functions, one curve per input, the basis size as the knob. Trees and forests: how a small tree predicts, why it is unstable, what averaging does. Then one simulated dataset for each kind of truth (sparse linear, additive smooth, thresholds with an interaction), every family fitted to each, and the four dimensions on which a method bets: wide or tall, sparse or dense, smooth or discontinuous, additive or interactive. Training error flatters every one of them (the optimism theorem, stated; its proof is yours before the seminar). The three-way split, training, selection and a test set opened once, is used from the first slide.\nReading\n\nISLR Chapter 6 (Linear Model Selection and Regularization), sections 6.2.1–6.2.2, pp. 237–250: ridge regression and the lasso, and what each penalty does to the coefficients. Stop before 6.2.3; choosing \\(\\lambda\\) by cross-validation is week 7.\nISLR Chapter 7 (Moving Beyond Linearity), sections 7.3–7.4, pp. 294–301 (basis functions and regression splines), and section 7.7, pp. 306–310 (generalized additive models; 7.7.1 fits one by least squares on spline basis functions, as the lecture does, and the GAM part of the lab in 7.8 has the lm and ns() code). Section 7.5, smoothing splines, is week 7. Skim 7.6, pp. 304–306: local regression is named in the lecture and not examined.\nISLR Chapter 8 (Tree-Based Methods), section 8.1.1, pp. 328–335 (regression trees), and sections 8.2.1–8.2.2, pp. 340–345 (bagging and random forests). Skim 8.1.2–8.1.4, pp. 335–340. Section 8.2.3, boosting, is week 8.\n\nOptional: PPA Chapter 6 (Generalization), “Generalization gap”, pp. 100–101, the setting of the optimism theorem.\nLecture and seminar: released here at the start of the week. All three families and the baselines on one dataset, one leaderboard, the three-way split enforced. Data: Spotify tracks (what makes a song popular; a data note comes with the notebook), the penguins, the movies, simulated data."
+    "section": "Week 5: functional structures",
+    "text": "Week 5: functional structures\nThe methods, introduced together and compared under one protocol, each a different functional structure for the predictor. Ridge and lasso: what a penalty changes and what \\(\\lambda\\) controls. Additive models: a spline as regression on basis functions, one curve per input, the basis size as the knob. Trees: how a small tree predicts and why it is unstable; a random forest as many trees combined into one model. A neural network as a composition, a GLM whose inputs are the outputs of other GLMs, named and fitted and otherwise left for week 11. Then one simulated dataset for each kind of truth (sparse linear, additive smooth, a step in two inputs at once), every family fitted to each, and the four dimensions on which a method bets: wide or tall, sparse or dense, smooth or discontinuous, additive or interactive. Training error flatters every one of them (the optimism theorem, stated; its proof is yours before the seminar). The three-way split, training, selection and a test set opened once, is used from the first slide. Data: Spotify tracks, what makes a song popular.\nReading\n\nISLR Chapter 6 (Linear Model Selection and Regularization), sections 6.2.1–6.2.2, pp. 237–250: ridge regression and the lasso, and what each penalty does to the coefficients. Stop before 6.2.3; choosing \\(\\lambda\\) by cross-validation is week 7.\nISLR Chapter 7 (Moving Beyond Linearity), sections 7.3–7.4, pp. 294–301 (basis functions and regression splines), and section 7.7, pp. 306–310 (generalized additive models; 7.7.1 fits one by least squares on spline basis functions, as the lecture does, and the GAM part of the lab in 7.8 has the lm and ns() code). Section 7.5, smoothing splines, is week 7. Skim 7.6, pp. 304–306: local regression is named in the lecture and not examined.\nISLR Chapter 8 (Tree-Based Methods), section 8.1.1, pp. 328–335 (regression trees), and sections 8.2.1–8.2.2, pp. 340–345 (bagging and random forests). Skim 8.1.2–8.1.4, pp. 335–340. Section 8.2.3, boosting, is week 8.\n\nOptional: PPA Chapter 6 (Generalization), “Generalization gap”, pp. 100–101, the setting of the optimism theorem.\nLecture and seminar: released here at the start of the week. Every family and the baselines on the Spotify tracks (data note), one leaderboard, the three-way split enforced."
   },
   {
     "objectID": "index.html#week-6-reading-week",
@@ -1544,14 +1544,14 @@
     "href": "weeks/05-validation/slides/05-1-structures.html#section",
     "title": "Machine learning",
     "section": "",
-    "text": "Week 5: what structures can we model?\nPart 1: the task and the protocol\nPart 2: ridge and lasso\nPart 3: additive models\nPart 4: trees and forests\nPart 5: which structure?"
+    "text": "Week 5: functional structures\nPart 1: the task and the protocol\nPart 2: ridge and lasso\nPart 3: additive models\nPart 4: trees and forests\nPart 5: neural networks\nPart 6: which structure?"
   },
   {
     "objectID": "weeks/05-validation/slides/05-1-structures.html#where-week-4-left-it",
     "href": "weeks/05-validation/slides/05-1-structures.html#where-week-4-left-it",
     "title": "Machine learning",
     "section": "Where week 4 left it",
-    "text": "Where week 4 left it\nLast week: optimization, the general concepts and the methods that fit a model. Every method so far was a loss, a class and an algorithm\nThis week: a few specific families of supervised models, each introduced briefly. Each gets more detail later: how to choose its knob (week 7), how its fit is constructed and improved (week 8), what it can tell you (week 9)\nToday’s question: what structures can we model? Each family is a bet on the shape of \\(f^\\star\\), and we need one protocol to compare the bets\nWeek 4’s seminar ended on a question: the held-out score you chose the stopping step on is not the model’s error. The protocol answers it"
+    "text": "Where week 4 left it\nLast week: optimization, the general concepts and the methods that fit a model\nThis week: a few specific families of supervised models, each with its own functional structure, each introduced briefly. Every one of them gets more detail in a later week\nEach family is a bet on the shape of \\(f^\\star\\). To compare the bets we need one task and one protocol"
   },
   {
     "objectID": "weeks/05-validation/slides/05-1-structures.html#the-task-10000-spotify-tracks",
@@ -1573,6 +1573,13 @@
     "title": "Machine learning",
     "section": "CTF competition: the baselines",
     "text": "CTF competition: the baselines\nWhat we can fit so far, each a bet on \\(f^\\star\\): least squares, a plane (every input a slope); logistic regression, a plane for the log-odds (for a label, not today); \\(k\\) nearest neighbors, a local average, its \\(k\\) the knob\n\n\n\n\n\n\n\n\n\nThe local average (\\(k = 100\\)) and the plane, one standard error apart. Can a different shape beat both? The test set stays shut"
+  },
+  {
+    "objectID": "weeks/05-validation/slides/05-1-structures.html#the-plan-several-structures-each-tuned",
+    "href": "weeks/05-validation/slides/05-1-structures.html#the-plan-several-structures-each-tuned",
+    "title": "Machine learning",
+    "section": "The plan: several structures, each tuned",
+    "text": "The plan: several structures, each tuned\nTry several types of model, each with a different functional structure for \\(f\\):\n\n\n\n\n\n\n\n\n\nStructure\nFamily\nThe knob\n\n\n\n\na plane, shrunk or sparse\nridge, lasso\n\\(\\lambda\\), how hard the penalty pulls\n\n\na sum of one-input curves\nadditive splines\n\\(J\\), how many basis functions per input\n\n\nrectangles with a constant in each\na tree\nits depth\n\n\nan average of many trees\na random forest\n(defaults today)\n\n\na composition: a GLM of GLMs\na neural network\n\\(M\\), how many hidden units\n\n\n\n\nand tune each model so that it is the best version of its kind: every knob chosen on the selection tracks, as \\(k\\) was. Then compare the best of each kind"
   },
   {
     "objectID": "weeks/05-validation/slides/05-1-structures.html#section-1",
@@ -1600,7 +1607,7 @@
     "href": "weeks/05-validation/slides/05-1-structures.html#what-lambda-controls",
     "title": "Machine learning",
     "section": "What \\(\\lambda\\) controls",
-    "text": "What \\(\\lambda\\) controls\n\n\nSet the gradient of \\(\\| \\mathbf y - \\mathbf X \\beta \\|^2 + \\lambda \\| \\beta \\|^2\\) to zero (exercise 2): \\[\n(\\mathbf X^T\\mathbf X + \\lambda I)\\,\\hat\\beta_\\lambda = \\mathbf X^T\\mathbf y\n\\] \\[\n\\hat\\beta_\\lambda = (\\mathbf X^T\\mathbf X + \\lambda I)^{-1}\\mathbf X^T\\mathbf y\n\\]\n\\(\\mathbf X^T\\mathbf X + \\lambda I\\) is invertible for every \\(\\lambda &gt; 0\\), whatever \\(n\\) and \\(p\\): one solution even when \\(p &gt; n\\)\n\\(\\lambda \\to 0\\): least squares (when it exists). \\(\\lambda \\to \\infty\\): \\(\\hat\\beta_\\lambda \\to \\mathbf 0\\). In between, one knob\n\n\n\n\n\n\n\n\n\n\n\\(\\hat\\beta_\\lambda\\) against \\(-\\log\\lambda\\): the 16 standardized inputs (eleven numeric, five genre dummies), six named"
+    "text": "What \\(\\lambda\\) controls\n\n\nSet the gradient of \\(\\| \\mathbf y - \\mathbf X \\beta \\|^2 + \\lambda \\| \\beta \\|^2\\) to zero (exercise 2): \\[\n(\\mathbf X^T\\mathbf X + \\lambda I)\\,\\hat\\beta_\\lambda = \\mathbf X^T\\mathbf y\n\\] \\[\n\\hat\\beta_\\lambda = (\\mathbf X^T\\mathbf X + \\lambda I)^{-1}\\mathbf X^T\\mathbf y\n\\]\n\\(\\mathbf X^T\\mathbf X + \\lambda I\\) is invertible for every \\(\\lambda &gt; 0\\), whatever \\(n\\) and \\(p\\): one solution even when \\(p &gt; n\\)\n\\(\\lambda \\to 0\\): least squares (when it exists). \\(\\lambda \\to \\infty\\): \\(\\hat\\beta_\\lambda \\to \\mathbf 0\\)\n\n\n\n\n\n\n\n\n\n\n\\(\\hat\\beta_\\lambda\\) against \\(-\\log\\lambda\\): the 16 standardized inputs (eleven numeric, five genre dummies), six named"
   },
   {
     "objectID": "weeks/05-validation/slides/05-1-structures.html#lasso-vs-ridge-l1-vs-l2-norm-penalties",
@@ -1614,21 +1621,7 @@
     "href": "weeks/05-validation/slides/05-1-structures.html#lasso-vs-ridge-solution-paths-of-hat-beta",
     "title": "Machine learning",
     "section": "Lasso vs ridge: solution paths of \\(\\hat \\beta\\)",
-    "text": "Lasso vs ridge: solution paths of \\(\\hat \\beta\\)\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nSpotify, the same 16 inputs, large \\(\\lambda\\) on the left. The lasso’s coefficients are exactly zero over whole ranges of \\(\\lambda\\) and enter one at a time; ridge’s are never zero"
-  },
-  {
-    "objectID": "weeks/05-validation/slides/05-1-structures.html#high-dimensional-example",
-    "href": "weeks/05-validation/slides/05-1-structures.html#high-dimensional-example",
-    "title": "Machine learning",
-    "section": "High dimensional example",
-    "text": "High dimensional example\nSimulated (\\(p &gt; n\\) needs it): \\(p = 200\\) inputs, \\(n = 100\\) rows, 21 true coefficients nonzero; least squares has no unique fit. Ridge and lasso at the \\(\\lambda\\) chosen on 100 fresh rows\n\n\n\n\n\n\n\n\n\nBlack dots the truth, hollow pink circles the lasso, blue crosses ridge. The lasso keeps 71 of 200 (17 of the 21 true ones; its extras are below 0.22); ridge keeps all 200"
-  },
-  {
-    "objectID": "weeks/05-validation/slides/05-1-structures.html#lasso-cool-or-extremely-cool",
-    "href": "weeks/05-validation/slides/05-1-structures.html#lasso-cool-or-extremely-cool",
-    "title": "Machine learning",
-    "section": "Lasso: cool or extremely cool?",
-    "text": "Lasso: cool or extremely cool?\n\nHigh-dimensional: \\(p &gt; n\\) means OLS has no unique fit\n\nBut all is not lost! Penalized regression to the rescue\n\nTrue model is sparse\n\n21 of 200 nonzero; the lasso kept 71, 17 of the true 21 among them\n\nRidge estimates are dense\n\nAll coefficients nonzero 😰\n\nLasso estimates are sparse\n\nNonzero estimates include most of the true model, plus many small extras 😎"
+    "text": "Lasso vs ridge: solution paths of \\(\\hat \\beta\\)\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nSpotify, the same 16 inputs, large \\(\\lambda\\) on the left. The lasso’s coefficients are exactly zero over whole ranges of \\(\\lambda\\) and enter one at a time; ridge’s are never zero. Why, and what the lasso does when \\(p &gt; n\\): week 7"
   },
   {
     "objectID": "weeks/05-validation/slides/05-1-structures.html#section-2",
@@ -1642,7 +1635,7 @@
     "href": "weeks/05-validation/slides/05-1-structures.html#three-ways-to-estimate-a-curve",
     "title": "Machine learning",
     "section": "Three ways to estimate a curve",
-    "text": "Three ways to estimate a curve\nWeek 1’s data, life expectancy on GDP per capita, 142 countries (no log this time). Three ways to turn a line into a curve\n\n\n\n\n\n\n\n\n\nAverage nearby (\\(k\\)-NN; a kernel weights by distance instead of cutting at \\(k\\)). Fit a line nearby (loess). Fit a basis: fixed curves, combined by least squares. The course examines the third"
+    "text": "Three ways to estimate a curve\nWeek 1’s data, life expectancy on GDP per capita, 142 countries (no log this time). Three ways to turn a line into a curve\n\n\n\n\n\n\n\n\n\nAverage nearby (\\(k\\)-NN; a kernel weights by distance instead of cutting at \\(k\\)). Fit a line nearby (loess). Fit a basis: fixed curves, combined by least squares. We now focus on the third"
   },
   {
     "objectID": "weeks/05-validation/slides/05-1-structures.html#a-spline-is-regression-on-basis-functions",
@@ -1722,32 +1715,46 @@
     "text": "A tree is unstable\n\n\n\n\n\n\n\n\n\nWeek 1’s countries, resampled eight times (blue, one fit per resample). The trees’ cutoffs move with the sample and the steps move with them; the splines barely move. Orange: the average of the eight trees"
   },
   {
-    "objectID": "weeks/05-validation/slides/05-1-structures.html#bagging-bootstrap-aggregating",
-    "href": "weeks/05-validation/slides/05-1-structures.html#bagging-bootstrap-aggregating",
+    "objectID": "weeks/05-validation/slides/05-1-structures.html#random-forests-many-trees-one-model",
+    "href": "weeks/05-validation/slides/05-1-structures.html#random-forests-many-trees-one-model",
     "title": "Machine learning",
-    "section": "Bagging: bootstrap aggregating",
-    "text": "Bagging: bootstrap aggregating\nProblem: a single tree model can have high variance (like many non-smooth or non-regularized models)\n\nBootstrap: for each \\(b = 1, \\ldots, B\\) resamples (with replacement) of the training data, fit \\(\\hat f^{*b}\\) on bootstrap sample \\(b\\)\nAggregate: combine the \\(B\\) models, using majority vote for classification or mean for regression\n\n\\[\\hat f_\\text{bag} = \\frac{1}{B} \\sum_{b=1}^B \\hat f^{*b}\\]\n(“Smoothing” useful for low-bias, high-variance models)"
-  },
-  {
-    "objectID": "weeks/05-validation/slides/05-1-structures.html#random-forest-dropping-predictors",
-    "href": "weeks/05-validation/slides/05-1-structures.html#random-forest-dropping-predictors",
-    "title": "Machine learning",
-    "section": "Random forest: dropping predictors",
-    "text": "Random forest: dropping predictors\nProblem: aggregation does not increase information if the aggregates are highly correlated, e.g. averaging 1000 trees but each one uses the same small set of predictor variables\n\\[\\text{Var}\\left( \\sum_{b=1}^B \\hat f^{*b} \\right) =\n\\sum_{b=1}^B \\text{Var}\\left( \\hat f^{*b} \\right) + \\sum_{b=1}^B \\sum_{b'\\neq b} \\text{Cov}\\left( \\hat f^{*b}, \\hat f^{*b'} \\right)\\]\n\n\nDrop predictors randomly, at every split\n\ne.g. each split chooses among a random \\(\\sqrt{p}\\) of the \\(p\\) predictors\n\nAggregate models which are now (typically) less correlated, achieving greater variance reduction"
+    "section": "Random forests: many trees, one model",
+    "text": "Random forests: many trees, one model\nA random forest is a method that combines many trees into one model: it grows hundreds of trees, each on a resample of the training rows with a random subset of the inputs offered at each split, and averages their predictions\nThe last slide’s orange line, with hundreds of trees instead of eight: one model, smoother and more stable than any one tree\nToday: randomForest() with its defaults, no knob. How it works and why averaging helps: week 8"
   },
   {
     "objectID": "weeks/05-validation/slides/05-1-structures.html#section-4",
     "href": "weeks/05-validation/slides/05-1-structures.html#section-4",
     "title": "Machine learning",
     "section": "",
-    "text": "Part 5: which structure?"
+    "text": "Part 5: neural networks"
+  },
+  {
+    "objectID": "weeks/05-validation/slides/05-1-structures.html#a-glm-of-glms",
+    "href": "weeks/05-validation/slides/05-1-structures.html#a-glm-of-glms",
+    "title": "Machine learning",
+    "section": "A GLM of GLMs",
+    "text": "A GLM of GLMs\nWeek 3’s GLM: a link applied to a linear predictor. Now iterate it\n\n\n\n\n\n\n\n\n\n\n\n\nEach hidden unit is a logistic regression of the inputs, with its own weights: \\(h_k(x) = \\sigma(w_{k0} + w_k^T x)\\), where \\(\\sigma(z) = 1/(1 + e^{-z})\\)\nThe output is a linear regression on the hidden units (logistic, for a label): \\(f(x) = \\beta_0 + \\sum_{k=1}^M \\beta_k\\, h_k(x)\\)\nA GLM whose inputs are the outputs of \\(M\\) GLMs. Iterate once more: a deep network\n\nA basis like part 3’s, except that the basis is fitted to the data along with the coefficients, and each \\(h_k\\) uses every input at once"
+  },
+  {
+    "objectID": "weeks/05-validation/slides/05-1-structures.html#what-to-know-about-networks-today",
+    "href": "weeks/05-validation/slides/05-1-structures.html#what-to-know-about-networks-today",
+    "title": "Machine learning",
+    "section": "What to know about networks today",
+    "text": "What to know about networks today\nWhat it can represent. With enough hidden units, a network can come as close as you like to any smooth \\(f^\\star\\) (stated, week 11). The price: \\(M(p + 1) + M + 1\\) weights, all to be fitted from the data\nHow it is fitted. Week 4’s stochastic gradient descent, on a loss with every feature of week 4’s part 3: not one valley but many, with plateaus and saddles between them\nThe knob. \\(M\\), the number of hidden units, chosen on the selection tracks like the others; depth and a penalty on the weights are later knobs. In R, nnet(size = M)\nToday the network is one more structure in the comparison; how it is built and trained in depth is week 11’s, and ST311’s"
+  },
+  {
+    "objectID": "weeks/05-validation/slides/05-1-structures.html#section-5",
+    "href": "weeks/05-validation/slides/05-1-structures.html#section-5",
+    "title": "Machine learning",
+    "section": "",
+    "text": "Part 6: which structure?"
   },
   {
     "objectID": "weeks/05-validation/slides/05-1-structures.html#three-truths-one-protocol",
     "href": "weeks/05-validation/slides/05-1-structures.html#three-truths-one-protocol",
     "title": "Machine learning",
     "section": "Three truths, one protocol",
-    "text": "Three truths, one protocol\n\\(p = 10\\) inputs, uniform on \\([-1, 1]\\); \\(y = f^\\star(x) + \\varepsilon\\), noise variance \\(\\sigma^2 = 1\\). Three truths, each using two or three inputs:\n\nA, sparse linear: \\(f^\\star(x) = 2x_1 - 1.5x_2 + x_3\\)\nB, additive smooth: \\(f^\\star(x) = 1.5\\,[f_1(x_1) + f_2(x_2) + f_3(x_3)]\\), smooth \\(f_j\\)\nC, one step, two inputs at once: \\(f^\\star(x) = 4 \\cdot \\mathbf 1\\{x_1 &gt; 0,\\ x_2 &gt; 0\\}\\)\n\nOne protocol. 300 training, 100 selection, 2,000 test rows. Six competitors: least squares; lasso (\\(\\lambda\\)); \\(k\\)-NN (\\(k\\)); additive splines (\\(J\\)); a tree (depth); a forest. Knobs chosen on the selection rows, the fit refitted on training plus selection, scored once\n\nFor each truth: which family wins, which loses, and why?"
+    "text": "Three truths, one protocol\n\\(p = 10\\) inputs, uniform on \\([-1, 1]\\); \\(y = f^\\star(x) + \\varepsilon\\), noise variance \\(\\sigma^2 = 1\\). Three truths, each using two or three inputs:\n\nA, sparse linear: \\(f^\\star(x) = 2x_1 - 1.5x_2 + x_3\\)\nB, additive smooth: \\(f^\\star(x) = 1.5\\,[f_1(x_1) + f_2(x_2) + f_3(x_3)]\\), smooth \\(f_j\\)\nC, one step, two inputs at once: \\(f^\\star(x) = 4 \\cdot \\mathbf 1\\{x_1 &gt; 0,\\ x_2 &gt; 0\\}\\)\n\nOne protocol. 300 training, 100 selection, 2,000 test rows. Seven competitors: least squares; lasso (\\(\\lambda\\)); \\(k\\)-NN (\\(k\\)); additive splines (\\(J\\)); a tree (depth); a forest; a network (\\(M\\)). Knobs chosen on the selection rows, the fit refitted on training plus selection, scored once\n\nFor each truth: which family wins, which loses, and why?"
   },
   {
     "objectID": "weeks/05-validation/slides/05-1-structures.html#truth-a-sparse-linear-tall-and-then-wide",
@@ -1771,18 +1778,18 @@
     "text": "Truth C: thresholds with an interaction\n\n\n\n\n\n\n\n\n\nA sum of one-input functions can hold each input’s share of this step, two thirds of the signal at best, and not the product. Two questions in a row hold all of it"
   },
   {
-    "objectID": "weeks/05-validation/slides/05-1-structures.html#ctf-competition-the-six-on-spotify",
-    "href": "weeks/05-validation/slides/05-1-structures.html#ctf-competition-the-six-on-spotify",
+    "objectID": "weeks/05-validation/slides/05-1-structures.html#ctf-competition-the-seven-on-spotify",
+    "href": "weeks/05-validation/slides/05-1-structures.html#ctf-competition-the-seven-on-spotify",
     "title": "Machine learning",
-    "section": "CTF competition: the six on Spotify",
-    "text": "CTF competition: the six on Spotify\n\n\n\n\n\n\n\n\n\nKnobs chosen on the selection tracks, scored there. The curves beat the plane by about four standard errors; the forest’s training score is 87. The vault stays shut: the seminar refits and opens it once"
+    "section": "CTF competition: the seven on Spotify",
+    "text": "CTF competition: the seven on Spotify\n\n\n\n\n\n\n\n\n\nKnobs chosen on the selection tracks, scored there. The three that can bend beat the plane by about four standard errors and are within one of each other; the forest’s training score is 86. The vault stays shut: the seminar refits and opens it once"
   },
   {
     "objectID": "weeks/05-validation/slides/05-1-structures.html#four-dimensions-not-one",
     "href": "weeks/05-validation/slides/05-1-structures.html#four-dimensions-not-one",
     "title": "Machine learning",
     "section": "Four dimensions, not one",
-    "text": "Four dimensions, not one\n\n\n\n\n\n\n\n\n\nAxis\nThe question about \\(f^\\star\\)\nWho bets which way\n\n\n\n\nwide or tall\nhow \\(p\\) compares with \\(n\\)\nleast squares and the additive fit need \\(n \\gg\\) columns; ridge and the lasso fit at any \\(p\\)\n\n\nsparse or dense\nhow many inputs matter\nthe lasso bets few; least squares and ridge spread the fit over all; a forest tolerates idle inputs, \\(k\\)-NN pays for them\n\n\nsmooth or discontinuous\nhow \\(f^\\star\\) moves with each input\nsplines and \\(k\\)-NN bet smooth; trees bet on steps\n\n\nadditive or interactive\nwhether inputs act separately\nthe additive fit bets separately; trees, forests and \\(k\\)-NN allow interactions\n\n\n\n\nFour separate questions, not one scale from simple to complex. A family is a bet on the answers; a selection set says which bet paid on these data\n\nWeek 1’s curse: \\(k\\)-NN lost on every truth, ten inputs and 300 points. Week 4’s no free lunch: no family won every truth, and none can."
+    "text": "Four dimensions, not one\n\n\n\n\n\n\n\n\n\nAxis\nThe question about \\(f^\\star\\)\nWho bets which way\n\n\n\n\nwide or tall\nhow \\(p\\) compares with \\(n\\)\nleast squares, the additive fit and a network need \\(n \\gg\\) their parameters; ridge and the lasso fit at any \\(p\\)\n\n\nsparse or dense\nhow many inputs matter\nthe lasso bets few; least squares and ridge spread the fit over all; a forest tolerates idle inputs, \\(k\\)-NN pays for them\n\n\nsmooth or discontinuous\nhow \\(f^\\star\\) moves with each input\nsplines, \\(k\\)-NN and networks bet smooth; trees bet on steps\n\n\nadditive or interactive\nwhether inputs act separately\nthe additive fit bets separately; trees, forests, \\(k\\)-NN and networks allow interactions\n\n\n\n\nFour separate questions, not one scale from simple to complex. A family is a bet on the answers; a selection set says which bet paid on these data\n\nWeek 1’s curse: \\(k\\)-NN lost on every truth, ten inputs and 300 points. Week 4’s no free lunch: no family won every truth, and none can."
   },
   {
     "objectID": "weeks/05-validation/slides/05-1-structures.html#what-the-training-error-hides",
@@ -1806,11 +1813,11 @@
     "text": "Before the seminar\n\nThis week: exercises 1 and 2 at the top of the notebook. The optimism theorem’s proof, three lines with numbered hints; and ridge’s normal equations, with why \\(\\mathbf X^T\\mathbf X + \\lambda I\\) is invertible\nIn the seminar: the Spotify task with every family. Each knob chosen on the selection tracks, then the vault opened once for the leaderboard"
   },
   {
-    "objectID": "weeks/05-validation/slides/05-1-structures.html#conclusion-four-bets-one-protocol",
-    "href": "weeks/05-validation/slides/05-1-structures.html#conclusion-four-bets-one-protocol",
+    "objectID": "weeks/05-validation/slides/05-1-structures.html#conclusion-five-bets-one-protocol",
+    "href": "weeks/05-validation/slides/05-1-structures.html#conclusion-five-bets-one-protocol",
     "title": "Machine learning",
-    "section": "Conclusion: four bets, one protocol",
-    "text": "Conclusion: four bets, one protocol\nEach family is a bet on the shape of \\(f^\\star\\)\nA plane, a sparse plane, a sum of curves, a set of rectangles, an average of many. Four questions about the world decide which bet pays\nThe protocol decides what you may believe\nFit on the training rows, choose on the selection rows, open the test set once\nThe training error flatters, by a theorem\nOn average, for every class and every minimizer. How much flexibility to allow, and how to choose it: week 7"
+    "section": "Conclusion: five bets, one protocol",
+    "text": "Conclusion: five bets, one protocol\nEach family is a bet on the shape of \\(f^\\star\\)\nA plane, a sparse plane, a sum of curves, a set of rectangles, an average of many, a composition. Four questions about the world decide which bet pays\nThe protocol decides what you may believe\nFit on the training rows, choose on the selection rows, open the test set once\nThe training error flatters, by a theorem\nOn average, for every class and every minimizer. How much flexibility to allow, and how to choose it: week 7"
   },
   {
     "objectID": "data/penguins.html",

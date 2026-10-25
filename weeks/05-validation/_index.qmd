@@ -1,6 +1,6 @@
-## Week 5: what structures can we model?
+## Week 5: functional structures
 
-The methods, introduced together and compared under one protocol. Ridge and lasso: what a penalty changes, what $\lambda$ controls, fitting when $p > n$. Additive models: a spline as regression on basis functions, one curve per input, the basis size as the knob. Trees and forests: how a small tree predicts, why it is unstable, what averaging does. Then one simulated dataset for each kind of truth (sparse linear, additive smooth, thresholds with an interaction), every family fitted to each, and the four dimensions on which a method bets: wide or tall, sparse or dense, smooth or discontinuous, additive or interactive. Training error flatters every one of them (the optimism theorem, stated; its proof is yours before the seminar). The three-way split, training, selection and a test set opened once, is used from the first slide.
+The methods, introduced together and compared under one protocol, each a different functional structure for the predictor. Ridge and lasso: what a penalty changes and what $\lambda$ controls. Additive models: a spline as regression on basis functions, one curve per input, the basis size as the knob. Trees: how a small tree predicts and why it is unstable; a random forest as many trees combined into one model. A neural network as a composition, a GLM whose inputs are the outputs of other GLMs, named and fitted and otherwise left for week 11. Then one simulated dataset for each kind of truth (sparse linear, additive smooth, a step in two inputs at once), every family fitted to each, and the four dimensions on which a method bets: wide or tall, sparse or dense, smooth or discontinuous, additive or interactive. Training error flatters every one of them (the optimism theorem, stated; its proof is yours before the seminar). The three-way split, training, selection and a test set opened once, is used from the first slide. Data: Spotify tracks, what makes a song popular.
 
 **Reading**
 
@@ -10,4 +10,4 @@ The methods, introduced together and compared under one protocol. Ridge and lass
 
 Optional: PPA Chapter 6 (Generalization), "Generalization gap", pp. 100–101, the setting of the optimism theorem.
 
-**Lecture and seminar:** released here at the start of the week. All three families and the baselines on one dataset, one leaderboard, the three-way split enforced. Data: Spotify tracks (what makes a song popular; a data note comes with the notebook), the penguins, the movies, simulated data.
+**Lecture and seminar:** released here at the start of the week. Every family and the baselines on the Spotify tracks ([data note](data/spotify.html)), one leaderboard, the three-way split enforced.

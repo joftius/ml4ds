@@ -1,6 +1,6 @@
 ---
 title: "Machine learning"
-subtitle: "Week 5: what structures can we model?"
+subtitle: "Week 5: functional structures"
 author: "Joshua Loftus"
 institute: "LSE"
 format:
@@ -41,6 +41,7 @@ library(splines)        # ns(); ships with R, like MASS
 library(glmnet)
 library(rpart)
 library(randomForest)
+library(nnet)           # one-hidden-layer networks; ships with R, like MASS and splines
 library(gapminder)
 theme_set(theme_minimal(base_size = 18))
 options(knitr.table.format = "html")
@@ -107,14 +108,14 @@ colnames(sp_Xtr) <- colnames(sp_Xse) <- sub("^genre", "genre: ", colnames(sp_X(s
 ## {.inverse}
 
 ::: {.notes}
-The deck on the spine's scale (2 a content slide, 3 a slide with a pause for the room, 1 a dark slide); the bar at the top of each note is the share done and its denominator the total. Dark = rush or skip; each dark slide's note says skip or gives the compressed phrase. Datasets: Spotify for everything with several inputs; week 1's countries for the one-input pictures (the curves, the tree-variance picture); the three simulated truths in part 5; the p > n example is the one other simulation.
+The deck on the spine's scale (2 a content slide, 3 a slide with a pause for the room, 1 a dark slide); the bar at the top of each note is the share done and its denominator the total. Dark = rush or skip; each dark slide's note says skip or gives the compressed phrase. Datasets: Spotify for everything with several inputs; week 1's countries for the one-input pictures (the curves, the tree-variance picture); the three simulated truths in part 6. Handed to week 7: the legacy high-dimensional lasso example and its dark slide.
 
-Cut order: (1) "Recursive rectangular splitting" to one sentence, (2) "Random forest: dropping predictors" to its first line, (3) the high-dimensional example to the dark slide's line, (4) truth A's wide panel to a sentence. The Spotify leaderboard, the four-dimensions slide and the theorem do not move.
+Cut order: (1) "Recursive rectangular splitting" to one sentence, (2) "What to know about networks today" to its first line, (3) truth A's wide panel to a sentence, (4) "The basis size is the knob" to a sentence. The Spotify leaderboard, the four-dimensions slide and the theorem do not move.
 
 In the notebook: the optimism theorem proved (ex. 1), ridge's normal equations (ex. 2). The seminar refits every family on training plus selection and opens the Spotify test set once.
 :::
 
-### Week 5: what structures can we model?
+### Week 5: functional structures
 
 Part 1: the task and the protocol
 
@@ -124,21 +125,21 @@ Part 3: additive models
 
 Part 4: trees and forests
 
-Part 5: which structure?
+Part 5: neural networks
 
-## Where week 4 left it
+Part 6: which structure?
+
+## Where week 4 left it {minutes="1"}
 
 ::: {.notes}
-The bridge and the disclaimer, one minute. Say it plainly: four families, each briefly; the knobs (week 7) and the construction (week 8) come later. Week 4's seminar question is the hook for the protocol two slides on.
+One minute. Last week how a model is fitted; this week what shapes a model can have. Each family briefly; each gets its own detail later.
 :::
 
-Last week: optimization, the general concepts and the methods that fit a model. Every method so far was a loss, a class and an algorithm
+Last week: optimization, the general concepts and the methods that fit a model
 
-This week: a few specific families of supervised models, each introduced briefly. Each gets more detail later: how to choose its knob (week 7), how its fit is constructed and improved (week 8), what it can tell you (week 9)
+This week: a few specific families of supervised models, each with its own **functional structure**, each introduced briefly. Every one of them gets more detail in a later week
 
-Today's question: **what structures can we model?** Each family is a bet on the shape of $f^\star$, and we need one protocol to compare the bets
-
-Week 4's seminar ended on a question: the held-out score you chose the stopping step on is not the model's error. The protocol answers it
+Each family is a bet on the shape of $f^\star$. To compare the bets we need one task and one protocol
 
 ## The task: 10,000 Spotify tracks
 
@@ -226,6 +227,28 @@ ggplot(lb, aes(mse, competitor)) +
 
 The local average ($k = `r k_sp`$) and the plane, one standard error apart. Can a different shape beat both? The test set stays shut
 
+## The plan: several structures, each tuned
+
+::: {.notes}
+The task for the rest of the lecture, said once. Each family is a shape; each has a knob that sets how far the shape may bend to the data; the knob is chosen on the selection tracks, so that what gets compared is the best version of each kind. The knobs are named here and met one by one.
+:::
+
+Try several types of model, each with a different functional structure for $f$:
+
+::: {style="font-size: 0.95em"}
+| Structure | Family | The knob |
+|---|---|---|
+| a plane, shrunk or sparse | ridge, lasso | $\lambda$, how hard the penalty pulls |
+| a sum of one-input curves | additive splines | $J$, how many basis functions per input |
+| rectangles with a constant in each | a tree | its depth |
+| an average of many trees | a random forest | (defaults today) |
+| a composition: a GLM of GLMs | a neural network | $M$, how many hidden units |
+
+: {tbl-colwidths="[36,26,38]"}
+:::
+
+and **tune each model so that it is the best version of its kind**: every knob chosen on the selection tracks, as $k$ was. Then compare the best of each kind
+
 ## {.inverse .center}
 
 ::: {.notes}
@@ -300,7 +323,7 @@ $$
 
 $\mathbf X^T\mathbf X + \lambda I$ is invertible for every $\lambda > 0$, whatever $n$ and $p$: one solution even when $p > n$
 
-$\lambda \to 0$: least squares (when it exists). $\lambda \to \infty$: $\hat\beta_\lambda \to \mathbf 0$. In between, one knob
+$\lambda \to 0$: least squares (when it exists). $\lambda \to \infty$: $\hat\beta_\lambda \to \mathbf 0$
 :::
 ::: {.column width="48%"}
 ```{r}
@@ -354,71 +377,7 @@ path_plot(lasso_sp, first_in, "lasso")
 :::
 :::
 
-Spotify, the same 16 inputs, large $\lambda$ on the left. The lasso's coefficients are exactly zero over whole ranges of $\lambda$ and enter one at a time; ridge's are never zero
-
-## High dimensional example
-
-::: {.notes}
-Legacy figure: p = 200 columns, n = 100 rows, a tenth of the coefficients nonzero. Least squares has no unique fit (week 4's seminar: infinitely many exact fits). Lambda for each method chosen on 100 fresh rows (a selection set; how to choose it well is week 7). Hollow pink circles the lasso, blue crosses ridge, black dots the truth: ridge gives everything a small coefficient; the lasso zeroes most, keeps the large true ones and lets in small extras (71 nonzero for 21 true: a lambda chosen for prediction keeps more than the truth; selection against prediction is week 7).
-:::
-
-```{r}
-#| label: highdim-data
-#| include: false
-set.seed(10)
-n_h <- 100; p_h <- 200   # high-dimensional
-X_h <- matrix(rnorm(n_h * p_h), nrow = n_h)
-beta_h <- rnorm(p_h) * rbinom(p_h, 1, 0.1) * rpois(p_h, 1)
-Y_h <- X_h %*% beta_h + rnorm(n_h)
-X_hs <- matrix(rnorm(n_h * p_h), nrow = n_h)   # 100 selection rows, for choosing lambda
-Y_hs <- X_hs %*% beta_h + rnorm(n_h)
-lasso_h <- glmnet(X_h, Y_h)
-ridge_h <- glmnet(X_h, Y_h, alpha = 0)
-lam_h  <- lasso_h$lambda[which.min(apply(predict(lasso_h, X_hs), 2, function(q) mse(Y_hs, q)))]
-lamr_h <- ridge_h$lambda[which.min(apply(predict(ridge_h, X_hs), 2, function(q) mse(Y_hs, q)))]
-high_dim <- tibble(variable = 1:p_h, true_beta = beta_h,
-                   lasso = as.vector(coef(lasso_h, s = lam_h))[-1],
-                   ridge = as.vector(coef(ridge_h, s = lamr_h))[-1])
-```
-
-Simulated ($p > n$ needs it): $p = 200$ inputs, $n = 100$ rows, `r sum(beta_h != 0)` true coefficients nonzero; least squares has no unique fit. Ridge and lasso at the $\lambda$ chosen on 100 fresh rows
-
-```{r}
-#| label: plot-highdim
-#| fig-width: 11
-#| fig-height: 3.1
-#| out-width: "92%"
-#| fig-align: center
-ggplot(high_dim, aes(variable)) +
-  geom_point(aes(y = true_beta), size = 1.8) +
-  geom_point(aes(y = lasso), color = m_pink, pch = 1, size = 3) +
-  geom_point(aes(y = ridge), color = v_blue, pch = 3, size = 2) +
-  labs(x = NULL, y = "coefficient")
-```
-
-Black dots the truth, hollow pink circles the lasso, blue crosses ridge. The lasso keeps `r sum(high_dim$lasso != 0)` of 200 (`r sum(high_dim$lasso != 0 & high_dim$true_beta != 0)` of the `r sum(beta_h != 0)` true ones; its extras are below `r round(max(abs(high_dim$lasso[high_dim$true_beta == 0])), 2)`); ridge keeps all 200
-
-## Lasso: cool or extremely cool? {.inverse}
-
-::: {.notes}
-Compress: p > n and penalized regression still fits; the sparse truth was largely recovered because it was sparse (the extras are small; which to believe is week 7). Two penalties, two beliefs about beta; part 5 says which belief paid where.
-:::
-
-- High-dimensional: $p > n$ means OLS has no unique fit
-
-But all is not lost! Penalized regression to the rescue
-
-- True model is sparse
-
-`r sum(beta_h != 0)` of `r p_h` nonzero; the lasso kept `r sum(high_dim$lasso != 0)`, `r sum(high_dim$lasso != 0 & high_dim$true_beta != 0)` of the true `r sum(beta_h != 0)` among them
-
-- Ridge estimates are dense
-
-All coefficients nonzero 😰
-
-- Lasso estimates are sparse
-
-Nonzero estimates include most of the true model, plus many small extras 😎
+Spotify, the same 16 inputs, large $\lambda$ on the left. The lasso's coefficients are exactly zero over whole ranges of $\lambda$ and enter one at a time; ridge's are never zero. Why, and what the lasso does when $p > n$: week 7
 
 ## {.inverse .center}
 
@@ -431,7 +390,7 @@ Compress: one input, a curve instead of a line, three ways to get one; then one 
 ## Three ways to estimate a curve {minutes="3"}
 
 ::: {.notes}
-Week 1's data and week 1's k-NN, GDP per capita unlogged so that the relation is curved. Three ideas, named once: average nearby (k-NN; a kernel weights by distance instead of cutting at k), fit a line nearby (loess with degree 1), fit a basis (the next two slides; week 7 adds its penalty). The course examines the third; the others are names. All three are curves, and all three have a knob.
+Week 1's data and week 1's k-NN, GDP per capita unlogged so that the relation is curved. Three ideas, named once: average nearby (k-NN; a kernel weights by distance instead of cutting at k), fit a line nearby (loess with degree 1), fit a basis (the next two slides; week 7 adds its penalty). We focus on the third; the others are names. All three are curves, and all three have a knob.
 :::
 
 Week 1's data, life expectancy on GDP per capita, 142 countries (no log this time). Three ways to turn a line into a curve
@@ -458,7 +417,7 @@ ggplot(gm, aes(gdpPercap, lifeExp)) +
   labs(x = "GDP per capita (dollars)", y = "life expectancy")
 ```
 
-**Average nearby** ($k$-NN; a *kernel* weights by distance instead of cutting at $k$). **Fit a line nearby** (*loess*). **Fit a basis**: fixed curves, combined by least squares. The course examines the third
+**Average nearby** ($k$-NN; a *kernel* weights by distance instead of cutting at $k$). **Fit a line nearby** (*loess*). **Fit a basis**: fixed curves, combined by least squares. We now focus on the third
 
 ## A spline is regression on basis functions
 
@@ -733,53 +692,105 @@ ggplot() +
 
 Week 1's countries, resampled eight times (blue, one fit per resample). The trees' cutoffs move with the sample and the steps move with them; the splines barely move. Orange: the average of the eight trees
 
-## Bagging: bootstrap aggregating
+## Random forests: many trees, one model
 
 ::: {.notes}
-Legacy slide. A bootstrap sample is what the last slide drew: rows 1 to 5, a draw might be 2, 2, 4, 5, 1, so row 3 is left out and row 2 counts twice. B trees, one average: the orange line. Why averaging helps, and by how much when the trees are correlated, is week 8's theorem.
+Said, not derived: a random forest grows hundreds of trees, each on a resample of the training rows (the last slide's draws with replacement) with a random subset of the inputs offered at each split, and averages them: the orange line, with hundreds of trees instead of eight. One model, smoother and more stable than any one tree, and no knob to tune today (the defaults). What the resampling and the random subsets do, how much averaging buys and what correlation costs: week 8.
 :::
 
-**Problem**: a single tree model can have high variance (like many non-smooth or non-regularized models)
+A **random forest** is a method that combines many trees into one model: it grows hundreds of trees, each on a resample of the training rows with a random subset of the inputs offered at each split, and averages their predictions
 
-1. **Bootstrap**: for each $b = 1, \ldots, B$  resamples (with replacement) of the training data, fit $\hat f^{*b}$ on bootstrap sample $b$
+The last slide's orange line, with hundreds of trees instead of eight: one model, smoother and more stable than any one tree
 
-2. **Aggregate**: combine the $B$ models, using majority vote for classification or mean for regression
-
-$$\hat f_\text{bag} = \frac{1}{B} \sum_{b=1}^B \hat f^{*b}$$
-
-("Smoothing" useful for low-bias, high-variance models)
-
-## Random forest: dropping predictors
-
-::: {.notes}
-Legacy slide with two small corrections: predictors are redrawn at every split (Breiman 2001), not once per tree; and the subsets typically lower the correlation, which is not guaranteed. randomForest's default is the square root of p for classification and p over 3 for regression. The variance identity is a picture of why; week 8 proves what averaging buys and what correlation costs.
-:::
-
-**Problem**: aggregation does not increase information if the aggregates are highly correlated, e.g. averaging 1000 trees but each one uses the same small set of predictor variables
-
-$$\text{Var}\left( \sum_{b=1}^B \hat f^{*b} \right) =
- \sum_{b=1}^B \text{Var}\left( \hat f^{*b} \right) + \sum_{b=1}^B \sum_{b'\neq b} \text{Cov}\left( \hat f^{*b}, \hat f^{*b'} \right)$$
-
-. . .
-
-1. **Drop** predictors randomly, at every split
-
-  e.g. each split chooses among a random $\sqrt{p}$ of the $p$ predictors
-
-2. **Aggregate** models which are now (typically) less correlated, achieving greater variance reduction
+Today: `randomForest()` with its defaults, no knob. How it works and why averaging helps: week 8
 
 ## {.inverse .center}
 
 ::: {.notes}
-Compress: four families, four bets; three truths, one protocol, and the training error of every one of them.
+Compress: one more structure, built by composing what we have: a regression whose inputs are themselves regressions.
 :::
 
-### Part 5: which structure?
+### Part 5: neural networks
+
+## A GLM of GLMs {minutes="3"}
+
+::: {.notes}
+The whole idea on one slide, by analogy with what students know. A GLM (week 3): a link applied to a linear predictor. Iterate: feed the inputs into M logistic regressions, take their outputs as new inputs, and run a linear regression (or a logistic one, for a label) on those. The hidden units are a basis like part 3's, except that the basis is fitted to the data rather than fixed in advance, and each basis function uses all the inputs at once. Iterate again and the network is deep. Symbols: M hidden units, w_k the k-th unit's weights, sigma the logistic function.
+:::
+
+```{r}
+#| label: network-picture
+#| include: false
+# The one-hidden-layer picture: p inputs, M hidden units, one output.
+nn_inputs <- tibble(x = 0, y = seq(3.2, -0.2, length.out = 4), lab = c("x[1]", "x[2]", "...", "x[p]"))
+nn_hidden <- tibble(x = 1.6, y = seq(2.8, 0.2, length.out = 3), lab = c("h[1]", "h[2]", "h[M]"))
+nn_out <- tibble(x = 3.2, y = 1.5, lab = "f(x)")
+nn_e1 <- expand_grid(a = 1:4, b = 1:3) |> filter(a != 3) |>
+  mutate(x = nn_inputs$x[a], y = nn_inputs$y[a], xend = nn_hidden$x[b], yend = nn_hidden$y[b])
+nn_e2 <- tibble(x = nn_hidden$x, y = nn_hidden$y, xend = nn_out$x, yend = nn_out$y)
+nn_plot <- ggplot() +
+  geom_segment(data = nn_e1, aes(x, y, xend = xend, yend = yend), colour = v_blue, alpha = 0.6, linewidth = 0.9) +
+  geom_segment(data = nn_e2, aes(x, y, xend = xend, yend = yend), colour = m_pink, alpha = 0.8, linewidth = 1.1) +
+  geom_point(data = filter(nn_inputs, lab != "..."), aes(x, y), size = 15, colour = "grey35", fill = "white", shape = 21, stroke = 1.3) +
+  geom_point(data = nn_hidden, aes(x, y), size = 17, colour = v_blue, fill = "#e8f0f7", shape = 21, stroke = 1.6) +
+  geom_point(data = nn_out, aes(x, y), size = 17, colour = m_pink, fill = "#fbe9f1", shape = 21, stroke = 1.6) +
+  geom_text(data = bind_rows(nn_inputs, nn_hidden, nn_out), aes(x, y, label = lab), parse = TRUE, size = 6.5) +
+  annotate("text", x = 0, y = 3.8, label = "inputs", size = 5.5, colour = "grey30") +
+  annotate("text", x = 1.6, y = 3.8, label = "M hidden units", size = 5.5, colour = v_blue) +
+  annotate("text", x = 3.2, y = 3.8, label = "output", size = 5.5, colour = m_pink) +
+  coord_cartesian(xlim = c(-0.4, 3.6), ylim = c(-0.6, 4.1), clip = "off") +
+  theme_void()
+```
+
+Week 3's GLM: a link applied to a linear predictor. Now iterate it
+
+::: {.columns}
+::: {.column width="44%"}
+```{r}
+#| label: network-diagram
+#| fig-width: 5.6
+#| fig-height: 3.6
+#| out-width: "100%"
+nn_plot
+```
+:::
+::: {.column width="56%"}
+Each **hidden unit** is a logistic regression of the inputs, with its own weights: $h_k(x) = \sigma(w_{k0} + w_k^T x)$, where $\sigma(z) = 1/(1 + e^{-z})$
+
+The **output** is a linear regression on the hidden units (logistic, for a label): $f(x) = \beta_0 + \sum_{k=1}^M \beta_k\, h_k(x)$
+
+A GLM whose inputs are the outputs of $M$ GLMs. Iterate once more: a *deep* network
+:::
+:::
+
+A basis like part 3's, except that the basis is fitted to the data along with the coefficients, and each $h_k$ uses every input at once
+
+## What to know about networks today
+
+::: {.notes}
+Three things and no more. Represent: with enough hidden units a network can come as close as you like to any smooth f-star (stated in week 11; universal approximation); the price is M times (p + 1) weights that all have to be fitted. Fit: week 4's stochastic gradient descent on a loss with every feature of week 4's part 3 (not convex: the hilly road, the saddle). The knob: M, chosen on the selection tracks; depth, and the penalty on the weights, are later knobs. nnet() in R, which ships with the base install; week 11 and ST311 do the rest.
+:::
+
+**What it can represent.** With enough hidden units, a network can come as close as you like to any smooth $f^\star$ (stated, week 11). The price: $M(p + 1) + M + 1$ weights, all to be fitted from the data
+
+**How it is fitted.** Week 4's stochastic gradient descent, on a loss with every feature of week 4's part 3: not one valley but many, with plateaus and saddles between them
+
+**The knob.** $M$, the number of hidden units, chosen on the selection tracks like the others; depth and a penalty on the weights are later knobs. In R, `nnet(size = M)`
+
+Today the network is one more structure in the comparison; how it is built and trained in depth is week 11's, and ST311's
+
+## {.inverse .center}
+
+::: {.notes}
+Compress: five families, five bets; three truths, one protocol, and the training error of every one of them.
+:::
+
+### Part 6: which structure?
 
 ## Three truths, one protocol {minutes="3"}
 
 ::: {.notes}
-Ten inputs, uniform on minus one to one, noise sd 1, so the floor is an MSE of 1. Truth A is a plane in three of the ten; B is three smooth one-input curves (f1 = -1 + 2x - x^2, f2 = sin(pi x), f3 = exp(-5(x - 1/2)^2)), scaled by 1.5, in three of the ten; C is one step that needs two inputs at once (signal variance 3, of which the best sum of one-input functions holds 2 and the product the last 1). Every knob chosen on the 100 selection rows, then the chosen fit refitted on the 400 training-plus-selection rows; the test set is 2,000 rows because the truth is simulated and we can afford it. Forest with its defaults, no knob. The ask: two minutes, a show of hands per truth; take the reasons, not only the names.
+Ten inputs, uniform on minus one to one, noise sd 1, so the floor is an MSE of 1. The network: M chosen on the selection rows, a small fixed ridge penalty on its weights, fitted by nnet; with 300 rows it stays small. Truth A is a plane in three of the ten; B is three smooth one-input curves (f1 = -1 + 2x - x^2, f2 = sin(pi x), f3 = exp(-5(x - 1/2)^2)), scaled by 1.5, in three of the ten; C is one step that needs two inputs at once (signal variance 3, of which the best sum of one-input functions holds 2 and the product the last 1). Every knob chosen on the 100 selection rows, then the chosen fit refitted on the 400 training-plus-selection rows; the test set is 2,000 rows because the truth is simulated and we can afford it. Forest with its defaults, no knob. The ask: two minutes, a show of hands per truth; take the reasons, not only the names.
 :::
 
 $p = 10$ inputs, uniform on $[-1, 1]$; $y = f^\star(x) + \varepsilon$, noise variance $\sigma^2 = 1$. Three truths, each using two or three inputs:
@@ -788,7 +799,7 @@ $p = 10$ inputs, uniform on $[-1, 1]$; $y = f^\star(x) + \varepsilon$, noise var
 - **B, additive smooth:** $f^\star(x) = 1.5\,[f_1(x_1) + f_2(x_2) + f_3(x_3)]$, smooth $f_j$
 - **C, one step, two inputs at once:** $f^\star(x) = 4 \cdot \mathbf 1\{x_1 > 0,\ x_2 > 0\}$
 
-**One protocol.** 300 training, 100 selection, 2,000 test rows. Six competitors: least squares; lasso ($\lambda$); $k$-NN ($k$); additive splines ($J$); a tree (depth); a forest. Knobs chosen on the selection rows, the fit refitted on training plus selection, scored once
+**One protocol.** 300 training, 100 selection, 2,000 test rows. Seven competitors: least squares; lasso ($\lambda$); $k$-NN ($k$); additive splines ($J$); a tree (depth); a forest; a network ($M$). Knobs chosen on the selection rows, the fit refitted on training plus selection, scored once
 
 ::: {.ask}
 For each truth: which family wins, which loses, and why?
@@ -844,7 +855,13 @@ compare_families <- function(truth, p, n_train, n_sel, n_test, seed, wide = FALS
   out$tree <- score("tree", predict(t, all), predict(t, te))
   rf <- randomForest(y ~ ., all, ntree = 300)
   out$forest <- score("forest", predict(rf, all), predict(rf, te))
-  bind_rows(out) |> mutate(knob = paste0("lambda ", signif(lam, 2), ", k ", k, ", J ", if (wide) NA else J, ", depth ", d))
+  # A one-hidden-layer network: M chosen on the selection rows, a small fixed penalty on the weights.
+  Ms <- c(2, 4, 8, 16)
+  nn_fit <- function(d, M) { set.seed(10); nnet(y ~ ., d, size = M, decay = 0.01, linout = TRUE, maxit = 500, MaxNWts = 5000, trace = FALSE) }
+  M <- Ms[which.min(sapply(Ms, function(M) mse(se$y, predict(nn_fit(tr, M), se))))]
+  nn <- nn_fit(all, M)
+  out$network <- score("network", predict(nn, all), predict(nn, te))
+  bind_rows(out) |> mutate(knob = paste0("lambda ", signif(lam, 2), ", k ", k, ", J ", if (wide) NA else J, ", depth ", d, ", M ", M))
 }
 # Truth B's three curves: a parabola, a sine, a bump (the legacy GAM deck's simulation).
 f1 <- function(x) -1 + 2 * x - x^2
@@ -875,7 +892,7 @@ leaderboard <- function(res, title, xmax = NULL) {
 ## Truth A: sparse linear, tall and then wide
 
 ::: {.notes}
-Left, tall: n = 300, p = 10. Least squares and the lasso sit on the floor (dotted line, the noise variance, the smallest population MSE; a realized test MSE on 2,000 rows can sit a little below it); the additive fit is close, with 30 columns to estimate; the forest and the tree pay for a shape they do not need; k-NN in ten dimensions is last. Right, wide: n = 100, p = 200, the same truth. Least squares and the additive fit have no unique fit; the lasso alone stays near the floor; ridge, the forest and k-NN are near the mean's score. The hollow points: the forest's training error is a quarter of its test error; least squares' training error sits above its test error here (one realization; the theorem is about averages).
+Left, tall: n = 300, p = 10. Least squares and the lasso sit on the floor (dotted line, the noise variance, the smallest population MSE; a realized test MSE on 2,000 rows can sit a little below it); the additive fit and the two-unit network are close, each with many more parameters to estimate; the forest and the tree pay for a shape they do not need; k-NN in ten dimensions is last. Right, wide: n = 100, p = 200, the same truth. Least squares and the additive fit have no unique fit; the lasso alone stays near the floor; ridge, the forest and k-NN are near the mean's score; the two-unit network, with over 400 weights for 100 rows, fits the training rows exactly and is last. The hollow points: the forest's training error is a quarter of its test error; least squares' training error sits above its test error here (one realization; the theorem is about averages).
 :::
 
 ```{r}
@@ -907,7 +924,7 @@ The additive fit was built for this truth. A forest can bend, with rectangles; a
 ## Truth C: thresholds with an interaction
 
 ::: {.notes}
-The tree of depth 2 is the truth, so it sits on the floor; the forest close behind. A sum of one-input functions can hold at most two thirds of this signal (each input's share) and the smooth splines hold less than that, so the additive fit and least squares are far from the floor; k-NN last again. The tree's training error sits above its test error: another one-realization exception.
+The tree of depth 2 is the truth, so it sits on the floor; the forest close behind. A sum of one-input functions can hold at most two thirds of this signal (each input's share) and the smooth splines hold less than that, so the additive fit and least squares are far from the floor. The network could represent this step but does not find it from 300 rows: it needs data. k-NN last again. The tree's training error sits above its test error: another one-realization exception.
 :::
 
 ```{r}
@@ -921,10 +938,10 @@ leaderboard(res_C, "n = 300, p = 10; one step, two inputs at once")
 
 A sum of one-input functions can hold each input's share of this step, two thirds of the signal at best, and not the product. Two questions in a row hold all of it
 
-## CTF competition: the six on Spotify
+## CTF competition: the seven on Spotify
 
 ::: {.notes}
-The baselines slide asked whether a shape could beat both; this is the answer on the selection tracks, the knobs chosen there (the one-SE bars are the selection set's). Additive splines 490 and the forest 493 lead; the tree 512; the lasso with genre 525; k-NN 528; least squares 541; the mean 581. The hollow points are the training scores: the forest's is 86. The vault stays shut: the seminar refits on training plus selection and opens it once. What these data have: a nonlinear year effect and loudness, which the plane cannot bend to, and little else the inputs can see.
+The baselines slide asked whether a shape could beat both; this is the answer on the selection tracks, the knobs chosen there (the one-SE bars are the selection set's). The two-unit network 486, additive splines 490 and the forest 493 lead, within a standard error of each other; the tree 512; the lasso with genre 525; k-NN 528; least squares 541; the mean 581. The hollow points are the training scores: the forest's is 86. The vault stays shut: the seminar refits on training plus selection and opens it once. What these data have: a nonlinear year effect and loudness, which the plane cannot bend to, and little else the inputs can see.
 :::
 
 ```{r}
@@ -945,6 +962,10 @@ d_sp <- ds_sp[which.min(sapply(ds_sp, function(d) mse(y_se, predict(rpart(f_gen,
           control = rpart.control(maxdepth = d, cp = 0, minbucket = 10)), sp_sel))))]
 fit_tree_sp <- rpart(f_gen, sp_train, control = rpart.control(maxdepth = d_sp, cp = 0, minbucket = 10))
 fit_rf_sp <- randomForest(f_gen, sp_train, ntree = 300)
+Ms_sp <- c(2, 4, 8, 16)
+nn_sp <- function(X, y, M) { set.seed(10); nnet(X, y, size = M, decay = 0.1, linout = TRUE, maxit = 300, trace = FALSE) }
+M_sp <- Ms_sp[which.min(sapply(Ms_sp, function(M) mse(y_se, predict(nn_sp(sp_Xtr, y_tr, M), sp_Xse))))]
+fit_nn_sp <- nn_sp(sp_Xtr, y_tr, M_sp)
 six <- bind_rows(
   sc_sp("the training mean", rep(mean(y_tr), length(y_tr)), rep(mean(y_tr), length(y_se))),
   sc_sp("least squares, 11 numeric inputs", fitted(fit_ls), predict(fit_ls, sp_sel)),
@@ -952,7 +973,8 @@ six <- bind_rows(
   sc_sp("lasso, + genre", predict(lasso_sp, sp_Xtr, s = lam_sp), predict(lasso_sp, sp_Xse, s = lam_sp)),
   sc_sp(paste0("additive splines, + genre, J = ", J_sp), fitted(fit_gam_sp), predict(fit_gam_sp, sp_sel)),
   sc_sp(paste0("tree, + genre, depth ", d_sp), predict(fit_tree_sp, sp_train), predict(fit_tree_sp, sp_sel)),
-  sc_sp("forest, + genre, defaults", predict(fit_rf_sp, sp_train), predict(fit_rf_sp, sp_sel))) |>
+  sc_sp("forest, + genre, defaults", predict(fit_rf_sp, sp_train), predict(fit_rf_sp, sp_sel)),
+  sc_sp(paste0("network, + genre, M = ", M_sp), predict(fit_nn_sp, sp_Xtr), predict(fit_nn_sp, sp_Xse))) |>
   mutate(competitor = fct_reorder(competitor, -sel))
 ggplot(six, aes(y = competitor)) +
   geom_errorbar(aes(xmin = sel - se, xmax = sel + se), width = 0.25, colour = "grey60", orientation = "y") +
@@ -963,21 +985,21 @@ ggplot(six, aes(y = competitor)) +
   theme(legend.position = "top")
 ```
 
-Knobs chosen on the selection tracks, scored there. The curves beat the plane by about four standard errors; the forest's training score is `r round(six$train[six$competitor == "forest, + genre, defaults"])`. The vault stays shut: the seminar refits and opens it once
+Knobs chosen on the selection tracks, scored there. The three that can bend beat the plane by about four standard errors and are within one of each other; the forest's training score is `r round(six$train[six$competitor == "forest, + genre, defaults"])`. The vault stays shut: the seminar refits and opens it once
 
 ## Four dimensions, not one {minutes="3"}
 
 ::: {.notes}
-Three minutes. Four questions about the world, not one scale from simple to complex: a truth can be tall and interactive, or wide and smooth. Each family is a bet on an answer; week 4's no free lunch says the bet is doing the work, and the selection set says which bet paid on these data (Spotify: smooth in year and loudness, roughly additive, so the splines and the forest). k-NN lost on every simulated truth: ten inputs, 300 points, week 1's curse with a price on it. Week 7 puts a rate on that price.
+Three minutes. Four questions about the world, not one scale from simple to complex: a truth can be tall and interactive, or wide and smooth. Each family is a bet on an answer; week 4's no free lunch says the bet is doing the work, and the selection set says which bet paid on these data (Spotify: smooth in year and loudness, roughly additive, so the splines, the forest and a two-unit network). k-NN lost on every simulated truth: ten inputs, 300 points, week 1's curse with a price on it. Week 7 puts a rate on that price.
 :::
 
 ::: {style="font-size: 0.97em"}
 | Axis | The question about $f^\star$ | Who bets which way |
 |---|---|---|
-| **wide or tall** | how $p$ compares with $n$ | least squares and the additive fit need $n \gg$ columns; ridge and the lasso fit at any $p$ |
+| **wide or tall** | how $p$ compares with $n$ | least squares, the additive fit and a network need $n \gg$ their parameters; ridge and the lasso fit at any $p$ |
 | **sparse or dense** | how many inputs matter | the lasso bets few; least squares and ridge spread the fit over all; a forest tolerates idle inputs, $k$-NN pays for them |
-| **smooth or discontinuous** | how $f^\star$ moves with each input | splines and $k$-NN bet smooth; trees bet on steps |
-| **additive or interactive** | whether inputs act separately | the additive fit bets separately; trees, forests and $k$-NN allow interactions |
+| **smooth or discontinuous** | how $f^\star$ moves with each input | splines, $k$-NN and networks bet smooth; trees bet on steps |
+| **additive or interactive** | whether inputs act separately | the additive fit bets separately; trees, forests, $k$-NN and networks allow interactions |
 
 : {tbl-colwidths="[22,30,48]"}
 :::
@@ -1005,7 +1027,7 @@ Three numbers: $\mathbb E[\hat R_n(\hat f)]$, $R(f_{\mathcal F})$, $\mathbb E[R(
 ## Optimism theorem {minutes="3"}
 
 ::: {.notes}
-Stated; the three-line proof is exercise 1. The heuristic first: f-hat was chosen to make the training losses small, so it beats any fixed member of the class on the training data, and a fixed member's training error is unbiased for its risk (the one line that uses the sampling assumption); on the population f-hat cannot beat the best member. Chain the three. Covered: least squares, and a spline basis whose knots are fixed in advance (ns() places them at sample quantiles, so strictly the class depends on the data). Ridge and the lasso in their constrained form with a fixed radius t are minimizers over a fixed class; at a fixed lambda they are not (noiseless Y = X: ridge has positive training error while the best line has risk zero, so the left inequality fails). Not covered: a tree (greedy), a forest, k-NN, and any knob chosen on the data. The direction was the usual one on the leaderboards, with exceptions, but the theorem is about the minimizer and about averages.
+Stated; the three-line proof is exercise 1. The heuristic first: f-hat was chosen to make the training losses small, so it beats any fixed member of the class on the training data, and a fixed member's training error is unbiased for its risk (the one line that uses the sampling assumption); on the population f-hat cannot beat the best member. Chain the three. Covered: least squares, and a spline basis whose knots are fixed in advance (ns() places them at sample quantiles, so strictly the class depends on the data). Ridge and the lasso in their constrained form with a fixed radius t are minimizers over a fixed class; at a fixed lambda they are not (noiseless Y = X: ridge has positive training error while the best line has risk zero, so the left inequality fails). Not covered: a tree (greedy), a forest, k-NN, a network as fitted (gradient descent returns a local minimum, not the minimizer), and any knob chosen on the data. The direction was the usual one on the leaderboards, with exceptions, but the theorem is about the minimizer and about averages.
 :::
 
 A function fixed before the data has an unbiased training error; $\hat f$ was chosen to make its own small, and cannot beat $f_{\mathcal F}$ on the population
@@ -1031,15 +1053,15 @@ Say it once: the exercises are what the seminar's problems vary. The seminar's l
 
 - In the seminar: the Spotify task with every family. Each knob chosen on the selection tracks, then the vault opened once for the leaderboard
 
-## Conclusion: four bets, one protocol {.inverse}
+## Conclusion: five bets, one protocol {.inverse}
 
 ::: {.notes}
-Compress: each family is a bet on the shape of f-star; the selection set says which bet paid; the training error says nothing you can trust, by a theorem. Next: how much flexibility, with cross-validation and a rate.
+Compress: each family is a bet on the shape of f-star; the selection set says which bet paid; the training error says nothing you can trust, by a theorem. Next: how much flexibility, with cross-validation, a rate, and the lasso in depth.
 :::
 
 #### Each family is a bet on the shape of $f^\star$
 
-A plane, a sparse plane, a sum of curves, a set of rectangles, an average of many. Four questions about the world decide which bet pays
+A plane, a sparse plane, a sum of curves, a set of rectangles, an average of many, a composition. Four questions about the world decide which bet pays
 
 #### The protocol decides what you may believe
 
