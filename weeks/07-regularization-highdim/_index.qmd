@@ -1,12 +1,14 @@
-## Week 7: regularization and high-dimensions
+## Week 7: how much flexibility should we allow?
 
-Many predictors: ridge regression and the lasso, their bias and variance against the tuning parameter (the bias–variance decomposition in its third form, with ridge written in the SVD basis), soft thresholding, and what changes when $p > n$. Then the held-out protocol under stress: the same evaluation set used many times, adaptive overfitting, and what the CIFAR-10 and ImageNet replications found.
+Every method of week 5 had a knob. This week chooses it, and asks what the choice costs. $K$-fold cross-validation and the curve it draws against $\lambda$, $k$ and tree depth. Why a flexible method needs data: from week 1's decomposition, the error of $k$-nearest neighbors in $d$ dimensions, the rate $n^{-2/(d+2)}$, and what an assumption buys (an additive truth, a sparse one). Ridge and lasso side by side in the simplest design: shrinkage against soft thresholding, prediction against selection; the smoothing penalty on a spline as ridge on its coefficients. What changes when $p > n$: the minimum-norm interpolant, why one interpolant rather than another, and the double-descent curve that the bias–variance picture does not predict. The standard error of a held-out score.
 
 **Reading [PROVISIONAL]**
 
-- ISLR Chapter 6, section 6.2, pp. 237–252 (ridge regression and the lasso, choosing the tuning parameter), and section 6.4, from p. 261 (what changes when $p > n$). The lab in section 6.5 goes with the seminar. Section 6.3 (principal components and partial least squares), which sits between them, is not part of this course.
-- PPA Chapter 8, pp. 158–167 (adaptivity: what happens when the same held-out set is used many times, and the CIFAR-10 and ImageNet replications).
+- ISLR Chapter 5 (Resampling Methods), section 5.1, pp. 197–209 (the validation set, leave-one-out and $K$-fold cross-validation, and the bias–variance trade-off in choosing $K$). Section 5.2, the bootstrap, is not part of this course.
+- ISLR Chapter 6, section 6.2.3, pp. 250–252 (choosing the tuning parameter by cross-validation), and section 6.4, from p. 261 (what changes when $p > n$). Section 6.3, which sits between them, is not part of this course.
+- ISLR Chapter 7, section 7.5, pp. 301–304 (smoothing splines: the roughness penalty, and $\lambda$ chosen from the data).
+- PPA Chapter 6 (Generalization), "Generalization gap" and "Overparameterization: empirical phenomena", pp. 100–106 (what over-parameterized models do in practice; double descent).
 
-Deeper, optional: ESL section 3.4, pp. 61–79 (ridge in the SVD basis; the lasso); CASI Chapter 7 (James–Stein) and Chapter 16 (the lasso).
+Deeper, optional: Belkin, Hsu, Ma and Mandal, "Reconciling modern machine-learning practice and the classical bias–variance trade-off", *PNAS* 116(32), 2019 (the double-descent curve); ESL section 3.4, pp. 61–73 (ridge and the lasso in general designs); Györfi, Kohler, Krzyżak and Walk, *A Distribution-Free Theory of Nonparametric Regression* (2002), Chapter 6, for the rigorous form of the nearest-neighbor rate the lecture derives from a stated lemma.
 
-**Lecture and seminar:** released here at the start of the week. Bias and variance of ridge and the lasso against $\lambda$, by simulation; tuning with `glmnet` on the Hitters data with a test set reserved first; the evaluation set reused, and what it does to a score. Data: simulated, and ISLR's Hitters (baseball salaries, 1987).
+**Lecture and seminar:** released here at the start of the week. A cross-validation pipeline on week 5's data; learning curves for $k$-nearest neighbors in one, two, five and ten dimensions read against the rate; then, after cross-validation has worked for you, two ways it goes wrong: standardizing before the split against inside the folds, and a random split against a split in time. Data: week 5's datasets, ISLR's Hitters (baseball salaries, 1987), simulated data.

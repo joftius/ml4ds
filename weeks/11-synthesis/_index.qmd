@@ -1,14 +1,17 @@
-## Week 11: what does winning mean?
+## Week 11: what changes when the representation is learned?
 
-The competition re-read with everything since: outcome reasoning against model reasoning, the four MARA(s) questions a deployment has to answer and for whom, and the seven recurring flaws of systems that predict something about a person and decide about them. The week-1 task re-run with every entrant the term taught you. One unfamiliar case diagnosed live. The theorems and results in one view. If time allows, the last method: a neural network as composition, fitted by hand.
+Every method in this course was a predictor on features someone chose. What changes when the features are built by hand (week 8's bases and kernels), learned together with the task (a network with one hidden layer as a basis the data chooses, fitted by week 4's stochastic gradient descent; everything beyond that is ST311's), or transferred from a model trained on something else (embeddings, with week 1's nearest neighbors and week 5's ridge run on them). Then the course's frame read again with everything since: what the held-out leaderboard delivered, and where it stops, each limit being a result from the term. The theorems in one view, as a reference sheet.
 
 **Reading [PROVISIONAL]**
 
+- PPA Chapter 4 (Representations and features), pp. 49–67: measurement, and "Nonlinear predictors" (polynomials, kernels and random features, and a neural network as a learned representation).
+- ISLR Chapter 10, sections 10.1–10.2, pp. 404–411 (single- and multilayer neural networks), for the one network the lecture builds. The rest of Chapter 10 is ST311's.
+
 Delivered in lecture, for reference rather than preparation:
 
-- Rodu and Baiocchi, "When black box algorithms are (not) appropriate", *Observational Studies* 2023 (arXiv 2001.07648): the common task framework, outcome and model reasoning, MARA(s).
-- Wang, Kapoor, Barocas and Narayanan, "Against predictive optimization", *ACM Journal on Responsible Computing* 2024, and the rubric at [predictive-optimization.cs.princeton.edu](https://predictive-optimization.cs.princeton.edu/): the project's justification section uses it.
+- Rodu and Baiocchi, "When black box algorithms are (not) appropriate", *Observational Studies* 9(2), 2023 (arXiv 2001.07648): the common task framework and what it does and does not establish.
+- Wang, Kapoor, Barocas and Narayanan, "Against predictive optimization", *ACM Journal on Responsible Computing* 1(1), 2024.
 
-Optional: ISLR Chapter 10, sections 10.1–10.2, pp. 404–411 (single- and multilayer neural networks), for the optional segment; ISLR Chapter 12, section 12.1, from p. 497, for the reader who wants to see what unsupervised learning is.
+Optional: ISLR Chapter 12, section 12.2, from p. 498 (principal components, the simplest learned representation); Belkin, Hsu, Ma and Mandal, *PNAS* 2019, if not read in week 7.
 
-**Lecture and seminar:** released here at the start of the week, together with the theorems in one view (statements only, with the week each was proved or derived; bring it to the seminar and try to reproduce each statement from memory first, checking second). One unfamiliar case on paper; a simulated lender in R on which a partial dependence curve, an intervention claim and a SHAP value are checked against a known truth; your own project against MARA(s) and the rubric. Data: a supplied simulation, and your project data.
+**Lecture and seminar:** released here at the start of the week, together with the theorems in one view (statements only, with the week each was proved or derived; bring it to the seminar and try to reproduce each statement from memory first, checking second). Supplied text embeddings in R: $k$-nearest neighbors, ridge and logistic regression fitted on them, what the representation preserves and where evaluation fails; then one unfamiliar problem taken from target to evaluation. Data: a supplied embedding file, and your project data.

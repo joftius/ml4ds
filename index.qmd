@@ -4,9 +4,10 @@ description: |
   A core set of commonly used machine learning tools, practiced in R, with attention to their mathematical foundations, their statistical limitations, and what they do and do not tell you.
 toc: true
 toc-depth: 2
+include-after-body: theme/collapse-weeks.html
 ---
 
-Readings and lectures are complementary so do both, and bring a laptop with R and RStudio to the seminar (see [about](about.html) for setup). The seminar notebook for each week is linked below; the `.qmd` link downloads the source file to open in RStudio, the other link is the same notebook rendered so you can read it in a browser.
+Readings and lectures are complementary so do both, and bring a laptop with R and RStudio to the seminar (see [about](about.html) for setup). The seminar notebook for each week is linked below; the `.qmd` link downloads the source file to open in RStudio, the other link is the same notebook rendered so you can read it in a browser. Click a week's heading, or its entry in the contents, to open it.
 
 <!-- One block per week, each in weeks/NN-<name>/_index.qmd (title, summary, reading,
 links). Include paths and the links inside the blocks are relative to this file.

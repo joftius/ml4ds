@@ -1,0 +1,80 @@
+<!-- Collapsible week blocks on the course page (index.qmd includes this file after the body).
+     Each level-2 section (one per week, from weeks/NN-<name>/_index.qmd) is collapsed
+     when the page loads; its heading toggles it. A link to a week's heading (the table of
+     contents, or a URL with the week's id in the hash) opens that week. Without JavaScript
+     the page is unchanged: every week is shown in full. -->
+<style>
+  .week-block > h2 { cursor: pointer; user-select: none; }
+  .week-block > h2::before {
+    content: "\25B8";            /* ▸ */
+    display: inline-block; width: 1.1em; margin-left: -1.1em;
+    font-size: 0.8em; color: #6c757d;
+  }
+  .week-block.open > h2::before { content: "\25BE"; }   /* ▾ */
+  .week-controls { font-size: 0.9em; color: #6c757d; margin: 0 0 1rem 0; }
+  .week-controls a { cursor: pointer; }
+  @media (max-width: 767px) { .week-block > h2::before { margin-left: 0; } }
+  @media print {
+    .week-body[hidden] { display: block !important; }
+    .week-block > h2::before, .week-controls { display: none; }
+  }
+</style>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  var main = document.querySelector("#quarto-document-content") || document.body;
+  var sections = Array.prototype.slice.call(main.querySelectorAll("section.level2"));
+  if (!sections.length) return;
+
+  sections.forEach(function (sec) {
+    var h = sec.querySelector(":scope > h2");
+    if (!h) return;
+    var body = document.createElement("div");
+    body.className = "week-body";
+    var node = h.nextSibling;
+    while (node) { var next = node.nextSibling; body.appendChild(node); node = next; }
+    sec.appendChild(body);
+    sec.classList.add("week-block");
+    h.setAttribute("role", "button");
+    h.setAttribute("tabindex", "0");
+    sec.setOpen = function (open) {
+      sec.classList.toggle("open", open);
+      h.setAttribute("aria-expanded", open ? "true" : "false");
+      body.hidden = !open;
+    };
+    sec.setOpen(false);
+    h.addEventListener("click", function (e) {
+      if (e.target.closest("a.anchorjs-link")) return;   /* the heading's own # link */
+      sec.setOpen(!sec.classList.contains("open"));
+    });
+    h.addEventListener("keydown", function (e) {
+      if (e.key === "Enter" || e.key === " ") { e.preventDefault(); h.click(); }
+    });
+  });
+
+  function openFromHash() {
+    var id = decodeURIComponent(location.hash.slice(1));
+    if (!id) return;
+    var el = document.getElementById(id);
+    var sec = el && el.closest("section.level2");
+    if (sec && sec.setOpen) {
+      sec.setOpen(true);
+      el.scrollIntoView({ block: "start" });
+    }
+  }
+  openFromHash();
+  window.addEventListener("hashchange", openFromHash);
+
+  var controls = document.createElement("p");
+  controls.className = "week-controls";
+  var expand = document.createElement("a");
+  expand.textContent = "Expand all weeks";
+  var collapse = document.createElement("a");
+  collapse.textContent = "Collapse all";
+  expand.addEventListener("click", function (e) { e.preventDefault(); sections.forEach(function (s) { s.setOpen && s.setOpen(true); }); });
+  collapse.addEventListener("click", function (e) { e.preventDefault(); sections.forEach(function (s) { s.setOpen && s.setOpen(false); }); });
+  controls.appendChild(expand);
+  controls.appendChild(document.createTextNode(" · "));
+  controls.appendChild(collapse);
+  sections[0].parentNode.insertBefore(controls, sections[0]);
+});
+</script>
