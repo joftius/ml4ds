@@ -217,18 +217,18 @@ Joshua Loftus
 <section id="section" class="slide level2 inverse">
 <h2></h2>
 <h3 id="week-5-functional-structures">Week 5: functional structures</h3>
-<p>Part 1: the task and the protocol</p>
+<p>Part 1: data and task intro</p>
 <p>Part 2: ridge and lasso</p>
 <p>Part 3: additive models</p>
 <p>Part 4: trees and forests</p>
 <p>Part 5: neural networks</p>
 <p>Part 6: which structure?</p>
 </section>
-<section id="where-week-4-left-it" class="slide level2" data-minutes="1">
-<h2>Where week 4 left it</h2>
+<section id="where-week-4-left-us" class="slide level2" data-minutes="1">
+<h2>Where week 4 left us</h2>
 <p>Last week: optimization, the general concepts and the methods that fit a model</p>
 <p>This week: a few specific families of supervised models, each with its own <strong>functional structure</strong>, each introduced briefly. Every one of them gets more detail in a later week</p>
-<p>Each family is a bet on the shape of <span class="math inline">\(f^\star\)</span>. To compare the bets we need one task and one protocol</p>
+<p>Each family is a bet on the shape of <span class="math inline">\(f^\star\)</span>. To compare the bets we need one task</p>
 </section>
 <section id="the-task-10000-spotify-tracks" class="slide level2">
 <h2>The task: 10,000 Spotify tracks</h2>
@@ -244,8 +244,8 @@ Joshua Loftus
 </div>
 <p>10,000 tracks from playlists of six genres (<a href="https://ml4ds.com/data/spotify.html">data note</a>); the 5,000 training tracks plotted. Their popularity has variance 559: the MSE of predicting the mean for everyone</p>
 </section>
-<section id="three-kinds-of-data-one-rule-each" class="slide level2">
-<h2>Three kinds of data, one rule each</h2>
+<section id="data-split" class="slide level2">
+<h2>Data split</h2>
 <div style="font-size: 1.05em">
 <table class="caption-top">
 <colgroup>
@@ -284,8 +284,8 @@ Joshua Loftus
 <p>Week 1’s one rule, now for evaluation data: a row is fair game for scoring only if nothing about the model was chosen on it.</p>
 </div>
 </section>
-<section id="ctf-competition-the-baselines" class="slide level2" data-minutes="3">
-<h2>CTF competition: the baselines</h2>
+<section id="ctf-competition-baselines" class="slide level2" data-minutes="3">
+<h2>CTF competition: baselines</h2>
 <p>What we can fit so far, each a bet on <span class="math inline">\(f^\star\)</span>: <strong>least squares</strong>, a plane (every input a slope); <strong>logistic regression</strong>, a plane for the log-odds (for a label, not today); <strong><span class="math inline">\(k\)</span> nearest neighbors</strong>, a local average, its <span class="math inline">\(k\)</span> the knob</p>
 <div class="cell">
 <div class="cell-output-display">
@@ -298,8 +298,8 @@ Joshua Loftus
 </div>
 <p>The local average (<span class="math inline">\(k = 100\)</span>) and the plane, one standard error apart. Can a different shape beat both? The test set stays shut</p>
 </section>
-<section id="the-plan-several-structures-each-tuned" class="slide level2">
-<h2>The plan: several structures, each tuned</h2>
+<section id="candidate-methods" class="slide level2">
+<h2>Candidate methods</h2>
 <p>Try several types of model, each with a different functional structure for <span class="math inline">\(f\)</span>:</p>
 <div style="font-size: 0.95em">
 <table class="caption-top">
@@ -400,6 +400,7 @@ Joshua Loftus
 <p>A simple <code>diff</code> to remember lasso/ridge is via the penalty/constraint (1-norm instead of 2-norm). Lasso is</p>
 <p><span class="math display">\[\text{minimize } \frac{1}{2n}\| \mathbf y - \mathbf X \beta \|_2^2 \text{ s. t. } \| \beta \|_1 \leq t\]</span> where <span class="math inline">\(\| \beta \|_1 = \sum_{j=1}^p |\beta_j|\)</span>. Lagrangian form</p>
 <p><span class="math display">\[\text{minimize } \frac{1}{2n} \| \mathbf y - \mathbf X \beta \|_2^2 + \lambda \| \beta \|_1\]</span></p>
+<p>The lasso often gives estimates with many coefficients set to exactly zero</p>
 </section>
 <section id="lasso-vs-ridge-solution-paths-of-hat-beta" class="slide level2">
 <h2>Lasso vs ridge: solution paths of <span class="math inline">\(\hat \beta\)</span></h2>
@@ -425,7 +426,7 @@ Joshua Loftus
 </div>
 </div>
 </div></div>
-<p>Spotify, the same 16 inputs, large <span class="math inline">\(\lambda\)</span> on the left. The lasso’s coefficients are exactly zero over whole ranges of <span class="math inline">\(\lambda\)</span> and enter one at a time; ridge’s are never zero. Why, and what the lasso does when <span class="math inline">\(p &gt; n\)</span>: week 7</p>
+<p>Spotify, the same 16 inputs, large <span class="math inline">\(\lambda\)</span> on the left. The lasso’s coefficients are exactly zero over whole ranges of <span class="math inline">\(\lambda\)</span> and enter one at a time; ridge’s are never zero</p>
 </section>
 <section id="section-2" class="slide level2 inverse center">
 <h2></h2>
@@ -476,7 +477,7 @@ f(x) = \beta_0 + \sum_{j=1}^J \beta_j\, b_j(x)
 </div>
 </div>
 </div>
-<p>Small <span class="math inline">\(J\)</span>: almost a line. Large <span class="math inline">\(J\)</span>: the curve follows the points, and at <span class="math inline">\(J = n\)</span> it passes through every one (training error zero). Which <span class="math inline">\(J\)</span>? The selection set, as for <span class="math inline">\(k\)</span> and <span class="math inline">\(\lambda\)</span>. Week 7: a penalty on wiggliness instead, with <span class="math inline">\(J\)</span> as a ceiling</p>
+<p>Small <span class="math inline">\(J\)</span>: almost a line. Large <span class="math inline">\(J\)</span>: the curve follows the points, and at <span class="math inline">\(J = n\)</span> it passes through every one (training error zero). Which <span class="math inline">\(J\)</span>? The selection set, as for <span class="math inline">\(k\)</span> and <span class="math inline">\(\lambda\)</span>. Later in the course: a penalty on wiggliness instead, with <span class="math inline">\(J\)</span> as a ceiling</p>
 </section>
 <section id="additive-modeling-assumption" class="slide level2">
 <h2>Additive modeling assumption</h2>
@@ -507,7 +508,7 @@ f(x) = \beta_0 + \sum_{j=1}^J \beta_j\, b_j(x)
 </div>
 </div>
 </div>
-<p>One fit, 30 coefficients, and a curve per input to read instead of a coefficient: what the model adds for that input with the others held fixed</p>
+<p>Each variable gets a curve instead of a coefficient (slope)</p>
 </section>
 <section id="section-3" class="slide level2 inverse center">
 <h2></h2>
@@ -576,7 +577,7 @@ Output: the predictor and cutoff with the best improvement</code></pre>
 <div class="fragment">
 <p>Starting from the full dataset, compute the first split as above</p>
 <p><strong>Recurse</strong>: take the two subsets of data from each side of the split and plug them both back into the same function</p>
-<p>Until some <strong>stopping rule</strong> prevents more splitting (today: a maximum depth, the tree’s knob; growing deep and pruning back is week 8)</p>
+<p>Until some <strong>stopping rule</strong> prevents more splitting (today: a maximum depth, the tree’s knob; growing deep and pruning back comes later in the course)</p>
 </div>
 </section>
 <section id="a-tree-is-unstable" class="slide level2">
@@ -596,7 +597,7 @@ Output: the predictor and cutoff with the best improvement</code></pre>
 <h2>Random forests: many trees, one model</h2>
 <p>A <strong>random forest</strong> is a method that combines many trees into one model: it grows hundreds of trees, each on a resample of the training rows with a random subset of the inputs offered at each split, and averages their predictions</p>
 <p>The last slide’s orange line, with hundreds of trees instead of eight: one model, smoother and more stable than any one tree</p>
-<p>Today: <code>randomForest()</code> with its defaults, no knob. How it works and why averaging helps: week 8</p>
+<p>Today: <code>randomForest()</code> with its defaults, no knob. How it works and why averaging helps: later in the course</p>
 </section>
 <section id="section-4" class="slide level2 inverse center">
 <h2></h2>
@@ -604,7 +605,7 @@ Output: the predictor and cutoff with the best improvement</code></pre>
 </section>
 <section id="a-glm-of-glms" class="slide level2" data-minutes="3">
 <h2>A GLM of GLMs</h2>
-<p>Week 3’s GLM: a link applied to a linear predictor. Now iterate it</p>
+<p>Week 4’s GLM: the inverse link applied to a linear predictor, <span class="math inline">\(g^{-1}(\mathbf x^T\beta)\)</span>. Now iterate it</p>
 <div class="columns">
 <div class="column" style="width:44%;">
 <div class="cell">
@@ -617,7 +618,7 @@ Output: the predictor and cutoff with the best improvement</code></pre>
 </div>
 </div>
 </div><div class="column" style="width:56%;">
-<p>Each <strong>hidden unit</strong> is a logistic regression of the inputs, with its own weights: <span class="math inline">\(h_k(x) = \sigma(w_{k0} + w_k^T x)\)</span>, where <span class="math inline">\(\sigma(z) = 1/(1 + e^{-z})\)</span></p>
+<p>Each <strong>hidden unit</strong> has the form of a logistic regression of the inputs, with its own weights: <span class="math inline">\(h_k(x) = g^{-1}(w_{k0} + w_k^T x)\)</span>, with <span class="math inline">\(g\)</span> the logit link, <span class="math inline">\(g^{-1}(z) = 1/(1 + e^{-z})\)</span></p>
 <p>The <strong>output</strong> is a linear regression on the hidden units (logistic, for a label): <span class="math inline">\(f(x) = \beta_0 + \sum_{k=1}^M \beta_k\, h_k(x)\)</span></p>
 <p>A GLM whose inputs are the outputs of <span class="math inline">\(M\)</span> GLMs. Iterate once more: a <em>deep</em> network</p>
 </div></div>
@@ -625,24 +626,23 @@ Output: the predictor and cutoff with the best improvement</code></pre>
 </section>
 <section id="what-to-know-about-networks-today" class="slide level2">
 <h2>What to know about networks today</h2>
-<p><strong>What it can represent.</strong> With enough hidden units, a network can come as close as you like to any smooth <span class="math inline">\(f^\star\)</span> (stated, week 11). The price: <span class="math inline">\(M(p + 1) + M + 1\)</span> weights, all to be fitted from the data</p>
-<p><strong>How it is fitted.</strong> Week 4’s stochastic gradient descent, on a loss with every feature of week 4’s part 3: not one valley but many, with plateaus and saddles between them</p>
-<p><strong>The knob.</strong> <span class="math inline">\(M\)</span>, the number of hidden units, chosen on the selection tracks like the others; depth and a penalty on the weights are later knobs. In R, <code>nnet(size = M)</code></p>
-<p>Today the network is one more structure in the comparison; how it is built and trained in depth is week 11’s, and ST311’s</p>
+<p><strong>How it is fitted.</strong> All <span class="math inline">\(M(p + 1) + M + 1\)</span> weights at once, by gradient-based optimization (week 4) on a loss with every feature of week 4’s part 3: not one valley but many, with plateaus and saddles between them. Today’s fits use <code>nnet()</code>, which runs a quasi-Newton method</p>
+<p><strong>The knob.</strong> <span class="math inline">\(M\)</span>, the number of hidden units, chosen on the selection tracks like the others; depth and a penalty on the weights are later knobs. In R, <code>nnet(size = M, linout = TRUE)</code></p>
+<p>Today the network is one more structure in the comparison; how it is built and trained is for later in the course</p>
 </section>
 <section id="section-5" class="slide level2 inverse center">
 <h2></h2>
 <h3 id="part-6-which-structure">Part 6: which structure?</h3>
 </section>
-<section id="three-truths-one-protocol" class="slide level2" data-minutes="3">
-<h2>Three truths, one protocol</h2>
+<section id="three-truths-one-task" class="slide level2" data-minutes="3">
+<h2>Three truths, one task</h2>
 <p><span class="math inline">\(p = 10\)</span> inputs, uniform on <span class="math inline">\([-1, 1]\)</span>; <span class="math inline">\(y = f^\star(x) + \varepsilon\)</span>, noise variance <span class="math inline">\(\sigma^2 = 1\)</span>. Three truths, each using two or three inputs:</p>
 <ul>
 <li><strong>A, sparse linear:</strong> <span class="math inline">\(f^\star(x) = 2x_1 - 1.5x_2 + x_3\)</span></li>
 <li><strong>B, additive smooth:</strong> <span class="math inline">\(f^\star(x) = 1.5\,[f_1(x_1) + f_2(x_2) + f_3(x_3)]\)</span>, smooth <span class="math inline">\(f_j\)</span></li>
 <li><strong>C, one step, two inputs at once:</strong> <span class="math inline">\(f^\star(x) = 4 \cdot \mathbf 1\{x_1 &gt; 0,\ x_2 &gt; 0\}\)</span></li>
 </ul>
-<p><strong>One protocol.</strong> 300 training, 100 selection, 2,000 test rows. Seven competitors: least squares; lasso (<span class="math inline">\(\lambda\)</span>); <span class="math inline">\(k\)</span>-NN (<span class="math inline">\(k\)</span>); additive splines (<span class="math inline">\(J\)</span>); a tree (depth); a forest; a network (<span class="math inline">\(M\)</span>). Knobs chosen on the selection rows, the fit refitted on training plus selection, scored once</p>
+<p><strong>One task.</strong> 300 training, 100 selection, 2,000 test rows. Seven competitors: least squares; lasso (<span class="math inline">\(\lambda\)</span>); <span class="math inline">\(k\)</span>-NN (<span class="math inline">\(k\)</span>); additive splines (<span class="math inline">\(J\)</span>); a tree (depth); a forest; a network (<span class="math inline">\(M\)</span>). Knobs chosen on the selection rows, the fit refitted on training plus selection, scored once</p>
 <div class="ask">
 <p>For each truth: which family wins, which loses, and why?</p>
 </div>
@@ -770,14 +770,14 @@ Output: the predictor and cutoff with the best improvement</code></pre>
 <li><p>In the seminar: the Spotify task with every family. Each knob chosen on the selection tracks, then the vault opened once for the leaderboard</p></li>
 </ul>
 </section>
-<section id="conclusion-five-bets-one-protocol" class="slide level2 inverse">
-<h2>Conclusion: five bets, one protocol</h2>
+<section id="conclusion-five-bets-one-task" class="slide level2 inverse">
+<h2>Conclusion: five bets, one task</h2>
 <h4 id="each-family-is-a-bet-on-the-shape-of-fstar">Each family is a bet on the shape of <span class="math inline">\(f^\star\)</span></h4>
 <p>A plane, a sparse plane, a sum of curves, a set of rectangles, an average of many, a composition. Four questions about the world decide which bet pays</p>
-<h4 id="the-protocol-decides-what-you-may-believe">The protocol decides what you may believe</h4>
+<h4 id="the-data-split-decides-what-you-may-believe">The data split decides what you may believe</h4>
 <p>Fit on the training rows, choose on the selection rows, open the test set once</p>
 <h4 id="the-training-error-flatters-by-a-theorem">The training error flatters, by a theorem</h4>
-<p>On average, for every class and every minimizer. <em>How much flexibility to allow, and how to choose it: week 7</em></p>
+<p>On average, for every class and every minimizer. <em>How much flexibility to allow, and how to choose it: next</em></p>
 
 
 </section>

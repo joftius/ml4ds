@@ -1075,7 +1075,7 @@ Joshua Loftus
 <h2></h2>
 <aside class="notes">
 <p><code>[--------------------]</code> 0%  0 of 79 min</p>
-<p>The deck on the spine’s scale (2 a content slide, 3 a slide with a pause for the room, 1 a dark slide); the bar at the top of each note is the share done and its denominator the total. Dark = rush or skip; each dark slide’s note says skip or gives the compressed phrase. Datasets: Spotify for everything with several inputs; week 1’s countries for the one-input pictures (the curves, the tree-variance picture); the three simulated truths in part 6. Handed to week 7: the legacy high-dimensional lasso example and its dark slide.</p>
+<p>The deck on the spine’s scale (2 a content slide, 3 a slide with a pause for the room, 1 a dark slide); the bar at the top of each note is the share done and its denominator the total. Dark = rush or skip; each dark slide’s note says skip or gives the compressed phrase. Datasets: Spotify for everything with several inputs; week 1’s countries for the one-input pictures (the curves, the tree-variance picture); the three simulated truths in part 6. Handed on (convenor, 25 October): the legacy high-dimensional lasso example and its dark slide, for the lasso’s own lecture.</p>
 <p>Cut order: (1) “Recursive rectangular splitting” to one sentence, (2) “What to know about networks today” to its first line, (3) truth A’s wide panel to a sentence, (4) “The basis size is the knob” to a sentence. The Spotify leaderboard, the four-dimensions slide and the theorem do not move.</p>
 <p>In the notebook: the optimism theorem proved (ex. 1), ridge’s normal equations (ex. 2). The seminar refits every family on training plus selection and opens the Spotify test set once.</p>
 <style type="text/css">
@@ -1090,15 +1090,15 @@ overflow: hidden!important;
 display:block!important;
 }</style></aside>
 <h3 id="week-5-functional-structures">Week 5: functional structures</h3>
-<p>Part 1: the task and the protocol</p>
+<p>Part 1: data and task intro</p>
 <p>Part 2: ridge and lasso</p>
 <p>Part 3: additive models</p>
 <p>Part 4: trees and forests</p>
 <p>Part 5: neural networks</p>
 <p>Part 6: which structure?</p>
 </section>
-<section id="where-week-4-left-it" class="slide level2" data-minutes="1">
-<h2>Where week 4 left it</h2>
+<section id="where-week-4-left-us" class="slide level2" data-minutes="1">
+<h2>Where week 4 left us</h2>
 <aside class="notes">
 <p><code>[--------------------]</code> 1%  1 of 79 min</p>
 <p>One minute. Last week how a model is fitted; this week what shapes a model can have. Each family briefly; each gets its own detail later.</p>
@@ -1115,7 +1115,7 @@ display:block!important;
 }</style></aside>
 <p>Last week: optimization, the general concepts and the methods that fit a model</p>
 <p>This week: a few specific families of supervised models, each with its own <strong>functional structure</strong>, each introduced briefly. Every one of them gets more detail in a later week</p>
-<p>Each family is a bet on the shape of <span class="math inline">\(f^\star\)</span>. To compare the bets we need one task and one protocol</p>
+<p>Each family is a bet on the shape of <span class="math inline">\(f^\star\)</span>. To compare the bets we need one task</p>
 </section>
 <section id="the-task-10000-spotify-tracks" class="slide level2">
 <h2>The task: 10,000 Spotify tracks</h2>
@@ -1145,11 +1145,11 @@ display:block!important;
 </div>
 <p>10,000 tracks from playlists of six genres (<a href="https://ml4ds.com/data/spotify.html">data note</a>); the 5,000 training tracks plotted. Their popularity has variance 559: the MSE of predicting the mean for everyone</p>
 </section>
-<section id="three-kinds-of-data-one-rule-each" class="slide level2">
-<h2>Three kinds of data, one rule each</h2>
+<section id="data-split" class="slide level2">
+<h2>Data split</h2>
 <aside class="notes">
 <p><code>[#-------------------]</code> 5%  4 of 79 min</p>
-<p>The protocol in a table; “selection set” is the course’s name, books and software say validation set. Not said today: the selection winner’s score is itself optimistic (a selected minimum); that is the seminar’s problem 1 and week 7’s topic. The third row is the one people break. ESL’s word: the vault.</p>
+<p>The split in a table; “selection set” is the course’s name, books and software say validation set. Not said today: the selection winner’s score is itself optimistic (a selected minimum); that is the seminar’s problem 1 and returns later in the course. The third row is the one people break. ESL’s word: the vault.</p>
 <style type="text/css">
 span.MJX_Assistive_MathML {
 position:absolute!important;
@@ -1199,8 +1199,8 @@ display:block!important;
 <p>Week 1’s one rule, now for evaluation data: a row is fair game for scoring only if nothing about the model was chosen on it.</p>
 </div>
 </section>
-<section id="ctf-competition-the-baselines" class="slide level2" data-minutes="3">
-<h2>CTF competition: the baselines</h2>
+<section id="ctf-competition-baselines" class="slide level2" data-minutes="3">
+<h2>CTF competition: baselines</h2>
 <aside class="notes">
 <p><code>[##------------------]</code> 8%  6 of 79 min</p>
 <p>What we can fit so far, scored on the selection tracks, both on the same eleven numeric inputs (genre is a factor and joins in the seminar, where the distance on its dummies is the students’ decision): the mean 581, least squares 541, k-NN 528 at k = 100 chosen on the selection rows, standardized inputs. About one standard error apart: neither is far from the other. The question for the rest of the lecture: can a different shape beat both? The test set stays shut until the seminar.</p>
@@ -1227,8 +1227,8 @@ display:block!important;
 </div>
 <p>The local average (<span class="math inline">\(k = 100\)</span>) and the plane, one standard error apart. Can a different shape beat both? The test set stays shut</p>
 </section>
-<section id="the-plan-several-structures-each-tuned" class="slide level2">
-<h2>The plan: several structures, each tuned</h2>
+<section id="candidate-methods" class="slide level2">
+<h2>Candidate methods</h2>
 <aside class="notes">
 <p><code>[##------------------]</code> 11%  9 of 79 min</p>
 <p>The task for the rest of the lecture, said once. Each family is a shape; each has a knob that sets how far the shape may bend to the data; the knob is chosen on the selection tracks, so that what gets compared is the best version of each kind. The knobs are named here and met one by one.</p>
@@ -1311,7 +1311,7 @@ display:block!important;
 <h2>Regularized (i.e. penalized) regression</h2>
 <aside class="notes">
 <p><code>[###-----------------]</code> 15%  12 of 79 min</p>
-<p>Legacy slide; its James–Stein opening is week 7’s one slide, so the motivation here is week 4’s early stopping. “Loss plus penalty” is the shape of most of today’s methods.</p>
+<p>Legacy slide; its James–Stein opening is kept for later in the course, so the motivation here is week 4’s early stopping. “Loss plus penalty” is the shape of most of today’s methods.</p>
 <style type="text/css">
 span.MJX_Assistive_MathML {
 position:absolute!important;
@@ -1413,6 +1413,7 @@ display:block!important;
 <p>A simple <code>diff</code> to remember lasso/ridge is via the penalty/constraint (1-norm instead of 2-norm). Lasso is</p>
 <p><span class="math display">\[\text{minimize } \frac{1}{2n}\| \mathbf y - \mathbf X \beta \|_2^2 \text{ s. t. } \| \beta \|_1 \leq t\]</span> where <span class="math inline">\(\| \beta \|_1 = \sum_{j=1}^p |\beta_j|\)</span>. Lagrangian form</p>
 <p><span class="math display">\[\text{minimize } \frac{1}{2n} \| \mathbf y - \mathbf X \beta \|_2^2 + \lambda \| \beta \|_1\]</span></p>
+<p>The lasso often gives estimates with many coefficients set to exactly zero</p>
 </section>
 <section id="lasso-vs-ridge-solution-paths-of-hat-beta" class="slide level2">
 <h2>Lasso vs ridge: solution paths of <span class="math inline">\(\hat \beta\)</span></h2>
@@ -1452,7 +1453,7 @@ display:block!important;
 </div>
 </div>
 </div></div>
-<p>Spotify, the same 16 inputs, large <span class="math inline">\(\lambda\)</span> on the left. The lasso’s coefficients are exactly zero over whole ranges of <span class="math inline">\(\lambda\)</span> and enter one at a time; ridge’s are never zero. Why, and what the lasso does when <span class="math inline">\(p &gt; n\)</span>: week 7</p>
+<p>Spotify, the same 16 inputs, large <span class="math inline">\(\lambda\)</span> on the left. The lasso’s coefficients are exactly zero over whole ranges of <span class="math inline">\(\lambda\)</span> and enter one at a time; ridge’s are never zero</p>
 </section>
 <section id="section-2" class="slide level2 inverse center">
 <h2></h2>
@@ -1476,7 +1477,7 @@ display:block!important;
 <h2>Three ways to estimate a curve</h2>
 <aside class="notes">
 <p><code>[######--------------]</code> 30%  24 of 79 min</p>
-<p>Week 1’s data and week 1’s k-NN, GDP per capita unlogged so that the relation is curved. Three ideas, named once: average nearby (k-NN; a kernel weights by distance instead of cutting at k), fit a line nearby (loess with degree 1), fit a basis (the next two slides; week 7 adds its penalty). We focus on the third; the others are names. All three are curves, and all three have a knob.</p>
+<p>Week 1’s data and week 1’s k-NN, GDP per capita unlogged so that the relation is curved. Three ideas, named once: average nearby (k-NN; a kernel weights by distance instead of cutting at k), fit a line nearby (loess with degree 1), fit a basis (the next two slides; a penalty on it comes later in the course). We focus on the third; the others are names. All three are curves, and all three have a knob.</p>
 <style type="text/css">
 span.MJX_Assistive_MathML {
 position:absolute!important;
@@ -1538,7 +1539,7 @@ f(x) = \beta_0 + \sum_{j=1}^J \beta_j\, b_j(x)
 <h2>The basis size is the knob</h2>
 <aside class="notes">
 <p><code>[#######-------------]</code> 37%  29 of 79 min</p>
-<p>Same data, J = 2, 5, 15. J small, nearly a line; J large, wiggles, and at J = n the curve passes through every point with training error zero. Which J: the selection set, as for k and lambda. Week 7 adds a penalty on wiggliness instead, and J becomes a ceiling.</p>
+<p>Same data, J = 2, 5, 15. J small, nearly a line; J large, wiggles, and at J = n the curve passes through every point with training error zero. Which J: the selection set, as for k and lambda. Later in the course a penalty on wiggliness replaces it, and J becomes a ceiling.</p>
 <style type="text/css">
 span.MJX_Assistive_MathML {
 position:absolute!important;
@@ -1559,7 +1560,7 @@ display:block!important;
 </div>
 </div>
 </div>
-<p>Small <span class="math inline">\(J\)</span>: almost a line. Large <span class="math inline">\(J\)</span>: the curve follows the points, and at <span class="math inline">\(J = n\)</span> it passes through every one (training error zero). Which <span class="math inline">\(J\)</span>? The selection set, as for <span class="math inline">\(k\)</span> and <span class="math inline">\(\lambda\)</span>. Week 7: a penalty on wiggliness instead, with <span class="math inline">\(J\)</span> as a ceiling</p>
+<p>Small <span class="math inline">\(J\)</span>: almost a line. Large <span class="math inline">\(J\)</span>: the curve follows the points, and at <span class="math inline">\(J = n\)</span> it passes through every one (training error zero). Which <span class="math inline">\(J\)</span>? The selection set, as for <span class="math inline">\(k\)</span> and <span class="math inline">\(\lambda\)</span>. Later in the course: a penalty on wiggliness instead, with <span class="math inline">\(J\)</span> as a ceiling</p>
 </section>
 <section id="additive-modeling-assumption" class="slide level2">
 <h2>Additive modeling assumption</h2>
@@ -1592,7 +1593,7 @@ display:block!important;
 <h2>An additive model for popularity</h2>
 <aside class="notes">
 <p><code>[########------------]</code> 42%  33 of 79 min</p>
-<p>Spotify, the training tracks: six of the numeric inputs as splines with J = 4, genre as a factor, one least-squares fit on 30 columns. R squared about 0.17: most of popularity is not in these inputs, which is the honest state of affairs. Each panel is a fitted component, centered, over the middle 98 percent of its input. Read two: loudness (louder tracks score higher, 20 points across the range), release year (the oldest tracks score high, a low around 2012, then the steep rise into 2019 and 2020: recency, as the data note says). Energy falls once loudness is in the model: the two are correlated, and the component is what energy adds with loudness held fixed, week 2’s reading. Backfitting, week 8, is how these components are found when the one-input fits are not least squares.</p>
+<p>Spotify, the training tracks: six of the numeric inputs as splines with J = 4, genre as a factor, one least-squares fit on 30 columns. R squared about 0.17: most of popularity is not in these inputs, which is the honest state of affairs. Each panel is a fitted component, centered, over the middle 98 percent of its input. Read two: loudness (louder tracks score higher, 20 points across the range), release year (the oldest tracks score high, a low around 2012, then the steep rise into 2019 and 2020: recency, as the data note says). Energy falls once loudness is in the model: the two are correlated, and the component is what energy adds with loudness held fixed, week 2’s reading. Backfitting, later in the course, is how these components are found when the one-input fits are not least squares.</p>
 <style type="text/css">
 span.MJX_Assistive_MathML {
 position:absolute!important;
@@ -1618,7 +1619,7 @@ display:block!important;
 </div>
 </div>
 </div>
-<p>One fit, 30 coefficients, and a curve per input to read instead of a coefficient: what the model adds for that input with the others held fixed</p>
+<p>Each variable gets a curve instead of a coefficient (slope)</p>
 </section>
 <section id="section-3" class="slide level2 inverse center">
 <h2></h2>
@@ -1724,7 +1725,7 @@ display:block!important;
 <h2>One predictor, every cutoff</h2>
 <aside class="notes">
 <p><code>[##########----------]</code> 52%  41 of 79 min</p>
-<p>New slide, before the loop. One input, release year: for every cutoff, split the training tracks in two, predict each side’s mean, and record the training MSE; the best cutoff is where the curve is lowest, 2018 here (the recency effect). The right panel is the two-leaf fit that cutoff gives: one question. Week 8 does this by hand and scores every cutoff in one pass.</p>
+<p>New slide, before the loop. One input, release year: for every cutoff, split the training tracks in two, predict each side’s mean, and record the training MSE; the best cutoff is where the curve is lowest, 2018 here (the recency effect). The right panel is the two-leaf fit that cutoff gives: one question. Later in the course this is done by hand, scoring every cutoff in one pass.</p>
 <style type="text/css">
 span.MJX_Assistive_MathML {
 position:absolute!important;
@@ -1751,7 +1752,7 @@ display:block!important;
 <h2>Recursive rectangular splitting on predictors</h2>
 <aside class="notes">
 <p><code>[###########---------]</code> 54%  43 of 79 min</p>
-<p>Legacy slide, now the loop around the last slide: every input, its best cutoff, the best of those; then the same on each side. Greedy. How deep to grow and how to prune back are week 8’s; today a depth is the tree’s knob, chosen like the others.</p>
+<p>Legacy slide, now the loop around the last slide: every input, its best cutoff, the best of those; then the same on each side. Greedy. How deep to grow and how to prune back come later in the course; today a depth is the tree’s knob, chosen like the others.</p>
 <style type="text/css">
 span.MJX_Assistive_MathML {
 position:absolute!important;
@@ -1771,7 +1772,7 @@ Output: the predictor and cutoff with the best improvement</code></pre>
 <div class="fragment">
 <p>Starting from the full dataset, compute the first split as above</p>
 <p><strong>Recurse</strong>: take the two subsets of data from each side of the split and plug them both back into the same function</p>
-<p>Until some <strong>stopping rule</strong> prevents more splitting (today: a maximum depth, the tree’s knob; growing deep and pruning back is week 8)</p>
+<p>Until some <strong>stopping rule</strong> prevents more splitting (today: a maximum depth, the tree’s knob; growing deep and pruning back comes later in the course)</p>
 </div>
 </section>
 <section id="a-tree-is-unstable" class="slide level2">
@@ -1805,7 +1806,7 @@ display:block!important;
 <h2>Random forests: many trees, one model</h2>
 <aside class="notes">
 <p><code>[############--------]</code> 59%  47 of 79 min</p>
-<p>Said, not derived: a random forest grows hundreds of trees, each on a resample of the training rows (the last slide’s draws with replacement) with a random subset of the inputs offered at each split, and averages them: the orange line, with hundreds of trees instead of eight. One model, smoother and more stable than any one tree, and no knob to tune today (the defaults). What the resampling and the random subsets do, how much averaging buys and what correlation costs: week 8.</p>
+<p>Said, not derived: a random forest grows hundreds of trees, each on a resample of the training rows (the last slide’s draws with replacement) with a random subset of the inputs offered at each split, and averages them: the orange line, with hundreds of trees instead of eight. One model, smoother and more stable than any one tree, and no knob to tune today (the defaults). What the resampling and the random subsets do, how much averaging buys and what correlation costs: later in the course.</p>
 <style type="text/css">
 span.MJX_Assistive_MathML {
 position:absolute!important;
@@ -1819,7 +1820,7 @@ display:block!important;
 }</style></aside>
 <p>A <strong>random forest</strong> is a method that combines many trees into one model: it grows hundreds of trees, each on a resample of the training rows with a random subset of the inputs offered at each split, and averages their predictions</p>
 <p>The last slide’s orange line, with hundreds of trees instead of eight: one model, smoother and more stable than any one tree</p>
-<p>Today: <code>randomForest()</code> with its defaults, no knob. How it works and why averaging helps: week 8</p>
+<p>Today: <code>randomForest()</code> with its defaults, no knob. How it works and why averaging helps: later in the course</p>
 </section>
 <section id="section-4" class="slide level2 inverse center">
 <h2></h2>
@@ -1843,7 +1844,7 @@ display:block!important;
 <h2>A GLM of GLMs</h2>
 <aside class="notes">
 <p><code>[#############-------]</code> 63%  50 of 79 min</p>
-<p>The whole idea on one slide, by analogy with what students know. A GLM (week 3): a link applied to a linear predictor. Iterate: feed the inputs into M logistic regressions, take their outputs as new inputs, and run a linear regression (or a logistic one, for a label) on those. The hidden units are a basis like part 3’s, except that the basis is fitted to the data rather than fixed in advance, and each basis function uses all the inputs at once. Iterate again and the network is deep. Symbols: M hidden units, w_k the k-th unit’s weights, sigma the logistic function.</p>
+<p>The whole idea on one slide, by analogy with what students know. A GLM (weeks 3 and 4): the inverse link applied to a linear predictor, g<sup>{-1}(x</sup>T beta). Iterate: feed the inputs into M logistic regressions, take their outputs as new inputs, and run a linear regression (or a logistic one, for a label) on those; all the weights are fitted together. The hidden units are a basis like part 3’s, except that the basis is fitted to the data rather than fixed in advance, and each basis function uses all the inputs at once. Iterate again and the network is deep. Symbols: M hidden units, w_k the k-th unit’s weights, g the logit link of week 4.</p>
 <style type="text/css">
 span.MJX_Assistive_MathML {
 position:absolute!important;
@@ -1855,7 +1856,7 @@ width: 1px!important;
 overflow: hidden!important;
 display:block!important;
 }</style></aside>
-<p>Week 3’s GLM: a link applied to a linear predictor. Now iterate it</p>
+<p>Week 4’s GLM: the inverse link applied to a linear predictor, <span class="math inline">\(g^{-1}(\mathbf x^T\beta)\)</span>. Now iterate it</p>
 <div class="columns">
 <div class="column" style="width:44%;">
 <div class="cell">
@@ -1868,7 +1869,7 @@ display:block!important;
 </div>
 </div>
 </div><div class="column" style="width:56%;">
-<p>Each <strong>hidden unit</strong> is a logistic regression of the inputs, with its own weights: <span class="math inline">\(h_k(x) = \sigma(w_{k0} + w_k^T x)\)</span>, where <span class="math inline">\(\sigma(z) = 1/(1 + e^{-z})\)</span></p>
+<p>Each <strong>hidden unit</strong> has the form of a logistic regression of the inputs, with its own weights: <span class="math inline">\(h_k(x) = g^{-1}(w_{k0} + w_k^T x)\)</span>, with <span class="math inline">\(g\)</span> the logit link, <span class="math inline">\(g^{-1}(z) = 1/(1 + e^{-z})\)</span></p>
 <p>The <strong>output</strong> is a linear regression on the hidden units (logistic, for a label): <span class="math inline">\(f(x) = \beta_0 + \sum_{k=1}^M \beta_k\, h_k(x)\)</span></p>
 <p>A GLM whose inputs are the outputs of <span class="math inline">\(M\)</span> GLMs. Iterate once more: a <em>deep</em> network</p>
 </div></div>
@@ -1878,7 +1879,7 @@ display:block!important;
 <h2>What to know about networks today</h2>
 <aside class="notes">
 <p><code>[#############-------]</code> 67%  53 of 79 min</p>
-<p>Three things and no more. Represent: with enough hidden units a network can come as close as you like to any smooth f-star (stated in week 11; universal approximation); the price is M times (p + 1) weights that all have to be fitted. Fit: week 4’s stochastic gradient descent on a loss with every feature of week 4’s part 3 (not convex: the hilly road, the saddle). The knob: M, chosen on the selection tracks; depth, and the penalty on the weights, are later knobs. nnet() in R, which ships with the base install; week 11 and ST311 do the rest.</p>
+<p>Two things and no more. Fit: every weight at once, by gradient-based optimization on a loss with every feature of week 4’s part 3 (not convex: the hilly road, the saddle); nnet() uses BFGS, a quasi-Newton method, rather than stochastic gradient descent, and linout = TRUE for a numeric outcome. The knob: M, chosen on the selection tracks; depth, and the penalty on the weights, are later knobs. nnet() ships with the base install; the rest of networks comes later in the course and in ST311.</p>
 <style type="text/css">
 span.MJX_Assistive_MathML {
 position:absolute!important;
@@ -1890,16 +1891,15 @@ width: 1px!important;
 overflow: hidden!important;
 display:block!important;
 }</style></aside>
-<p><strong>What it can represent.</strong> With enough hidden units, a network can come as close as you like to any smooth <span class="math inline">\(f^\star\)</span> (stated, week 11). The price: <span class="math inline">\(M(p + 1) + M + 1\)</span> weights, all to be fitted from the data</p>
-<p><strong>How it is fitted.</strong> Week 4’s stochastic gradient descent, on a loss with every feature of week 4’s part 3: not one valley but many, with plateaus and saddles between them</p>
-<p><strong>The knob.</strong> <span class="math inline">\(M\)</span>, the number of hidden units, chosen on the selection tracks like the others; depth and a penalty on the weights are later knobs. In R, <code>nnet(size = M)</code></p>
-<p>Today the network is one more structure in the comparison; how it is built and trained in depth is week 11’s, and ST311’s</p>
+<p><strong>How it is fitted.</strong> All <span class="math inline">\(M(p + 1) + M + 1\)</span> weights at once, by gradient-based optimization (week 4) on a loss with every feature of week 4’s part 3: not one valley but many, with plateaus and saddles between them. Today’s fits use <code>nnet()</code>, which runs a quasi-Newton method</p>
+<p><strong>The knob.</strong> <span class="math inline">\(M\)</span>, the number of hidden units, chosen on the selection tracks like the others; depth and a penalty on the weights are later knobs. In R, <code>nnet(size = M, linout = TRUE)</code></p>
+<p>Today the network is one more structure in the comparison; how it is built and trained is for later in the course</p>
 </section>
 <section id="section-5" class="slide level2 inverse center">
 <h2></h2>
 <aside class="notes">
 <p><code>[##############------]</code> 70%  55 of 79 min</p>
-<p>Compress: five families, five bets; three truths, one protocol, and the training error of every one of them.</p>
+<p>Compress: five families, five bets; three truths, one task, and the training error of every one of them.</p>
 <style type="text/css">
 span.MJX_Assistive_MathML {
 position:absolute!important;
@@ -1913,8 +1913,8 @@ display:block!important;
 }</style></aside>
 <h3 id="part-6-which-structure">Part 6: which structure?</h3>
 </section>
-<section id="three-truths-one-protocol" class="slide level2" data-minutes="3">
-<h2>Three truths, one protocol</h2>
+<section id="three-truths-one-task" class="slide level2" data-minutes="3">
+<h2>Three truths, one task</h2>
 <aside class="notes">
 <p><code>[##############------]</code> 71%  56 of 79 min</p>
 <p>Ten inputs, uniform on minus one to one, noise sd 1, so the floor is an MSE of 1. The network: M chosen on the selection rows, a small fixed ridge penalty on its weights, fitted by nnet; with 300 rows it stays small. Truth A is a plane in three of the ten; B is three smooth one-input curves (f1 = -1 + 2x - x^2, f2 = sin(pi x), f3 = exp(-5(x - 1/2)^2)), scaled by 1.5, in three of the ten; C is one step that needs two inputs at once (signal variance 3, of which the best sum of one-input functions holds 2 and the product the last 1). Every knob chosen on the 100 selection rows, then the chosen fit refitted on the 400 training-plus-selection rows; the test set is 2,000 rows because the truth is simulated and we can afford it. Forest with its defaults, no knob. The ask: two minutes, a show of hands per truth; take the reasons, not only the names.</p>
@@ -1935,7 +1935,7 @@ display:block!important;
 <li><strong>B, additive smooth:</strong> <span class="math inline">\(f^\star(x) = 1.5\,[f_1(x_1) + f_2(x_2) + f_3(x_3)]\)</span>, smooth <span class="math inline">\(f_j\)</span></li>
 <li><strong>C, one step, two inputs at once:</strong> <span class="math inline">\(f^\star(x) = 4 \cdot \mathbf 1\{x_1 &gt; 0,\ x_2 &gt; 0\}\)</span></li>
 </ul>
-<p><strong>One protocol.</strong> 300 training, 100 selection, 2,000 test rows. Seven competitors: least squares; lasso (<span class="math inline">\(\lambda\)</span>); <span class="math inline">\(k\)</span>-NN (<span class="math inline">\(k\)</span>); additive splines (<span class="math inline">\(J\)</span>); a tree (depth); a forest; a network (<span class="math inline">\(M\)</span>). Knobs chosen on the selection rows, the fit refitted on training plus selection, scored once</p>
+<p><strong>One task.</strong> 300 training, 100 selection, 2,000 test rows. Seven competitors: least squares; lasso (<span class="math inline">\(\lambda\)</span>); <span class="math inline">\(k\)</span>-NN (<span class="math inline">\(k\)</span>); additive splines (<span class="math inline">\(J\)</span>); a tree (depth); a forest; a network (<span class="math inline">\(M\)</span>). Knobs chosen on the selection rows, the fit refitted on training plus selection, scored once</p>
 <div class="ask">
 <p>For each truth: which family wins, which loses, and why?</p>
 </div>
@@ -2133,7 +2133,7 @@ display:block!important;
 <h2>Optimism theorem</h2>
 <aside class="notes">
 <p><code>[##################--]</code> 92%  73 of 79 min</p>
-<p>Stated; the three-line proof is exercise 1. The heuristic first: f-hat was chosen to make the training losses small, so it beats any fixed member of the class on the training data, and a fixed member’s training error is unbiased for its risk (the one line that uses the sampling assumption); on the population f-hat cannot beat the best member. Chain the three. Covered: least squares, and a spline basis whose knots are fixed in advance (ns() places them at sample quantiles, so strictly the class depends on the data). Ridge and the lasso in their constrained form with a fixed radius t are minimizers over a fixed class; at a fixed lambda they are not (noiseless Y = X: ridge has positive training error while the best line has risk zero, so the left inequality fails). Not covered: a tree (greedy), a forest, k-NN, a network as fitted (gradient descent returns a local minimum, not the minimizer), and any knob chosen on the data. The direction was the usual one on the leaderboards, with exceptions, but the theorem is about the minimizer and about averages.</p>
+<p>Stated; the three-line proof is exercise 1. The heuristic first: f-hat was chosen to make the training losses small, so it beats any fixed member of the class on the training data, and a fixed member’s training error is unbiased for its risk (the one line that uses the sampling assumption); on the population f-hat cannot beat the best member. Chain the three. Covered: least squares, and a spline basis whose knots are fixed in advance (ns() places them at sample quantiles, so strictly the class depends on the data). Ridge and the lasso in their constrained form with a fixed radius t are minimizers over a fixed class; at a fixed lambda they are not (noiseless Y = X: ridge has positive training error while the best line has risk zero, so the left inequality fails). Not covered: a tree (greedy), a forest, k-NN, a network as fitted (the optimizer is not guaranteed to find the global empirical minimizer), and any knob chosen on the data. The direction was the usual one on the leaderboards, with exceptions, but the theorem is about the minimizer and about averages.</p>
 <style type="text/css">
 span.MJX_Assistive_MathML {
 position:absolute!important;
@@ -2175,11 +2175,11 @@ display:block!important;
 <li><p>In the seminar: the Spotify task with every family. Each knob chosen on the selection tracks, then the vault opened once for the leaderboard</p></li>
 </ul>
 </section>
-<section id="conclusion-five-bets-one-protocol" class="slide level2 inverse">
-<h2>Conclusion: five bets, one protocol</h2>
+<section id="conclusion-five-bets-one-task" class="slide level2 inverse">
+<h2>Conclusion: five bets, one task</h2>
 <aside class="notes">
 <p><code>[####################]</code> 99%  78 of 79 min</p>
-<p>Compress: each family is a bet on the shape of f-star; the selection set says which bet paid; the training error says nothing you can trust, by a theorem. Next: how much flexibility, with cross-validation, a rate, and the lasso in depth.</p>
+<p>Compress: each family is a bet on the shape of f-star; the selection set says which bet paid; the training error says nothing you can trust, by a theorem. Next: how much flexibility, and how to choose it.</p>
 <style type="text/css">
 span.MJX_Assistive_MathML {
 position:absolute!important;
@@ -2193,10 +2193,10 @@ display:block!important;
 }</style></aside>
 <h4 id="each-family-is-a-bet-on-the-shape-of-fstar">Each family is a bet on the shape of <span class="math inline">\(f^\star\)</span></h4>
 <p>A plane, a sparse plane, a sum of curves, a set of rectangles, an average of many, a composition. Four questions about the world decide which bet pays</p>
-<h4 id="the-protocol-decides-what-you-may-believe">The protocol decides what you may believe</h4>
+<h4 id="the-data-split-decides-what-you-may-believe">The data split decides what you may believe</h4>
 <p>Fit on the training rows, choose on the selection rows, open the test set once</p>
 <h4 id="the-training-error-flatters-by-a-theorem">The training error flatters, by a theorem</h4>
-<p>On average, for every class and every minimizer. <em>How much flexibility to allow, and how to choose it: week 7</em></p>
+<p>On average, for every class and every minimizer. <em>How much flexibility to allow, and how to choose it: next</em></p>
 
 
 </section>
