@@ -120,31 +120,31 @@ Today's question: what structures can we model? Four new families, each a bet on
 ## The task: 10,000 Spotify tracks
 
 ::: {.notes}
-Data note: data/spotify. Popularity is Spotify's score in January 2020, so recency is in it; the tenth at zero are tracks nobody plays. Eleven features, a genre, a release year, squared loss. Nothing is fitted yet.
+Data note: data/spotify. Popularity is Spotify's score in January 2020, so recency is in it; the tenth at zero are tracks nobody plays. Ten audio features, the release year, a genre, squared loss. The plots use the 5,000 training tracks only: nothing from the other 5,000 is looked at before the split. Nothing is fitted yet.
 :::
 
-Predict a track's **popularity** (Spotify's score, 0 to 100) from eleven audio features (danceability, energy, loudness, valence, tempo, duration, ...), its genre and its release year. Loss: squared error
+Predict a track's **popularity** (Spotify's score, 0 to 100) from ten audio features (danceability, energy, loudness, valence, tempo, ...), its release year and its genre. Loss: squared error
 
 ```{r}
 #| label: spotify-task
-#| fig-height: 3.3
+#| fig-height: 3.0
 #| fig-width: 12
-p_hist <- ggplot(sp, aes(track_popularity)) +
+p_hist <- ggplot(sp_train, aes(track_popularity)) +
   geom_histogram(binwidth = 5, boundary = 0, fill = v_blue) +
   labs(x = "popularity", y = "tracks")
-p_loud <- ggplot(sp, aes(loudness, track_popularity)) +
+p_loud <- ggplot(sp_train, aes(loudness, track_popularity)) +
   geom_point(alpha = 0.12, size = 0.7, colour = "grey50") +
   geom_smooth(method = "loess", se = FALSE, colour = m_pink, linewidth = 1.2) +
   coord_cartesian(xlim = c(-25, 0)) +
   labs(x = "loudness (dB)", y = "popularity")
-p_year <- ggplot(sp, aes(release_year, track_popularity)) +
+p_year <- ggplot(sp_train, aes(release_year, track_popularity)) +
   geom_point(alpha = 0.12, size = 0.7, colour = "grey50") +
   geom_smooth(method = "loess", se = FALSE, colour = m_pink, linewidth = 1.2) +
   labs(x = "release year", y = NULL)
 p_hist + p_loud + p_year
 ```
 
-10,000 tracks from playlists of six genres ([data note](https://ml4ds.com/data/spotify.html)). The variance of popularity is `r round(var(sp$track_popularity))`, the MSE of the model that predicts the mean for everyone
+10,000 tracks from playlists of six genres ([data note](https://ml4ds.com/data/spotify.html)); the 5,000 training tracks plotted. Their popularity has variance `r round(var(sp_train$track_popularity))`: the MSE of predicting the mean for everyone
 
 ## Three kinds of data, one rule each
 
@@ -162,7 +162,7 @@ The protocol in a table; "selection set" is the course's name, books and softwar
 : {tbl-colwidths="[24,40,36]"}
 :::
 
-ESL's word for the third: a **vault**. Split once, at random, before looking (today 5,000, 2,000 and 3,000 tracks); refit the chosen model on training plus selection; open the vault once; report that number and no other
+ESL's word for the third: a **vault**. Split once, at random, before looking (today 5,000, 2,000 and 3,000 tracks); refit the chosen model on training plus selection; open the vault once. A test set may score several competitors fixed in advance; nothing is chosen on it
 
 ::: {.retrieval}
 Week 1's one rule, now for evaluation data: a row is fair game for scoring only if nothing about the model was chosen on it.
@@ -171,27 +171,27 @@ Week 1's one rule, now for evaluation data: a row is fair game for scoring only 
 ## CTF competition: the baselines {minutes="3"}
 
 ::: {.notes}
-What we can fit so far, scored on the selection tracks: the mean 581, least squares 525, k-NN 528 at k = 100 chosen on the selection rows (the standardized features). Say it: eleven inputs, 5,000 points, and the local average does no better than a plane; week 1's curse. The question for the rest of the lecture: can a different shape beat 525? The test set stays shut until the seminar.
+What we can fit so far, scored on the selection tracks, both on the same eleven numeric inputs (genre is a factor and joins in the seminar, where the distance on its dummies is the students' decision): the mean 581, least squares 541, k-NN 528 at k = 100 chosen on the selection rows, standardized inputs. About one standard error apart: neither is far from the other. The question for the rest of the lecture: can a different shape beat both? The test set stays shut until the seminar.
 :::
 
-What we can fit so far, each a bet on $f^\star$: **least squares**, a plane (every input a slope); **logistic regression**, a plane for a probability (for a label, not today); **$k$ nearest neighbors**, a local average, its $k$ the knob
+What we can fit so far, each a bet on $f^\star$: **least squares**, a plane (every input a slope); **logistic regression**, a plane for the log-odds (for a label, not today); **$k$ nearest neighbors**, a local average, its $k$ the knob
 
 ```{r}
 #| label: baselines
-#| fig-height: 2.5
+#| fig-height: 2.2
 #| fig-width: 9.5
 stdz <- function(d, mu, s) sweep(sweep(as.matrix(d[, feat]), 2, mu), 2, s, "/")
 mu_f <- colMeans(sp_train[, feat]); sd_f <- apply(sp_train[, feat], 2, sd)
 X_tr <- stdz(sp_train, mu_f, sd_f); X_se <- stdz(sp_sel, mu_f, sd_f)
-f_lin <- reformulate(c(feat, "genre"), "track_popularity")
+f_lin <- reformulate(feat, "track_popularity")   # the eleven numeric inputs; genre joins in the seminar
 fit_ls <- lm(f_lin, sp_train)
 ks_sp <- c(1, 5, 10, 20, 50, 100, 200)
 knn_sel <- sapply(ks_sp, function(k) mse(sp_sel$track_popularity, knn_predict(X_se, X_tr, sp_train$track_popularity, k)))
 k_sp <- ks_sp[which.min(knn_sel)]
 preds <- list(
   "baseline: the training mean" = rep(mean(sp_train$track_popularity), nrow(sp_sel)),
-  "least squares on the 11 features and genre" = predict(fit_ls, sp_sel),
-  "k nearest neighbors, k chosen here" = knn_predict(X_se, X_tr, sp_train$track_popularity, k_sp))
+  "least squares on the 11 numeric inputs" = predict(fit_ls, sp_sel),
+  "k nearest neighbors on the same 11, k chosen here" = knn_predict(X_se, X_tr, sp_train$track_popularity, k_sp))
 lb <- imap_dfr(preds, ~ tibble(competitor = .y, mse = mse(sp_sel$track_popularity, .x),
                                 se = se_loss(sp_sel$track_popularity, .x))) |>
   mutate(competitor = fct_reorder(competitor, -mse))
@@ -201,7 +201,7 @@ ggplot(lb, aes(mse, competitor)) +
   labs(x = "MSE on the 2,000 selection tracks", y = NULL, caption = "bars: one standard error")
 ```
 
-Eleven inputs and 5,000 training tracks: the local average ($k = `r k_sp`$) does no better than a plane. Can a different shape beat `r round(lb$mse[lb$competitor == "least squares on the 11 features and genre"])`? The test set stays shut until the seminar
+The local average ($k = `r k_sp`$) and the plane, one standard error apart. Can a different shape beat both? The test set stays shut
 
 ## {.inverse .center}
 
@@ -233,7 +233,7 @@ Many ML methods are optimizing "loss + penalty"
 ## Ridge (i.e. L2 penalized) regression
 
 ::: {.notes}
-Legacy slide, whole. This lambda is the course's lambda: the objective with the squared error not divided by n. glmnet divides the squared error by n and the ridge penalty by 2, so its lambda is this one over n up to that factor; the path figures' axes are glmnet's.
+Legacy slide, whole. This lambda is the course's lambda: the objective with the squared error not divided by n. glmnet divides the squared error by n and the ridge penalty by 2, so its lambda is this one over n up to that factor; the path figures' axes are glmnet's. Conventions, said once: the intercept is not penalized, and the columns are standardized before the penalty is applied (glmnet's default), since a penalty on beta_j depends on the units of x_j.
 :::
 
 - Originally motivated by problems where $\mathbf X^T \mathbf X$ is uninvertible (or badly conditioned, i.e. almost uninvertible)
@@ -341,7 +341,7 @@ Same simulated data, large $\lambda$ on the left: $n = 100$, $p = 20$, `r sum(be
 ## High dimensional example
 
 ::: {.notes}
-Legacy figure: p = 200 columns, n = 100 rows, a tenth of the coefficients nonzero. Least squares cannot be fitted. Lambda for each method chosen on 100 fresh rows (a selection set; how to choose it well is week 7). Hollow pink circles the lasso, blue crosses ridge, black dots the truth: ridge gives everything a small coefficient; the lasso zeroes most, keeps the large true ones and lets in small extras (71 nonzero for 21 true: a lambda chosen for prediction keeps more than the truth; selection against prediction is week 7).
+Legacy figure: p = 200 columns, n = 100 rows, a tenth of the coefficients nonzero. Least squares has no unique fit (week 4's seminar: infinitely many exact fits). Lambda for each method chosen on 100 fresh rows (a selection set; how to choose it well is week 7). Hollow pink circles the lasso, blue crosses ridge, black dots the truth: ridge gives everything a small coefficient; the lasso zeroes most, keeps the large true ones and lets in small extras (71 nonzero for 21 true: a lambda chosen for prediction keeps more than the truth; selection against prediction is week 7).
 :::
 
 ```{r}
@@ -400,7 +400,7 @@ All coefficients nonzero 😰
 
 - Lasso estimates are sparse
 
-Nonzero estimates largely coincide with true model 😎
+Nonzero estimates include most of the true model, plus many small extras 😎
 
 ## {.inverse .center}
 
@@ -426,7 +426,7 @@ knn_one <- function(x0, x, y, k) mean(y[order(abs(x - x0))[1:k]])
 three <- bind_rows(
   tibble(lgdp = gm_grid$lgdp, fit = sapply(gm_grid$lgdp, knn_one, x = gm$lgdp, y = gm$lifeExp, k = 10),
          method = "average nearby: k = 10 nearest neighbors"),
-  tibble(lgdp = gm_grid$lgdp, fit = predict(loess(lifeExp ~ lgdp, gm), gm_grid),
+  tibble(lgdp = gm_grid$lgdp, fit = predict(loess(lifeExp ~ lgdp, gm, degree = 1), gm_grid),
          method = "fit a line nearby: loess"),
   tibble(lgdp = gm_grid$lgdp, fit = predict(lm(lifeExp ~ ns(lgdp, df = 4), gm), gm_grid),
          method = "fit a basis: natural spline, J = 4")) |>
@@ -467,13 +467,13 @@ tibble(lgdp = rep(gm_grid$lgdp, 6), b = as.vector(basis_mat),
 ```
 :::
 ::: {.column width="52%"}
-A **basis**: fixed functions $b_1(x), \ldots, b_J(x)$ of one input. The fit is their combination,
+A **basis**: fixed functions $b_1(x), \ldots, b_J(x)$ of one input, combined by least squares:
 $$
-f(x) = \sum_{j=1}^J \beta_j\, b_j(x)
+f(x) = \beta_0 + \sum_{j=1}^J \beta_j\, b_j(x)
 $$
-linear in $\beta$, so least squares fits it: `lm(lifeExp ~ ns(lgdp, df = J))`, where `ns()` builds the $J$ columns
+linear in $\beta$: `lm(lifeExp ~ ns(lgdp, df = J))`, where `ns()` builds the $J$ columns
 
-A **natural cubic spline**: cubic pieces joined smoothly at knots, linear beyond the ends. Each $b_j$ is local: it is zero far from its knots
+A **natural cubic spline**: cubic pieces joined smoothly at knots, linear beyond the ends. The basis functions are the bends the knots allow; `lm` adds $\beta_0$
 :::
 :::
 
@@ -718,11 +718,13 @@ Top left is the tree on all 333 penguins; the other three are grown on bootstrap
 #| fig-width: 7
 #| fig-height: 4.8
 #| out-width: "100%"
+# Short column names so that the split labels fit in a small panel.
+pg_s <- pg |> rename(bill_len = bill_length_mm, bill_dep = bill_depth_mm, flipper = flipper_length_mm, mass = body_mass_g)
 fit_class <- rpart(species ~ ., method = "class", parms = list(split = "gini"),
-                   control = rpart.control(minbucket = 40, cp = -1), data = pg)
+                   control = rpart.control(minbucket = 40, cp = -1), data = pg_s)
 boot_tree <- function() rpart(species ~ ., method = "class", parms = list(split = "gini"),
                               control = rpart.control(minbucket = 40, cp = -1),
-                              data = slice_sample(pg, n = nrow(pg), replace = TRUE))
+                              data = slice_sample(pg_s, n = nrow(pg_s), replace = TRUE))
 set.seed(12)
 fit_tree2 <- boot_tree(); fit_tree3 <- boot_tree(); fit_tree4 <- boot_tree()
 par(mfrow = c(2, 2), mar = c(0.4, 0.4, 0.4, 0.4), xpd = NA)
@@ -739,11 +741,8 @@ One tree on all the data, three on resamples of it. Predictions for one penguin
 #| label: one-penguin
 #| comment: ""
 i <- 13
-pg[i, ] |> as.data.frame() |>
-  select(species, flipper_length_mm) |>
-  print.data.frame(row.names = FALSE)
-pg[i, ] |> as.data.frame() |>
-  select(bill_length_mm, bill_depth_mm) |>
+pg_s[i, ] |> as.data.frame() |>
+  select(species, flipper, bill_len, bill_dep) |>
   print.data.frame(row.names = FALSE)
 ```
 
@@ -751,10 +750,10 @@ pg[i, ] |> as.data.frame() |>
 #| label: one-penguin-preds
 #| comment: ""
 predictions <- rbind(
-  predict(fit_class, newdata = pg[i, ]),
-  predict(fit_tree2, newdata = pg[i, ]),
-  predict(fit_tree3, newdata = pg[i, ]),
-  predict(fit_tree4, newdata = pg[i, ]))
+  predict(fit_class, newdata = pg_s[i, ]),
+  predict(fit_tree2, newdata = pg_s[i, ]),
+  predict(fit_tree3, newdata = pg_s[i, ]),
+  predict(fit_tree4, newdata = pg_s[i, ]))
 rownames(predictions) <- 1:4
 round(predictions, 3)
 ```
@@ -807,68 +806,76 @@ Compress: four families, four bets; three truths, one protocol, and the training
 ## Three truths, one protocol {minutes="3"}
 
 ::: {.notes}
-Ten inputs, uniform on minus one to one, noise sd 1, so the floor is an MSE of 1. Truth A is a plane in three of the ten; B is the three curves of part 3, scaled by 1.5, in three of the ten; C is a checkerboard in two of them, with no additive part at all (each input alone tells you nothing). Every knob chosen on the 100 selection rows; the test set is 2,000 rows because the truth is simulated and we can afford it. Forest with its defaults, no knob.
+Ten inputs, uniform on minus one to one, noise sd 1, so the floor is an MSE of 1. Truth A is a plane in three of the ten; B is the three curves of part 3, scaled by 1.5, in three of the ten; C is one step that needs two inputs at once (signal variance 3, of which the best sum of one-input functions holds 2 and the product the last 1). Every knob chosen on the 100 selection rows, then the chosen fit refitted on the 400 training-plus-selection rows; the test set is 2,000 rows because the truth is simulated and we can afford it. Forest with its defaults, no knob. The ask: two minutes, a show of hands per truth; take the reasons, not only the names.
 :::
 
-$p = 10$ inputs, each uniform on $[-1, 1]$; $y = f^\star(x) + \varepsilon$, noise variance $\sigma^2 = 1$. Three truths, each using three (or two) of the ten inputs:
+$p = 10$ inputs, each uniform on $[-1, 1]$; $y = f^\star(x) + \varepsilon$, noise variance $\sigma^2 = 1$. Three truths, each using two or three of the ten inputs:
 
 - **A, sparse linear:** $f^\star(x) = 2x_1 - 1.5x_2 + x_3$
-- **B, additive smooth:** $f^\star(x) = 1.5\,[f_1(x_1) + f_2(x_2) + f_3(x_3)]$, part 3's three curves
-- **C, thresholds with an interaction:** $f^\star(x) = 2 \cdot \mathbf 1\{x_1 > 0,\ x_2 > 0\} - 2 \cdot \mathbf 1\{x_1 \le 0,\ x_2 \le 0\}$
+- **B, additive smooth:** $f^\star(x) = 1.5\,[f_1(x_1) + f_2(x_2) + f_3(x_3)]$, part 3's curves
+- **C, a threshold in two inputs at once:** $f^\star(x) = 4 \cdot \mathbf 1\{x_1 > 0,\ x_2 > 0\}$
 
-**One protocol.** 300 training rows, 100 selection rows, 2,000 test rows. Six competitors: least squares; the lasso ($\lambda$); $k$-NN ($k$); the additive spline fit ($J$); a tree (depth); a forest (defaults). Every knob chosen on the selection rows, then scored once on the test rows, with the training MSE recorded beside it
+**One protocol.** 300 training, 100 selection, 2,000 test rows. Six competitors: least squares; lasso ($\lambda$); $k$-NN ($k$); additive splines ($J$); a tree (depth); a forest (defaults). Knobs chosen on the selection rows, the chosen fit refitted on training plus selection, then scored once
+
+::: {.ask}
+For each truth: which family wins, which loses, and why?
+:::
 
 ```{r}
 #| label: compare-families
 #| include: false
-# Every family fitted to one simulated dataset under the protocol above; returns one row per
-# competitor with training MSE, test MSE and its standard error. wide = TRUE drops least squares
-# and the additive fit (more columns than rows) and adds ridge.
+# Every family fitted to one simulated dataset under the protocol above: each knob chosen on the
+# selection rows, the chosen fit refitted on training plus selection (k-NN uses those rows as its
+# neighbors), then scored on the test rows. Returns one row per competitor with training MSE (on
+# the refit rows), test MSE and its standard error. wide = TRUE drops least squares and the
+# additive fit (no unique fit with more columns than rows) and adds ridge.
 compare_families <- function(truth, p, n_train, n_sel, n_test, seed, wide = FALSE) {
   set.seed(seed)
   gen <- function(n) {
     X <- matrix(runif(n * p, -1, 1), n, p); colnames(X) <- paste0("x", 1:p)
     tibble(as.data.frame(X), y = truth(X) + rnorm(n))
   }
-  tr <- gen(n_train); se <- gen(n_sel); te <- gen(n_test)
-  Xtr <- as.matrix(tr[, 1:p]); Xse <- as.matrix(se[, 1:p]); Xte <- as.matrix(te[, 1:p])
-  score <- function(name, pred_tr, pred_te)
-    tibble(competitor = name, train = mse(tr$y, pred_tr), test = mse(te$y, pred_te), se = se_loss(te$y, pred_te))
+  tr <- gen(n_train); se <- gen(n_sel); te <- gen(n_test); all <- bind_rows(tr, se)
+  Xtr <- as.matrix(tr[, 1:p]); Xse <- as.matrix(se[, 1:p]); Xte <- as.matrix(te[, 1:p]); Xall <- as.matrix(all[, 1:p])
+  score <- function(name, pred_all, pred_te)
+    tibble(competitor = name, train = mse(all$y, pred_all), test = mse(te$y, pred_te), se = se_loss(te$y, pred_te))
   out <- list()
   if (!wide) {
-    fit <- lm(y ~ ., tr)
+    fit <- lm(y ~ ., all)
     out$ls <- score("least squares", fitted(fit), predict(fit, te))
   }
   las <- glmnet(Xtr, tr$y)
   lam <- las$lambda[which.min(apply(predict(las, Xse), 2, function(q) mse(se$y, q)))]
-  out$lasso <- score("lasso", predict(las, Xtr, s = lam), predict(las, Xte, s = lam))
+  las_all <- glmnet(Xall, all$y, lambda = lam)
+  out$lasso <- score("lasso", predict(las_all, Xall), predict(las_all, Xte))
   if (wide) {
     rid <- glmnet(Xtr, tr$y, alpha = 0)
     lamr <- rid$lambda[which.min(apply(predict(rid, Xse), 2, function(q) mse(se$y, q)))]
-    out$ridge <- score("ridge", predict(rid, Xtr, s = lamr), predict(rid, Xte, s = lamr))
+    rid_all <- glmnet(Xall, all$y, alpha = 0, lambda = lamr)
+    out$ridge <- score("ridge", predict(rid_all, Xall), predict(rid_all, Xte))
   }
   ks <- c(1, 2, 3, 5, 8, 12, 20, 30, 50)
   k <- ks[which.min(sapply(ks, function(k) mse(se$y, knn_predict(Xse, Xtr, tr$y, k))))]
-  out$knn <- score("k-NN", knn_predict(Xtr, Xtr, tr$y, k), knn_predict(Xte, Xtr, tr$y, k))
+  out$knn <- score("k-NN", knn_predict(Xall, Xall, all$y, k), knn_predict(Xte, Xall, all$y, k))
   if (!wide) {
     gam_f <- function(J) reformulate(sprintf("ns(x%d, df = %d)", 1:p, J), "y")
     Js <- c(2, 3, 4, 6, 8)
     J <- Js[which.min(sapply(Js, function(J) mse(se$y, predict(lm(gam_f(J), tr), se))))]
-    g <- lm(gam_f(J), tr)
+    g <- lm(gam_f(J), all)
     out$gam <- score("additive splines", fitted(g), predict(g, te))
   }
   ds <- 1:8
   d <- ds[which.min(sapply(ds, function(d) mse(se$y, predict(rpart(y ~ ., tr,
          control = rpart.control(maxdepth = d, cp = 0, minbucket = 5)), se))))]
-  t <- rpart(y ~ ., tr, control = rpart.control(maxdepth = d, cp = 0, minbucket = 5))
-  out$tree <- score("tree", predict(t, tr), predict(t, te))
-  rf <- randomForest(y ~ ., tr, ntree = 300)
-  out$forest <- score("forest", predict(rf, tr), predict(rf, te))
+  t <- rpart(y ~ ., all, control = rpart.control(maxdepth = d, cp = 0, minbucket = 5))
+  out$tree <- score("tree", predict(t, all), predict(t, te))
+  rf <- randomForest(y ~ ., all, ntree = 300)
+  out$forest <- score("forest", predict(rf, all), predict(rf, te))
   bind_rows(out) |> mutate(knob = paste0("lambda ", signif(lam, 2), ", k ", k, ", J ", if (wide) NA else J, ", depth ", d))
 }
 truth_A <- function(X) 2 * X[, 1] - 1.5 * X[, 2] + X[, 3]
 truth_B <- function(X) 1.5 * (f1(X[, 1]) + f2(X[, 2]) + f3(X[, 3]))
-truth_C <- function(X) 2 * (X[, 1] > 0 & X[, 2] > 0) - 2 * (X[, 1] <= 0 & X[, 2] <= 0)
+truth_C <- function(X) 4 * (X[, 1] > 0 & X[, 2] > 0)
 res_A  <- compare_families(truth_A, p = 10, 300, 100, 2000, seed = 1)
 res_Aw <- compare_families(truth_A, p = 200, 100, 50, 2000, seed = 2, wide = TRUE)
 res_B  <- compare_families(truth_B, p = 10, 300, 100, 2000, seed = 1)
@@ -891,7 +898,7 @@ leaderboard <- function(res, title, xmax = NULL) {
 ## Truth A: sparse linear, tall and then wide
 
 ::: {.notes}
-Left, tall: n = 300, p = 10. Least squares and the lasso sit on the floor (dotted line, the noise variance); the additive fit is close, with 30 columns to estimate; the forest and the tree pay for a shape they do not need; k-NN in ten dimensions is last. Right, wide: n = 100, p = 200, the same truth. Least squares and the additive fit cannot be fitted; the lasso alone stays near the floor; ridge, the forest and k-NN are near the mean's score. The hollow points: the forest's training error is a quarter of its test error.
+Left, tall: n = 300, p = 10. Least squares and the lasso sit on the floor (dotted line, the noise variance, the smallest population MSE; a realized test MSE on 2,000 rows can sit a little below it); the additive fit is close, with 30 columns to estimate; the forest and the tree pay for a shape they do not need; k-NN in ten dimensions is last. Right, wide: n = 100, p = 200, the same truth. Least squares and the additive fit have no unique fit; the lasso alone stays near the floor; ridge, the forest and k-NN are near the mean's score. The hollow points: the forest's training error is a quarter of its test error; least squares' training error sits above its test error here (one realization; the theorem is about averages).
 :::
 
 ```{r}
@@ -901,7 +908,7 @@ Left, tall: n = 300, p = 10. Least squares and the lasso sit on the floor (dotte
 leaderboard(res_A, "tall: n = 300, p = 10") + leaderboard(res_Aw, "wide: n = 100, p = 200")
 ```
 
-Dotted line: the noise variance, the best any predictor can do. Sparsity costs nothing when $n \gg p$ and is the only thing that works when $p > n$
+Dotted line: the noise variance, the smallest population MSE. For this sparse truth the lasso ties least squares when $n \gg p$, and alone stays near the floor when $p > n$
 
 ## Truth B: additive smooth
 
@@ -923,7 +930,7 @@ The additive fit was built for this truth. A forest can bend, with rectangles; a
 ## Truth C: thresholds with an interaction
 
 ::: {.notes}
-The tree of depth 2 is the truth, so it sits on the floor; the forest close behind. The additive fit and least squares are stuck near the signal's variance plus 1: each input alone carries nothing (a checkerboard), so a sum of one-input curves cannot see it. k-NN last again.
+The tree of depth 2 is the truth, so it sits on the floor; the forest close behind. A sum of one-input functions can hold at most two thirds of this signal (each input's share) and the smooth splines hold less than that, so the additive fit and least squares are far from the floor; k-NN last again. The tree's training error sits above its test error: another one-realization exception.
 :::
 
 ```{r}
@@ -932,10 +939,10 @@ The tree of depth 2 is the truth, so it sits on the floor; the forest close behi
 #| fig-width: 8.5
 #| fig-align: center
 #| out-width: "75%"
-leaderboard(res_C, "n = 300, p = 10; a checkerboard in two inputs")
+leaderboard(res_C, "n = 300, p = 10; one step, two inputs at once")
 ```
 
-A checkerboard: each input alone says nothing, so every additive model is blind to it. Two questions in a row see all of it
+A sum of one-input functions can hold each input's share of this step, two thirds of the signal at best, and not the product. Two questions in a row hold all of it
 
 ## Four dimensions, not one {minutes="3"}
 
@@ -963,12 +970,12 @@ Week 1's curse: $k$-NN lost on every truth, with ten inputs and 300 points. Week
 ## What the training error hides {minutes="3"}
 
 ::: {.notes}
-Two minutes for the ask; collect two orderings before the reveal. Why anyone cared: the training error is the only error you can compute without new data. The hollow points sat left of the filled ones on every leaderboard and the forest's by a factor of four; the question is whether that is a law. Week 4's symbols: a class, the best in it, what the data return.
+Two minutes for the ask; collect two orderings before the reveal. Why anyone cared: the training error is the only error you can compute without new data. The hollow points sat left of the filled ones on most rows, the forest's by a factor of four, and right of them on a few (least squares on truth A, the tree on truth C); the question is whether the usual direction is a law, and what the exceptions are. Expected answer after the theorem: it is a statement about averages over training sets, and one realization of 300 rows can go either way by a little; the test MSE is itself a noisy number. Week 4's symbols: a class, the best in it, what the data return.
 :::
 
-On every leaderboard the training MSE sat below the test MSE, the forest's by a factor of four. Luck, or a law?
+On most rows of the leaderboards the training MSE sat below the test MSE, the forest's by a factor of four; on a few it sat above. Luck, or a law, and what are the exceptions?
 
-Training data $(x_i, y_i)$, $i = 1, \ldots, n$, independent draws from the population; a class $\mathcal F$ (the planes; the additive fits with a given $J$); $f_{\mathcal F}$ the best in $\mathcal F$, the minimizer of $R$ over it; $\hat f$ the empirical risk minimizer, the minimizer of $\hat R_n$ over $\mathcal F$ (week 4)
+Training data $(x_i, y_i)$, $i = 1, \ldots, n$, independent draws from the population; a class $\mathcal F$ fixed before the data (the planes; the spline fits with a given basis); $f_{\mathcal F}$ the best in $\mathcal F$, the minimizer of $R$ over it; $\hat f$ the empirical risk minimizer, the minimizer of $\hat R_n$ over $\mathcal F$ (week 4)
 
 ::: {.ask}
 Three numbers: $\mathbb E[\hat R_n(\hat f)]$, $R(f_{\mathcal F})$, $\mathbb E[R(\hat f)]$. Put them in order, and write down what you used to do it.
@@ -977,21 +984,21 @@ Three numbers: $\mathbb E[\hat R_n(\hat f)]$, $R(f_{\mathcal F})$, $\mathbb E[R(
 ## Optimism theorem {minutes="3"}
 
 ::: {.notes}
-Stated; the three-line proof is exercise 1. The heuristic first: f-hat was chosen to make the training losses small, so it beats any fixed member of the class on the training data, and a fixed member's training error is unbiased for its risk (the one line that uses the sampling assumption); on the population f-hat cannot beat the best member. Chain the three. Covered: least squares, the spline fits at a fixed J, ridge and the lasso at a fixed lambda (minimizers over a constrained class). Not covered as stated: a tree (greedy), a forest, k-NN, and any knob chosen on the data; the direction was the same on the leaderboards, but the theorem is about the minimizer.
+Stated; the three-line proof is exercise 1. The heuristic first: f-hat was chosen to make the training losses small, so it beats any fixed member of the class on the training data, and a fixed member's training error is unbiased for its risk (the one line that uses the sampling assumption); on the population f-hat cannot beat the best member. Chain the three. Covered: least squares, and a spline basis whose knots are fixed in advance (ns() places them at sample quantiles, so strictly the class depends on the data). Ridge and the lasso in their constrained form with a fixed radius t are minimizers over a fixed class; at a fixed lambda they are not (noiseless Y = X: ridge has positive training error while the best line has risk zero, so the left inequality fails). Not covered: a tree (greedy), a forest, k-NN, and any knob chosen on the data. The direction was the usual one on the leaderboards, with exceptions, but the theorem is about the minimizer and about averages.
 :::
 
-A function fixed before the data has an unbiased training error. $\hat f$ beats every such function in $\mathcal F$ on the training data (it was chosen to) and cannot beat $f_{\mathcal F}$ on the population
+A function fixed before the data has an unbiased training error; $\hat f$ was chosen to make its own small, and cannot beat $f_{\mathcal F}$ on the population
 
-Training data i.i.d. from the population; $\hat f$ the empirical risk minimizer over $\mathcal F$; $f_{\mathcal F}$ the best in $\mathcal F$ (risks finite, minimizers exist). Then
+Training data i.i.d.; $\mathcal F$ fixed before the data; $\hat f$ the empirical risk minimizer over $\mathcal F$; $f_{\mathcal F}$ the best in $\mathcal F$ (risks finite, minimizers exist). Then
 $$
 \mathbb E\big[\hat R_n(\hat f)\big] \;\le\; R(f_{\mathcal F}) \;\le\; \mathbb E\big[R(\hat f)\big]
 $$
 
 ::: {.leave}
-Training error flatters the model: on average it sits below the best risk the class can reach, and the fitted model's risk sits above it. The test set estimates the right end of this line.
+Training error flatters the model: on average it sits below the best risk the class can reach, and the fitted model's risk above it. A test set estimates $R(\hat f)$; its average is the right end.
 :::
 
-**Proof**: exercise 1, three lines. Covers the minimizer over a fixed class (least squares; splines and penalized fits at a fixed knob); not a tree, a forest, $k$-NN, or a knob chosen on the data
+**Proof**: exercise 1. Covers least squares, a fixed spline basis, ridge and lasso with a fixed radius; not a fixed $\lambda$, a tree, a forest, $k$-NN, or a knob chosen on the data
 
 ## Before the seminar
 

@@ -234,7 +234,7 @@ Joshua Loftus
 </section>
 <section id="the-task-10000-spotify-tracks" class="slide level2">
 <h2>The task: 10,000 Spotify tracks</h2>
-<p>Predict a track’s <strong>popularity</strong> (Spotify’s score, 0 to 100) from eleven audio features (danceability, energy, loudness, valence, tempo, duration, …), its genre and its release year. Loss: squared error</p>
+<p>Predict a track’s <strong>popularity</strong> (Spotify’s score, 0 to 100) from ten audio features (danceability, energy, loudness, valence, tempo, …), its release year and its genre. Loss: squared error</p>
 <div class="cell">
 <div class="cell-output-display">
 <div>
@@ -244,7 +244,7 @@ Joshua Loftus
 </div>
 </div>
 </div>
-<p>10,000 tracks from playlists of six genres (<a href="https://ml4ds.com/data/spotify.html">data note</a>). The variance of popularity is 564, the MSE of the model that predicts the mean for everyone</p>
+<p>10,000 tracks from playlists of six genres (<a href="https://ml4ds.com/data/spotify.html">data note</a>); the 5,000 training tracks plotted. Their popularity has variance 559: the MSE of predicting the mean for everyone</p>
 </section>
 <section id="three-kinds-of-data-one-rule-each" class="slide level2">
 <h2>Three kinds of data, one rule each</h2>
@@ -281,14 +281,14 @@ Joshua Loftus
 </tbody>
 </table>
 </div>
-<p>ESL’s word for the third: a <strong>vault</strong>. Split once, at random, before looking (today 5,000, 2,000 and 3,000 tracks); refit the chosen model on training plus selection; open the vault once; report that number and no other</p>
+<p>ESL’s word for the third: a <strong>vault</strong>. Split once, at random, before looking (today 5,000, 2,000 and 3,000 tracks); refit the chosen model on training plus selection; open the vault once. A test set may score several competitors fixed in advance; nothing is chosen on it</p>
 <div class="retrieval">
 <p>Week 1’s one rule, now for evaluation data: a row is fair game for scoring only if nothing about the model was chosen on it.</p>
 </div>
 </section>
 <section id="ctf-competition-the-baselines" class="slide level2" data-minutes="3">
 <h2>CTF competition: the baselines</h2>
-<p>What we can fit so far, each a bet on <span class="math inline">\(f^\star\)</span>: <strong>least squares</strong>, a plane (every input a slope); <strong>logistic regression</strong>, a plane for a probability (for a label, not today); <strong><span class="math inline">\(k\)</span> nearest neighbors</strong>, a local average, its <span class="math inline">\(k\)</span> the knob</p>
+<p>What we can fit so far, each a bet on <span class="math inline">\(f^\star\)</span>: <strong>least squares</strong>, a plane (every input a slope); <strong>logistic regression</strong>, a plane for the log-odds (for a label, not today); <strong><span class="math inline">\(k\)</span> nearest neighbors</strong>, a local average, its <span class="math inline">\(k\)</span> the knob</p>
 <div class="cell">
 <div class="cell-output-display">
 <div>
@@ -298,7 +298,7 @@ Joshua Loftus
 </div>
 </div>
 </div>
-<p>Eleven inputs and 5,000 training tracks: the local average (<span class="math inline">\(k = 100\)</span>) does no better than a plane. Can a different shape beat 525? The test set stays shut until the seminar</p>
+<p>The local average (<span class="math inline">\(k = 100\)</span>) and the plane, one standard error apart. Can a different shape beat both? The test set stays shut</p>
 </section>
 <section id="section-1" class="slide level2 inverse center">
 <h2></h2>
@@ -414,7 +414,7 @@ Joshua Loftus
 <ul>
 <li>Lasso estimates are sparse</li>
 </ul>
-<p>Nonzero estimates largely coincide with true model 😎</p>
+<p>Nonzero estimates include most of the true model, plus many small extras 😎</p>
 </section>
 <section id="section-2" class="slide level2 inverse center">
 <h2></h2>
@@ -448,10 +448,10 @@ Joshua Loftus
 </div>
 </div>
 </div><div class="column" style="width:52%;">
-<p>A <strong>basis</strong>: fixed functions <span class="math inline">\(b_1(x), \ldots, b_J(x)\)</span> of one input. The fit is their combination, <span class="math display">\[
-f(x) = \sum_{j=1}^J \beta_j\, b_j(x)
-\]</span> linear in <span class="math inline">\(\beta\)</span>, so least squares fits it: <code>lm(lifeExp ~ ns(lgdp, df = J))</code>, where <code>ns()</code> builds the <span class="math inline">\(J\)</span> columns</p>
-<p>A <strong>natural cubic spline</strong>: cubic pieces joined smoothly at knots, linear beyond the ends. Each <span class="math inline">\(b_j\)</span> is local: it is zero far from its knots</p>
+<p>A <strong>basis</strong>: fixed functions <span class="math inline">\(b_1(x), \ldots, b_J(x)\)</span> of one input, combined by least squares: <span class="math display">\[
+f(x) = \beta_0 + \sum_{j=1}^J \beta_j\, b_j(x)
+\]</span> linear in <span class="math inline">\(\beta\)</span>: <code>lm(lifeExp ~ ns(lgdp, df = J))</code>, where <code>ns()</code> builds the <span class="math inline">\(J\)</span> columns</p>
+<p>A <strong>natural cubic spline</strong>: cubic pieces joined smoothly at knots, linear beyond the ends. The basis functions are the bends the knots allow; <code>lm</code> adds <span class="math inline">\(\beta_0\)</span></p>
 </div></div>
 </section>
 <section id="the-basis-size-is-the-knob" class="slide level2">
@@ -599,12 +599,8 @@ Output: predictor and split with best improvement</code></pre>
 <p>One tree on all the data, three on resamples of it. Predictions for one penguin</p>
 <div class="cell">
 <div class="cell-output cell-output-stdout">
-<pre><code> species flipper_length_mm
-  Adelie               197</code></pre>
-</div>
-<div class="cell-output cell-output-stdout">
-<pre><code> bill_length_mm bill_depth_mm
-           42.5          20.7</code></pre>
+<pre><code> species flipper bill_len bill_dep
+  Adelie     197     42.5     20.7</code></pre>
 </div>
 </div>
 <div class="cell">
@@ -649,13 +645,16 @@ Output: predictor and split with best improvement</code></pre>
 </section>
 <section id="three-truths-one-protocol" class="slide level2" data-minutes="3">
 <h2>Three truths, one protocol</h2>
-<p><span class="math inline">\(p = 10\)</span> inputs, each uniform on <span class="math inline">\([-1, 1]\)</span>; <span class="math inline">\(y = f^\star(x) + \varepsilon\)</span>, noise variance <span class="math inline">\(\sigma^2 = 1\)</span>. Three truths, each using three (or two) of the ten inputs:</p>
+<p><span class="math inline">\(p = 10\)</span> inputs, each uniform on <span class="math inline">\([-1, 1]\)</span>; <span class="math inline">\(y = f^\star(x) + \varepsilon\)</span>, noise variance <span class="math inline">\(\sigma^2 = 1\)</span>. Three truths, each using two or three of the ten inputs:</p>
 <ul>
 <li><strong>A, sparse linear:</strong> <span class="math inline">\(f^\star(x) = 2x_1 - 1.5x_2 + x_3\)</span></li>
-<li><strong>B, additive smooth:</strong> <span class="math inline">\(f^\star(x) = 1.5\,[f_1(x_1) + f_2(x_2) + f_3(x_3)]\)</span>, part 3’s three curves</li>
-<li><strong>C, thresholds with an interaction:</strong> <span class="math inline">\(f^\star(x) = 2 \cdot \mathbf 1\{x_1 &gt; 0,\ x_2 &gt; 0\} - 2 \cdot \mathbf 1\{x_1 \le 0,\ x_2 \le 0\}\)</span></li>
+<li><strong>B, additive smooth:</strong> <span class="math inline">\(f^\star(x) = 1.5\,[f_1(x_1) + f_2(x_2) + f_3(x_3)]\)</span>, part 3’s curves</li>
+<li><strong>C, a threshold in two inputs at once:</strong> <span class="math inline">\(f^\star(x) = 4 \cdot \mathbf 1\{x_1 &gt; 0,\ x_2 &gt; 0\}\)</span></li>
 </ul>
-<p><strong>One protocol.</strong> 300 training rows, 100 selection rows, 2,000 test rows. Six competitors: least squares; the lasso (<span class="math inline">\(\lambda\)</span>); <span class="math inline">\(k\)</span>-NN (<span class="math inline">\(k\)</span>); the additive spline fit (<span class="math inline">\(J\)</span>); a tree (depth); a forest (defaults). Every knob chosen on the selection rows, then scored once on the test rows, with the training MSE recorded beside it</p>
+<p><strong>One protocol.</strong> 300 training, 100 selection, 2,000 test rows. Six competitors: least squares; lasso (<span class="math inline">\(\lambda\)</span>); <span class="math inline">\(k\)</span>-NN (<span class="math inline">\(k\)</span>); additive splines (<span class="math inline">\(J\)</span>); a tree (depth); a forest (defaults). Knobs chosen on the selection rows, the chosen fit refitted on training plus selection, then scored once</p>
+<div class="ask">
+<p>For each truth: which family wins, which loses, and why?</p>
+</div>
 </section>
 <section id="truth-a-sparse-linear-tall-and-then-wide" class="slide level2">
 <h2>Truth A: sparse linear, tall and then wide</h2>
@@ -668,7 +667,7 @@ Output: predictor and split with best improvement</code></pre>
 </div>
 </div>
 </div>
-<p>Dotted line: the noise variance, the best any predictor can do. Sparsity costs nothing when <span class="math inline">\(n \gg p\)</span> and is the only thing that works when <span class="math inline">\(p &gt; n\)</span></p>
+<p>Dotted line: the noise variance, the smallest population MSE. For this sparse truth the lasso ties least squares when <span class="math inline">\(n \gg p\)</span>, and alone stays near the floor when <span class="math inline">\(p &gt; n\)</span></p>
 </section>
 <section id="truth-b-additive-smooth" class="slide level2">
 <h2>Truth B: additive smooth</h2>
@@ -694,7 +693,7 @@ Output: predictor and split with best improvement</code></pre>
 </div>
 </div>
 </div>
-<p>A checkerboard: each input alone says nothing, so every additive model is blind to it. Two questions in a row see all of it</p>
+<p>A sum of one-input functions can hold each input’s share of this step, two thirds of the signal at best, and not the product. Two questions in a row hold all of it</p>
 </section>
 <section id="four-dimensions-not-one" class="slide level2" data-minutes="3">
 <h2>Four dimensions, not one</h2>
@@ -743,22 +742,22 @@ Output: predictor and split with best improvement</code></pre>
 </section>
 <section id="what-the-training-error-hides" class="slide level2" data-minutes="3">
 <h2>What the training error hides</h2>
-<p>On every leaderboard the training MSE sat below the test MSE, the forest’s by a factor of four. Luck, or a law?</p>
-<p>Training data <span class="math inline">\((x_i, y_i)\)</span>, <span class="math inline">\(i = 1, \ldots, n\)</span>, independent draws from the population; a class <span class="math inline">\(\mathcal F\)</span> (the planes; the additive fits with a given <span class="math inline">\(J\)</span>); <span class="math inline">\(f_{\mathcal F}\)</span> the best in <span class="math inline">\(\mathcal F\)</span>, the minimizer of <span class="math inline">\(R\)</span> over it; <span class="math inline">\(\hat f\)</span> the empirical risk minimizer, the minimizer of <span class="math inline">\(\hat R_n\)</span> over <span class="math inline">\(\mathcal F\)</span> (week 4)</p>
+<p>On most rows of the leaderboards the training MSE sat below the test MSE, the forest’s by a factor of four; on a few it sat above. Luck, or a law, and what are the exceptions?</p>
+<p>Training data <span class="math inline">\((x_i, y_i)\)</span>, <span class="math inline">\(i = 1, \ldots, n\)</span>, independent draws from the population; a class <span class="math inline">\(\mathcal F\)</span> fixed before the data (the planes; the spline fits with a given basis); <span class="math inline">\(f_{\mathcal F}\)</span> the best in <span class="math inline">\(\mathcal F\)</span>, the minimizer of <span class="math inline">\(R\)</span> over it; <span class="math inline">\(\hat f\)</span> the empirical risk minimizer, the minimizer of <span class="math inline">\(\hat R_n\)</span> over <span class="math inline">\(\mathcal F\)</span> (week 4)</p>
 <div class="ask">
 <p>Three numbers: <span class="math inline">\(\mathbb E[\hat R_n(\hat f)]\)</span>, <span class="math inline">\(R(f_{\mathcal F})\)</span>, <span class="math inline">\(\mathbb E[R(\hat f)]\)</span>. Put them in order, and write down what you used to do it.</p>
 </div>
 </section>
 <section id="optimism-theorem" class="slide level2" data-minutes="3">
 <h2>Optimism theorem</h2>
-<p>A function fixed before the data has an unbiased training error. <span class="math inline">\(\hat f\)</span> beats every such function in <span class="math inline">\(\mathcal F\)</span> on the training data (it was chosen to) and cannot beat <span class="math inline">\(f_{\mathcal F}\)</span> on the population</p>
-<p>Training data i.i.d. from the population; <span class="math inline">\(\hat f\)</span> the empirical risk minimizer over <span class="math inline">\(\mathcal F\)</span>; <span class="math inline">\(f_{\mathcal F}\)</span> the best in <span class="math inline">\(\mathcal F\)</span> (risks finite, minimizers exist). Then <span class="math display">\[
+<p>A function fixed before the data has an unbiased training error; <span class="math inline">\(\hat f\)</span> was chosen to make its own small, and cannot beat <span class="math inline">\(f_{\mathcal F}\)</span> on the population</p>
+<p>Training data i.i.d.; <span class="math inline">\(\mathcal F\)</span> fixed before the data; <span class="math inline">\(\hat f\)</span> the empirical risk minimizer over <span class="math inline">\(\mathcal F\)</span>; <span class="math inline">\(f_{\mathcal F}\)</span> the best in <span class="math inline">\(\mathcal F\)</span> (risks finite, minimizers exist). Then <span class="math display">\[
 \mathbb E\big[\hat R_n(\hat f)\big] \;\le\; R(f_{\mathcal F}) \;\le\; \mathbb E\big[R(\hat f)\big]
 \]</span></p>
 <div class="leave">
-<p>Training error flatters the model: on average it sits below the best risk the class can reach, and the fitted model’s risk sits above it. The test set estimates the right end of this line.</p>
+<p>Training error flatters the model: on average it sits below the best risk the class can reach, and the fitted model’s risk above it. A test set estimates <span class="math inline">\(R(\hat f)\)</span>; its average is the right end.</p>
 </div>
-<p><strong>Proof</strong>: exercise 1, three lines. Covers the minimizer over a fixed class (least squares; splines and penalized fits at a fixed knob); not a tree, a forest, <span class="math inline">\(k\)</span>-NN, or a knob chosen on the data</p>
+<p><strong>Proof</strong>: exercise 1. Covers least squares, a fixed spline basis, ridge and lasso with a fixed radius; not a fixed <span class="math inline">\(\lambda\)</span>, a tree, a forest, <span class="math inline">\(k\)</span>-NN, or a knob chosen on the data</p>
 </section>
 <section id="before-the-seminar" class="slide level2">
 <h2>Before the seminar</h2>

@@ -94,6 +94,35 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   }
 }</script>
 
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 <link rel="stylesheet" href="../styles.css">
 </head>
@@ -236,7 +265,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </tr>
 <tr class="even">
 <td><strong>Permitted predictors</strong></td>
-<td>Week 5: the eleven numeric features (<code>duration_ms</code> in minutes) and <code>playlist_genre</code>. <code>key</code> and <code>mode</code> are categorical and are left out of the splines; <code>instrumentalness</code> is 0 for most tracks and is used as a linear term or on a log scale.</td>
+<td>Week 5: the eleven numeric features (ten audio features, <code>duration_ms</code> in minutes, and <code>release_year</code>) and <code>playlist_genre</code>. <code>key</code> and <code>mode</code> are categorical and are left out of the splines; <code>instrumentalness</code> is exactly 0 for over a third of the tracks and is used as a linear term or on a log scale.</td>
 </tr>
 <tr class="odd">
 <td><strong>Missingness</strong></td>
@@ -248,7 +277,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </tr>
 <tr class="odd">
 <td><strong>Baseline</strong></td>
-<td>Predict the mean (39.1 on the training tracks): mean squared error 560 on the test tracks. Least squares on the eleven features and genre reaches about 519, an additive spline model about 484 and a random forest about 479, with a standard error of about 9.5 on the test set (the seminar’s leaderboard; numbers from the seed above).</td>
+<td>Predict the mean (39.1 on the training tracks): mean squared error 581 on the 2,000 selection tracks, where least squares on the eleven numeric features reaches about 541 and <span class="math inline">\(k\)</span> nearest neighbors on the same inputs about 528 (the lecture’s baselines). The test scores of every family are the seminar’s leaderboard, opened once there and reported with the seminar’s solutions.</td>
 </tr>
 <tr class="even">
 <td><strong>Methods that use it</strong></td>
