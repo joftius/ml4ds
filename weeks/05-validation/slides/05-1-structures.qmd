@@ -108,7 +108,7 @@ colnames(sp_Xtr) <- colnames(sp_Xse) <- sub("^genre", "genre: ", colnames(sp_X(s
 ## {.inverse}
 
 ::: {.notes}
-The deck on the spine's scale (2 a content slide, 3 a slide with a pause for the room, 1 a dark slide); the bar at the top of each note is the share done and its denominator the total. Dark = rush or skip; each dark slide's note says skip or gives the compressed phrase. Datasets: Spotify for everything with several inputs; week 1's countries for the one-input pictures (the curves, the tree-variance picture); the three simulated truths in part 6. Handed on (convenor, 25 October): the legacy high-dimensional lasso example and its dark slide, for the lasso's own lecture.
+The deck on the spine's scale (2 a content slide, 3 a slide with a pause for the room, 1 a dark slide); the bar at the top of each note is the share done and its denominator the total. Dark = rush or skip; each dark slide's note says skip or gives the compressed phrase. Datasets: Spotify for everything with several inputs; week 1's countries for the one-input pictures (the curves, the tree-variance picture); the three simulated truths in part 6. Handed on (convenor, 25 October): the legacy high-dimensional lasso example and its dark slide, for the lasso's own lecture. Cut for time (convenor, 26 October): the legacy vaccine-rules dark slide, the forest's own slide (merged into the instability slide) and the loess panel of the curves slide.
 
 Cut order: (1) "Recursive rectangular splitting" to one sentence, (2) "What to know about networks today" to its first line, (3) truth A's wide panel to a sentence, (4) "The basis size is the knob" to a sentence. The Spotify leaderboard, the four-dimensions slide and the theorem do not move.
 
@@ -392,42 +392,40 @@ Spotify, the same 16 inputs, large $\lambda$ on the left. The lasso's coefficien
 ## {.inverse .center}
 
 ::: {.notes}
-Compress: one input, a curve instead of a line, three ways to get one; then one curve per input, added up.
+Compress: one input, a curve instead of a line, two ways to get one; then one curve per input, added up.
 :::
 
 ### Part 3: additive models
 
-## Three ways to estimate a curve {minutes="3"}
+## Two ways to estimate a curve
 
 ::: {.notes}
-Week 1's data and week 1's k-NN, GDP per capita unlogged so that the relation is curved. Three ideas, named once: average nearby (k-NN; a kernel weights by distance instead of cutting at k), fit a line nearby (loess with degree 1), fit a basis (the next two slides; a penalty on it comes later in the course). We focus on the third; the others are names. All three are curves, and all three have a knob.
+Week 1's data and week 1's k-NN, GDP per capita unlogged so that the relation is curved. Two ideas, named once: average nearby (k-NN; a kernel weights by distance instead of cutting at k), fit a basis (the next two slides; a penalty on it comes later in the course). We focus on the second; the first is a name. Both are curves, and both have a knob. Local regression (loess, ISLR 7.6) was a third panel here and is cut for time; it is skim reading only.
 :::
 
-Week 1's data, life expectancy on GDP per capita, 142 countries (no log this time). Three ways to turn a line into a curve
+Week 1's data, life expectancy on GDP per capita, 142 countries (no log this time). Two ways to turn a line into a curve
 
 ```{r}
-#| label: three-ways
+#| label: two-ways
 #| fig-height: 3.2
 #| fig-width: 12
 knn_one <- function(x0, x, y, k) mean(y[order(abs(x - x0))[1:k]])
-three <- bind_rows(
+two <- bind_rows(
   tibble(gdpPercap = gm_grid$gdpPercap, fit = sapply(gm_grid$gdpPercap, knn_one, x = gm$gdpPercap, y = gm$lifeExp, k = 10),
          method = "average nearby: k = 10 nearest neighbors"),
-  tibble(gdpPercap = gm_grid$gdpPercap, fit = predict(loess(lifeExp ~ gdpPercap, gm, degree = 1), gm_grid),
-         method = "fit a line nearby: loess"),
   tibble(gdpPercap = gm_grid$gdpPercap, fit = predict(lm(lifeExp ~ ns(gdpPercap, df = 4), gm), gm_grid),
          method = "fit a basis: natural spline, J = 4")) |>
   mutate(method = fct_inorder(method))
 ggplot(gm, aes(gdpPercap, lifeExp)) +
   geom_point(colour = "grey55", size = 1.5) +
-  geom_line(data = three, aes(y = fit, colour = method), linewidth = 1.3) +
-  scale_colour_manual(values = c(v_teal, m_orange, v_dark)) +
+  geom_line(data = two, aes(y = fit, colour = method), linewidth = 1.3) +
+  scale_colour_manual(values = c(v_teal, v_dark)) +
   facet_wrap(~ method) +
   theme(legend.position = "none", strip.text = element_text(size = 14)) +
   labs(x = "GDP per capita (dollars)", y = "life expectancy")
 ```
 
-**Average nearby** ($k$-NN; a *kernel* weights by distance instead of cutting at $k$). **Fit a line nearby** (*loess*). **Fit a basis**: fixed curves, combined by least squares. We now focus on the third
+**Average nearby** ($k$-NN; a *kernel* weights by distance instead of cutting at $k$). **Fit a basis**: fixed curves, combined by least squares. We now focus on the second
 
 ## A spline is regression on basis functions
 
@@ -547,26 +545,10 @@ Each variable gets a curve instead of a coefficient (slope)
 ## {.inverse .center}
 
 ::: {.notes}
-Compress: a different shape altogether, rectangles with a constant in each; then why one tree is not enough and what averaging many does.
+Compress: a sequence of yes-or-no questions, each about one input, is a model too: a different shape altogether, rectangles with a constant in each; then why one tree is not enough and what averaging many does.
 :::
 
 ### Part 4: trees and forests
-
-## Decision trees {.inverse}
-
-::: {.notes}
-Compress: a sequence of yes-or-no questions, each about one input, is a model too.
-:::
-
-### Are you eligible for the COVID-19 vaccine?
-
-- If `Age >= 50` then `yes`, otherwise continue
-- If `HighRisk == TRUE` then `yes`, otherwise continue
-- If `Job == CareWorker` then `yes`, otherwise `no`
-
-This is (arguably) more interpretable than a linear model with multiple predictors
-
-(Note: this is not the real vaccination criteria, but it was close to this in early 2021)
 
 ## A regression tree for popularity
 
@@ -673,15 +655,15 @@ Starting from the full dataset, compute the first split as above
 
 Until some **stopping rule** prevents more splitting (today: a maximum depth, the tree's knob; growing deep and pruning back comes later in the course)
 
-## A tree is unstable
+## A tree is unstable; a forest averages many
 
 ::: {.notes}
-New slide, before the fix. Gapminder, where 142 points make it visible: eight resamples of the countries (draws with replacement, the same size), a depth-3 tree and a J = 4 spline on each. The trees' cutoffs jump between resamples and their steps jump with them; the splines barely move. Across the grid the eight trees' predictions have an average standard deviation of about 1.6 years, the splines' about 0.9. A tree has high variance; the orange line, the average of the eight trees, is already smoother than any of them, which is the next slide.
+New slide, before the fix. Gapminder, where 142 points make it visible: eight resamples of the countries (draws with replacement, the same size), a depth-3 tree and a J = 4 spline on each. The trees' cutoffs jump between resamples and their steps jump with them; the splines barely move. Across the grid the eight trees' predictions have an average standard deviation of about 1.6 years, the splines' about 0.9. A tree has high variance; the orange line, the average of the eight trees, is already smoother than any of them. Said, not derived: a random forest grows hundreds of trees, each on a resample of the training rows (these draws with replacement) with a random subset of the inputs offered at each split, and averages them: the orange line with hundreds of trees instead of eight. One model, more stable than any one tree, and no knob to tune today (the defaults). What the resampling and the random subsets do, how much averaging buys and what correlation costs: later in the course.
 :::
 
 ```{r}
 #| label: tree-variance
-#| fig-height: 3.9
+#| fig-height: 3.1
 #| fig-width: 12
 set.seed(3)
 resamples <- map_dfr(1:8, function(b) {
@@ -702,19 +684,9 @@ ggplot() +
   labs(x = "GDP per capita (dollars)", y = "life expectancy")
 ```
 
-Week 1's countries, resampled eight times (blue, one fit per resample). The trees' cutoffs move with the sample and the steps move with them; the splines barely move. Orange: the average of the eight trees
+Week 1's countries resampled eight times, one fit per resample (blue). The trees' cutoffs jump with the sample; the splines barely move. Orange: the eight trees' average
 
-## Random forests: many trees, one model
-
-::: {.notes}
-Said, not derived: a random forest grows hundreds of trees, each on a resample of the training rows (the last slide's draws with replacement) with a random subset of the inputs offered at each split, and averages them: the orange line, with hundreds of trees instead of eight. One model, smoother and more stable than any one tree, and no knob to tune today (the defaults). What the resampling and the random subsets do, how much averaging buys and what correlation costs: later in the course.
-:::
-
-A **random forest** is a method that combines many trees into one model: it grows hundreds of trees, each on a resample of the training rows, and averages their predictions
-
-The last slide's orange line, with hundreds of trees instead of eight: one model, smoother and more stable than any one tree
-
-Today: `randomForest()` with its defaults, no knob. How it works and why averaging helps: later in the course
+A **random forest** is a method that combines many trees into one model: hundreds of trees, each on a resample of the training rows, averaged (orange, with hundreds not eight). Today `randomForest()` with its defaults, no knob; details later in the course
 
 ## {.inverse .center}
 
@@ -1004,7 +976,7 @@ Knobs chosen on the selection tracks, scored there. The three that can bend lead
 ## Four dimensions, not one {minutes="3"}
 
 ::: {.notes}
-Three minutes. Four questions about the world, not one scale from simple to complex: a truth can be tall and interactive, or wide and smooth. Each family is a bet on an answer; week 4's no free lunch says the bet is doing the work, and the selection set says which bet paid on these data (Spotify: smooth in year and loudness, roughly additive, so the splines, the forest and a two-unit network). k-NN near the bottom on every simulated truth: ten inputs of which seven are idle, 300 points, week 1's curse with a price on it. Week 7 puts a rate on that price.
+Three minutes. Four questions about the world, not one scale from simple to complex: a truth can be tall and interactive, or wide and smooth. Each family is a bet on an answer; week 4's no free lunch says the bet is doing the work, and the selection set says which bet paid on these data (Spotify: smooth in year and loudness, roughly additive, so the splines, the forest and a two-unit network). k-NN near the bottom on every simulated truth: ten inputs of which seven are idle, 300 points, week 1's curse with a price on it; a rate on that price comes later in the course.
 :::
 
 ::: {style="font-size: 0.94em"}

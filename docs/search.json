@@ -1376,7 +1376,7 @@
     "href": "index.html#week-5-functional-structures",
     "title": "ST310 course page",
     "section": "Week 5: functional structures",
-    "text": "Week 5: functional structures\nThe methods, introduced together and compared on one task, each a different functional structure for the predictor. Ridge and lasso: what a penalty changes and what \\(\\lambda\\) controls. Additive models: a spline as regression on basis functions, one curve per input, the basis size as the knob. Trees: how a small tree predicts and why it is unstable; a random forest as many trees combined into one model. A neural network as a composition, a GLM whose inputs are the outputs of other GLMs, named and fitted and otherwise left for later. Then one simulated dataset for each kind of truth (sparse linear, additive smooth, a step in two inputs at once), every family fitted to each, and the four dimensions on which a method bets: wide or tall, sparse or dense, smooth or discontinuous, additive or interactive. Training error flatters a fitted model (the optimism theorem, stated; its proof is yours before the seminar). The three-way split, training, selection and a test set opened once, is used from the first slide. Data: Spotify tracks, what makes a song popular.\nReading\n\nISLR Chapter 6 (Linear Model Selection and Regularization), sections 6.2.1–6.2.2, pp. 237–250: ridge regression and the lasso, and what each penalty does to the coefficients. Stop before 6.2.3; choosing \\(\\lambda\\) by cross-validation is week 7.\nISLR Chapter 7 (Moving Beyond Linearity), sections 7.3–7.4, pp. 294–301 (basis functions and regression splines), and section 7.7, pp. 306–310 (generalized additive models; 7.7.1 fits one by least squares on spline basis functions, as the lecture does, and the GAM part of the lab in 7.8 has the lm and ns() code). Section 7.5, smoothing splines, is week 7. Skim 7.6, pp. 304–306: local regression is named in the lecture and not examined.\nISLR Chapter 8 (Tree-Based Methods), section 8.1.1, pp. 328–335 (regression trees), and sections 8.2.1–8.2.2, pp. 340–345 (bagging and random forests). Skim 8.1.2–8.1.4, pp. 335–340. Section 8.2.3, boosting, is week 8.\n\nOptional: PPA Chapter 6 (Generalization), “Generalization gap”, pp. 100–101, the setting of the optimism theorem.\nLecture and seminar: released here at the start of the week. Every family and the baselines on the Spotify tracks (data note), one leaderboard, the three-way split enforced."
+    "text": "Week 5: functional structures\nThe methods, introduced together and compared on one task, each a different functional structure for the predictor. Ridge and lasso: what a penalty changes and what \\(\\lambda\\) controls. Additive models: a spline as regression on basis functions, one curve per input, the basis size as the knob. Trees: how a small tree predicts and why it is unstable; a random forest as many trees combined into one model. A neural network as a composition, a GLM whose inputs are the outputs of other GLMs, named and fitted and otherwise left for later. Then one simulated dataset for each kind of truth (sparse linear, additive smooth, a step in two inputs at once), every family fitted to each, and the four dimensions on which a method bets: wide or tall, sparse or dense, smooth or discontinuous, additive or interactive. Training error flatters a fitted model (the optimism theorem, stated; its proof is yours before the seminar). The three-way split, training, selection and a test set opened once, is used from the first slide. Data: Spotify tracks, what makes a song popular.\nReading\n\nISLR Chapter 6 (Linear Model Selection and Regularization), sections 6.2.1–6.2.2, pp. 237–250: ridge regression and the lasso, and what each penalty does to the coefficients. Stop before 6.2.3; choosing \\(\\lambda\\) by cross-validation is week 7.\nISLR Chapter 7 (Moving Beyond Linearity), sections 7.3–7.4, pp. 294–301 (basis functions and regression splines), and section 7.7, pp. 306–310 (generalized additive models; 7.7.1 fits one by least squares on spline basis functions, as the lecture does, and the GAM part of the lab in 7.8 has the lm and ns() code). Section 7.5, smoothing splines, is week 7. Skim 7.6, pp. 304–306: local regression, not examined.\nISLR Chapter 8 (Tree-Based Methods), section 8.1.1, pp. 328–335 (regression trees), and sections 8.2.1–8.2.2, pp. 340–345 (bagging and random forests). Skim 8.1.2–8.1.4, pp. 335–340. Section 8.2.3, boosting, is week 8.\n\nOptional: PPA Chapter 6 (Generalization), “Generalization gap”, pp. 100–101, the setting of the optimism theorem.\nLecture and seminar: released here at the start of the week. Every family and the baselines on the Spotify tracks (data note), one leaderboard, the three-way split enforced."
   },
   {
     "objectID": "index.html#week-6-reading-week",
@@ -1638,11 +1638,11 @@
     "text": "Part 3: additive models"
   },
   {
-    "objectID": "weeks/05-validation/slides/05-1-structures.html#three-ways-to-estimate-a-curve",
-    "href": "weeks/05-validation/slides/05-1-structures.html#three-ways-to-estimate-a-curve",
+    "objectID": "weeks/05-validation/slides/05-1-structures.html#two-ways-to-estimate-a-curve",
+    "href": "weeks/05-validation/slides/05-1-structures.html#two-ways-to-estimate-a-curve",
     "title": "Machine learning",
-    "section": "Three ways to estimate a curve",
-    "text": "Three ways to estimate a curve\nWeek 1’s data, life expectancy on GDP per capita, 142 countries (no log this time). Three ways to turn a line into a curve\n\n\n\n\n\n\n\n\n\nAverage nearby (\\(k\\)-NN; a kernel weights by distance instead of cutting at \\(k\\)). Fit a line nearby (loess). Fit a basis: fixed curves, combined by least squares. We now focus on the third"
+    "section": "Two ways to estimate a curve",
+    "text": "Two ways to estimate a curve\nWeek 1’s data, life expectancy on GDP per capita, 142 countries (no log this time). Two ways to turn a line into a curve\n\n\n\n\n\n\n\n\n\nAverage nearby (\\(k\\)-NN; a kernel weights by distance instead of cutting at \\(k\\)). Fit a basis: fixed curves, combined by least squares. We now focus on the second"
   },
   {
     "objectID": "weeks/05-validation/slides/05-1-structures.html#a-spline-is-regression-on-basis-functions",
@@ -1680,13 +1680,6 @@
     "text": "Part 4: trees and forests"
   },
   {
-    "objectID": "weeks/05-validation/slides/05-1-structures.html#decision-trees",
-    "href": "weeks/05-validation/slides/05-1-structures.html#decision-trees",
-    "title": "Machine learning",
-    "section": "Decision trees",
-    "text": "Decision trees\nAre you eligible for the COVID-19 vaccine?\n\nIf Age &gt;= 50 then yes, otherwise continue\nIf HighRisk == TRUE then yes, otherwise continue\nIf Job == CareWorker then yes, otherwise no\n\nThis is (arguably) more interpretable than a linear model with multiple predictors\n(Note: this is not the real vaccination criteria, but it was close to this in early 2021)"
-  },
-  {
     "objectID": "weeks/05-validation/slides/05-1-structures.html#a-regression-tree-for-popularity",
     "href": "weeks/05-validation/slides/05-1-structures.html#a-regression-tree-for-popularity",
     "title": "Machine learning",
@@ -1715,18 +1708,11 @@
     "text": "Recursive rectangular splitting on predictors\n“Stratification of the feature space”\nInput: subset of data\n  For each predictor variable x_j in subset\n    Scan cutoff values to find the best split for x_j (last slide)\nOutput: the predictor and cutoff with the best improvement\n\nStarting from the full dataset, compute the first split as above\nRecurse: take the two subsets of data from each side of the split and plug them both back into the same function\nUntil some stopping rule prevents more splitting (today: a maximum depth, the tree’s knob; growing deep and pruning back comes later in the course)"
   },
   {
-    "objectID": "weeks/05-validation/slides/05-1-structures.html#a-tree-is-unstable",
-    "href": "weeks/05-validation/slides/05-1-structures.html#a-tree-is-unstable",
+    "objectID": "weeks/05-validation/slides/05-1-structures.html#a-tree-is-unstable-a-forest-averages-many",
+    "href": "weeks/05-validation/slides/05-1-structures.html#a-tree-is-unstable-a-forest-averages-many",
     "title": "Machine learning",
-    "section": "A tree is unstable",
-    "text": "A tree is unstable\n\n\n\n\n\n\n\n\n\nWeek 1’s countries, resampled eight times (blue, one fit per resample). The trees’ cutoffs move with the sample and the steps move with them; the splines barely move. Orange: the average of the eight trees"
-  },
-  {
-    "objectID": "weeks/05-validation/slides/05-1-structures.html#random-forests-many-trees-one-model",
-    "href": "weeks/05-validation/slides/05-1-structures.html#random-forests-many-trees-one-model",
-    "title": "Machine learning",
-    "section": "Random forests: many trees, one model",
-    "text": "Random forests: many trees, one model\nA random forest is a method that combines many trees into one model: it grows hundreds of trees, each on a resample of the training rows, and averages their predictions\nThe last slide’s orange line, with hundreds of trees instead of eight: one model, smoother and more stable than any one tree\nToday: randomForest() with its defaults, no knob. How it works and why averaging helps: later in the course"
+    "section": "A tree is unstable; a forest averages many",
+    "text": "A tree is unstable; a forest averages many\n\n\n\n\n\n\n\n\n\nWeek 1’s countries resampled eight times, one fit per resample (blue). The trees’ cutoffs jump with the sample; the splines barely move. Orange: the eight trees’ average\nA random forest is a method that combines many trees into one model: hundreds of trees, each on a resample of the training rows, averaged (orange, with hundreds not eight). Today randomForest() with its defaults, no knob; details later in the course"
   },
   {
     "objectID": "weeks/05-validation/slides/05-1-structures.html#section-4",

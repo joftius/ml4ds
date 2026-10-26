@@ -436,19 +436,19 @@ Joshua Loftus
 <h2></h2>
 <h3 id="part-3-additive-models">Part 3: additive models</h3>
 </section>
-<section id="three-ways-to-estimate-a-curve" class="slide level2" data-minutes="3">
-<h2>Three ways to estimate a curve</h2>
-<p>Week 1’s data, life expectancy on GDP per capita, 142 countries (no log this time). Three ways to turn a line into a curve</p>
+<section id="two-ways-to-estimate-a-curve" class="slide level2">
+<h2>Two ways to estimate a curve</h2>
+<p>Week 1’s data, life expectancy on GDP per capita, 142 countries (no log this time). Two ways to turn a line into a curve</p>
 <div class="cell">
 <div class="cell-output-display">
 <div>
 <figure>
-<p><img data-src="05-1-structures_files/figure-revealjs/three-ways-1.png" width="1800"></p>
+<p><img data-src="05-1-structures_files/figure-revealjs/two-ways-1.png" width="1800"></p>
 </figure>
 </div>
 </div>
 </div>
-<p><strong>Average nearby</strong> (<span class="math inline">\(k\)</span>-NN; a <em>kernel</em> weights by distance instead of cutting at <span class="math inline">\(k\)</span>). <strong>Fit a line nearby</strong> (<em>loess</em>). <strong>Fit a basis</strong>: fixed curves, combined by least squares. We now focus on the third</p>
+<p><strong>Average nearby</strong> (<span class="math inline">\(k\)</span>-NN; a <em>kernel</em> weights by distance instead of cutting at <span class="math inline">\(k\)</span>). <strong>Fit a basis</strong>: fixed curves, combined by least squares. We now focus on the second</p>
 </section>
 <section id="a-spline-is-regression-on-basis-functions" class="slide level2">
 <h2>A spline is regression on basis functions</h2>
@@ -518,17 +518,6 @@ f(x) = \beta_0 + \sum_{j=1}^J \beta_j\, b_j(x)
 <h2></h2>
 <h3 id="part-4-trees-and-forests">Part 4: trees and forests</h3>
 </section>
-<section id="decision-trees" class="slide level2 inverse">
-<h2>Decision trees</h2>
-<h3 id="are-you-eligible-for-the-covid-19-vaccine">Are you eligible for the COVID-19 vaccine?</h3>
-<ul>
-<li>If <code>Age &gt;= 50</code> then <code>yes</code>, otherwise continue</li>
-<li>If <code>HighRisk == TRUE</code> then <code>yes</code>, otherwise continue</li>
-<li>If <code>Job == CareWorker</code> then <code>yes</code>, otherwise <code>no</code></li>
-</ul>
-<p>This is (arguably) more interpretable than a linear model with multiple predictors</p>
-<p>(Note: this is not the real vaccination criteria, but it was close to this in early 2021)</p>
-</section>
 <section id="a-regression-tree-for-popularity" class="slide level2">
 <h2>A regression tree for popularity</h2>
 <div class="cell" data-layout-align="center">
@@ -585,8 +574,8 @@ Output: the predictor and cutoff with the best improvement</code></pre>
 <p>Until some <strong>stopping rule</strong> prevents more splitting (today: a maximum depth, the tree’s knob; growing deep and pruning back comes later in the course)</p>
 </div>
 </section>
-<section id="a-tree-is-unstable" class="slide level2">
-<h2>A tree is unstable</h2>
+<section id="a-tree-is-unstable-a-forest-averages-many" class="slide level2">
+<h2>A tree is unstable; a forest averages many</h2>
 <div class="cell">
 <div class="cell-output-display">
 <div>
@@ -596,13 +585,8 @@ Output: the predictor and cutoff with the best improvement</code></pre>
 </div>
 </div>
 </div>
-<p>Week 1’s countries, resampled eight times (blue, one fit per resample). The trees’ cutoffs move with the sample and the steps move with them; the splines barely move. Orange: the average of the eight trees</p>
-</section>
-<section id="random-forests-many-trees-one-model" class="slide level2">
-<h2>Random forests: many trees, one model</h2>
-<p>A <strong>random forest</strong> is a method that combines many trees into one model: it grows hundreds of trees, each on a resample of the training rows, and averages their predictions</p>
-<p>The last slide’s orange line, with hundreds of trees instead of eight: one model, smoother and more stable than any one tree</p>
-<p>Today: <code>randomForest()</code> with its defaults, no knob. How it works and why averaging helps: later in the course</p>
+<p>Week 1’s countries resampled eight times, one fit per resample (blue). The trees’ cutoffs jump with the sample; the splines barely move. Orange: the eight trees’ average</p>
+<p>A <strong>random forest</strong> is a method that combines many trees into one model: hundreds of trees, each on a resample of the training rows, averaged (orange, with hundreds not eight). Today <code>randomForest()</code> with its defaults, no knob; details later in the course</p>
 </section>
 <section id="section-4" class="slide level2 inverse center">
 <h2></h2>
