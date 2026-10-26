@@ -12,4 +12,4 @@ Optional: PPA Chapter 6 (Generalization), "Generalization gap", pp. 100–101, t
 
 **Lecture:** [slides](weeks/05-validation/slides/05-1-structures.html)
 
-**Seminar:** released here at the start of the week. Every family and the baselines on the Spotify tracks ([data note](data/spotify.html)), one leaderboard, the three-way split enforced.
+**Seminar:** [notebook](weeks/05-validation/notebooks/notebook5.html) ([.qmd](https://ml4ds.com/weeks/05-validation/notebooks/notebook5.qmd){download="notebook5.qmd"}). Before the seminar, do exercises 1 and 2 at the top of the notebook (the optimism theorem's proof, with hints, and ridge regression's normal equations); the seminar's problems start from them. Then every family and the baselines on the Spotify tracks ([data note](data/spotify.html)), one leaderboard, the three-way split enforced and the test set opened once.
