@@ -10,4 +10,6 @@ The methods, introduced together and compared on one task, each a different func
 
 Optional: PPA Chapter 6 (Generalization), "Generalization gap", pp. 100–101, the setting of the optimism theorem.
 
-**Lecture and seminar:** released here at the start of the week. Every family and the baselines on the Spotify tracks ([data note](data/spotify.html)), one leaderboard, the three-way split enforced.
+**Lecture:** [slides](weeks/05-validation/slides/05-1-structures.html)
+
+**Seminar:** released here at the start of the week. Every family and the baselines on the Spotify tracks ([data note](data/spotify.html)), one leaderboard, the three-way split enforced.
