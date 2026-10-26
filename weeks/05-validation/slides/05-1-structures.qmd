@@ -46,9 +46,6 @@ library(gapminder)
 theme_set(theme_minimal(base_size = 18))
 options(knitr.table.format = "html")
 options(digits = 5)
-# Base-graphics trees: small margins and labels allowed to use them, in every chunk.
-knitr::opts_knit$set(global.par = TRUE)
-par(mar = c(0.5, 0.5, 0.5, 0.5), xpd = NA)
 set.seed(5)
 # Palette: viridis for the primary scale, magma for the second one.
 v_dark <- "#440154"; v_blue <- "#31688e"; v_teal <- "#21918c"; v_green <- "#5ec962"
@@ -558,12 +555,13 @@ The legacy penguin tree, on the Spotify training tracks: popularity on release y
 
 ```{r}
 #| label: spotify-tree
-#| echo: true
+#| echo: !expr -1
 #| code-line-numbers: "1-2"
 #| fig-width: 12
 #| fig-height: 3.2
 #| fig-align: center
 #| out-width: "92%"
+par(mar = c(0, 0, 0, 0), xpd = NA)   # no margins, labels may overhang: the par() in setup does not reach this chunk
 fit_tree <- rpart(track_popularity ~ release_year + energy, sp_train,
                   control = rpart.control(maxdepth = 3, cp = 0, minbucket = 250))
 plot(fit_tree, uniform = TRUE, margin = 0.1)
