@@ -186,7 +186,7 @@ The split in a table; "selection set" is the course's name, books and software s
 ESL's word for the third: a **vault**. Split once, at random, before looking (today 5,000, 2,000 and 3,000 tracks); refit the chosen model on training plus selection; open the vault once. A test set may score several competitors fixed in advance; nothing is chosen on it
 
 ::: {.retrieval}
-Week 1's one rule, now for evaluation data: a row is fair game for scoring only if nothing about the model was chosen on it.
+The one rule for evaluation data: a row is fair game for scoring only if nothing about the model was chosen on it.
 :::
 
 ## CTF competition: baselines {minutes="3"}
@@ -224,13 +224,15 @@ ggplot(lb, aes(mse, competitor)) +
 
 The local average ($k = `r k_sp`$) and the plane, one standard error apart. Can a different shape beat both? The test set stays shut
 
-## Tuning {.inverse .center background-image="img/dial.jpg" background-size="cover" background-opacity="0.55" background-color="#440154"}
+## Tuning {.inverse background-image="img/dial.jpg" background-size="cover" background-opacity="0.55" background-color="#440154"}
 
 ::: {.notes}
-Compress: every candidate has a knob; the selection tracks say where to leave it.
+Compress: every candidate has a knob; turn it and the fit follows the data more or less closely.
 :::
 
-### Every candidate has a knob. Turn it, and the fit follows the data more or less closely; the selection tracks say where to leave it
+::: {style="position: absolute; bottom: 40px; left: 0; right: 0;"}
+<h3>Every candidate has a knob. Turn it, and the fit follows the data more or less closely</h3>
+:::
 
 ## Candidate methods
 
@@ -268,7 +270,7 @@ Compress: a penalty is a knob written into the objective. Two penalties, two bet
 Legacy slide; its James--Stein opening is kept for later in the course, so the motivation here is week 4's early stopping. "Loss plus penalty" is the shape of most of today's methods.
 :::
 
-Motivation: week 4 stopped gradient descent early, and the number of steps became a knob that controlled how far the fit went. Can the knob be written into the objective instead?
+Motivation: early stopping made the number of gradient-descent steps a knob that controlled how far the fit went. Can the knob be written into the objective instead?
 
 . . .
 
@@ -400,7 +402,7 @@ Compress: one input, a curve instead of a line, two ways to get one; then one cu
 Week 1's data and week 1's k-NN, GDP per capita unlogged so that the relation is curved. Two ideas, named once: average nearby (k-NN; a kernel weights by distance instead of cutting at k), fit a basis (the next two slides; a penalty on it comes later in the course). We focus on the second; the first is a name. Both are curves, and both have a knob. Local regression (loess, ISLR 7.6) was a third panel here and is cut for time; it is skim reading only.
 :::
 
-Week 1's data, life expectancy on GDP per capita, 142 countries (no log this time). Two ways to turn a line into a curve
+Life expectancy on GDP per capita, 142 countries in 2007 (no log this time). Two ways to turn a line into a curve
 
 ```{r}
 #| label: two-ways
@@ -682,7 +684,7 @@ ggplot() +
   labs(x = "GDP per capita (dollars)", y = "life expectancy")
 ```
 
-Week 1's countries resampled eight times, one fit per resample (blue). The trees' cutoffs jump with the sample; the splines barely move. Orange: the eight trees' average
+The 142 countries resampled eight times, one fit per resample (blue). The trees' cutoffs jump with the sample; the splines barely move. Orange: the eight trees' average
 
 A **random forest** is a method that combines many trees into one model: hundreds of trees, each on a resample of the training rows, averaged (orange, with hundreds not eight). Today `randomForest()` with its defaults, no knob; details later in the course
 
@@ -697,7 +699,7 @@ Compress: one more structure, built by composing what we have: a regression whos
 ## A GLM of GLMs {minutes="3"}
 
 ::: {.notes}
-The whole idea on one slide, by analogy with what students know. A GLM (weeks 3 and 4): the inverse link applied to a linear predictor, g^{-1}(x^T beta). Iterate: feed the inputs into M logistic regressions, take their outputs as new inputs, and run a linear regression (or a logistic one, for a label) on those; all the weights are fitted together. The hidden units are a basis like part 3's, except that the basis is fitted to the data rather than fixed in advance, and each basis function uses all the inputs at once. Iterate again and the network is deep. Symbols: M hidden units, w_k the k-th unit's weights, g the logit link of week 4.
+The whole idea on one slide, by analogy with what students know. A GLM (weeks 3 and 4): the inverse link applied to a linear predictor, g^{-1}(x^T beta). Iterate: feed the inputs into M logistic regressions, take their outputs as new inputs, and run a linear regression (or a logistic one, for a label) on those; all the weights are fitted together. The hidden units are a basis like part 3's, except that the basis is fitted to the data rather than fixed in advance, and each basis function uses all the inputs at once. Iterate again and the network is deep. Symbols: M hidden units, w_k the k-th unit's weights, g the logit link of week 4. Said, not on the slide: the hidden units are a basis like part 3's, fitted to the data along with the coefficients, each unit using every input at once.
 :::
 
 ```{r}
@@ -724,7 +726,7 @@ nn_plot <- ggplot() +
   theme_void()
 ```
 
-Week 4's GLM: the inverse link applied to a linear predictor, $g^{-1}(\mathbf x^T\beta)$. Now iterate it
+A GLM: the inverse link applied to a linear predictor, $g^{-1}(\mathbf x^T\beta)$. Now iterate it
 
 ::: {.columns}
 ::: {.column width="44%"}
@@ -737,15 +739,13 @@ nn_plot
 ```
 :::
 ::: {.column width="56%"}
-Each **hidden unit** has the form of a logistic regression of the inputs, with its own weights: $h_k(x) = g^{-1}(w_{k0} + w_k^T x)$, with $g$ the logit link, $g^{-1}(z) = 1/(1 + e^{-z})$
+**Hidden unit** $k$: a logistic regression of the inputs, with its own weights, $h_k(x) = g^{-1}(w_{k0} + w_k^T x)$, $g$ the logit link
 
-The **output** is a linear regression on the hidden units (logistic, for a label): $f(x) = \beta_0 + \sum_{k=1}^M \beta_k\, h_k(x)$
+**Output**: a linear regression on the hidden units, $f(x) = \beta_0 + \sum_{k=1}^M \beta_k\, h_k(x)$ (logistic, for a label)
 
-A GLM whose inputs are the outputs of $M$ GLMs. Iterate once more: a *deep* network
+A GLM whose inputs are $M$ GLMs. Iterate again: a *deep* network
 :::
 :::
-
-A basis like part 3's, except that the basis is fitted to the data along with the coefficients, and each $h_k$ uses every input at once
 
 ## What to know about networks today
 
@@ -753,11 +753,9 @@ A basis like part 3's, except that the basis is fitted to the data along with th
 Two things and no more. Fit: every weight at once, by gradient-based optimization on a loss with every feature of week 4's part 3 (not convex: the hilly road, the saddle); nnet() uses BFGS, a quasi-Newton method, rather than stochastic gradient descent, and linout = TRUE for a numeric outcome. The knob: M, chosen on the selection tracks; depth, and the penalty on the weights, are later knobs. nnet() ships with the base install; the rest of networks comes later in the course and in ST311.
 :::
 
-**How it is fitted.** All $M(p + 1) + M + 1$ weights at once, by gradient-based optimization (week 4) on a loss with every feature of week 4's part 3: not one valley but many, with plateaus and saddles between them. Today's fits use `nnet()`, which runs a quasi-Newton method
+**How it is fitted.** All $M(p + 1) + M + 1$ weights at once, by gradient-based optimization of a loss that is not convex: many valleys, with plateaus and saddles between them. Today's fits: `nnet()`, a quasi-Newton method
 
-**The knob.** $M$, the number of hidden units, chosen on the selection tracks like the others; depth and a penalty on the weights are later knobs. In R, `nnet(size = M, linout = TRUE)`
-
-Today the network is one more structure in the comparison; how it is built and trained is for later in the course
+**The knob.** $M$, the number of hidden units, chosen on the selection tracks. Depth, and a penalty on the weights: later knobs. In R, `nnet(size = M, linout = TRUE)`
 
 ## {.inverse .center}
 
@@ -767,7 +765,7 @@ Compress: five families, five bets; three truths, one task, and the training err
 
 ### Part 6: which structure?
 
-## Three truths, one task {minutes="3"}
+## Comparison across three functional structures {minutes="3"}
 
 ::: {.notes}
 Ten inputs, uniform on minus one to one, noise sd 1, so the floor is an MSE of 1. The network: M chosen on the selection rows, a small fixed ridge penalty on its weights, fitted by nnet; with 300 rows it stays small. Truth A is a plane in three of the ten; B is three smooth one-input curves (f1 = -1 + 2x - x^2, f2 = sin(pi x), f3 = exp(-5(x - 1/2)^2)), scaled by 1.5, in three of the ten; C is one step that needs two inputs at once (signal variance 3, of which the best sum of one-input functions holds 2 and the product the last 1). Every knob chosen on the 100 selection rows, then the chosen fit refitted on the 400 training-plus-selection rows; the test set is 2,000 rows because the truth is simulated and we can afford it. Forest with its defaults, no knob. The ask: two minutes, a show of hands per truth; take the reasons, not only the names.
@@ -923,7 +921,7 @@ A sum of one-input functions can hold each input's share of this step, two third
 ## CTF competition: everyone on Spotify
 
 ::: {.notes}
-The baselines slide asked whether a shape could beat both; this is the answer on the selection tracks, the knobs chosen there. The two-unit network 486, additive splines 490 and the forest 493 lead; the tree 512; the lasso and least squares with genre 525; k-NN 528; least squares without genre 541; the mean 581. Least squares with genre is the fair comparison for the bending fits: same inputs, so the gap is the structure. The bars are each method's own standard error, not that of a difference, and the knobs were chosen on these same tracks, so the ranking is descriptive; the seminar's test set, with paired losses, is where differences get a standard error. The hollow points are the training scores: the forest's is 86. The vault stays shut: the seminar refits on training plus selection and opens it once. What these data have: a nonlinear year effect and loudness, which the plane cannot bend to, and little else the inputs can see.
+The baselines slide asked whether a shape could beat both; this is the answer on the selection tracks, the knobs chosen there. The two-unit network 486, additive splines 490 and the forest 493 lead; the tree 512; the lasso and least squares with genre 525; k-NN 528; least squares without genre 541; the mean 581. Least squares with genre is the fair comparison for the bending fits: same inputs, so the gap is the structure. The bars are each method's own standard error, not that of a difference, and the knobs were chosen on these same tracks, so the ranking is descriptive; the seminar's test set, with paired losses, is where differences get a standard error. The hollow points are the training scores: the forest's is 86, and that is right, not a bug: predict() on the training rows uses the trees that had each row in-bag, grown to leaves of five rows, so the forest nearly reproduces its training rows; its out-of-bag score, the honest in-sample number, is 475. The vault stays shut: the seminar refits on training plus selection and opens it once. What these data have: a nonlinear year effect and loudness, which the plane cannot bend to, and little else the inputs can see.
 :::
 
 ```{r}
@@ -991,7 +989,7 @@ Three minutes. Four questions about the world, not one scale from simple to comp
 Four separate questions, not one scale from simple to complex. A family is a bet on the answers; a selection set says which bet paid
 
 ::: {.retrieval}
-Week 1's curse: $k$-NN near the bottom on every truth, seven idle inputs. Week 4's no free lunch: no family won every truth, and none can.
+Curse of dimensionality: $k$-NN near the bottom on every truth, seven idle inputs. No free lunch theorem: no family won every truth, and none can.
 :::
 
 ## What the training error hides {minutes="3"}
@@ -1000,12 +998,12 @@ Week 1's curse: $k$-NN near the bottom on every truth, seven idle inputs. Week 4
 Two minutes for the ask; collect two orderings before the reveal. Why anyone cared: the training error is the only error you can compute without new data. The hollow points sat left of the filled ones on most rows, the forest's by a factor of four, and right of them on a few (least squares on truth A, the tree on truth C); the question is whether the usual direction is a law, and what the exceptions are. Expected answer after the theorem: it is a statement about averages over training sets, and one realization of 300 rows can go either way by a little; the test MSE is itself a noisy number. Week 4's symbols: a class, the best in it, what the data return.
 :::
 
-On most rows of the leaderboards the training MSE sat below the test or selection MSE, the forest's by a factor of four on the truths and of six on Spotify; on a few rows it sat above. Luck, or a law, and what are the exceptions?
+On most rows of the leaderboards the training MSE sat below the test or selection MSE; on a few it sat above. Luck, or a law?
 
-Training data $(x_i, y_i)$, $i = 1, \ldots, n$, independent draws from the population; a class $\mathcal F$ fixed before the data (the planes; the spline fits with a given basis); $f_{\mathcal F}$ the best in $\mathcal F$, the minimizer of $R$ over it; $\hat f$ the empirical risk minimizer, the minimizer of $\hat R_n$ over $\mathcal F$ (week 4)
+Training data i.i.d. from the population; a class $\mathcal F$ fixed before the data; $f_{\mathcal F}$ the best in $\mathcal F$ (smallest $R$); $\hat f$ the empirical risk minimizer (smallest $\hat R_n$ over $\mathcal F$)
 
 ::: {.ask}
-Three numbers: $\mathbb E[\hat R_n(\hat f)]$, $R(f_{\mathcal F})$, $\mathbb E[R(\hat f)]$. Put them in order, and write down what you used to do it.
+Three numbers: $\mathbb E[\hat R_n(\hat f)]$, $R(f_{\mathcal F})$, $\mathbb E[R(\hat f)]$. Put them in order, and write down what you used.
 :::
 
 ## Optimism theorem {minutes="3"}
@@ -1025,7 +1023,7 @@ $$
 Training error flatters the model: on average it sits below the best risk the class can reach, and the fitted model's risk above it. A test set estimates $R(\hat f)$; its average is the right end.
 :::
 
-**Proof**: exercise 1. Covers least squares, a fixed spline basis, ridge and lasso with a fixed radius; not a fixed $\lambda$, a tree, a forest, $k$-NN, or a knob chosen on the data
+**Proof**: exercise 1
 
 ## Before the seminar
 
@@ -1049,8 +1047,8 @@ A plane, a sparse plane, a sum of curves, a set of rectangles, an average of man
 
 #### The data split decides what you may believe
 
-Fit on the training rows, choose on the selection rows, open the test set once
+Fit on the training rows, tune on the selection rows, open the test set once
 
-#### The training error flatters, by a theorem
+#### Training error underestimates risk
 
-Optimistic on average for every minimizer over a fixed class, and no substitute for held-out data for the rest. *How much flexibility to allow, and how to choose it: next*
+Optimistic on average for every minimizer over a fixed class

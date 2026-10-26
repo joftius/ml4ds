@@ -281,7 +281,7 @@ Joshua Loftus
 </div>
 <p>ESL’s word for the third: a <strong>vault</strong>. Split once, at random, before looking (today 5,000, 2,000 and 3,000 tracks); refit the chosen model on training plus selection; open the vault once. A test set may score several competitors fixed in advance; nothing is chosen on it</p>
 <div class="retrieval">
-<p>Week 1’s one rule, now for evaluation data: a row is fair game for scoring only if nothing about the model was chosen on it.</p>
+<p>The one rule for evaluation data: a row is fair game for scoring only if nothing about the model was chosen on it.</p>
 </div>
 </section>
 <section id="ctf-competition-baselines" class="slide level2" data-minutes="3">
@@ -298,9 +298,13 @@ Joshua Loftus
 </div>
 <p>The local average (<span class="math inline">\(k = 100\)</span>) and the plane, one standard error apart. Can a different shape beat both? The test set stays shut</p>
 </section>
-<section id="tuning" class="slide level2 inverse center" data-background-image="img/dial.jpg" data-background-size="cover" data-background-opacity="0.55" data-background-color="#440154">
+<section id="tuning" class="slide level2 inverse" data-background-image="img/dial.jpg" data-background-size="cover" data-background-opacity="0.55" data-background-color="#440154">
 <h2>Tuning</h2>
-<h3 id="every-candidate-has-a-knob.-turn-it-and-the-fit-follows-the-data-more-or-less-closely-the-selection-tracks-say-where-to-leave-it">Every candidate has a knob. Turn it, and the fit follows the data more or less closely; the selection tracks say where to leave it</h3>
+<div style="position: absolute; bottom: 40px; left: 0; right: 0;">
+<h3>
+Every candidate has a knob. Turn it, and the fit follows the data more or less closely
+</h3>
+</div>
 </section>
 <section id="candidate-methods" class="slide level2">
 <h2>Candidate methods</h2>
@@ -356,7 +360,7 @@ Joshua Loftus
 </section>
 <section id="regularized-i.e.-penalized-regression" class="slide level2">
 <h2>Regularized (i.e.&nbsp;penalized) regression</h2>
-<p>Motivation: week 4 stopped gradient descent early, and the number of steps became a knob that controlled how far the fit went. Can the knob be written into the objective instead?</p>
+<p>Motivation: early stopping made the number of gradient-descent steps a knob that controlled how far the fit went. Can the knob be written into the objective instead?</p>
 <div class="fragment">
 <p>For some penalty function <span class="math inline">\(\mathcal P_\lambda\)</span>, which depends on a tuning parameter <span class="math inline">\(\lambda\)</span>, the estimator</p>
 <p><span class="math display">\[\hat \beta_\lambda = \arg \min_\beta \| \mathbf y - \mathbf X \beta \|^2_2 + \mathcal P_\lambda(\beta)\]</span> is “regularized” or shrunk (shranken?) toward values that decrease the penalty. Often <span class="math inline">\(\mathcal P_\lambda = \lambda \| \cdot \|\)</span> for some norm</p>
@@ -438,7 +442,7 @@ Joshua Loftus
 </section>
 <section id="two-ways-to-estimate-a-curve" class="slide level2">
 <h2>Two ways to estimate a curve</h2>
-<p>Week 1’s data, life expectancy on GDP per capita, 142 countries (no log this time). Two ways to turn a line into a curve</p>
+<p>Life expectancy on GDP per capita, 142 countries in 2007 (no log this time). Two ways to turn a line into a curve</p>
 <div class="cell">
 <div class="cell-output-display">
 <div>
@@ -585,7 +589,7 @@ Output: the predictor and cutoff with the best improvement</code></pre>
 </div>
 </div>
 </div>
-<p>Week 1’s countries resampled eight times, one fit per resample (blue). The trees’ cutoffs jump with the sample; the splines barely move. Orange: the eight trees’ average</p>
+<p>The 142 countries resampled eight times, one fit per resample (blue). The trees’ cutoffs jump with the sample; the splines barely move. Orange: the eight trees’ average</p>
 <p>A <strong>random forest</strong> is a method that combines many trees into one model: hundreds of trees, each on a resample of the training rows, averaged (orange, with hundreds not eight). Today <code>randomForest()</code> with its defaults, no knob; details later in the course</p>
 </section>
 <section id="section-4" class="slide level2 inverse center">
@@ -594,7 +598,7 @@ Output: the predictor and cutoff with the best improvement</code></pre>
 </section>
 <section id="a-glm-of-glms" class="slide level2" data-minutes="3">
 <h2>A GLM of GLMs</h2>
-<p>Week 4’s GLM: the inverse link applied to a linear predictor, <span class="math inline">\(g^{-1}(\mathbf x^T\beta)\)</span>. Now iterate it</p>
+<p>A GLM: the inverse link applied to a linear predictor, <span class="math inline">\(g^{-1}(\mathbf x^T\beta)\)</span>. Now iterate it</p>
 <div class="columns">
 <div class="column" style="width:44%;">
 <div class="cell">
@@ -607,24 +611,22 @@ Output: the predictor and cutoff with the best improvement</code></pre>
 </div>
 </div>
 </div><div class="column" style="width:56%;">
-<p>Each <strong>hidden unit</strong> has the form of a logistic regression of the inputs, with its own weights: <span class="math inline">\(h_k(x) = g^{-1}(w_{k0} + w_k^T x)\)</span>, with <span class="math inline">\(g\)</span> the logit link, <span class="math inline">\(g^{-1}(z) = 1/(1 + e^{-z})\)</span></p>
-<p>The <strong>output</strong> is a linear regression on the hidden units (logistic, for a label): <span class="math inline">\(f(x) = \beta_0 + \sum_{k=1}^M \beta_k\, h_k(x)\)</span></p>
-<p>A GLM whose inputs are the outputs of <span class="math inline">\(M\)</span> GLMs. Iterate once more: a <em>deep</em> network</p>
+<p><strong>Hidden unit</strong> <span class="math inline">\(k\)</span>: a logistic regression of the inputs, with its own weights, <span class="math inline">\(h_k(x) = g^{-1}(w_{k0} + w_k^T x)\)</span>, <span class="math inline">\(g\)</span> the logit link</p>
+<p><strong>Output</strong>: a linear regression on the hidden units, <span class="math inline">\(f(x) = \beta_0 + \sum_{k=1}^M \beta_k\, h_k(x)\)</span> (logistic, for a label)</p>
+<p>A GLM whose inputs are <span class="math inline">\(M\)</span> GLMs. Iterate again: a <em>deep</em> network</p>
 </div></div>
-<p>A basis like part 3’s, except that the basis is fitted to the data along with the coefficients, and each <span class="math inline">\(h_k\)</span> uses every input at once</p>
 </section>
 <section id="what-to-know-about-networks-today" class="slide level2">
 <h2>What to know about networks today</h2>
-<p><strong>How it is fitted.</strong> All <span class="math inline">\(M(p + 1) + M + 1\)</span> weights at once, by gradient-based optimization (week 4) on a loss with every feature of week 4’s part 3: not one valley but many, with plateaus and saddles between them. Today’s fits use <code>nnet()</code>, which runs a quasi-Newton method</p>
-<p><strong>The knob.</strong> <span class="math inline">\(M\)</span>, the number of hidden units, chosen on the selection tracks like the others; depth and a penalty on the weights are later knobs. In R, <code>nnet(size = M, linout = TRUE)</code></p>
-<p>Today the network is one more structure in the comparison; how it is built and trained is for later in the course</p>
+<p><strong>How it is fitted.</strong> All <span class="math inline">\(M(p + 1) + M + 1\)</span> weights at once, by gradient-based optimization of a loss that is not convex: many valleys, with plateaus and saddles between them. Today’s fits: <code>nnet()</code>, a quasi-Newton method</p>
+<p><strong>The knob.</strong> <span class="math inline">\(M\)</span>, the number of hidden units, chosen on the selection tracks. Depth, and a penalty on the weights: later knobs. In R, <code>nnet(size = M, linout = TRUE)</code></p>
 </section>
 <section id="section-5" class="slide level2 inverse center">
 <h2></h2>
 <h3 id="part-6-which-structure">Part 6: which structure?</h3>
 </section>
-<section id="three-truths-one-task" class="slide level2" data-minutes="3">
-<h2>Three truths, one task</h2>
+<section id="comparison-across-three-functional-structures" class="slide level2" data-minutes="3">
+<h2>Comparison across three functional structures</h2>
 <p><span class="math inline">\(p = 10\)</span> inputs on <span class="math inline">\([-1, 1]\)</span>, <span class="math inline">\(y = f^\star(x) + \varepsilon\)</span>, <span class="math inline">\(\sigma^2 = 1\)</span>. Three truths:</p>
 <div style="font-size: 0.92em">
 <ul>
@@ -732,15 +734,15 @@ Output: the predictor and cutoff with the best improvement</code></pre>
 </div>
 <p>Four separate questions, not one scale from simple to complex. A family is a bet on the answers; a selection set says which bet paid</p>
 <div class="retrieval">
-<p>Week 1’s curse: <span class="math inline">\(k\)</span>-NN near the bottom on every truth, seven idle inputs. Week 4’s no free lunch: no family won every truth, and none can.</p>
+<p>Curse of dimensionality: <span class="math inline">\(k\)</span>-NN near the bottom on every truth, seven idle inputs. No free lunch theorem: no family won every truth, and none can.</p>
 </div>
 </section>
 <section id="what-the-training-error-hides" class="slide level2" data-minutes="3">
 <h2>What the training error hides</h2>
-<p>On most rows of the leaderboards the training MSE sat below the test or selection MSE, the forest’s by a factor of four on the truths and of six on Spotify; on a few rows it sat above. Luck, or a law, and what are the exceptions?</p>
-<p>Training data <span class="math inline">\((x_i, y_i)\)</span>, <span class="math inline">\(i = 1, \ldots, n\)</span>, independent draws from the population; a class <span class="math inline">\(\mathcal F\)</span> fixed before the data (the planes; the spline fits with a given basis); <span class="math inline">\(f_{\mathcal F}\)</span> the best in <span class="math inline">\(\mathcal F\)</span>, the minimizer of <span class="math inline">\(R\)</span> over it; <span class="math inline">\(\hat f\)</span> the empirical risk minimizer, the minimizer of <span class="math inline">\(\hat R_n\)</span> over <span class="math inline">\(\mathcal F\)</span> (week 4)</p>
+<p>On most rows of the leaderboards the training MSE sat below the test or selection MSE; on a few it sat above. Luck, or a law?</p>
+<p>Training data i.i.d. from the population; a class <span class="math inline">\(\mathcal F\)</span> fixed before the data; <span class="math inline">\(f_{\mathcal F}\)</span> the best in <span class="math inline">\(\mathcal F\)</span> (smallest <span class="math inline">\(R\)</span>); <span class="math inline">\(\hat f\)</span> the empirical risk minimizer (smallest <span class="math inline">\(\hat R_n\)</span> over <span class="math inline">\(\mathcal F\)</span>)</p>
 <div class="ask">
-<p>Three numbers: <span class="math inline">\(\mathbb E[\hat R_n(\hat f)]\)</span>, <span class="math inline">\(R(f_{\mathcal F})\)</span>, <span class="math inline">\(\mathbb E[R(\hat f)]\)</span>. Put them in order, and write down what you used to do it.</p>
+<p>Three numbers: <span class="math inline">\(\mathbb E[\hat R_n(\hat f)]\)</span>, <span class="math inline">\(R(f_{\mathcal F})\)</span>, <span class="math inline">\(\mathbb E[R(\hat f)]\)</span>. Put them in order, and write down what you used.</p>
 </div>
 </section>
 <section id="optimism-theorem" class="slide level2" data-minutes="3">
@@ -752,7 +754,7 @@ Output: the predictor and cutoff with the best improvement</code></pre>
 <div class="leave">
 <p>Training error flatters the model: on average it sits below the best risk the class can reach, and the fitted model’s risk above it. A test set estimates <span class="math inline">\(R(\hat f)\)</span>; its average is the right end.</p>
 </div>
-<p><strong>Proof</strong>: exercise 1. Covers least squares, a fixed spline basis, ridge and lasso with a fixed radius; not a fixed <span class="math inline">\(\lambda\)</span>, a tree, a forest, <span class="math inline">\(k\)</span>-NN, or a knob chosen on the data</p>
+<p><strong>Proof</strong>: exercise 1</p>
 </section>
 <section id="before-the-seminar" class="slide level2">
 <h2>Before the seminar</h2>
@@ -766,9 +768,9 @@ Output: the predictor and cutoff with the best improvement</code></pre>
 <h4 id="each-family-is-a-bet-on-the-shape-of-fstar">Each family is a bet on the shape of <span class="math inline">\(f^\star\)</span></h4>
 <p>A plane, a sparse plane, a sum of curves, a set of rectangles, an average of many, a composition. Four questions about the world decide which bet pays</p>
 <h4 id="the-data-split-decides-what-you-may-believe">The data split decides what you may believe</h4>
-<p>Fit on the training rows, choose on the selection rows, open the test set once</p>
-<h4 id="the-training-error-flatters-by-a-theorem">The training error flatters, by a theorem</h4>
-<p>Optimistic on average for every minimizer over a fixed class, and no substitute for held-out data for the rest. <em>How much flexibility to allow, and how to choose it: next</em></p>
+<p>Fit on the training rows, tune on the selection rows, open the test set once</p>
+<h4 id="training-error-underestimates-risk">Training error underestimates risk</h4>
+<p>Optimistic on average for every minimizer over a fixed class</p>
 
 
 </section>
