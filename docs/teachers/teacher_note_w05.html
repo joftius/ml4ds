@@ -2352,7 +2352,7 @@ window.Quarto = {
 </thead>
 <tbody>
 <tr class="odd">
-<td>Problem 1(a, b): choosing on a dataset is minimizing an empirical risk over a finite class, so the winner’s score flatters it</td>
+<td>Problem 1(a, b): choosing on a dataset is minimizing an empirical risk over a finite class, so the winner’s score underestimates its risk</td>
 <td style="text-align: right;">4</td>
 <td>Keep</td>
 <td>Exercise 1 with <span class="math inline">\(\{f_1, \ldots, f_K\}\)</span> for <span class="math inline">\(\mathcal F\)</span> and the selection score for <span class="math inline">\(\hat R_n\)</span></td>
@@ -2367,7 +2367,7 @@ window.Quarto = {
 <td>Problem 2(a, b): ridge at a fixed <span class="math inline">\(\lambda\)</span> on noiseless <span class="math inline">\(Y = X\)</span> breaks the left inequality; the constrained form does not</td>
 <td style="text-align: right;">4</td>
 <td>Rush; cut second</td>
-<td><span class="math inline">\(\hat\beta_\lambda = \sum x_i^2 / (\sum x_i^2 + \lambda) &lt; 1\)</span>, training error positive, best risk zero: not the empirical risk minimizer</td>
+<td><span class="math inline">\(\hat\beta_\lambda = \sum x_i^2 / (\sum x_i^2 + \lambda) &lt; 1\)</span>, training error positive, best risk zero: it minimizes a different objective, not the training error</td>
 </tr>
 <tr class="even">
 <td>Problem 2(c, d): the greedy tree loses one line of the proof; the right inequality holds for any member of the class</td>
@@ -2382,94 +2382,97 @@ window.Quarto = {
 <td>Write <span class="math inline">\(\tilde{\mathbf X}^T\tilde{\mathbf X} = \mathbf X^T\mathbf X + \lambda\mathbf I\)</span> on the board and stop</td>
 </tr>
 <tr class="even">
-<td>Coding 1, step 1 and question 1: the split by track, seed 5</td>
+<td>Coding 1, step 1 and question 1: the split, one seed</td>
 <td style="text-align: right;">4</td>
 <td>Keep</td>
 <td>The unit of the split is the unit that repeats</td>
 </tr>
 <tr class="odd">
-<td>Coding 1, step 2: the mean 581, the plane 525, <span class="math inline">\(k\)</span>-NN 528 at <span class="math inline">\(k = 100\)</span>; genre dummies in the distance, 518</td>
+<td>Coding 1, step 2: the mean 564, the plane 526, <span class="math inline">\(k\)</span>-NN 523 at <span class="math inline">\(k = 100\)</span></td>
 <td style="text-align: right;">6</td>
 <td>Keep</td>
-<td>If stuck on the loop, give <code>sapply(ks, function(k) mse(y_se, ____))</code></td>
+<td>If stuck on the loop, give <code>sapply(ks, function(k) mse(y_tune, ____))</code></td>
 </tr>
 <tr class="even">
-<td>Coding 2, step 3: the lasso, <span class="math inline">\(\lambda\)</span> chosen from the path, no coefficient at zero</td>
+<td>Coding 2, step 3: the lasso, <span class="math inline">\(\lambda\)</span> chosen from the path, no coefficient at zero, 526</td>
 <td style="text-align: right;">4</td>
 <td>Keep</td>
 <td><code>predict()</code> gives one column per <span class="math inline">\(\lambda\)</span>; <code>apply</code> over columns</td>
 </tr>
 <tr class="odd">
-<td>Coding 2, step 4: additive splines, <span class="math inline">\(J = 6\)</span>, 490</td>
+<td>Coding 2, step 4: additive splines, <span class="math inline">\(J = 3\)</span>, 495</td>
 <td style="text-align: right;">4</td>
 <td>Keep</td>
-<td>Same loop as step 3 with <code>lm(gam_formula(J), sp_train)</code></td>
+<td>Same loop as step 3 with <code>spline_fit(J, sp_train)</code></td>
 </tr>
 <tr class="even">
-<td>Coding 2, step 5: tree depth 3 (512), forest 492</td>
+<td>Coding 2, step 5: tree depth 3 (513), forest 499</td>
 <td style="text-align: right;">5</td>
 <td>Rush</td>
-<td>Start the forest and talk while it fits (about a minute)</td>
+<td>Start the forest and talk while it fits (about half a minute)</td>
 </tr>
 <tr class="odd">
-<td>Coding 2, step 6: network, <span class="math inline">\(M = 2\)</span>, 486</td>
+<td>Coding 2, step 6: network, <span class="math inline">\(M = 2\)</span>, 496</td>
 <td style="text-align: right;">3</td>
 <td>Rush; cut first</td>
-<td>Say it: the lecture’s number, two hidden units, and the bigger ones overfit</td>
+<td>Say it: the lecture’s number, two hidden units, and the bigger ones do worse</td>
 </tr>
 <tr class="even">
-<td>Coding 2, leaderboard and question 2: the three that bend lead by 30 to 40; only the mean, the plane and the forest are unbiased rows</td>
+<td>Coding 2, leaderboard and question 2: the three that bend lead by about 30; the mean, the plane and the forest are the unbiased rows</td>
 <td style="text-align: right;">2</td>
 <td>Keep</td>
 <td>Problem 1 read off the board</td>
 </tr>
 <tr class="odd">
-<td>Coding 3, step 7: every competitor refitted on the 7,000 training and selection tracks at its chosen knob</td>
+<td>Coding 3, step 7: every competitor fitted so far refitted on the 7,000 training and tuning tracks at its chosen knob</td>
 <td style="text-align: right;">6</td>
 <td>Keep</td>
-<td>If short, refit only the three leaders and the plane; the forest takes another minute</td>
+<td>The solution’s <code>exists()</code> guards skip what was cut; refitting the plane, the lasso and the splines is enough</td>
 </tr>
 <tr class="even">
-<td>Coding 3, step 8 and question 3: the vault opened once; forest 474, splines 481, network 481; paired difference 6.9, standard error 4.6; every score lower, the mean’s included</td>
+<td>Coding 3, step 8 and question 3: the vault opened once; forest, network and splines all 499; the tuning leaders, splines against network, paired difference 0.3 with standard error 3.2</td>
 <td style="text-align: right;">4</td>
 <td>Keep</td>
-<td>The vault’s standard errors mean what they say; this one draw cannot show problem 1’s bias</td>
+<td>The pair is chosen on the tuning leaderboard, before the vault; this one draw cannot isolate problem 1’s bias</td>
 </tr>
 <tr class="odd">
-<td>Coding 3, question 4: forest training error 87 against test 474; plane 510 against 519</td>
+<td>Coding 3, question 4: forest training error 95 against test 499; plane 527 against 534</td>
 <td style="text-align: right;">2</td>
 <td>Rush</td>
 <td>The theorem covers the plane and not the forest; the gap is the same lesson either way</td>
 </tr>
 </tbody>
 </table>
-<p>Minimum seminar, about 35 minutes: problem 1, coding steps 1 to 4, 7 and 8 (refitting only the leaders and the plane). With more time, add step 5 back first, then problem 2.</p>
+<p>Minimum seminar, about 35 minutes: problem 1, coding steps 1 to 4, 7 and 8, with step 7 refitting only the plane, the lasso and the splines. With more time, add step 5 back first, then problem 2.</p>
 </section>
 <section id="if-you-read-on" class="level2">
 <h2 class="anchored" data-anchor-id="if-you-read-on">If you read on</h2>
 <p>How it runs</p>
 <ul>
 <li>Students did exercises 1 and 2 at home. Open the <a href="https://ml4ds.com/teachers/notebook5_complete.html">complete notebook</a> on screen: blue boxes are hints, opened in order after the room has had a few minutes; green boxes are answers.</li>
-<li>Show an exercise’s solution only if asked. Exercise 1 is the lecture’s stated theorem, proved; exercise 2 derives the ridge estimator the lecture used.</li>
-<li>Everything headed “Optional, can be done at home” is outside the seminar: ridge three ways (problem 3 in code) and the lasso path on the tracks.</li>
+<li>Show an exercise’s solution only if asked. Exercise 1 is the lecture’s stated theorem, proved; exercise 2 derives the ridge estimator the lecture used. Each problem’s solution stands on its own, so a skipped problem costs nothing later.</li>
+<li>Everything headed “Optional, can be done at home” is outside the seminar: ridge two ways (problem 3 in code), the lasso path on the tracks, and adding genre.</li>
+<li>One seed, <code>set.seed(310)</code> at the split, and no other. A student who runs the chunks in order gets the numbers below; one who re-runs the forest or a network chunk gets slightly different ones, and one who changes the seed gets a different split. Genre is left out (the lecture’s rows with genre score about 10 lower).</li>
 </ul>
 <p>What students should see</p>
 <ul>
 <li>Problem 1(c): <span class="math inline">\(\mathbb E[S_{\hat k}] = r - \tfrac12\)</span> for two candidates and <span class="math inline">\(r - 1 + 2^{1-K}\)</span> for <span class="math inline">\(K\)</span>; the winner’s risk is <span class="math inline">\(r\)</span> exactly.</li>
 <li>Problem 2(a): <span class="math inline">\(\hat\beta_\lambda = \sum_i x_i^2 / (\sum_i x_i^2 + \lambda)\)</span>, training error <span class="math inline">\(\big(\lambda / (\sum_i x_i^2 + \lambda)\big)^2 \cdot \tfrac1n\sum_i x_i^2 &gt; 0\)</span> against a best risk of <span class="math inline">\(0\)</span>.</li>
-<li>Coding 1 (seed 5): 10,000 tracks, 5,000 / 2,000 / 3,000. Selection MSE: the mean 581, the plane 525, <span class="math inline">\(k\)</span>-NN on the eleven numeric inputs 528 at <span class="math inline">\(k = 100\)</span> (996 at <span class="math inline">\(k = 1\)</span>); with the five genre dummies in the distance 518 at <span class="math inline">\(k = 50\)</span>. Standard errors about 12.</li>
-<li>Coding 2: lasso <span class="math inline">\(\lambda = 0.0066\)</span> on glmnet’s scale, no coefficient at zero, 525; splines 507, 494, 490, 490 at <span class="math inline">\(J = 2, 3, 4, 6\)</span>; tree 521, 512, 513, 520, 555 at depths 2, 3, 4, 6, 8; forest (seed 1) 492; network (seed 10) 486, 505, 527, 550 at <span class="math inline">\(M = 2, 4, 8, 16\)</span>. Leaderboard: network 486, splines 490, forest 492, tree 512, lasso 525, plane 525, <span class="math inline">\(k\)</span>-NN 528, mean 581.</li>
-<li>Coding 3: test MSE forest 474, splines 481, network 481, tree 497, lasso 519, plane 519, <span class="math inline">\(k\)</span>-NN 525, mean 560, standard errors about 10; forest against splines, paired: 6.9 with standard error 4.6. Question 4: forest 87 against 474, plane 510 against 519.</li>
-<li>Optional: the formula and the augmented <code>lm()</code> agree to <span class="math inline">\(10^{-12}\)</span>; on the lasso path energy, duration and instrumentalness enter first, loudness at step 11 and the release year at step 36, with a coefficient of <span class="math inline">\(0.19\)</span> at the end.</li>
+<li>Coding 1: 10,000 tracks, 5,000 / 2,000 / 3,000, eleven numeric inputs. Tuning MSE: the mean 564, the plane 526, <span class="math inline">\(k\)</span>-NN 523 at <span class="math inline">\(k = 100\)</span> (1,002 at <span class="math inline">\(k = 1\)</span>). Standard errors about 12.</li>
+<li>Coding 2: lasso <span class="math inline">\(\lambda = 0.0095\)</span> on glmnet’s scale, no coefficient at zero, 526; splines 510, 495, 496, 497 at <span class="math inline">\(J = 2, 3, 4, 6\)</span>; tree 518, 513, 520, 533, 558 at depths 2, 3, 4, 6, 8; forest 499; network 496, 508, 512, 531 at <span class="math inline">\(M = 2, 4, 8, 16\)</span>. Leaderboard: splines 495, network 496, forest 499, tree 513, <span class="math inline">\(k\)</span>-NN 523, plane 526, lasso 526, mean 564.</li>
+<li>Coding 3: test MSE forest 499, network 499, splines 499, tree 516, <span class="math inline">\(k\)</span>-NN 519, lasso 534, plane 534, mean 561, standard errors about 10; the tuning leaders (splines, network) paired: 0.3 with standard error 3.2. Question 4: forest 95 against 499, plane 527 against 534.</li>
+<li>Optional: the formula and the augmented <code>lm()</code> agree to <span class="math inline">\(10^{-13}\)</span>; on the lasso path energy and duration enter at the second step, loudness at step 10 and the release year at step 49 of 63, with a coefficient of <span class="math inline">\(-0.06\)</span> at the end; with genre the plane scores 515 and the splines 486 on the tuning tracks.</li>
+<li>Run times in the build container (R 4.3): the whole notebook executes in under a minute; the slowest chunks are the step 7 refits (22 s, the forest on 7,000 rows and <span class="math inline">\(k\)</span>-NN against them), the step 2 baselines (12 s, seven values of <span class="math inline">\(k\)</span>) and step 5 (10 s, the forest). A laptop may take two or three times as long.</li>
 </ul>
 <p>Where they get stuck</p>
 <ul>
-<li><code>design()</code> builds the matrix from a formula with <code>track_popularity</code> on the left, so it needs a data frame that has that column; a matrix of inputs alone fails. The same goes for <code>predict()</code> on the <code>lm</code> and <code>rpart</code> fits (data frames), against <code>glmnet</code> and <code>nnet</code> (matrices).</li>
-<li><code>predict()</code> on a <code>glmnet</code> fit returns a matrix with one column per <span class="math inline">\(\lambda\)</span> (<code>apply(..., 2, ...)</code> to score each); on an <code>nnet</code> fit an <span class="math inline">\(n \times 1\)</span> matrix, which goes into <code>pred_te</code> as <code>as.vector()</code>.</li>
-<li>Scoring the knob loop on <code>sp_train</code> instead of <code>sp_sel</code>: the tree then picks depth 8 and the network <span class="math inline">\(M = 16\)</span>, and the leaderboard reads differently. The checkpoint does not catch this; the numbers above do.</li>
-<li>Skipping the refit and predicting the test tracks from the part 2 fits, or rebuilding the standardized matrices with <code>sp_train</code> as the reference: the vault then moves by a few units. Not wrong, but not the task; the point of step 7 is that the chosen model is refitted on everything that is not the vault.</li>
-<li>Question 3: every test score is lower than its selection score, the mean’s included, and students read it as “the models improved”. The mean chose nothing; the test draw is easier (560 against 581 on the mean’s row) and the refits used 7,000 rows. Problem 1’s bias is an average over draws and this one draw cannot show it.</li>
-<li>Time: the forest takes about a minute each time (steps 5 and 7), the <span class="math inline">\(M = 16\)</span> network the longest of the four. Start them and keep talking.</li>
+<li><code>track_popularity ~ .</code> uses every other column of the data frame, which is why the loader keeps only the outcome and the eleven inputs; a student who keeps <code>track_id</code> or <code>genre</code> in the frame fits them too.</li>
+<li><code>scale(sp_tune[, feat], mu, s)</code>: the tuning and test matrices take the training (later: training plus tuning) means and standard deviations, not their own. Scaling each set by itself gives slightly different numbers and is the wrong procedure.</li>
+<li><code>predict()</code> on a <code>glmnet</code> fit returns a matrix with one column per <span class="math inline">\(\lambda\)</span> (<code>apply(..., 2, ...)</code> to score each); on an <code>nnet</code> fit an <span class="math inline">\(n \times 1\)</span> matrix, which goes into <code>pred_test</code> as <code>as.vector()</code>. <code>lm</code>, <code>rpart</code> and <code>randomForest</code> predict from data frames; <code>glmnet</code>, <code>nnet</code> and <code>knn_predict</code> from matrices.</li>
+<li>Scoring the knob loop on <code>sp_train</code> instead of <code>sp_tune</code>: the tree then picks depth 8 and the network <span class="math inline">\(M = 16\)</span>, and the leaderboard reads differently. The checkpoint does not catch this; the numbers above do.</li>
+<li>Step 8: choosing the pair to compare from the vault’s own top two. The notebook chooses it from the tuning leaderboard, before the vault is opened, and says why.</li>
+<li>Question 3: students may read the vault as “the models improved” or “got worse”. The mean chose nothing and moved too; the two sets of tracks are different draws and the refits used 7,000 rows, so this one comparison cannot isolate problem 1’s bias.</li>
+<li>The network stops at <code>maxit = 300</code> without converging (a fixed budget; running to convergence moves its test MSE by about 0.1), and its random starting weights mean a re-run gives a slightly different fit.</li>
 <li>In the student file, a chunk with a blank starts with <code>#| eval: false</code>; they delete that line once the blank is filled. The <code># ...</code> line can stay.</li>
 </ul>
 </section>

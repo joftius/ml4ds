@@ -1020,7 +1020,7 @@ $$
 $$
 
 ::: {.leave}
-Training error flatters the model: on average it sits below the best risk the class can reach, and the fitted model's risk above it. A test set estimates $R(\hat f)$; its average is the right end.
+Training error underestimates the risk: on average it sits below the best risk the class can reach, and the fitted model's risk above it. A test set estimates $R(\hat f)$; its average is the right end.
 :::
 
 **Proof**: exercise 1
