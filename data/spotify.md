@@ -11,10 +11,10 @@ description: "10,000 tracks from Spotify playlists of six genres, with audio fea
 | **Target and loss** | `track_popularity` with squared error. Variance about 560; a tenth of the tracks score exactly 0. |
 | **Available at prediction time** | The audio features and the release date are properties of the recording. The genre is the playlist's, not the track's. Popularity is Spotify's score in January 2020 and rewards recent plays, so `release_year` carries recency as well as era. |
 | **Permitted predictors** | Week 5: the ten audio features (`duration_ms` in minutes), `release_year` and `playlist_genre`. |
-| **Missingness** | None in the features; five tracks lack a name. |
-| **Split unit and seed** | Tracks, with `set.seed(5)`: 5,000 training, 2,000 selection, 3,000 test. A split by row puts the same track on both sides (week 7's leakage example). |
+| **Missingness** | None in the features; one track lacks a name. |
+| **Split unit and seed** | Tracks, with `set.seed(5)`: 5,000 training, 2,000 selection, 3,000 test. A split by row puts the same track on both sides (a leakage example for later in the course). |
 | **Baseline** | The training mean, 39.1: MSE 581 on the selection tracks, where least squares on the eleven numeric inputs scores about 541 and $k$ nearest neighbors on the same inputs about 528. The test scores are the seminar's. |
-| **Methods that use it** | Week 5: the lecture's demonstrations and the seminar's leaderboard. Week 7: cross-validation and the leakage check. |
+| **Methods that use it** | Week 5: the lecture's demonstrations and the seminar's leaderboard. Later: cross-validation and the leakage check. |
 | **Complication it carries** | The score is a snapshot of plays, not a judgment of the music; the playlists were one person's choice in one month. |
 | **Limitations** | Six genres, no lyrics, no artist history, no play counts. Fine for the mechanism, not for a claim about music. |
 | **Fictional?** | No. |
