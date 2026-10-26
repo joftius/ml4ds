@@ -1661,7 +1661,7 @@ display:block!important;
 <h2>A regression tree for popularity</h2>
 <aside class="notes">
 <p><code>[#########-----------]</code> 47%  36 of 76 min</p>
-<p>The legacy penguin tree, on the Spotify training tracks: popularity on release year and energy (the first two inputs to enter the lasso path), depth 3, at least 250 tracks in a leaf. Read it from the top: one question per node, the left branch is yes, a number in each leaf. The cutoff 2017.5 (2018 and later to the right) splits first; energy matters on both sides, with different cutoffs; the right side splits again at 2018.5. The leaf values are mean popularity in the leaf.</p>
+<p>The legacy penguin tree, on the Spotify training tracks: popularity on release year and energy (the year for its recency effect, energy as the strongest linear input on the lasso path), depth 3, at least 250 tracks in a leaf. Read it from the top: one question per node, the left branch is yes, a number in each leaf. The cutoff 2017.5 (2018 and later to the right) splits first; energy matters on both sides, with different cutoffs; the right side splits again at 2018.5. The leaf values are mean popularity in the leaf.</p>
 <style type="text/css">
 span.MJX_Assistive_MathML {
 position:absolute!important;

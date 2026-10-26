@@ -553,7 +553,7 @@ Compress: a sequence of yes-or-no questions, each about one input, is a model to
 ## A regression tree for popularity
 
 ::: {.notes}
-The legacy penguin tree, on the Spotify training tracks: popularity on release year and energy (the first two inputs to enter the lasso path), depth 3, at least 250 tracks in a leaf. Read it from the top: one question per node, the left branch is yes, a number in each leaf. The cutoff 2017.5 (2018 and later to the right) splits first; energy matters on both sides, with different cutoffs; the right side splits again at 2018.5. The leaf values are mean popularity in the leaf.
+The legacy penguin tree, on the Spotify training tracks: popularity on release year and energy (the year for its recency effect, energy as the strongest linear input on the lasso path), depth 3, at least 250 tracks in a leaf. Read it from the top: one question per node, the left branch is yes, a number in each leaf. The cutoff 2017.5 (2018 and later to the right) splits first; energy matters on both sides, with different cutoffs; the right side splits again at 2018.5. The leaf values are mean popularity in the leaf.
 :::
 
 ```{r}

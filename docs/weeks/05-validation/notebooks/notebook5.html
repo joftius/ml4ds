@@ -1,0 +1,1049 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.10.18">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Joshua Loftus">
+
+<title>Week 5 seminar – machine learning 4 data science</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: 1.5em;}
+div.column{flex: auto;}
+@media screen {
+div.columns{gap: min(4vw, 1.5em);}
+div.column{overflow-x: auto;}
+}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../../site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../../site_libs/bootstrap/bootstrap-2933ca209de16f787bfe4fe53c4e45ee.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="../../../styles.css">
+</head>
+
+<body class="nav-fixed quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a href="https://ml4ds.com" class="navbar-brand navbar-brand-logo">
+    <img src="../../../files/sticker.png" alt="ml4ds" class="navbar-logo light-content">
+    <img src="../../../files/sticker.png" alt="ml4ds" class="navbar-logo dark-content">
+    </a>
+    <a class="navbar-brand" href="https://ml4ds.com">
+    <span class="navbar-title">machine learning 4 data science</span>
+    </a>
+  </div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-references" role="link" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">references</span>
+    </a>
+    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="nav-menu-references">    
+        <li>
+    <a class="dropdown-item" href="https://www.statlearning.com/">
+ <span class="dropdown-text">ISLR</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="https://mlstory.org/">
+ <span class="dropdown-text">PPA (Patterns, Predictions, and Actions)</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="https://causalml-book.org/">
+ <span class="dropdown-text">CausalML</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="https://r4ds.hadley.nz/">
+ <span class="dropdown-text">R4DS</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="https://hastie.su.domains/ElemStatLearn/">
+ <span class="dropdown-text">ESL</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="https://hastie.su.domains/CASI/">
+ <span class="dropdown-text">CASI</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="https://christophm.github.io/interpretable-ml-book/">
+ <span class="dropdown-text">IML</span></a>
+  </li>  
+    </ul>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" href="../../../index.html"> 
+<span class="menu-text">content</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../../about.html"> 
+<span class="menu-text">about</span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul class="collapse">
+  <li><a href="#before-the-seminar" id="toc-before-the-seminar" class="nav-link active" data-scroll-target="#before-the-seminar">Before the seminar</a></li>
+  <li><a href="#problems" id="toc-problems" class="nav-link" data-scroll-target="#problems">Problems</a></li>
+  <li><a href="#coding" id="toc-coding" class="nav-link" data-scroll-target="#coding">Coding</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Week 5 seminar</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Joshua Loftus </p>
+          </div>
+  </div>
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>This is the student version of the notebook. The code you write goes where a line says <code># ...</code> or has a <code>____</code>. A code chunk with a blank starts with <code>#| eval: false</code>, so the file renders as it stands; delete that line once you have filled the blank. Working through the chunks one at a time in RStudio (Ctrl/Cmd+Enter) is unaffected. Answers are revealed in the seminar.</p>
+</div>
+</div>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)       <span class="co"># should've already install.packages("tidyverse")</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(splines)         <span class="co"># ns(); ships with R</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(glmnet)          <span class="co"># might need to install.packages("glmnet")</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(rpart)           <span class="co"># might need to install.packages("rpart")</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(randomForest)    <span class="co"># might need to install.packages("randomForest")</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(nnet)            <span class="co"># one-hidden-layer networks; ships with R</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="fu">theme_set</span>(<span class="fu">theme_minimal</span>())</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>mse <span class="ot">&lt;-</span> <span class="cf">function</span>(y, pred) <span class="fu">mean</span>((y <span class="sc">-</span> pred)<span class="sc">^</span><span class="dv">2</span>)</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>se_loss <span class="ot">&lt;-</span> <span class="cf">function</span>(y, pred) <span class="fu">sd</span>((y <span class="sc">-</span> pred)<span class="sc">^</span><span class="dv">2</span>) <span class="sc">/</span> <span class="fu">sqrt</span>(<span class="fu">length</span>(y))   <span class="co"># standard error of an MSE</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="co"># k-NN regression with several standardized inputs, as in the lecture: squared distances by</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="co"># matrix algebra, then the mean outcome of the k nearest training rows.</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>knn_predict <span class="ot">&lt;-</span> <span class="cf">function</span>(Xnew, Xtrain, ytrain, k) {</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>  d2 <span class="ot">&lt;-</span> <span class="fu">outer</span>(<span class="fu">rowSums</span>(Xnew<span class="sc">^</span><span class="dv">2</span>), <span class="fu">rowSums</span>(Xtrain<span class="sc">^</span><span class="dv">2</span>), <span class="st">"+"</span>) <span class="sc">-</span> <span class="dv">2</span> <span class="sc">*</span> Xnew <span class="sc">%*%</span> <span class="fu">t</span>(Xtrain)</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">apply</span>(d2, <span class="dv">1</span>, <span class="cf">function</span>(d) <span class="fu">mean</span>(ytrain[<span class="fu">order</span>(d)[<span class="dv">1</span><span class="sc">:</span>k]]))</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<section id="before-the-seminar" class="level2">
+<h2 class="anchored" data-anchor-id="before-the-seminar">Before the seminar</h2>
+<!-- At home, before the seminar. -->
+<p>The lecture stated one result, the optimism theorem, and left its proof to you (exercise 1). It used ridge regression without deriving its estimator (exercise 2). Do both on paper before the seminar; the seminar’s problems are variations on them. You may use, without proof: linearity of expectation; the tower property, <span class="math inline">\(\mathbb E[W] = \mathbb E\big[\mathbb E[W \mid V]\big]\)</span>; that for a symmetric matrix <span class="math inline">\(\mathbf A\)</span> the gradient of <span class="math inline">\(\beta^T\mathbf A\beta\)</span> is <span class="math inline">\(2\mathbf A\beta\)</span> and its Hessian is <span class="math inline">\(2\mathbf A\)</span> (week 4); and that a symmetric matrix has real eigenvalues and an orthonormal basis of eigenvectors. Throughout, assume that every expectation that appears exists and every minimizer named exists.</p>
+<div class="callout callout-style-default callout-warning callout-titled" title="Hints">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Warning</span>Hints
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Each exercise has hints, collapsed below it. Do not open a hint unless you have been stuck for at least a few minutes, and open them in order. Solutions are shown in the seminar if you ask.</p>
+</div>
+</div>
+<p><strong>Exercise 1 (optimism theorem).</strong> Training data <span class="math inline">\((x_i, y_i)\)</span>, <span class="math inline">\(i = 1, \ldots, n\)</span>, independent draws from the population of <span class="math inline">\((X, Y)\)</span>; a loss <span class="math inline">\(\ell\)</span>; the risk <span class="math inline">\(R(f) = \mathbb E\,\ell(Y, f(X))\)</span> and the training error <span class="math inline">\(\hat R_n(f) = \tfrac1n\sum_{i=1}^n \ell(y_i, f(x_i))\)</span>. A class <span class="math inline">\(\mathcal F\)</span> is fixed before the data; <span class="math inline">\(f_{\mathcal F}\)</span> minimizes <span class="math inline">\(R\)</span> over <span class="math inline">\(\mathcal F\)</span>; <span class="math inline">\(\hat f\)</span> minimizes <span class="math inline">\(\hat R_n\)</span> over <span class="math inline">\(\mathcal F\)</span> (the empirical risk minimizer). Expectations are over the training data.</p>
+<ol type="a">
+<li><p>Let <span class="math inline">\(f\)</span> be any fixed function, chosen without looking at the data. Show that <span class="math inline">\(\mathbb E[\hat R_n(f)] = R(f)\)</span>. Which part of “independent draws from the population” did you use, and which part did you not use?</p></li>
+<li><p>Show that <span class="math inline">\(\hat R_n(\hat f) \le \hat R_n(f_{\mathcal F})\)</span> for every training set, and deduce <span class="math inline">\(\mathbb E[\hat R_n(\hat f)] \le R(f_{\mathcal F})\)</span>.</p></li>
+<li><p>Show that <span class="math inline">\(R(f_{\mathcal F}) \le R(\hat f)\)</span> for every training set, and deduce <span class="math inline">\(R(f_{\mathcal F}) \le \mathbb E[R(\hat f)]\)</span>. Of the two inequalities in the theorem, which used the sampling assumption and which used only the definitions?</p></li>
+<li><p>A test set <span class="math inline">\((x'_j, y'_j)\)</span>, <span class="math inline">\(j = 1, \ldots, m\)</span>, of independent draws from the population, independent of the training data, scores <span class="math inline">\(\hat f\)</span> by <span class="math inline">\(\hat R_{\text{test}}(\hat f) = \tfrac1m\sum_j \ell(y'_j, \hat f(x'_j))\)</span>. Show that <span class="math inline">\(\mathbb E[\hat R_{\text{test}}(\hat f)] = \mathbb E[R(\hat f)]\)</span>: the test score lands, on average, on the right end of the theorem.</p></li>
+</ol>
+<div class="callout callout-style-default callout-note callout-titled" title="Hint 1">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-3-contents" aria-controls="callout-3" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Hint 1
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-3" class="callout-3-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<ol type="a">
+<li><span class="math inline">\(\hat R_n(f)\)</span> is an average of <span class="math inline">\(n\)</span> terms; take the expectation of each term. What is the distribution of <span class="math inline">\((x_i, y_i)\)</span>?</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled" title="Hint 2">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-4-contents" aria-controls="callout-4" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Hint 2
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-4" class="callout-4-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<ol start="2" type="a">
+<li><span class="math inline">\(\hat f\)</span> minimizes <span class="math inline">\(\hat R_n\)</span> over <span class="math inline">\(\mathcal F\)</span>, and <span class="math inline">\(f_{\mathcal F}\)</span> is a member of <span class="math inline">\(\mathcal F\)</span>. Then apply (a) to <span class="math inline">\(f_{\mathcal F}\)</span>: is it a fixed function?</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled" title="Hint 3">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-5-contents" aria-controls="callout-5" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Hint 3
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-5" class="callout-5-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<ol start="4" type="a">
+<li>Condition on the training data. Given them, <span class="math inline">\(\hat f\)</span> is a fixed function and the test rows are still draws from the population; apply (a), then the tower property.</li>
+</ol>
+</div>
+</div>
+</div>
+<p><strong>Exercise 2 (ridge regression’s normal equations).</strong> <span class="math inline">\(\mathbf X\)</span> is <span class="math inline">\(n \times p\)</span> with centered columns and <span class="math inline">\(\mathbf y\)</span> is centered, so there is no intercept to fit (the lecture’s convention: the intercept is not penalized). For <span class="math inline">\(\lambda &gt; 0\)</span> the ridge estimator minimizes <span class="math display">\[
+Q_\lambda(\beta) = \|\mathbf y - \mathbf X\beta\|^2 + \lambda\|\beta\|^2.
+\]</span></p>
+<ol type="a">
+<li><p>Expand <span class="math inline">\(Q_\lambda\)</span>, compute its gradient, and show that a stationary point satisfies <span class="math inline">\((\mathbf X^T\mathbf X + \lambda\mathbf I)\beta = \mathbf X^T\mathbf y\)</span>.</p></li>
+<li><p>Show that <span class="math inline">\(\mathbf X^T\mathbf X + \lambda\mathbf I\)</span> is positive definite, hence invertible, for every <span class="math inline">\(\lambda &gt; 0\)</span>, whatever <span class="math inline">\(n\)</span> and <span class="math inline">\(p\)</span> are. Conclude that <span class="math inline">\(\hat\beta_\lambda = (\mathbf X^T\mathbf X + \lambda\mathbf I)^{-1}\mathbf X^T\mathbf y\)</span> is the unique stationary point, even when <span class="math inline">\(p &gt; n\)</span>.</p></li>
+<li><p>Compute the Hessian of <span class="math inline">\(Q_\lambda\)</span>. In week 4’s language, what are its smallest and largest curvatures, in terms of the eigenvalues <span class="math inline">\(\mu_1 \ge \dots \ge \mu_p \ge 0\)</span> of <span class="math inline">\(\mathbf X^T\mathbf X\)</span>? Why is the stationary point the global minimizer, and what does the penalty do to the ratio of largest to smallest curvature that week 4 showed sets the speed of gradient descent?</p></li>
+<li><p>Show that <span class="math inline">\(\|\hat\beta_\lambda\| \le \|\mathbf X^T\mathbf y\|/\lambda\)</span>, so <span class="math inline">\(\hat\beta_\lambda \to \mathbf 0\)</span> as <span class="math inline">\(\lambda \to \infty\)</span>. What is <span class="math inline">\(\hat\beta_\lambda\)</span> at <span class="math inline">\(\lambda = 0\)</span> when <span class="math inline">\(\mathbf X^T\mathbf X\)</span> is invertible?</p></li>
+</ol>
+<div class="callout callout-style-default callout-note callout-titled" title="Hint 1">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-6-contents" aria-controls="callout-6" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Hint 1
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-6" class="callout-6-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<ol type="a">
+<li><span class="math inline">\(\|\mathbf y - \mathbf X\beta\|^2 = \mathbf y^T\mathbf y - 2\beta^T\mathbf X^T\mathbf y + \beta^T\mathbf X^T\mathbf X\beta\)</span>, and <span class="math inline">\(\|\beta\|^2 = \beta^T\mathbf I\beta\)</span>. Differentiate term by term.</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled" title="Hint 2">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-7-contents" aria-controls="callout-7" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Hint 2
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-7" class="callout-7-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<ol start="2" type="a">
+<li>For any <span class="math inline">\(v\)</span>, <span class="math inline">\(v^T\mathbf X^T\mathbf X v = \|\mathbf X v\|^2\)</span>. What is <span class="math inline">\(v^T(\mathbf X^T\mathbf X + \lambda\mathbf I)v\)</span> when <span class="math inline">\(v \ne \mathbf 0\)</span>?</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled" title="Hint 3">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-8-contents" aria-controls="callout-8" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Hint 3
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-8" class="callout-8-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>(c), (d) <span class="math inline">\(\mathbf X^T\mathbf X\)</span> and <span class="math inline">\(\mathbf X^T\mathbf X + \lambda\mathbf I\)</span> have the same eigenvectors; the eigenvalues of the second are <span class="math inline">\(\mu_j + \lambda\)</span>. Write <span class="math inline">\(\mathbf X^T\mathbf y\)</span> in the eigenvector basis.</p>
+</div>
+</div>
+</div>
+</section>
+<section id="problems" class="level2">
+<h2 class="anchored" data-anchor-id="problems">Problems</h2>
+<!-- About 20 min: problems 1 to 3, pen and paper. Hints are revealed in order after a few minutes, the answer last. -->
+<p><strong>Problem 1 (the selection winner’s score).</strong> <span class="math inline">\(K\)</span> candidate predictors <span class="math inline">\(f_1, \ldots, f_K\)</span> have been fitted on the training rows, say by <span class="math inline">\(K\)</span> methods or one method at <span class="math inline">\(K\)</span> values of its knob. A selection set of <span class="math inline">\(m\)</span> rows, independent draws from the population and independent of the training rows, scores them: <span class="math inline">\(S_k = \tfrac1m\sum_j \ell(y_j, f_k(x_j))\)</span>. The winner is <span class="math inline">\(\hat k = \arg\min_k S_k\)</span>, and <span class="math inline">\(S_{\hat k}\)</span> is its score, the number at the top of the leaderboard.</p>
+<ol type="a">
+<li><p>Show that <span class="math inline">\(\mathbb E[S_k \mid \text{training data}] = R(f_k)\)</span> for each <span class="math inline">\(k\)</span>.</p></li>
+<li><p>Show that <span class="math inline">\(\mathbb E[S_{\hat k} \mid \text{training data}] \le \min_k R(f_k) \le \mathbb E[R(f_{\hat k}) \mid \text{training data}]\)</span>. Which argument from exercise 1 is this, with what in place of <span class="math inline">\(\mathcal F\)</span> and of <span class="math inline">\(\hat R_n\)</span>?</p></li>
+<li><p>Two candidates with the same risk <span class="math inline">\(r\)</span>, whose scores are independent and each equal to <span class="math inline">\(r - 1\)</span> or <span class="math inline">\(r + 1\)</span> with probability <span class="math inline">\(\tfrac12\)</span>. Compute <span class="math inline">\(\mathbb E[S_{\hat k}]\)</span> and <span class="math inline">\(\mathbb E[R(f_{\hat k})]\)</span>. Now <span class="math inline">\(K\)</span> such candidates: what is <span class="math inline">\(\mathbb E[S_{\hat k}]\)</span>, and what happens as <span class="math inline">\(K\)</span> grows?</p></li>
+<li><p>The winner is then scored once on the test set. Why does that score not have the same problem?</p></li>
+</ol>
+<p><strong>Problem 2 (where the proof breaks).</strong> The lecture said the optimism theorem covers least squares and ridge or lasso with a fixed radius, and not ridge at a fixed <span class="math inline">\(\lambda\)</span>, a greedily grown tree, or a knob chosen on the data.</p>
+<ol type="a">
+<li><p>A population in which <span class="math inline">\(Y = X\)</span> exactly (no noise), <span class="math inline">\(\mathbb E X^2 &gt; 0\)</span>, squared loss, and the class <span class="math inline">\(\mathcal F = \{x \mapsto \beta x : \beta \in \mathbb R\}\)</span> of lines through the origin. Find <span class="math inline">\(f_{\mathcal F}\)</span> and <span class="math inline">\(R(f_{\mathcal F})\)</span>. For a sample <span class="math inline">\(x_1, \ldots, x_n\)</span> (not all zero) and a fixed <span class="math inline">\(\lambda &gt; 0\)</span>, find the ridge estimate <span class="math inline">\(\hat\beta_\lambda\)</span> and its training error <span class="math inline">\(\hat R_n(\hat\beta_\lambda)\)</span>, and show that <span class="math inline">\(\mathbb E[\hat R_n(\hat\beta_\lambda)] &gt; R(f_{\mathcal F})\)</span>: the left inequality fails. Which hypothesis of the theorem does <span class="math inline">\(\hat\beta_\lambda\)</span> violate?</p></li>
+<li><p>Replace the penalty by the constraint <span class="math inline">\(|\beta| \le t\)</span> for a fixed <span class="math inline">\(t &gt; 0\)</span>: <span class="math inline">\(\mathcal F_t = \{x \mapsto \beta x : |\beta| \le t\}\)</span>, and <span class="math inline">\(\hat f\)</span> the minimizer of <span class="math inline">\(\hat R_n\)</span> over <span class="math inline">\(\mathcal F_t\)</span>. Does the theorem apply? What is <span class="math inline">\(\hat f\)</span> here, for <span class="math inline">\(t \ge 1\)</span> and for <span class="math inline">\(t &lt; 1\)</span>?</p></li>
+<li><p>A tree of depth <span class="math inline">\(2\)</span> grown greedily (the lecture’s splitting) is a member of the class of all depth-<span class="math inline">\(2\)</span> trees on the same inputs. Which line of your proof of exercise 1 is not available for it? Does that mean its training error must sit above its risk on average, or only that the theorem does not say?</p></li>
+<li><p>Which of the theorem’s two inequalities holds for every <span class="math inline">\(\hat f \in \mathcal F\)</span>, whatever algorithm produced it?</p></li>
+</ol>
+<p><strong>Problem 3 (ridge as least squares on more rows).</strong> Stack <span class="math inline">\(p\)</span> extra rows under the data: <span class="math inline">\(\tilde{\mathbf X} = \begin{pmatrix}\mathbf X \\ \sqrt\lambda\,\mathbf I_p\end{pmatrix}\)</span>, an <span class="math inline">\((n + p) \times p\)</span> matrix, and <span class="math inline">\(\tilde{\mathbf y} = \begin{pmatrix}\mathbf y \\ \mathbf 0_p\end{pmatrix}\)</span>.</p>
+<ol type="a">
+<li><p>Show that <span class="math inline">\(\|\tilde{\mathbf y} - \tilde{\mathbf X}\beta\|^2 = Q_\lambda(\beta)\)</span>, the ridge objective of exercise 2.</p></li>
+<li><p>Write week 2’s normal equations for the regression of <span class="math inline">\(\tilde{\mathbf y}\)</span> on <span class="math inline">\(\tilde{\mathbf X}\)</span> and check that they are exercise 2’s. Show that <span class="math inline">\(\tilde{\mathbf X}\)</span> has full column rank for every <span class="math inline">\(\lambda &gt; 0\)</span>, even when <span class="math inline">\(p &gt; n\)</span>.</p></li>
+<li><p>In words: what does each of the <span class="math inline">\(p\)</span> extra rows say, and what does <span class="math inline">\(\sqrt\lambda\)</span> do? How would you fit ridge regression with nothing but <code>lm()</code>?</p></li>
+</ol>
+</section>
+<section id="coding" class="level2">
+<h2 class="anchored" data-anchor-id="coding">Coding</h2>
+<!-- About 40 min: part 1 10, part 2 18, part 3 12. Skeleton lines in comments are scaffolds: the statistical operation is what you write. Everything headed "Optional, can be done at home" is outside the seminar. -->
+<section id="the-task-and-the-split" class="level3">
+<h3 class="anchored" data-anchor-id="the-task-and-the-split">1. The task and the split</h3>
+<!-- 10 min: steps 1 and 2, question 1. -->
+<p>The lecture’s task: predict a track’s popularity from ten audio features, its release year and its genre, squared loss (<a href="https://ml4ds.com/data/spotify.html">data note</a>). The three-way split with the lecture’s seed, so that your numbers match its leaderboards.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>sp_file <span class="ot">&lt;-</span> <span class="st">"https://ml4ds.com/files/spotify_tracks.csv"</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="co"># the course file; a local copy is used if one is beside this notebook's folder</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (p <span class="cf">in</span> <span class="fu">c</span>(<span class="st">"../../../files/spotify_tracks.csv"</span>, <span class="st">"../../../../files/spotify_tracks.csv"</span>)) <span class="cf">if</span> (<span class="fu">file.exists</span>(p)) sp_file <span class="ot">&lt;-</span> p</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>sp <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(sp_file, <span class="at">show_col_types =</span> <span class="cn">FALSE</span>) <span class="sc">|&gt;</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">distinct</span>(track_id, <span class="at">.keep_all =</span> <span class="cn">TRUE</span>) <span class="sc">|&gt;</span>          <span class="co"># one row per track</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">duration_min =</span> duration_ms <span class="sc">/</span> <span class="dv">60000</span>, <span class="at">genre =</span> <span class="fu">factor</span>(playlist_genre))</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>feat <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"danceability"</span>, <span class="st">"energy"</span>, <span class="st">"loudness"</span>, <span class="st">"speechiness"</span>, <span class="st">"acousticness"</span>,</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>          <span class="st">"instrumentalness"</span>, <span class="st">"liveness"</span>, <span class="st">"valence"</span>, <span class="st">"tempo"</span>, <span class="st">"duration_min"</span>, <span class="st">"release_year"</span>)</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>f_plane <span class="ot">&lt;-</span> <span class="fu">reformulate</span>(<span class="fu">c</span>(feat, <span class="st">"genre"</span>), <span class="st">"track_popularity"</span>)   <span class="co"># every input, as a formula</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p><strong>Step 1.</strong> Split the 10,000 tracks at random into 5,000 training, 2,000 selection and 3,000 test tracks. The test tracks are the vault: nothing before part 3 touches them.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">5</span>)</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>sp_id <span class="ot">&lt;-</span> <span class="fu">sample</span>(<span class="fu">nrow</span>(sp))        <span class="co"># a random order of the 10,000 tracks</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="co"># sp_train &lt;- sp[sp_id[____], ]  # 5,000 tracks</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="co"># sp_sel &lt;- ____                 # 2,000</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="co"># sp_test &lt;- ____                # 3,000</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>Checkpoint (run it; if it stops, fix step 1 before going on):</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">nrow</span>(sp_train) <span class="sc">==</span> <span class="dv">5000</span>, <span class="fu">nrow</span>(sp_sel) <span class="sc">==</span> <span class="dv">2000</span>, <span class="fu">nrow</span>(sp_test) <span class="sc">==</span> <span class="dv">3000</span>,</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>          <span class="fu">length</span>(<span class="fu">intersect</span>(sp_train<span class="sc">$</span>track_id, <span class="fu">c</span>(sp_sel<span class="sc">$</span>track_id, sp_test<span class="sc">$</span>track_id))) <span class="sc">==</span> <span class="dv">0</span>,</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>          <span class="fu">length</span>(<span class="fu">intersect</span>(sp_sel<span class="sc">$</span>track_id, sp_test<span class="sc">$</span>track_id)) <span class="sc">==</span> <span class="dv">0</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p><strong>Question 1.</strong> The file has 11,554 rows for 10,000 tracks, because 1,101 tracks are in more than one playlist, and the split above is by track. If you had skipped <code>distinct()</code> and split the rows, what could happen to a track, and which of the lecture’s rules would the test score then break?</p>
+<p><strong>Step 2.</strong> The baselines on the selection tracks, as in the lecture. <code>score()</code> builds one leaderboard row: a competitor’s selection MSE and its standard error. The mean is done; add the plane (least squares on every input) and <span class="math inline">\(k\)</span> nearest neighbors on the eleven numeric inputs, standardized, with <span class="math inline">\(k\)</span> chosen on the selection tracks from <code>ks</code>. <code>design()</code> builds a standardized matrix of inputs, with genre as five 0/1 columns when asked, each column centered and scaled by the reference set’s mean and standard deviation.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>y_tr <span class="ot">&lt;-</span> sp_train<span class="sc">$</span>track_popularity</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>y_se <span class="ot">&lt;-</span> sp_sel<span class="sc">$</span>track_popularity</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>score <span class="ot">&lt;-</span> <span class="cf">function</span>(name, pred_sel)</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tibble</span>(<span class="at">competitor =</span> name, <span class="at">sel_mse =</span> <span class="fu">mse</span>(y_se, pred_sel), <span class="at">se =</span> <span class="fu">se_loss</span>(y_se, pred_sel))</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>design <span class="ot">&lt;-</span> <span class="cf">function</span>(d, ref, <span class="at">with_genre =</span> <span class="cn">TRUE</span>) {</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>  f <span class="ot">&lt;-</span> <span class="fu">reformulate</span>(<span class="cf">if</span> (with_genre) <span class="fu">c</span>(feat, <span class="st">"genre"</span>) <span class="cf">else</span> feat, <span class="st">"track_popularity"</span>)</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>  X <span class="ot">&lt;-</span> <span class="fu">model.matrix</span>(f, d)[, <span class="sc">-</span><span class="dv">1</span>]</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>  R <span class="ot">&lt;-</span> <span class="fu">model.matrix</span>(f, ref)[, <span class="sc">-</span><span class="dv">1</span>]</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale</span>(X, <span class="fu">colMeans</span>(R), <span class="fu">apply</span>(R, <span class="dv">2</span>, sd))</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>ks <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">5</span>, <span class="dv">10</span>, <span class="dv">20</span>, <span class="dv">50</span>, <span class="dv">100</span>, <span class="dv">200</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># fit_plane &lt;- lm(____)</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>X_tr <span class="ot">&lt;-</span> <span class="fu">design</span>(sp_train, sp_train, <span class="at">with_genre =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>X_se <span class="ot">&lt;-</span> <span class="fu">design</span>(sp_sel, sp_train, <span class="at">with_genre =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="co"># knn_sel &lt;- sapply(ks, function(k) ____)      # the selection MSE at each k</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="co"># k_best &lt;- ____</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>lb <span class="ot">&lt;-</span> <span class="fu">bind_rows</span>(</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">score</span>(<span class="st">"the training mean"</span>, <span class="fu">rep</span>(<span class="fu">mean</span>(y_tr), <span class="fu">nrow</span>(sp_sel)))</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>  <span class="co"># , score("least squares, every input", ____)</span></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>  <span class="co"># , score(paste("k-NN, numeric inputs, k =", k_best), ____)</span></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>lb</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="five-structures-each-tuned-on-the-selection-tracks" class="level3">
+<h3 class="anchored" data-anchor-id="five-structures-each-tuned-on-the-selection-tracks">2. Five structures, each tuned on the selection tracks</h3>
+<!-- 18 min: steps 3 to 6 and question 2. The network is the first thing to cut. -->
+<p>The pattern is the same for every family: fit on the training tracks at each value of the knob, score each fit on the selection tracks, keep the best. Each step adds one row to <code>lb</code>.</p>
+<p><strong>Step 3.</strong> The lasso. <code>glmnet()</code> fits the whole path of <span class="math inline">\(\lambda\)</span> values at once, on the standardized matrix with the genre columns; <code>predict()</code> on the selection matrix then gives one column of predictions per <span class="math inline">\(\lambda\)</span>. Choose <span class="math inline">\(\lambda\)</span>, and count the coefficients that are exactly zero at it.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>Xg_tr <span class="ot">&lt;-</span> <span class="fu">design</span>(sp_train, sp_train)</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>Xg_se <span class="ot">&lt;-</span> <span class="fu">design</span>(sp_sel, sp_train)</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>lasso_fit <span class="ot">&lt;-</span> <span class="fu">glmnet</span>(Xg_tr, y_tr, <span class="at">standardize =</span> <span class="cn">FALSE</span>)   <span class="co"># the columns already are</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="co"># lasso_sel &lt;- apply(predict(lasso_fit, Xg_se), 2, function(pred) ____)</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="co"># lam_best &lt;- lasso_fit$lambda[____]</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a><span class="co"># coefficients at lam_best: coef(lasso_fit, s = lam_best); how many are zero?</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a><span class="co"># ...</span></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a><span class="co"># lb &lt;- bind_rows(lb, score("lasso, every input", ____))</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p><strong>Step 4.</strong> Additive splines: <code>lm()</code> on a natural-spline basis of size <span class="math inline">\(J\)</span> for each numeric input, plus genre, as in the lecture. <code>gam_formula(J)</code> writes the formula. Choose <span class="math inline">\(J\)</span> from <code>Js</code>.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>gam_formula <span class="ot">&lt;-</span> <span class="cf">function</span>(J) <span class="fu">reformulate</span>(<span class="fu">c</span>(<span class="fu">sprintf</span>(<span class="st">"ns(%s, df = %d)"</span>, feat, J), <span class="st">"genre"</span>), <span class="st">"track_popularity"</span>)</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>Js <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">4</span>, <span class="dv">6</span>)</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="co"># gam_sel &lt;- sapply(Js, function(J) ____)</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="co"># J_best &lt;- ____</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="co"># fit_gam &lt;- ____</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a><span class="co"># lb &lt;- bind_rows(lb, score(paste("additive splines, J =", J_best), ____))</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p><strong>Step 5.</strong> A tree and a forest. <code>tree_at(d, data)</code> grows a tree of depth <span class="math inline">\(d\)</span>; choose the depth from <code>depths</code>. The forest has no knob today: <code>randomForest()</code> with its defaults, 300 trees, seeded so that everyone grows the same forest (it takes a minute).</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>tree_at <span class="ot">&lt;-</span> <span class="cf">function</span>(d, data) <span class="fu">rpart</span>(f_plane, data, <span class="at">control =</span> <span class="fu">rpart.control</span>(<span class="at">maxdepth =</span> d, <span class="at">cp =</span> <span class="dv">0</span>, <span class="at">minbucket =</span> <span class="dv">10</span>))</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>depths <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">4</span>, <span class="dv">6</span>, <span class="dv">8</span>)</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="co"># tree_sel &lt;- sapply(depths, function(d) ____)</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="co"># d_best &lt;- ____</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="co"># fit_tree &lt;- tree_at(d_best, sp_train)</span></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1</span>)</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>fit_rf <span class="ot">&lt;-</span> <span class="fu">randomForest</span>(f_plane, sp_train, <span class="at">ntree =</span> <span class="dv">300</span>)</span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a><span class="co"># lb &lt;- bind_rows(lb, score(paste("tree, depth", d_best), ____), score("forest, defaults", ____))</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p><strong>Step 6.</strong> A network with one hidden layer of <span class="math inline">\(M\)</span> units, <code>nnet()</code> on the standardized matrix (<code>linout = TRUE</code> for a numeric outcome; <code>decay</code> is a small ridge penalty on the weights, fixed today). <code>net_at()</code> seeds each fit, since the optimization starts from random weights. Choose <span class="math inline">\(M\)</span> from <code>Ms</code>.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>net_at <span class="ot">&lt;-</span> <span class="cf">function</span>(M, X, y) {</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set.seed</span>(<span class="dv">10</span>)</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">nnet</span>(X, y, <span class="at">size =</span> M, <span class="at">decay =</span> <span class="fl">0.1</span>, <span class="at">linout =</span> <span class="cn">TRUE</span>, <span class="at">maxit =</span> <span class="dv">300</span>, <span class="at">trace =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>Ms <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">2</span>, <span class="dv">4</span>, <span class="dv">8</span>, <span class="dv">16</span>)</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a><span class="co"># net_sel &lt;- sapply(Ms, function(M) ____)</span></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a><span class="co"># M_best &lt;- ____</span></span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a><span class="co"># fit_net &lt;- ____</span></span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a><span class="co"># lb &lt;- bind_rows(lb, score(paste("network, M =", M_best), ____))</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>The selection leaderboard:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>lb <span class="sc">|&gt;</span> <span class="fu">arrange</span>(sel_mse) <span class="sc">|&gt;</span> <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="fu">c</span>(sel_mse, se), round))</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(lb, <span class="fu">aes</span>(sel_mse, <span class="fu">fct_reorder</span>(competitor, <span class="sc">-</span>sel_mse))) <span class="sc">+</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_errorbar</span>(<span class="fu">aes</span>(<span class="at">xmin =</span> sel_mse <span class="sc">-</span> se, <span class="at">xmax =</span> sel_mse <span class="sc">+</span> se), <span class="at">width =</span> <span class="fl">0.3</span>, <span class="at">colour =</span> <span class="st">"grey60"</span>) <span class="sc">+</span></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="dv">3</span>) <span class="sc">+</span></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"MSE on the 2,000 selection tracks"</span>, <span class="at">y =</span> <span class="cn">NULL</span>, <span class="at">caption =</span> <span class="st">"bars: one standard error"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p><strong>Question 2.</strong> Which competitors lead, and by how much against the plane with the same inputs? The bars are each score’s own standard error: can they tell the leaders apart? Which rows of this leaderboard are unbiased estimates of their competitor’s risk, and which are not (problem 1)?</p>
+</section>
+<section id="the-vault" class="level3">
+<h3 class="anchored" data-anchor-id="the-vault">3. The vault</h3>
+<!-- 12 min: steps 7 and 8, questions 3 and 4. -->
+<p><strong>Step 7.</strong> Refit every competitor on the training and selection tracks together, each at the knob it chose, and predict the test tracks. The standardized matrices are rebuilt with the 7,000 rows as the reference. <span class="math inline">\(k\)</span>-NN has nothing to refit: its “model” is the rows it averages over, now 7,000 of them.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>sp_both <span class="ot">&lt;-</span> <span class="fu">bind_rows</span>(sp_train, sp_sel)</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>y_both <span class="ot">&lt;-</span> sp_both<span class="sc">$</span>track_popularity</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>y_te <span class="ot">&lt;-</span> sp_test<span class="sc">$</span>track_popularity</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>X_both <span class="ot">&lt;-</span> <span class="fu">design</span>(sp_both, sp_both, <span class="at">with_genre =</span> <span class="cn">FALSE</span>); X_te <span class="ot">&lt;-</span> <span class="fu">design</span>(sp_test, sp_both, <span class="at">with_genre =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>Xg_both <span class="ot">&lt;-</span> <span class="fu">design</span>(sp_both, sp_both); Xg_te <span class="ot">&lt;-</span> <span class="fu">design</span>(sp_test, sp_both)</span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>pred_te <span class="ot">&lt;-</span> <span class="fu">list</span>(</span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>  <span class="st">"the training mean"</span> <span class="ot">=</span> <span class="fu">rep</span>(<span class="fu">mean</span>(y_both), <span class="fu">nrow</span>(sp_test))</span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>  <span class="co"># , "least squares, every input" = ____</span></span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>  <span class="co"># , "k-NN, numeric inputs" = ____</span></span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>  <span class="co"># , "lasso" = ____</span></span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>  <span class="co"># , "additive splines" = ____</span></span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a>  <span class="co"># , "tree" = ____</span></span>
+<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a>  <span class="co"># , "forest" = ____</span></span>
+<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a>  <span class="co"># , "network" = ____</span></span>
+<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>Checkpoint:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">all</span>(<span class="fu">sapply</span>(pred_te, length) <span class="sc">==</span> <span class="fu">nrow</span>(sp_test)))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p><strong>Step 8.</strong> Open the vault once: every competitor’s test MSE with its standard error, in one table. Then the paired comparison of the two leaders: the per-track difference of their squared errors, its mean and its standard error.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># vault &lt;- imap_dfr(pred_te, ~ tibble(competitor = .y, test_mse = ____, se = ____)) |&gt; arrange(test_mse)</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="co"># the two leaders, paired on the 3,000 test tracks:</span></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="co"># d &lt;- ____</span></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a><span class="co"># c(mean = mean(d), se = ____)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p><strong>Question 3.</strong> Compare the vault with the selection leaderboard: the order, and each competitor’s test score against its selection score. Problem 1 says a tuned competitor’s selection score is too good on average. Can you see that here? What else changed between the two leaderboards?</p>
+<p><strong>Question 4.</strong> The forest’s training error against its test error, and the plane’s: compute both and compare the gaps. Which competitor does the optimism theorem cover, and does the uncovered one behave any differently?</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># c(forest_train = ____, forest_test = ____, plane_train = ____, plane_test = ____)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="optional-can-be-done-at-home-ridge-three-ways" class="level3">
+<h3 class="anchored" data-anchor-id="optional-can-be-done-at-home-ridge-three-ways">Optional, can be done at home: ridge three ways</h3>
+<p>Problem 3 says ridge regression is least squares on an augmented dataset. Check it on the Spotify training matrix: fit ridge with <span class="math inline">\(\lambda = 100\)</span> by the formula of exercise 2, by <code>lm()</code> on the augmented rows, and compare the two coefficient vectors.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>lambda <span class="ot">&lt;-</span> <span class="dv">100</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>X_c <span class="ot">&lt;-</span> <span class="fu">scale</span>(Xg_tr, <span class="at">scale =</span> <span class="cn">FALSE</span>)          <span class="co"># centered columns, as in exercise 2</span></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>y_c <span class="ot">&lt;-</span> y_tr <span class="sc">-</span> <span class="fu">mean</span>(y_tr)</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a><span class="co"># b_formula &lt;- ____</span></span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a><span class="co"># X_aug &lt;- rbind(X_c, ____); y_aug &lt;- c(y_c, ____)</span></span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a><span class="co"># b_lm &lt;- coef(lm(y_aug ~ X_aug - 1))</span></span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a><span class="co"># max(abs(b_formula - b_lm))</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled" title="Hint 1">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-9-contents" aria-controls="callout-9" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Hint 1
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-9" class="callout-9-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p><code>solve(A, b)</code> solves <span class="math inline">\(\mathbf A\beta = \mathbf b\)</span>. <code>diag(p)</code> is <span class="math inline">\(\mathbf I_p\)</span>. The augmented fit has no intercept: <code>- 1</code> in the formula.</p>
+</div>
+</div>
+</div>
+</section>
+<section id="optional-can-be-done-at-home-the-lasso-path-on-the-tracks" class="level3">
+<h3 class="anchored" data-anchor-id="optional-can-be-done-at-home-the-lasso-path-on-the-tracks">Optional, can be done at home: the lasso path on the tracks</h3>
+<p>The lecture drew the lasso’s solution path on these tracks. Draw it from your <code>lasso_fit</code> with <code>plot(lasso_fit, xvar = "lambda", label = TRUE)</code>, and find the step of the path at which each input enters as <span class="math inline">\(\lambda\)</span> falls (large <span class="math inline">\(\lambda\)</span> is on the right in this plot). Where are the release year and loudness, the two inputs the lecture’s component plots bent most?</p>
+
+
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/ml4ds\.com");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+<p>ST310 Machine Learning, LSE. Original course content CC BY 4.0 except where otherwise credited; datasets and images carry their own licences.</p>
+</div>   
+    <div class="nav-footer-center">
+      &nbsp;
+    </div>
+    <div class="nav-footer-right">
+      &nbsp;
+    </div>
+  </div>
+</footer>
+
+
+
+
+</body></html>
