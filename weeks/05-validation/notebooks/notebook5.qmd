@@ -39,7 +39,7 @@ knn_predict <- function(Xnew, Xtrain, ytrain, k) {
 
 <!-- At home, before the seminar. -->
 
-The lecture stated one result, the optimism theorem, and left its proof to you (exercise 1). It used ridge regression without deriving its estimator (exercise 2). Do both on paper before the seminar; the seminar's problems are variations on them. You may use, without proof: linearity of expectation; the tower property, $\mathbb E[W] = \mathbb E\big[\mathbb E[W \mid V]\big]$; that for a symmetric matrix $\mathbf A$ the gradient of $\beta^T\mathbf A\beta$ is $2\mathbf A\beta$ and its Hessian is $2\mathbf A$ (week 4); and that a symmetric matrix has real eigenvalues and an orthonormal basis of eigenvectors. Throughout, assume that every expectation that appears exists and every minimizer named exists.
+The lecture stated one result, the optimism theorem, and left its proof to you (exercise 1). It used ridge regression without deriving its estimator (exercise 2). Do both on paper before the seminar; the seminar's problems are variations on them. You may use, without proof: linearity of expectation; the tower property, $\mathbb E[W] = \mathbb E\big[\mathbb E[W \mid V]\big]$; that for a symmetric matrix $\mathbf A$ the gradient of $\beta^T\mathbf A\beta$ is $2\mathbf A\beta$ and its Hessian is $2\mathbf A$; and that a symmetric matrix has real eigenvalues and an orthonormal basis of eigenvectors. Throughout, assume that every expectation that appears exists and every minimizer named exists.
 
 ::: {.callout-warning title="Hints"}
 Each exercise has hints, collapsed below it. Do not open a hint unless you have been stuck for at least a few minutes, and open them in order. Solutions are shown in the seminar if you ask.
@@ -76,7 +76,7 @@ $$
 
 (b) Show that $\mathbf X^T\mathbf X + \lambda\mathbf I$ is positive definite, hence invertible, for every $\lambda > 0$, whatever $n$ and $p$ are. Conclude that $\hat\beta_\lambda = (\mathbf X^T\mathbf X + \lambda\mathbf I)^{-1}\mathbf X^T\mathbf y$ is the unique stationary point, even when $p > n$.
 
-(c) Compute the Hessian of $Q_\lambda$. In week 4's language, what are its smallest and largest curvatures, in terms of the eigenvalues $\mu_1 \ge \dots \ge \mu_p \ge 0$ of $\mathbf X^T\mathbf X$? Why is the stationary point the global minimizer, and what does the penalty do to the ratio of largest to smallest curvature that week 4 showed sets the speed of gradient descent?
+(c) Compute the Hessian of $Q_\lambda$. What are its smallest and largest curvatures, in terms of the eigenvalues $\mu_1 \ge \dots \ge \mu_p \ge 0$ of $\mathbf X^T\mathbf X$? Why is the stationary point the global minimizer, and what does the penalty do to the ratio of largest to smallest curvature, the ratio that sets the speed of gradient descent?
 
 (d) Show that $\|\hat\beta_\lambda\| \le \|\mathbf X^T\mathbf y\|/\lambda$, so $\hat\beta_\lambda \to \mathbf 0$ as $\lambda \to \infty$. What is $\hat\beta_\lambda$ at $\lambda = 0$ when $\mathbf X^T\mathbf X$ is invertible?
 
@@ -94,7 +94,7 @@ $$
 
 ## Problems
 
-<!-- About 20 min: problems 1 to 3, pen and paper. Hints are revealed in order after a few minutes, the answer last. -->
+<!-- About 20 min: problems 1 to 3, pen and paper. Hints are revealed in order after a few minutes, the answer last. Each solution is written from scratch, so that a problem can be done without the ones before it; citing an earlier result that has been proved is also fine. -->
 
 **Problem 1 (the selection winner's score).** $K$ candidate predictors $f_1, \ldots, f_K$ have been fitted on the training rows, say by $K$ methods or one method at $K$ values of its knob. A selection set of $m$ rows, independent draws from the population and independent of the training rows, scores them: $S_k = \tfrac1m\sum_j \ell(y_j, f_k(x_j))$. The winner is $\hat k = \arg\min_k S_k$, and $S_{\hat k}$ is its score, the number at the top of the leaderboard.
 
@@ -106,21 +106,21 @@ $$
 
 (d) The winner is then scored once on the test set. Why does that score not have the same problem?
 
-**Problem 2 (where the proof breaks).** The lecture said the optimism theorem covers least squares and ridge or lasso with a fixed radius, and not ridge at a fixed $\lambda$, a greedily grown tree, or a knob chosen on the data.
+**Problem 2 (where the proof breaks).** The optimism theorem does not cover every method. Its proof needs $\hat f$ to be the minimizer of the training error over a class fixed before the data, and that fails for ridge regression at a fixed $\lambda$, for a tree grown greedily, and for any knob chosen on the data (problem 1). The first two cases:
 
 (a) A population in which $Y = X$ exactly (no noise), $\mathbb E X^2 > 0$, squared loss, and the class $\mathcal F = \{x \mapsto \beta x : \beta \in \mathbb R\}$ of lines through the origin. Find $f_{\mathcal F}$ and $R(f_{\mathcal F})$. For a sample $x_1, \ldots, x_n$ (not all zero) and a fixed $\lambda > 0$, find the ridge estimate $\hat\beta_\lambda$ and its training error $\hat R_n(\hat\beta_\lambda)$, and show that $\mathbb E[\hat R_n(\hat\beta_\lambda)] > R(f_{\mathcal F})$: the left inequality fails. Which hypothesis of the theorem does $\hat\beta_\lambda$ violate?
 
 (b) Replace the penalty by the constraint $|\beta| \le t$ for a fixed $t > 0$: $\mathcal F_t = \{x \mapsto \beta x : |\beta| \le t\}$, and $\hat f$ the minimizer of $\hat R_n$ over $\mathcal F_t$. Does the theorem apply? What is $\hat f$ here, for $t \ge 1$ and for $t < 1$?
 
-(c) A tree of depth $2$ grown greedily (the lecture's splitting) is a member of the class of all depth-$2$ trees on the same inputs. Which line of your proof of exercise 1 is not available for it? Does that mean its training error must sit above its risk on average, or only that the theorem does not say?
+(c) A tree of depth $2$ grown greedily (the lecture's splitting) is a member of the class of all depth-$2$ trees on the same inputs. Which line of the proof is not available for it? Does that mean its training error must sit above its risk on average, or only that the theorem does not say?
 
 (d) Which of the theorem's two inequalities holds for every $\hat f \in \mathcal F$, whatever algorithm produced it?
 
 **Problem 3 (ridge as least squares on more rows).** Stack $p$ extra rows under the data: $\tilde{\mathbf X} = \begin{pmatrix}\mathbf X \\ \sqrt\lambda\,\mathbf I_p\end{pmatrix}$, an $(n + p) \times p$ matrix, and $\tilde{\mathbf y} = \begin{pmatrix}\mathbf y \\ \mathbf 0_p\end{pmatrix}$.
 
-(a) Show that $\|\tilde{\mathbf y} - \tilde{\mathbf X}\beta\|^2 = Q_\lambda(\beta)$, the ridge objective of exercise 2.
+(a) Show that $\|\tilde{\mathbf y} - \tilde{\mathbf X}\beta\|^2 = \|\mathbf y - \mathbf X\beta\|^2 + \lambda\|\beta\|^2$, the ridge objective.
 
-(b) Write week 2's normal equations for the regression of $\tilde{\mathbf y}$ on $\tilde{\mathbf X}$ and check that they are exercise 2's. Show that $\tilde{\mathbf X}$ has full column rank for every $\lambda > 0$, even when $p > n$.
+(b) Write the least-squares normal equations for the regression of $\tilde{\mathbf y}$ on $\tilde{\mathbf X}$ and check that they are ridge regression's, $(\mathbf X^T\mathbf X + \lambda\mathbf I)\beta = \mathbf X^T\mathbf y$. Show that $\tilde{\mathbf X}$ has full column rank for every $\lambda > 0$, even when $p > n$.
 
 (c) In words: what does each of the $p$ extra rows say, and what does $\sqrt\lambda$ do? How would you fit ridge regression with nothing but `lm()`?
 
@@ -132,165 +132,162 @@ $$
 
 <!-- 10 min: steps 1 and 2, question 1. -->
 
-The lecture's task: predict a track's popularity from ten audio features, its release year and its genre, squared loss ([data note](https://ml4ds.com/data/spotify.html)). The three-way split with the lecture's seed, so that your numbers match its leaderboards.
+The lecture's task: predict a track's popularity from ten audio features and its release year, squared loss ([data note](https://ml4ds.com/data/spotify.html)). Genre is left out today, so the numbers are those of the lecture's rows without genre; an optional item at the end adds it.
 
 ```{r}
-sp_file <- "https://ml4ds.com/files/spotify_tracks.csv"
-# the course file; a local copy is used if one is beside this notebook's folder
-for (p in c("../../../files/spotify_tracks.csv", "../../../../files/spotify_tracks.csv")) if (file.exists(p)) sp_file <- p
-sp <- read_csv(sp_file, show_col_types = FALSE) |>
-  distinct(track_id, .keep_all = TRUE) |>          # one row per track
-  mutate(duration_min = duration_ms / 60000, genre = factor(playlist_genre))
 feat <- c("danceability", "energy", "loudness", "speechiness", "acousticness",
           "instrumentalness", "liveness", "valence", "tempo", "duration_min", "release_year")
-f_plane <- reformulate(c(feat, "genre"), "track_popularity")   # every input, as a formula
+sp <- read_csv("https://ml4ds.com/files/spotify_tracks.csv", show_col_types = FALSE) |>
+  distinct(track_id, .keep_all = TRUE) |>          # one row per track
+  mutate(duration_min = duration_ms / 60000) |>
+  select(track_popularity, all_of(feat))            # the outcome and the eleven inputs
 ```
 
-**Step 1.** Split the 10,000 tracks at random into 5,000 training, 2,000 selection and 3,000 test tracks. The test tracks are the vault: nothing before part 3 touches them.
+**Step 1.** Split the 10,000 tracks at random into 5,000 training, 2,000 tuning and 3,000 test tracks. The test tracks are the vault: nothing before part 3 touches them.
 
 ```{r}
 #| eval: false
-set.seed(5)
-sp_id <- sample(nrow(sp))        # a random order of the 10,000 tracks
-# sp_train <- sp[sp_id[____], ]  # 5,000 tracks
-# sp_sel <- ____                 # 2,000
-# sp_test <- ____                # 3,000
+set.seed(310)   # change this number: a different split, and different numbers below
+id <- sample(nrow(sp))          # a random order of the 10,000 tracks
+# sp_train <- sp[id[____], ]    # 5,000 tracks
+# sp_tune <- ____               # 2,000
+# sp_test <- ____               # 3,000
 ```
 
 Checkpoint (run it; if it stops, fix step 1 before going on):
 
 ```{r}
 #| eval: !expr exists("sp_test")
-stopifnot(nrow(sp_train) == 5000, nrow(sp_sel) == 2000, nrow(sp_test) == 3000,
-          length(intersect(sp_train$track_id, c(sp_sel$track_id, sp_test$track_id))) == 0,
-          length(intersect(sp_sel$track_id, sp_test$track_id)) == 0)
+stopifnot(nrow(sp_train) == 5000, nrow(sp_tune) == 2000, nrow(sp_test) == 3000,
+          length(unique(c(id[1:5000], id[5001:7000], id[7001:10000]))) == 10000)
 ```
 
-**Question 1.** The file has 11,554 rows for 10,000 tracks, because 1,101 tracks are in more than one playlist, and the split above is by track. If you had skipped `distinct()` and split the rows, what could happen to a track, and which of the lecture's rules would the test score then break?
+**Question 1.** The file has 11,554 rows for 10,000 tracks, because 1,101 tracks are in more than one playlist, and `distinct()` kept one row per track before the split. If you had skipped `distinct()` and split the rows, what could happen to a track, and which of the lecture's rules would the test score then break?
 
-**Step 2.** The baselines on the selection tracks, as in the lecture. `score()` builds one leaderboard row: a competitor's selection MSE and its standard error. The mean is done; add the plane (least squares on every input) and $k$ nearest neighbors on the eleven numeric inputs, standardized, with $k$ chosen on the selection tracks from `ks`. `design()` builds a standardized matrix of inputs, with genre as five 0/1 columns when asked, each column centered and scaled by the reference set's mean and standard deviation.
+**Step 2.** The baselines on the tuning tracks, as in the lecture. `score()` builds one leaderboard row: a competitor's MSE on the tuning tracks and its standard error. The mean is done; add the plane (least squares on every input) and $k$ nearest neighbors on the standardized inputs, with $k$ chosen on the tuning tracks from `ks`. `scale()` centers and scales each column; the tuning rows get the training means and standard deviations, so that both matrices are on the same scale.
 
 ```{r}
 #| eval: !expr exists("sp_test")
-y_tr <- sp_train$track_popularity
-y_se <- sp_sel$track_popularity
-score <- function(name, pred_sel)
-  tibble(competitor = name, sel_mse = mse(y_se, pred_sel), se = se_loss(y_se, pred_sel))
-design <- function(d, ref, with_genre = TRUE) {
-  f <- reformulate(if (with_genre) c(feat, "genre") else feat, "track_popularity")
-  X <- model.matrix(f, d)[, -1]
-  R <- model.matrix(f, ref)[, -1]
-  scale(X, colMeans(R), apply(R, 2, sd))
-}
+y_train <- sp_train$track_popularity
+y_tune <- sp_tune$track_popularity
+score <- function(name, pred)
+  tibble(competitor = name, tune_mse = mse(y_tune, pred), se = se_loss(y_tune, pred))
+mu <- colMeans(sp_train[, feat])
+s <- apply(sp_train[, feat], 2, sd)
+X_train <- scale(sp_train[, feat], mu, s)
+X_tune <- scale(sp_tune[, feat], mu, s)
 ks <- c(1, 5, 10, 20, 50, 100, 200)
 ```
 
 ```{r}
 #| eval: false
 # fit_plane <- lm(____)
-X_tr <- design(sp_train, sp_train, with_genre = FALSE)
-X_se <- design(sp_sel, sp_train, with_genre = FALSE)
-# knn_sel <- sapply(ks, function(k) ____)      # the selection MSE at each k
+# knn_tune <- sapply(ks, function(k) ____)      # the tuning MSE at each k
 # k_best <- ____
 lb <- bind_rows(
-  score("the training mean", rep(mean(y_tr), nrow(sp_sel)))
-  # , score("least squares, every input", ____)
-  # , score(paste("k-NN, numeric inputs, k =", k_best), ____)
+  score("the mean", rep(mean(y_train), nrow(sp_tune)))
+  # , score("least squares", ____)
+  # , score("k-NN", ____)
 )
 lb
 ```
 
-### 2. Five structures, each tuned on the selection tracks
+### 2. Five structures, each tuned on the tuning tracks
 
 <!-- 18 min: steps 3 to 6 and question 2. The network is the first thing to cut. -->
 
-The pattern is the same for every family: fit on the training tracks at each value of the knob, score each fit on the selection tracks, keep the best. Each step adds one row to `lb`.
+The pattern is the same for every family: fit on the training tracks at each value of the knob, score each fit on the tuning tracks, keep the best. Each step adds one row to `lb`.
 
-**Step 3.** The lasso. `glmnet()` fits the whole path of $\lambda$ values at once, on the standardized matrix with the genre columns; `predict()` on the selection matrix then gives one column of predictions per $\lambda$. Choose $\lambda$, and count the coefficients that are exactly zero at it.
+**Step 3.** The lasso. `glmnet()` fits the whole path of $\lambda$ values at once, on the standardized matrix; `predict()` on the tuning matrix then gives one column of predictions per $\lambda$. Choose $\lambda$, and count the coefficients that are exactly zero at it.
 
 ```{r}
 #| eval: false
-Xg_tr <- design(sp_train, sp_train)
-Xg_se <- design(sp_sel, sp_train)
-lasso_fit <- glmnet(Xg_tr, y_tr, standardize = FALSE)   # the columns already are
-# lasso_sel <- apply(predict(lasso_fit, Xg_se), 2, function(pred) ____)
+lasso_fit <- glmnet(X_train, y_train, standardize = FALSE)   # the columns already are
+# lasso_tune <- apply(predict(lasso_fit, X_tune), 2, function(pred) ____)
 # lam_best <- lasso_fit$lambda[____]
 # coefficients at lam_best: coef(lasso_fit, s = lam_best); how many are zero?
 # ...
-# lb <- bind_rows(lb, score("lasso, every input", ____))
+# lb <- bind_rows(lb, score("lasso", ____))
 ```
 
-**Step 4.** Additive splines: `lm()` on a natural-spline basis of size $J$ for each numeric input, plus genre, as in the lecture. `gam_formula(J)` writes the formula. Choose $J$ from `Js`.
+**Step 4.** Additive splines: `lm()` on a natural-spline basis of size $J$ for each input, all in one least-squares fit, as in the lecture. `spline_fit(J, data)` writes the formula out. Choose $J$ from `Js`.
 
 ```{r}
 #| eval: false
-gam_formula <- function(J) reformulate(c(sprintf("ns(%s, df = %d)", feat, J), "genre"), "track_popularity")
+spline_fit <- function(J, data)
+  lm(track_popularity ~ ns(danceability, J) + ns(energy, J) + ns(loudness, J) + ns(speechiness, J) +
+       ns(acousticness, J) + ns(instrumentalness, J) + ns(liveness, J) + ns(valence, J) +
+       ns(tempo, J) + ns(duration_min, J) + ns(release_year, J), data)
 Js <- c(2, 3, 4, 6)
-# gam_sel <- sapply(Js, function(J) ____)
+# spline_tune <- sapply(Js, function(J) ____)
 # J_best <- ____
-# fit_gam <- ____
-# lb <- bind_rows(lb, score(paste("additive splines, J =", J_best), ____))
+# fit_spline <- spline_fit(J_best, sp_train)
+# lb <- bind_rows(lb, score("additive splines", ____))
 ```
 
-**Step 5.** A tree and a forest. `tree_at(d, data)` grows a tree of depth $d$; choose the depth from `depths`. The forest has no knob today: `randomForest()` with its defaults, 300 trees, seeded so that everyone grows the same forest (it takes a minute).
+**Step 5.** A tree and a forest. `tree_fit(d, data)` grows a tree of depth $d$; choose the depth from `depths`. The forest has no knob today: `randomForest()` with its defaults, 300 trees (the slowest fit of the seminar, about half a minute).
 
 ```{r}
 #| eval: false
-tree_at <- function(d, data) rpart(f_plane, data, control = rpart.control(maxdepth = d, cp = 0, minbucket = 10))
+tree_fit <- function(d, data)
+  rpart(track_popularity ~ ., data, control = rpart.control(maxdepth = d, cp = 0, minbucket = 10))
 depths <- c(2, 3, 4, 6, 8)
-# tree_sel <- sapply(depths, function(d) ____)
+# tree_tune <- sapply(depths, function(d) ____)
 # d_best <- ____
-# fit_tree <- tree_at(d_best, sp_train)
-set.seed(1)
-fit_rf <- randomForest(f_plane, sp_train, ntree = 300)
-# lb <- bind_rows(lb, score(paste("tree, depth", d_best), ____), score("forest, defaults", ____))
+# fit_tree <- tree_fit(d_best, sp_train)
+fit_rf <- randomForest(track_popularity ~ ., sp_train, ntree = 300)
+# lb <- bind_rows(lb, score("tree", ____), score("forest", ____))
 ```
 
-**Step 6.** A network with one hidden layer of $M$ units, `nnet()` on the standardized matrix (`linout = TRUE` for a numeric outcome; `decay` is a small ridge penalty on the weights, fixed today). `net_at()` seeds each fit, since the optimization starts from random weights. Choose $M$ from `Ms`.
+**Step 6.** A network with one hidden layer of $M$ units: `nnet()` on the standardized matrix, `linout = TRUE` for a numeric outcome, `decay` a small ridge penalty on the weights (fixed today), and `maxit = 300` a fixed budget of iterations rather than a convergence test. The weights start at random values, so two fits of the same network differ slightly. Choose $M$ from `Ms`.
 
 ```{r}
 #| eval: false
-net_at <- function(M, X, y) {
-  set.seed(10)
-  nnet(X, y, size = M, decay = 0.1, linout = TRUE, maxit = 300, trace = FALSE)
-}
+net_fit <- function(M, X, y) nnet(X, y, size = M, decay = 0.1, linout = TRUE, maxit = 300, trace = FALSE)
 Ms <- c(2, 4, 8, 16)
-# net_sel <- sapply(Ms, function(M) ____)
+# net_tune <- sapply(Ms, function(M) ____)
 # M_best <- ____
-# fit_net <- ____
-# lb <- bind_rows(lb, score(paste("network, M =", M_best), ____))
+# fit_net <- net_fit(M_best, X_train, y_train)
+# lb <- bind_rows(lb, score("network", ____))
 ```
 
-The selection leaderboard:
+The tuning leaderboard, with each competitor's chosen knob:
 
 ```{r}
 #| eval: !expr exists("lb")
-lb |> arrange(sel_mse) |> mutate(across(c(sel_mse, se), round))
-ggplot(lb, aes(sel_mse, fct_reorder(competitor, -sel_mse))) +
-  geom_errorbar(aes(xmin = sel_mse - se, xmax = sel_mse + se), width = 0.3, colour = "grey60") +
+lb |> arrange(tune_mse) |> mutate(across(c(tune_mse, se), round))
+ggplot(lb, aes(tune_mse, fct_reorder(competitor, -tune_mse))) +
+  geom_errorbar(aes(xmin = tune_mse - se, xmax = tune_mse + se), width = 0.3, colour = "grey60") +
   geom_point(size = 3) +
-  labs(x = "MSE on the 2,000 selection tracks", y = NULL, caption = "bars: one standard error")
+  labs(x = "MSE on the 2,000 tuning tracks", y = NULL, caption = "bars: one standard error")
 ```
 
-**Question 2.** Which competitors lead, and by how much against the plane with the same inputs? The bars are each score's own standard error: can they tell the leaders apart? Which rows of this leaderboard are unbiased estimates of their competitor's risk, and which are not (problem 1)?
+```{r}
+#| eval: !expr exists("M_best")
+c(k = k_best, lambda = signif(lam_best, 2), J = J_best, depth = d_best, M = M_best)
+```
+
+**Question 2.** Which competitors lead, and by how much against the plane? The bars are each score's own standard error: do they settle the order among the leaders? Which rows of this leaderboard are unbiased estimates of their competitor's risk, and which are not (problem 1)?
 
 ### 3. The vault
 
 <!-- 12 min: steps 7 and 8, questions 3 and 4. -->
 
-**Step 7.** Refit every competitor on the training and selection tracks together, each at the knob it chose, and predict the test tracks. The standardized matrices are rebuilt with the 7,000 rows as the reference. $k$-NN has nothing to refit: its "model" is the rows it averages over, now 7,000 of them.
+**Step 7.** Refit every competitor on the training and tuning tracks together, each at the knob it chose, and predict the test tracks. The standardized matrices are rebuilt with the 7,000 rows' means and standard deviations. $k$-NN has nothing to refit: its "model" is the rows it averages over, now 7,000 of them. Refit only the competitors you fitted in part 2; the solution skips the others.
 
 ```{r}
 #| eval: false
-sp_both <- bind_rows(sp_train, sp_sel)
+sp_both <- bind_rows(sp_train, sp_tune)
 y_both <- sp_both$track_popularity
-y_te <- sp_test$track_popularity
-X_both <- design(sp_both, sp_both, with_genre = FALSE); X_te <- design(sp_test, sp_both, with_genre = FALSE)
-Xg_both <- design(sp_both, sp_both); Xg_te <- design(sp_test, sp_both)
-pred_te <- list(
-  "the training mean" = rep(mean(y_both), nrow(sp_test))
-  # , "least squares, every input" = ____
-  # , "k-NN, numeric inputs" = ____
+y_test <- sp_test$track_popularity
+mu_both <- colMeans(sp_both[, feat])
+s_both <- apply(sp_both[, feat], 2, sd)
+X_both <- scale(sp_both[, feat], mu_both, s_both)
+X_test <- scale(sp_test[, feat], mu_both, s_both)
+pred_test <- list(
+  "the mean" = rep(mean(y_both), nrow(sp_test))
+  # , "least squares" = ____
+  # , "k-NN" = ____
   # , "lasso" = ____
   # , "additive splines" = ____
   # , "tree" = ____
@@ -302,21 +299,21 @@ pred_te <- list(
 Checkpoint:
 
 ```{r}
-#| eval: !expr exists("pred_te")
-stopifnot(all(sapply(pred_te, length) == nrow(sp_test)))
+#| eval: !expr exists("pred_test")
+stopifnot(all(sapply(pred_test, length) == nrow(sp_test)))
 ```
 
-**Step 8.** Open the vault once: every competitor's test MSE with its standard error, in one table. Then the paired comparison of the two leaders: the per-track difference of their squared errors, its mean and its standard error.
+**Step 8.** Open the vault once: every competitor's test MSE with its standard error, in one table. Then one paired comparison, decided before the vault was opened: the two leaders of the tuning leaderboard, the per-track difference of their squared errors, its mean and its standard error.
 
 ```{r}
 #| eval: false
-# vault <- imap_dfr(pred_te, ~ tibble(competitor = .y, test_mse = ____, se = ____)) |> arrange(test_mse)
-# the two leaders, paired on the 3,000 test tracks:
-# d <- ____
+# vault <- imap_dfr(pred_test, ~ tibble(competitor = .y, test_mse = ____, se = ____)) |> arrange(test_mse)
+# leaders <- ____                     # the top two of the tuning leaderboard, not of the vault
+# d <- ____                           # their squared errors, track by track
 # c(mean = mean(d), se = ____)
 ```
 
-**Question 3.** Compare the vault with the selection leaderboard: the order, and each competitor's test score against its selection score. Problem 1 says a tuned competitor's selection score is too good on average. Can you see that here? What else changed between the two leaderboards?
+**Question 3.** Compare the vault with the tuning leaderboard: the order, and each competitor's test score against its tuning score. Problem 1 says a tuned competitor's tuning score is too good on average. Can you see that here? What else changed between the two leaderboards?
 
 **Question 4.** The forest's training error against its test error, and the plane's: compute both and compare the gaps. Which competitor does the optimism theorem cover, and does the uncovered one behave any differently?
 
@@ -325,15 +322,15 @@ stopifnot(all(sapply(pred_te, length) == nrow(sp_test)))
 # c(forest_train = ____, forest_test = ____, plane_train = ____, plane_test = ____)
 ```
 
-### Optional, can be done at home: ridge three ways
+### Optional, can be done at home: ridge two ways
 
-Problem 3 says ridge regression is least squares on an augmented dataset. Check it on the Spotify training matrix: fit ridge with $\lambda = 100$ by the formula of exercise 2, by `lm()` on the augmented rows, and compare the two coefficient vectors.
+Problem 3 says ridge regression is least squares on an augmented dataset. Check it on the training matrix: fit ridge with $\lambda = 100$ by the formula of exercise 2 and by `lm()` on the augmented rows, and compare the two coefficient vectors.
 
 ```{r}
 #| eval: false
 lambda <- 100
-X_c <- scale(Xg_tr, scale = FALSE)          # centered columns, as in exercise 2
-y_c <- y_tr - mean(y_tr)
+X_c <- scale(X_train, scale = FALSE)        # centered columns, as in exercise 2
+y_c <- y_train - mean(y_train)
 # b_formula <- ____
 # X_aug <- rbind(X_c, ____); y_aug <- c(y_c, ____)
 # b_lm <- coef(lm(y_aug ~ X_aug - 1))
@@ -346,5 +343,9 @@ y_c <- y_tr - mean(y_tr)
 
 ### Optional, can be done at home: the lasso path on the tracks
 
-The lecture drew the lasso's solution path on these tracks. Draw it from your `lasso_fit` with `plot(lasso_fit, xvar = "lambda", label = TRUE)`, and find the step of the path at which each input enters as $\lambda$ falls (large $\lambda$ is on the right in this plot). Where are the release year and loudness, the two inputs the lecture's component plots bent most?
+The lecture drew the lasso's solution path on these tracks. Draw it from your `lasso_fit` with `plot(lasso_fit, xvar = "lambda", label = TRUE)`, and find the step of the path at which each input enters: the path starts at the end where every coefficient is zero (the largest $\lambda$; which side of the plot that is depends on your version of glmnet) and the coefficients leave zero one by one as $\lambda$ falls. Where are the release year and loudness, the two inputs the lecture's component plots bent most?
+
+### Optional, can be done at home: add genre
+
+The lecture's leaderboard also used the playlist's genre, a factor with six levels. Add it to the training and tuning tracks (`playlist_genre` in the file, matched by row after `distinct()`), refit the plane and the additive splines with `+ genre`, and score them on the tuning tracks. Which methods take a factor as it is, and which need it as 0/1 columns (`model.matrix()`) first?
 
