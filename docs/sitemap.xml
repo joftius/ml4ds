@@ -4,70 +4,79 @@
     <loc>https://ml4ds.com/data/spotify.html</loc>
   </url>
   <url>
-    <loc>https://ml4ds.com/data/nhanes.html</loc>
+    <loc>https://ml4ds.com/data/obermeyer.html</loc>
   </url>
   <url>
-    <loc>https://ml4ds.com/weeks/09-uncert-interp/slides/09-1-uncertainty-interpretation.html</loc>
+    <loc>https://ml4ds.com/data/movies.html</loc>
   </url>
   <url>
-    <loc>https://ml4ds.com/weeks/09-uncert-interp/intervals-calibration.html</loc>
-  </url>
-  <url>
-    <loc>https://ml4ds.com/weeks/08-additive/notebooks/notebook8.html</loc>
-  </url>
-  <url>
-    <loc>https://ml4ds.com/weeks/07-regularization-highdim/notebooks/notebook7.html</loc>
-  </url>
-  <url>
-    <loc>https://ml4ds.com/weeks/05-validation/slides/05-1-structures.html</loc>
-  </url>
-  <url>
-    <loc>https://ml4ds.com/weeks/04-optimization/slides/04-1-optimization.html</loc>
-  </url>
-  <url>
-    <loc>https://ml4ds.com/weeks/03-classification-causality/slides/03-1-classification-causality.html</loc>
-  </url>
-  <url>
-    <loc>https://ml4ds.com/weeks/02-regression/slides/02-1-regression.html</loc>
-  </url>
-  <url>
-    <loc>https://ml4ds.com/weeks/01-introduction-foundations/slides/01-1-introduction.html</loc>
-  </url>
-  <url>
-    <loc>https://ml4ds.com/about.html</loc>
-  </url>
-  <url>
-    <loc>https://ml4ds.com/index.html</loc>
-  </url>
-  <url>
-    <loc>https://ml4ds.com/weeks/01-introduction-foundations/notebooks/notebook1.html</loc>
-  </url>
-  <url>
-    <loc>https://ml4ds.com/weeks/02-regression/notebooks/notebook2.html</loc>
-  </url>
-  <url>
-    <loc>https://ml4ds.com/weeks/03-classification-causality/notebooks/notebook3.html</loc>
-  </url>
-  <url>
-    <loc>https://ml4ds.com/weeks/04-optimization/notebooks/notebook4.html</loc>
-  </url>
-  <url>
-    <loc>https://ml4ds.com/weeks/05-validation/notebooks/notebook5.html</loc>
-  </url>
-  <url>
-    <loc>https://ml4ds.com/weeks/07-regularization-highdim/james-stein.html</loc>
-  </url>
-  <url>
-    <loc>https://ml4ds.com/weeks/07-regularization-highdim/slides/07-1-regularization.html</loc>
-  </url>
-  <url>
-    <loc>https://ml4ds.com/weeks/08-additive/slides/08-1-ensembles.html</loc>
+    <loc>https://ml4ds.com/weeks/10-explaining-intervening/slides/10-1-evaluation.html</loc>
   </url>
   <url>
     <loc>https://ml4ds.com/weeks/09-uncert-interp/notebooks/notebook9.html</loc>
   </url>
   <url>
-    <loc>https://ml4ds.com/data/movies.html</loc>
+    <loc>https://ml4ds.com/weeks/08-additive/slides/08-1-ensembles.html</loc>
+  </url>
+  <url>
+    <loc>https://ml4ds.com/weeks/07-regularization-highdim/slides/07-1-regularization.html</loc>
+  </url>
+  <url>
+    <loc>https://ml4ds.com/weeks/07-regularization-highdim/james-stein.html</loc>
+  </url>
+  <url>
+    <loc>https://ml4ds.com/weeks/05-validation/notebooks/notebook5.html</loc>
+  </url>
+  <url>
+    <loc>https://ml4ds.com/weeks/04-optimization/notebooks/notebook4.html</loc>
+  </url>
+  <url>
+    <loc>https://ml4ds.com/weeks/03-classification-causality/notebooks/notebook3.html</loc>
+  </url>
+  <url>
+    <loc>https://ml4ds.com/weeks/02-regression/notebooks/notebook2.html</loc>
+  </url>
+  <url>
+    <loc>https://ml4ds.com/weeks/01-introduction-foundations/notebooks/notebook1.html</loc>
+  </url>
+  <url>
+    <loc>https://ml4ds.com/index.html</loc>
+  </url>
+  <url>
+    <loc>https://ml4ds.com/about.html</loc>
+  </url>
+  <url>
+    <loc>https://ml4ds.com/weeks/01-introduction-foundations/slides/01-1-introduction.html</loc>
+  </url>
+  <url>
+    <loc>https://ml4ds.com/weeks/02-regression/slides/02-1-regression.html</loc>
+  </url>
+  <url>
+    <loc>https://ml4ds.com/weeks/03-classification-causality/slides/03-1-classification-causality.html</loc>
+  </url>
+  <url>
+    <loc>https://ml4ds.com/weeks/04-optimization/slides/04-1-optimization.html</loc>
+  </url>
+  <url>
+    <loc>https://ml4ds.com/weeks/05-validation/slides/05-1-structures.html</loc>
+  </url>
+  <url>
+    <loc>https://ml4ds.com/weeks/07-regularization-highdim/notebooks/notebook7.html</loc>
+  </url>
+  <url>
+    <loc>https://ml4ds.com/weeks/08-additive/notebooks/notebook8.html</loc>
+  </url>
+  <url>
+    <loc>https://ml4ds.com/weeks/09-uncert-interp/intervals-calibration.html</loc>
+  </url>
+  <url>
+    <loc>https://ml4ds.com/weeks/09-uncert-interp/slides/09-1-uncertainty-interpretation.html</loc>
+  </url>
+  <url>
+    <loc>https://ml4ds.com/weeks/10-explaining-intervening/winning-scores.html</loc>
+  </url>
+  <url>
+    <loc>https://ml4ds.com/data/nhanes.html</loc>
   </url>
   <url>
     <loc>https://ml4ds.com/data/penguins.html</loc>

@@ -1,0 +1,1190 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<script src="../../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../../site_libs/quarto-html/tabby.min.js"></script>
+<script src="../../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<link href="../../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../../site_libs/quarto-html/light-border.css" rel="stylesheet">
+<link href="../../../site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
+  <meta name="generator" content="quarto-1.10.18">
+
+  <title>machine learning 4 data science – Machine learning</title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+  <link rel="stylesheet" href="../../../site_libs/revealjs/dist/reset.css">
+  <link rel="stylesheet" href="../../../site_libs/revealjs/dist/reveal.css">
+  <style>
+    /* Default styles provided by pandoc.
+    ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+    */
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: 1.5em;}
+    div.column{flex: auto;}
+    @media screen {
+    div.columns{gap: min(4vw, 1.5em);}
+    div.column{overflow-x: auto;}
+    }
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+      vertical-align: middle;
+    }
+  </style>
+  <link rel="stylesheet" href="../../../site_libs/revealjs/dist/theme/quarto-ee4c55e7dc5b973c77711487f0e8ae43.css">
+  <link href="../../../site_libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
+  <link href="../../../site_libs/revealjs/plugin/reveal-menu/menu.css" rel="stylesheet">
+  <link href="../../../site_libs/revealjs/plugin/reveal-menu/quarto-menu.css" rel="stylesheet">
+  <link href="../../../site_libs/revealjs/plugin/quarto-support/footer.css" rel="stylesheet">
+  <style type="text/css">
+    .reveal div.sourceCode {
+      margin: 0;
+      overflow: auto;
+    }
+    .reveal div.hanging-indent {
+      margin-left: 1em;
+      text-indent: -1em;
+    }
+    .reveal .slide:not(.center) {
+      height: 100%;
+    }
+    .reveal .slide.scrollable {
+      overflow-y: auto;
+    }
+    .reveal .footnotes {
+      height: 100%;
+      overflow-y: auto;
+    }
+    .reveal .slide .absolute {
+      position: absolute;
+      display: block;
+    }
+    .reveal .footnotes ol {
+      counter-reset: ol;
+      list-style-type: none; 
+      margin-left: 0;
+    }
+    .reveal .footnotes ol li:before {
+      counter-increment: ol;
+      content: counter(ol) ". "; 
+    }
+    .reveal .footnotes ol li > p:first-child {
+      display: inline-block;
+    }
+    .reveal .slide ul,
+    .reveal .slide ol {
+      margin-bottom: 0.5em;
+    }
+    .reveal .slide ul li,
+    .reveal .slide ol li {
+      margin-top: 0.4em;
+      margin-bottom: 0.2em;
+    }
+    .reveal .slide ul[role="tablist"] li {
+      margin-bottom: 0;
+    }
+    .reveal .slide ul li > *:first-child,
+    .reveal .slide ol li > *:first-child {
+      margin-block-start: 0;
+    }
+    .reveal .slide ul li > *:last-child,
+    .reveal .slide ol li > *:last-child {
+      margin-block-end: 0;
+    }
+    .reveal .slide .columns:nth-child(3) {
+      margin-block-start: 0.8em;
+    }
+    .reveal blockquote {
+      box-shadow: none;
+    }
+    .reveal .tippy-content>* {
+      margin-top: 0.2em;
+      margin-bottom: 0.7em;
+    }
+    .reveal .tippy-content>*:last-child {
+      margin-bottom: 0.2em;
+    }
+    .reveal .slide > img.stretch.quarto-figure-center,
+    .reveal .slide > img.r-stretch.quarto-figure-center {
+      display: block;
+      margin-left: auto;
+      margin-right: auto; 
+    }
+    .reveal .slide > img.stretch.quarto-figure-left,
+    .reveal .slide > img.r-stretch.quarto-figure-left  {
+      display: block;
+      margin-left: 0;
+      margin-right: auto; 
+    }
+    .reveal .slide > img.stretch.quarto-figure-right,
+    .reveal .slide > img.r-stretch.quarto-figure-right  {
+      display: block;
+      margin-left: auto;
+      margin-right: 0; 
+    }
+  </style>
+</head>
+<body class="quarto-light">
+  <div class="reveal">
+    <div class="slides">
+
+<section id="title-slide" class="center">
+  <h1 class="title">Machine learning</h1>
+  <p class="subtitle">Week 10: evaluation, distribution shift and deployment</p>
+  <div class="ask title-question">A model wins a prediction competition. What has it shown, and what has it not?</div>
+</section>
+<section id="where-we-left-off" class="slide level2" data-minutes="3">
+<h2>Where we left off</h2>
+<div class="retrieval">
+<p>Prediction competition: curated data, the same for every competitor; a task; an agreed score; an evaluation dataset the competitors cannot see. Winning model chosen by best score</p>
+</div>
+<p>The Netflix prize went to a blend that was never put into production</p>
+<div class="leave">
+<p>Winning a competition is not always useful</p>
+</div>
+<p>Today, what a winning score does and does not tell us:</p>
+<ul>
+<li>how variable the leaderboard is</li>
+<li>what happens when the data the model meets are not like the data it was scored on</li>
+<li>what the score leaves out</li>
+</ul>
+</section>
+<section id="section" class="slide level2 inverse">
+<h2></h2>
+<h3 id="evaluation-distribution-shift-and-deployment">Evaluation, distribution shift and deployment</h3>
+<p>Part 1: the leaderboard</p>
+<p>Part 2: when the data move</p>
+<p>Part 3: scores and decisions</p>
+</section>
+<section id="section-1" class="slide level2 inverse center">
+<h2></h2>
+<h3 id="part-1-the-leaderboard">Part 1: the leaderboard</h3>
+</section>
+<section id="data-patients-of-a-health-system" class="slide level2" data-minutes="2">
+<h2>Data: patients of a health system</h2>
+<p>Obermeyer et al.&nbsp;(2019) studied a commercial algorithm that a US health system used to predict patients’ costs, and released <strong>synthetic</strong> rows that mimic their data: 48,784 patient-years (5,582 Black, 43,202 White)</p>
+<ul>
+<li><strong>Inputs</strong>, from the year before: age band, sex, 34 chronic conditions, 13 kinds of cost, 94 test results and medications (149 columns)</li>
+<li><strong>Outcomes</strong>, the year after: cost, number of active chronic conditions, test results</li>
+<li><strong>Task</strong>: predict whether next year’s cost will be in the <strong>top quarter</strong> (above $6,800 on the training rows), as a probability <span class="math inline">\(\hat p(x)\)</span></li>
+<li><strong>Score</strong>: the <strong>Brier score</strong>, squared error for a probability, <span class="math inline">\(\ell(y, \hat p) = (y - \hat p)^2\)</span>, between 0 and 1</li>
+</ul>
+<p>Split once at random: 16,000 training, 8,000 tuning, 12,000 test, 12,784 kept back for later</p>
+</section>
+<section id="ctf-competition-the-tuning-leaderboard" class="slide level2" data-minutes="2">
+<h2>CTF competition: the tuning leaderboard</h2>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="10-1-evaluation_files/figure-revealjs/leaderboard-1.png" class="quarto-figure quarto-figure-center" width="1500"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>The four models with any structure are within 0.014 of each other, and every bar is about 0.010 wide</p>
+</section>
+<section id="can-the-same-rows-separate-two-models" class="slide level2" data-minutes="3">
+<h2>Can the same rows separate two models?</h2>
+<div class="ask">
+<p>The two leaders’ bars overlap. Their scores come from the same 8,000 patients. Can those patients still tell the two models apart?</p>
+</div>
+<div class="fragment">
+<p>Score each patient twice and take the difference, <span class="math inline">\(\Delta_j = \ell\big(y_j, \hat p_A(x_j)\big) - \ell\big(y_j, \hat p_B(x_j)\big)\)</span></p>
+<ul>
+<li>The difference of the two scores is <span class="math inline">\(\bar\Delta\)</span>, with standard error <span class="math inline">\(\mathrm{sd}(\Delta)/\sqrt m\)</span></li>
+<li><span class="math inline">\(\mathrm{Var}(\ell_A - \ell_B) = \mathrm{Var}(\ell_A) + \mathrm{Var}(\ell_B) - 2\,\mathrm{Cov}(\ell_A, \ell_B)\)</span>: the models err on mostly the same patients, so the covariance is large</li>
+</ul>
+<p>boosted trees minus lasso: <span class="math inline">\(\bar\Delta = -0.0021\)</span>, standard error 0.0008, against 0.0025 for one score alone</p>
+<p>The pair to compare on the test rows: <strong>boosted trees against lasso</strong>, chosen now</p>
+</div>
+</section>
+<section id="a-score-and-its-risk" class="slide level2" data-minutes="3">
+<h2>A score and its risk</h2>
+<p>A score is a mean of <span class="math inline">\(m\)</span> losses, <span class="math inline">\(\hat R = \frac1m\sum_j \ell_j\)</span>, with mean <span class="math inline">\(R\)</span>, the risk</p>
+<div class="retrieval">
+<p>A loss between 0 and 1 has variance at most <span class="math inline">\(\frac14\)</span>, so <span class="math inline">\(\mathrm{Var}(\hat R) \le \frac{1}{4m}\)</span></p>
+</div>
+<p>If <span class="math inline">\(\hat R\)</span> were normal with that variance: <span class="math inline">\(P\big(|\hat R - R| \ge t\big) \le 2e^{-t^2/(2\sigma^2)}\)</span> with <span class="math inline">\(\sigma^2 = \frac{1}{4m}\)</span>, which is <span class="math inline">\(2e^{-2mt^2}\)</span></p>
+<div class="columns">
+<div class="column" style="width:56%;">
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure>
+<p><img data-src="10-1-evaluation_files/figure-revealjs/tails-1.png" width="990"></p>
+</figure>
+</div>
+</div>
+</div>
+</div><div class="column" style="width:44%;">
+<p><span class="math inline">\(m = 50\)</span> losses of 0 or 1</p>
+<p>The central limit theorem makes the normal shape plausible, but does not control the far tail at a fixed <span class="math inline">\(m\)</span></p>
+</div></div>
+</section>
+<section id="hoeffdings-inequality" class="slide level2" data-minutes="3">
+<h2>Hoeffding’s inequality</h2>
+<div class="leave">
+<p><strong>Hoeffding’s inequality</strong> (stated). If <span class="math inline">\(Z_1, \ldots, Z_m\)</span> are independent with <span class="math inline">\(0 \le Z_i \le 1\)</span> and <span class="math inline">\(\bar Z\)</span> is their mean, then for every <span class="math inline">\(t &gt; 0\)</span> and every <span class="math inline">\(m\)</span>, <span class="math inline">\(P\big(|\bar Z - \mathbb E\bar Z| \ge t\big) \le 2e^{-2mt^2}\)</span></p>
+</div>
+<p>Why it holds for every <span class="math inline">\(m\)</span>:</p>
+<ol type="1">
+<li>Markov’s inequality on <span class="math inline">\(e^{\lambda D}\)</span>, <span class="math inline">\(D = \bar Z - \mathbb E\bar Z\)</span>; by independence, <span class="math inline">\(\mathbb E\big[e^{\lambda D}\big]\)</span> is a product of <span class="math inline">\(m\)</span> factors</li>
+<li><strong>Hoeffding’s lemma</strong> (stated): each factor is at most what a normal with variance <span class="math inline">\(\frac14\)</span> would give; then choose <span class="math inline">\(\lambda\)</span></li>
+</ol>
+<div class="fragment">
+<p><span class="math inline">\(K\)</span> models fixed in advance, by the union bound: every score within <span class="math inline">\(t_K = \sqrt{\log(2K/\delta)/(2m)}\)</span> of its risk, with probability <span class="math inline">\(1 - \delta\)</span>. Here <span class="math inline">\(t_K = 0.018\)</span>: gaps above <span class="math inline">\(2t_K\)</span> are resolved for 1 of the 10 pairs, against a paired standard error of 0.0008</p>
+</div>
+</section>
+<section id="the-test-rows-opened-once" class="slide level2" data-minutes="2">
+<h2>The test rows, opened once</h2>
+<p>Decided before opening: boosted trees against lasso, the paired difference with two standard errors</p>
+<div class="cell">
+<div class="cell-output-display">
+<table class="caption-top">
+<thead>
+<tr class="header">
+<th style="text-align: left;" data-quarto-table-cell-role="th"></th>
+<th style="text-align: center;" data-quarto-table-cell-role="th">boosted trees</th>
+<th style="text-align: center;" data-quarto-table-cell-role="th">lasso</th>
+<th style="text-align: center;" data-quarto-table-cell-role="th">difference ± 2 SE</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">tuning</td>
+<td style="text-align: center;">0.147</td>
+<td style="text-align: center;">0.149</td>
+<td style="text-align: center;">-0.0021 ± 0.0015</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">test</td>
+<td style="text-align: center;">0.145</td>
+<td style="text-align: center;">0.147</td>
+<td style="text-align: center;">-0.0023 ± 0.0012</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="retrieval">
+<p>The selected candidate’s score is biased low: the winner of <span class="math inline">\(K\)</span> noisy scores was partly lucky. A test set scored once, for models fixed before it is opened, has no such bias</p>
+</div>
+<p>The leader scored 0.147 on the tuning rows and 0.145 on the test rows: with <span class="math inline">\(K = 5\)</span> and <span class="math inline">\(m = 8{,}000\)</span>, no sign of the bias</p>
+</section>
+<section id="resampling-the-test-rows" class="slide level2" data-minutes="3">
+<h2>Resampling the test rows</h2>
+<p>A program can enroll only the 3% with the highest scores. Of those 360 test patients, the share with top-quarter cost is 84.7% for boosted trees and 82.5% for lasso</p>
+<div class="ask">
+<p>Which patients are in the top 3% depends on every patient’s score. This number is not an average of per-patient losses. What replaces <span class="math inline">\(\mathrm{sd}/\sqrt m\)</span>?</p>
+</div>
+<div class="fragment">
+<p><strong>Bootstrap the test rows</strong>: draw <span class="math inline">\(m\)</span> rows with replacement, recompute the difference, repeat <span class="math inline">\(B\)</span> times, and read off the spread. Each drawn row keeps both models’ predictions, so the comparison stays paired</p>
+<p>90% bootstrap interval for the difference: -0.6 to 5.3 percentage points, so this number does not separate them. The models are held fixed: the interval says nothing about refitting, and nothing about how the pair was chosen</p>
+</div>
+</section>
+<section id="scores-that-move" class="slide level2" data-minutes="3">
+<h2>Scores that move</h2>
+<p><strong>Adaptive drift</strong> (stated). If the candidates depend on earlier scores on the same rows (tune, look, tune again), the union bound no longer covers them, and the score can be driven away from the risk. A test set scored once, for models fixed before, does not move</p>
+<p>Recht et al.&nbsp;(2019) built new test sets for CIFAR-10 and ImageNet to the original recipe. Accuracy fell for every model, many by about 10 percentage points (the best ImageNet model in their Table 1 from 82.9% to 72.2%), with the order of the models almost unchanged. They split the drop into three gaps:</p>
+<p><span class="math display">\[
+\hat R_{\text{old}} - \hat R_{\text{new}} = \underbrace{\hat R_{\text{old}} - R_{\text{old}}}_{\text{adaptivity}} \;+\; \underbrace{R_{\text{old}} - R_{\text{new}}}_{\text{distribution}} \;+\; \underbrace{R_{\text{new}} - \hat R_{\text{new}}}_{\text{sampling}}
+\]</span></p>
+<p>and found it was mostly the distribution: slightly harder images. On 120 Kaggle competitions, public and private leaderboards agreed closely (Roelofs et al.&nbsp;2019)</p>
+</section>
+<section id="section-2" class="slide level2 inverse center">
+<h2></h2>
+<h3 id="part-2-when-the-data-move">Part 2: when the data move</h3>
+</section>
+<section id="in-distribution-and-out-of-distribution" class="slide level2" data-minutes="3">
+<h2>In distribution and out of distribution</h2>
+<div class="retrieval">
+<p>Fit to 142 countries in 2002, tested on the same countries in 1997: has it predicted anything new?</p>
+</div>
+<p>Built from the patients kept back: a <strong>sicker population</strong> (kept with a probability rising with last year’s chronic conditions), and one with <strong>high cost twice as common</strong> (every high-cost patient kept, a third of the others)</p>
+<div class="cell">
+<div class="cell-output-display">
+<table class="caption-top">
+<thead>
+<tr class="header">
+<th style="text-align: left;" data-quarto-table-cell-role="th">Model</th>
+<th style="text-align: center;" data-quarto-table-cell-role="th">Tuning rows</th>
+<th style="text-align: center;" data-quarto-table-cell-role="th">Sicker population</th>
+<th style="text-align: center;" data-quarto-table-cell-role="th">High cost twice as common</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">boosted trees</td>
+<td style="text-align: center;">0.147</td>
+<td style="text-align: center;">0.164</td>
+<td style="text-align: center;">0.235</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">lasso</td>
+<td style="text-align: center;">0.149</td>
+<td style="text-align: center;">0.165</td>
+<td style="text-align: center;">0.244</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">forest</td>
+<td style="text-align: center;">0.150</td>
+<td style="text-align: center;">0.165</td>
+<td style="text-align: center;">0.255</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">tree</td>
+<td style="text-align: center;">0.160</td>
+<td style="text-align: center;">0.178</td>
+<td style="text-align: center;">0.261</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">baseline</td>
+<td style="text-align: center;">0.185</td>
+<td style="text-align: center;">0.212</td>
+<td style="text-align: center;">0.305</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<section id="covariate-shift" class="slide level2" data-minutes="4">
+<h2>Covariate shift</h2>
+<div class="ask">
+<p>The new patients’ costs are not known yet. What is a model’s risk on them?</p>
+</div>
+<div class="fragment">
+<p><span class="math inline">\(p_{\text{test}}\)</span>: where the model will be used. <span class="math inline">\(r(x) = \mathbb E[\ell(Y, f(X)) \mid X = x]\)</span>, <span class="math inline">\(w(x) = p_{\text{test}}(x)/p_{\text{train}}(x)\)</span></p>
+<p><span class="math display">\[
+\begin{alignedat}{2}
+R_{\text{test}}(f) &amp;= \mathbb E_{\text{test}}\big[r_{\text{test}}(X)\big] &amp;\quad&amp; \color{gray}\small\text{tower property} \\[2pt]
+&amp;\class{fragment}{{}= \mathbb E_{\text{test}}\big[r_{\text{train}}(X)\big]}
+&amp;&amp; \class{fragment}{\color{gray}\small\text{covariate shift: } p_{\text{test}}(y \mid x) = p_{\text{train}}(y \mid x)} \\[2pt]
+&amp;\class{fragment}{{}= \textstyle\int r_{\text{train}}(x)\, w(x)\, p_{\text{train}}(x)\, dx}
+&amp;&amp; \class{fragment}{\color{gray}\small\text{needs } p_{\text{train}}(x) &gt; 0 \text{ wherever } p_{\text{test}}(x) &gt; 0} \\[2pt]
+&amp;\class{fragment}{{}= \mathbb E_{\text{train}}\big[w(X)\, \ell(Y, f(X))\big]}
+&amp;&amp; \class{fragment}{\color{gray}\small\text{tower property again}}
+\end{alignedat}
+\]</span></p>
+<div class="retrieval">
+<p>Inverse propensity weighting: weight <span class="math inline">\(1/\pi(Z)\)</span>, needing <span class="math inline">\(0 &lt; \pi(Z) &lt; 1\)</span></p>
+</div>
+</div>
+</section>
+<section id="reweighting-the-tuning-rows" class="slide level2" data-minutes="2">
+<h2>Reweighting the tuning rows</h2>
+<p>The covariate-shift identity on the tuning rows, <span class="math inline">\(\frac1m\sum_j w(x_j)\,\ell_j\)</span>, against the score on the sicker population itself:</p>
+<div class="cell">
+<div class="cell-output-display">
+<table class="caption-top">
+<thead>
+<tr class="header">
+<th style="text-align: left;" data-quarto-table-cell-role="th">Model</th>
+<th style="text-align: center;" data-quarto-table-cell-role="th">Tuning rows</th>
+<th style="text-align: center;" data-quarto-table-cell-role="th">Reweighted tuning rows</th>
+<th style="text-align: center;" data-quarto-table-cell-role="th">Sicker population</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">boosted trees</td>
+<td style="text-align: center;">0.147</td>
+<td style="text-align: center;">0.163</td>
+<td style="text-align: center;">0.164</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">lasso</td>
+<td style="text-align: center;">0.149</td>
+<td style="text-align: center;">0.164</td>
+<td style="text-align: center;">0.165</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">forest</td>
+<td style="text-align: center;">0.150</td>
+<td style="text-align: center;">0.166</td>
+<td style="text-align: center;">0.165</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">tree</td>
+<td style="text-align: center;">0.160</td>
+<td style="text-align: center;">0.182</td>
+<td style="text-align: center;">0.178</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">baseline</td>
+<td style="text-align: center;">0.185</td>
+<td style="text-align: center;">0.219</td>
+<td style="text-align: center;">0.212</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>The weights are needed to evaluate a fixed model’s risk on the new population. Whether to fit with them is a separate question</p>
+<p>The weights add variance: for boosted trees, the reweighted score has standard error 0.0031, against 0.0025 unweighted</p>
+</section>
+<section id="label-shift" class="slide level2" data-minutes="3">
+<h2>Label shift</h2>
+<p>If <span class="math inline">\(p(x \mid y)\)</span> is unchanged and the share with <span class="math inline">\(Y = 1\)</span> moves from <span class="math inline">\(q_{\text{train}}\)</span> to <span class="math inline">\(q_{\text{test}}\)</span>, Bayes’ rule in odds changes only the last factor:</p>
+<p><span class="math display">\[
+\begin{aligned}
+\frac{P(Y = 1 \mid X = x)}{P(Y = 0 \mid X = x)} &amp;= \frac{p(x \mid 1)}{p(x \mid 0)} \cdot \frac{q}{1 - q} \\[4pt]
+\operatorname{logit} P_{\text{test}}(Y = 1 \mid X = x) &amp;= \operatorname{logit} P_{\text{train}}(Y = 1 \mid X = x) + \operatorname{logit} q_{\text{test}} - \operatorname{logit} q_{\text{train}}
+\end{aligned}
+\]</span></p>
+<ul>
+<li>The fix: move the intercept (a recalibration with the slope kept at 1), with <span class="math inline">\(q_{\text{test}}\)</span> known or estimated</li>
+<li>With unchanged costs, the optimal threshold on the correct deployment probability is still <span class="math inline">\(c^\star\)</span>; the old score needs a new threshold. The order of patients by score does not change</li>
+</ul>
+</section>
+<section id="accuracy-calibration-and-ranking-under-shift" class="slide level2" data-minutes="3">
+<h2>Accuracy, calibration and ranking under shift</h2>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="10-1-evaluation_files/figure-revealjs/reliability-1.png" class="quarto-figure quarto-figure-center" width="1725"></p>
+</figure>
+</div>
+</div>
+</div>
+<table class="caption-top">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th></th>
+<th>Covariate shift, <span class="math inline">\(p(y \mid x)\)</span> fixed</th>
+<th>Label shift, <span class="math inline">\(p(x \mid y)\)</span> fixed</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Risk</td>
+<td>changes; estimate it by reweighting with <span class="math inline">\(w(x)\)</span></td>
+<td>changes</td>
+</tr>
+<tr class="even">
+<td>Calibration</td>
+<td>kept by a correct model of <span class="math inline">\(p(y \mid x)\)</span>, not always by others</td>
+<td>lost; move the intercept</td>
+</tr>
+<tr class="odd">
+<td>Ranking by score (AUC)</td>
+<td>can change with the mix of patients</td>
+<td>kept</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="when-the-function-itself-has-moved" class="slide level2 inverse">
+<h2>When the function itself has moved</h2>
+<p>If <span class="math inline">\(p(y \mid x)\)</span> changes (a new payment rule, a new treatment, a change in who gets care), neither fix applies: the old rows contain no information about the new relation, and only new outcomes reveal it</p>
+<p>Deploying a model can be what moves it: a program that enrolls the predicted high-cost patients changes their costs, and next year’s training rows record a world the model helped make</p>
+</section>
+<section id="causes-and-effects-as-inputs" class="slide level2 inverse">
+<h2>Causes and effects as inputs</h2>
+<p>Theory: the distribution of <span class="math inline">\(Y\)</span> given all its causes is unchanged by interventions that leave <span class="math inline">\(Y\)</span>’s own mechanism alone, so a model on the causes should travel</p>
+<p>Nastl and Hardt (2024), 16 tabular tasks with several domains each (income by region, voting by region, hospital mortality by insurance type, …): models on all features beat models on causal features <strong>in</strong> and <strong>out</strong> of domain in every task. Their advice: approximate the best predictor on all the features available</p>
+<p>The invariance holds for the true conditional distribution, not for the risk of a model fitted to a few features</p>
+</section>
+<section id="section-3" class="slide level2 inverse center">
+<h2></h2>
+<h3 id="part-3-scores-and-decisions">Part 3: scores and decisions</h3>
+</section>
+<section id="an-absurdly-abbreviated-history-of-optics" class="slide level2" data-minutes="2">
+<h2>An absurdly abbreviated history of optics</h2>
+<ul>
+<li><p>Ptolemy (100-170) measured refraction of light passing from air to water, altering measurements so they would fit to a quadratic curve (ancient “machine learning” or curve fitting)</p></li>
+<li><p>Ibn Sahl (940-1000) described the correct law, which English speakers refer to as Snell’s law</p></li>
+<li><p>Fermat (1607-1665) proposed the more general “principle of least time” which can be used to derive Snell’s law <em>and</em> solve other optical problems – predict values in different settings</p></li>
+</ul>
+</section>
+<section id="ptolemys-curve-in-glass" class="slide level2" data-minutes="2">
+<h2>Ptolemy’s curve in glass</h2>
+<div class="columns">
+<div class="column" style="width:60%;">
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure>
+<p><img data-src="10-1-evaluation_files/figure-revealjs/optics-plot-1.png" width="1080"></p>
+</figure>
+</div>
+</div>
+</div>
+</div><div class="column" style="width:40%;">
+<p>Points: Ptolemy’s table, air to water, within 2.2 degrees of Snell’s law, <span class="math inline">\(\sin i = n \sin r\)</span> with <span class="math inline">\(n = 1.33\)</span></p>
+<p>In glass the same curve is off by 1.4 degrees at 10 and 9.0 at 80. Snell’s law changes one number, <span class="math inline">\(n = 1.5\)</span></p>
+<p>Refitted to new measurements, a quadratic would fit glass too. It could not say anything before them</p>
+</div></div>
+</section>
+<section id="put-the-science-back-in-data-science" class="slide level2" data-minutes="2">
+<h2>Put the “science” back in “data science”!</h2>
+<p>Feynman, <a href="https://www.feynmanlectures.caltech.edu/I_26.html">Lectures on Physics, Vol. 1</a>:</p>
+<blockquote>
+<p>Now in the further development of science, we want more than just a formula. First we have an observation, then we have numbers that we measure, then we have a law which summarizes all the numbers. <em>But the real glory of science is that we can find a way of thinking such that the law is evident</em>.</p>
+</blockquote>
+<p>And from “Cargo Cult Science”:</p>
+<blockquote>
+<p>When you have put a lot of ideas together to make an <strong>elaborate theory</strong>, you want to make sure, when explaining what it fits, that <em>those things it fits are not just the things that gave you the idea for the theory</em>; but that the finished theory makes something else come out right, in addition.</p>
+</blockquote>
+</section>
+<section id="ctf-competition-what-it-delivered" class="slide level2" data-minutes="2">
+<h2>CTF competition: what it delivered</h2>
+<p>Donoho (2017) called prediction plus the common task framework machine learning’s “secret sauce”:</p>
+<ul>
+<li>training data shared by everyone, competitors, and a referee who scores each submitted rule on data hidden from them</li>
+<li>effort goes to measured performance; many groups compete; judging is impartial and automatic</li>
+<li>winners arrive already tested, so they look close to deployable</li>
+</ul>
+<div class="retrieval">
+<p>The Netflix prize: the winning blend was never put into production</p>
+</div>
+</section>
+<section id="outcome-reasoning-and-model-reasoning" class="slide level2" data-minutes="3">
+<h2>Outcome reasoning and model reasoning</h2>
+<p>Rodu and Baiocchi (2023): a competition justifies “Algorithm A performs better than Algorithm B”, not deployment</p>
+<div class="columns">
+<div class="column" style="width:50%;">
+<p>Two ways to trust a prediction:</p>
+<ul>
+<li><strong>outcome reasoning</strong>: measured performance</li>
+<li><strong>model reasoning</strong>: the model’s structure, checked against what we know</li>
+</ul>
+<p>Only the second can be argued before use</p>
+</div><div class="column" style="width:50%;">
+<p>Outcome reasoning is enough only if:</p>
+<ul>
+<li><strong>measurement</strong>: future outcomes can be scored</li>
+<li><strong>adaptability</strong>: the model can be updated in time</li>
+<li><strong>resilience</strong>: accumulated errors are tolerable</li>
+<li><strong>agnosis</strong>: conflict with beliefs is tolerable</li>
+</ul>
+</div></div>
+<p>Each depends on <strong>who is asking</strong>, the stakeholders</p>
+</section>
+<section id="the-winner-deployed" class="slide level2" data-minutes="2">
+<h2>The winner, deployed</h2>
+<p>The health system uses a cost score to choose who gets extra care: the 3% with the highest scores are enrolled in a program for patients with complex needs</p>
+<p>Use the competition’s winner, boosted trees. On the test patients at or above the 97th percentile of its score, the share with top-quarter cost is 81.8% for Black and 85.4% for White patients</p>
+<div class="ask">
+<p>The score predicts cost well, and about equally well in both groups. What could still be wrong?</p>
+</div>
+</section>
+<section id="the-same-score-by-health" class="slide level2" data-minutes="3">
+<h2>The same score, by health</h2>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="10-1-evaluation_files/figure-revealjs/by-health-1.png" class="quarto-figure quarto-figure-center" width="1725"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Left: what the score was trained for, similar in both groups. Right: at the same score, Black patients are sicker. Enrolled: 6.4 active chronic conditions for Black, 4.6 for White patients</p>
+<p>Why, in the study: at the same number of chronic illnesses, $1,801 a year less was spent on Black patients (in these rows, $320), so cost understates their need</p>
+</section>
+<section id="another-target" class="slide level2" data-minutes="3">
+<h2>Another target</h2>
+<p>Boosted trees with the same settings, trained on other targets. Who is in the top 3% of the test patients:</p>
+<div class="cell">
+<div class="cell-output-display">
+<table class="caption-top">
+<thead>
+<tr class="header">
+<th style="text-align: left;" data-quarto-table-cell-role="th">Target</th>
+<th style="text-align: center;" data-quarto-table-cell-role="th">Share Black</th>
+<th style="text-align: center;" data-quarto-table-cell-role="th">Mean active conditions</th>
+<th style="text-align: center;" data-quarto-table-cell-role="th">Share of next year's cost</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Top quarter of cost (the competition)</td>
+<td style="text-align: center;">18.3%</td>
+<td style="text-align: center;">4.92</td>
+<td style="text-align: center;">16.5%</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Total cost</td>
+<td style="text-align: center;">21.4%</td>
+<td style="text-align: center;">5.46</td>
+<td style="text-align: center;">17.8%</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Avoidable cost</td>
+<td style="text-align: center;">21.9%</td>
+<td style="text-align: center;">5.99</td>
+<td style="text-align: center;">16.9%</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Active chronic conditions</td>
+<td style="text-align: center;">26.7%</td>
+<td style="text-align: center;">7.43</td>
+<td style="text-align: center;">15.2%</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">The commercial score (in the data)</td>
+<td style="text-align: center;">20.0%</td>
+<td style="text-align: center;">5.59</td>
+<td style="text-align: center;">16.5%</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>11.9% of all test patients are Black. With chronic conditions as the target, the share among those enrolled rises by 9.0 percentage points (90% bootstrap interval 5.3 to 13.1)</p>
+<p>The competition fixed the target before anyone competed. Changing it changes who gets care, and no score on the old target can show that</p>
+</section>
+<section id="should-this-be-predicted-at-all" class="slide level2" data-minutes="2">
+<h2>Should this be predicted at all?</h2>
+<div class="ask">
+<p>For which of these tasks would a model with a better score make things better?</p>
+<ol type="1">
+<li>which patients will cost the most next year, to offer them extra care</li>
+<li>which defendants will be re-arrested before trial, to decide who is released</li>
+<li>which applicants will stay in a job for two years, to decide who is hired</li>
+<li>which drivers will claim on their insurance, to set the price they pay</li>
+</ol>
+</div>
+</section>
+<section id="limits-of-predictive-optimization" class="slide level2" data-minutes="3">
+<h2>Limits of predictive optimization</h2>
+<p>The case for prediction: decisions that are consistent, cheap, auditable, and often more accurate than unaided judgment (Wang et al.&nbsp;2024). Questions a score does not answer:</p>
+<ul>
+<li><strong>Acting on it</strong>: does acting on the prediction help? A decision can change the outcome it was predicted from</li>
+<li><strong>The target</strong>: is it what we care about? Re-arrest is not offending, and cost is not need</li>
+<li><strong>Predictability</strong>: in a mass competition on life outcomes, 160 teams’ best predictions were only slightly better than a simple benchmark (Salganik et al.&nbsp;2020)</li>
+<li><strong>Contesting</strong>: can the person decided about get an explanation, their data, and a way to correct the decision?</li>
+</ul>
+<p>Some predictions are objected to even when they are accurate: pricing car insurance by credit score holds people accountable for things that are not their fault (Kiviat 2019)</p>
+</section>
+<section id="more-warnings-for-data-about-humans" class="slide level2" data-minutes="2">
+<h2>More warnings for data about humans</h2>
+<p>Social science is hard! Health is also (at least partially) social. It is very difficult to <a href="https://www.pnas.org/content/117/15/8398">predict life outcomes</a>, even with machine learning models and <a href="https://hdsr.mitpress.mit.edu/pub/uan1b4m9/release/3">big data</a></p>
+<p>Strategic/adversarial/adaptive behavior: <a href="https://twitter.com/CT_Bergstrom/status/1329175501882019841">Goodhart’s law / Campbell’s law</a> / <a href="https://en.wikipedia.org/wiki/Lucas_critique">Lucas critique</a> / <a href="https://worthwhile.typepad.com/worthwhile_canadian_initi/2012/07/why-are-almost-all-economists-unaware-of-milton-friedmans-thermostat.html">Friedman’s thermostat</a> / <a href="https://en.wikipedia.org/wiki/Washback_effect">Washback effect</a> / <a href="https://en.wikipedia.org/wiki/Performativity">Performativity</a> / <a href="https://en.wikipedia.org/wiki/Reflexivity_%28social_theory%29">Reflexivity</a> / <a href="https://twitter.com/MCHammer/status/1363908982289559553">Hammer’s law</a></p>
+<p>For these reasons, <em>when dealing with human data</em>:</p>
+<ul>
+<li>Almost all variables correlate</li>
+<li>Unconfoundedness assumptions are always wrong</li>
+<li>Can’t separate “normative vs scientific” (ethics always important)</li>
+</ul>
+<p>Remember: focus on what is <strong>importantly wrong</strong></p>
+</section>
+<section id="recap" class="slide level2" data-minutes="4">
+<h2>Recap</h2>
+<div style="font-size: 1.15em">
+<table class="caption-top">
+<colgroup>
+<col style="width: 45%">
+<col style="width: 55%">
+</colgroup>
+<tbody>
+<tr class="odd">
+<td>The loss and the target define the problem</td>
+<td>optimal model theorem; optimal threshold theorem; quantile optimality</td>
+</tr>
+<tr class="even">
+<td>Training error underestimates the risk</td>
+<td>optimism theorem; the selected candidate’s score is biased low</td>
+</tr>
+<tr class="odd">
+<td>Faster rates need assumptions</td>
+<td>no free lunch; the k-NN rate</td>
+</tr>
+<tr class="even">
+<td>Shrinkage and averaging trade bias for variance</td>
+<td>bias–variance decompositions; ridge; the correlated-average variance</td>
+</tr>
+<tr class="odd">
+<td>Prediction is not intervention</td>
+<td>adjustment theorem; inverse propensity weighting; partial dependence and causal effects</td>
+</tr>
+<tr class="even">
+<td>A score is evidence about one target on one distribution, not a license to deploy</td>
+<td>Hoeffding’s inequality; covariate and label shift; another target</td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="before-the-seminar" class="slide level2" data-minutes="1">
+<h2>Before the seminar</h2>
+<ul>
+<li>Do the exercises at the top of the seminar notebook before the seminar</li>
+</ul>
+</section>
+<section id="conclusion" class="slide level2 inverse">
+<h2>Conclusion</h2>
+<h4 id="the-leaderboard">The leaderboard</h4>
+<p>Compare two models on the same rows, paired. Hoeffding’s inequality bounds every score at once for models fixed in advance. Choose the comparison before opening the test rows; resample the rows for anything that is not a mean</p>
+<h4 id="when-the-data-move">When the data move</h4>
+<p>Covariate shift: reweight by <span class="math inline">\(p_{\text{test}}/p_{\text{train}}\)</span>, where the supports overlap. Label shift: move the intercept. Neither repairs a change in <span class="math inline">\(p(y \mid x)\)</span></p>
+<h4 id="scores-and-decisions">Scores and decisions</h4>
+<p>That one model beats another, on one target and one distribution. Whether to deploy it, and whether the target is the right one, are questions the score does not answer</p>
+</section>
+<section id="course-survey" class="slide level2" data-minutes="5">
+<h2>Course survey</h2>
+<p>A few minutes for the course survey, now</p>
+</section>
+<section id="references-1-of-2" class="slide level2 inverse" data-minutes="0">
+<h2>References (1 of 2)</h2>
+<div style="font-size: 0.74em">
+<ul>
+<li>Donoho, D. (2017). 50 years of data science. <em>Journal of Computational and Graphical Statistics</em> 26(4), 745–766. <a href="https://doi.org/10.1080/10618600.2017.1384734">doi:10.1080/10618600.2017.1384734</a>. Section 6.</li>
+<li>Feynman, R. P., Leighton, R. B. and Sands, M. (1963). <em>The Feynman Lectures on Physics</em>, vol.&nbsp;I, chapter 26, Table 26-1 and section 26-3. <a href="https://www.feynmanlectures.caltech.edu/I_26.html">feynmanlectures.caltech.edu/I_26.html</a></li>
+<li>Feynman, R. P. (1974). Cargo cult science. <em>Engineering and Science</em> 37(7), 10–13.</li>
+<li>Hoeffding, W. (1963). Probability inequalities for sums of bounded random variables. <em>Journal of the American Statistical Association</em> 58(301), 13–30. <a href="https://doi.org/10.1080/01621459.1963.10500830">doi:10.1080/01621459.1963.10500830</a></li>
+<li>Kiviat, B. (2019). The moral limits of predictive practices: the case of credit-based insurance scores. <em>American Sociological Review</em> 84(6), 1134–1158. <a href="https://doi.org/10.1177/0003122419884917">doi:10.1177/0003122419884917</a></li>
+<li>Nastl, V. Y. and Hardt, M. (2024). Do causal predictors generalize better to new domains? <em>Advances in Neural Information Processing Systems</em> 37. <a href="https://doi.org/10.52202/079017-0983">doi:10.52202/079017-0983</a></li>
+<li>Obermeyer, Z., Powers, B., Vogeli, C. and Mullainathan, S. (2019). Dissecting racial bias in an algorithm used to manage the health of populations. <em>Science</em> 366(6464), 447–453. <a href="https://doi.org/10.1126/science.aax2342">doi:10.1126/science.aax2342</a>. Synthetic data and code: <a href="https://gitlab.com/labsysmed/dissecting-bias">gitlab.com/labsysmed/dissecting-bias</a></li>
+</ul>
+</div>
+</section>
+<section id="references-2-of-2" class="slide level2 inverse" data-minutes="0">
+<h2>References (2 of 2)</h2>
+<div style="font-size: 0.74em">
+<ul>
+<li>Recht, B., Roelofs, R., Schmidt, L. and Shankar, V. (2019). Do ImageNet classifiers generalize to ImageNet? <em>Proceedings of the 36th International Conference on Machine Learning</em>, PMLR 97, 5389–5400. <a href="https://proceedings.mlr.press/v97/recht19a.html">proceedings.mlr.press/v97/recht19a.html</a></li>
+<li>Rodu, J. and Baiocchi, M. (2023). When black box algorithms are (not) appropriate: a principled prediction-problem ontology. <em>Observational Studies</em>. <a href="https://muse.jhu.edu/pub/56/article/883478">muse.jhu.edu/pub/56/article/883478</a>. Sections as numbered in <a href="https://arxiv.org/abs/2001.07648v4">arXiv:2001.07648v4</a>.</li>
+<li>Roelofs, R., Shankar, V., Recht, B., Fridovich-Keil, S., Hardt, M., Miller, J. and Schmidt, L. (2019). A meta-analysis of overfitting in machine learning. <em>Advances in Neural Information Processing Systems</em> 32. <a href="https://papers.nips.cc/paper/9117-a-meta-analysis-of-overfitting-in-machine-learning">NeurIPS proceedings</a></li>
+<li>Salganik, M. J. et al.&nbsp;(2020). Measuring the predictability of life outcomes with a scientific mass collaboration. <em>Proceedings of the National Academy of Sciences</em> 117(15), 8398–8403. <a href="https://doi.org/10.1073/pnas.1915006117">doi:10.1073/pnas.1915006117</a></li>
+<li>Wang, A., Kapoor, S., Barocas, S. and Narayanan, A. (2024). Against predictive optimization: on the legitimacy of decision-making algorithms that optimize predictive accuracy. <em>ACM Journal on Responsible Computing</em> 1(1), 1–45. <a href="https://predictive-optimization.cs.princeton.edu/">predictive-optimization.cs.princeton.edu</a>. Sections as numbered in the draft of 16 February 2023.</li>
+</ul>
+</div>
+
+
+</section>
+    </div>
+  <div class="quarto-auto-generated-content" style="display: none;">
+<div class="footer footer-default">
+<p>ST310 Machine Learning</p>
+</div>
+</div></div>
+
+  <script>window.backupDefine = window.define; window.define = undefined;</script>
+  <script src="../../../site_libs/revealjs/dist/reveal.js"></script>
+  <!-- reveal.js plugins -->
+  <script src="../../../site_libs/revealjs/plugin/quarto-line-highlight/line-highlight.js"></script>
+  <script src="../../../site_libs/revealjs/plugin/pdf-export/pdfexport.js"></script>
+  <script src="../../../site_libs/revealjs/plugin/reveal-menu/menu.js"></script>
+  <script src="../../../site_libs/revealjs/plugin/reveal-menu/quarto-menu.js"></script>
+  <script src="../../../site_libs/revealjs/plugin/quarto-support/support.js"></script>
+  
+
+  <script src="../../../site_libs/revealjs/plugin/notes/notes.js"></script>
+  <script src="../../../site_libs/revealjs/plugin/search/search.js"></script>
+  <script src="../../../site_libs/revealjs/plugin/zoom/zoom.js"></script>
+  <script src="../../../site_libs/revealjs/plugin/math/math.js"></script>
+  <script>window.define = window.backupDefine; window.backupDefine = undefined;</script>
+
+  <script>
+
+      // Full list of configuration options available at:
+      // https://revealjs.com/config/
+      Reveal.initialize({
+'controlsAuto': true,
+'previewLinksAuto': false,
+'pdfSeparateFragments': false,
+'autoAnimateEasing': "ease",
+'autoAnimateDuration': 1,
+'autoAnimateUnmatched': true,
+'jumpToSlide': true,
+'menu': {"side":"left","useTextContentForMissingTitles":true,"markers":false,"loadIcons":false,"custom":[{"title":"Tools","icon":"<i class=\"fas fa-gear\"></i>","content":"<ul class=\"slide-menu-items\">\n<li class=\"slide-tool-item active\" data-item=\"0\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.fullscreen(event)\"><kbd>f</kbd> Fullscreen</a></li>\n<li class=\"slide-tool-item\" data-item=\"1\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.speakerMode(event)\"><kbd>s</kbd> Speaker View</a></li>\n<li class=\"slide-tool-item\" data-item=\"2\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.overview(event)\"><kbd>o</kbd> Slide Overview</a></li>\n<li class=\"slide-tool-item\" data-item=\"3\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.togglePdfExport(event)\"><kbd>e</kbd> PDF Export Mode</a></li>\n<li class=\"slide-tool-item\" data-item=\"4\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.toggleScrollView(event)\"><kbd>r</kbd> Scroll View Mode</a></li>\n<li class=\"slide-tool-item\" data-item=\"5\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.keyboardHelp(event)\"><kbd>?</kbd> Keyboard Help</a></li>\n</ul>"}],"openButton":true},
+'smaller': false,
+ 
+        // Display controls in the bottom right corner
+        controls: false,
+
+        // Help the user learn the controls by providing hints, for example by
+        // bouncing the down arrow when they first encounter a vertical slide
+        controlsTutorial: false,
+
+        // Determines where controls appear, "edges" or "bottom-right"
+        controlsLayout: 'edges',
+
+        // Visibility rule for backwards navigation arrows; "faded", "hidden"
+        // or "visible"
+        controlsBackArrows: 'faded',
+
+        // Display a presentation progress bar
+        progress: true,
+
+        // Display the page number of the current slide
+        slideNumber: 'c/t',
+
+        // 'all', 'print', or 'speaker'
+        showSlideNumber: 'all',
+
+        // Add the current slide number to the URL hash so that reloading the
+        // page/copying the URL will return you to the same slide
+        hash: true,
+
+        // Start with 1 for the hash rather than 0
+        hashOneBasedIndex: false,
+
+        // Flags if we should monitor the hash and change slides accordingly
+        respondToHashChanges: true,
+
+        // Push each slide change to the browser history
+        history: false,
+
+        // Enable keyboard shortcuts for navigation
+        keyboard: true,
+
+        // Enable the slide overview mode
+        overview: true,
+
+        // Disables the default reveal.js slide layout (scaling and centering)
+        // so that you can use custom CSS layout
+        disableLayout: false,
+
+        // Vertical centering of slides
+        center: false,
+
+        // Enables touch navigation on devices with touch input
+        touch: true,
+
+        // Loop the presentation
+        loop: false,
+
+        // Change the presentation direction to be RTL
+        rtl: false,
+
+        // see https://revealjs.com/vertical-slides/#navigation-mode
+        navigationMode: 'linear',
+
+        // Randomizes the order of slides each time the presentation loads
+        shuffle: false,
+
+        // Turns fragments on and off globally
+        fragments: true,
+
+        // Flags whether to include the current fragment in the URL,
+        // so that reloading brings you to the same fragment position
+        fragmentInURL: false,
+
+        // Flags if the presentation is running in an embedded mode,
+        // i.e. contained within a limited portion of the screen
+        embedded: false,
+
+        // Flags if we should show a help overlay when the questionmark
+        // key is pressed
+        help: true,
+
+        // Flags if it should be possible to pause the presentation (blackout)
+        pause: true,
+
+        // Flags if speaker notes should be visible to all viewers
+        showNotes: false,
+
+        // Global override for autoplaying embedded media (null/true/false)
+        autoPlayMedia: null,
+
+        // Global override for preloading lazy-loaded iframes (null/true/false)
+        preloadIframes: null,
+
+        // Number of milliseconds between automatically proceeding to the
+        // next slide, disabled when set to 0, this value can be overwritten
+        // by using a data-autoslide attribute on your slides
+        autoSlide: 0,
+
+        // Stop auto-sliding after user input
+        autoSlideStoppable: true,
+
+        // Use this method for navigation when auto-sliding
+        autoSlideMethod: null,
+
+        // Specify the average time in seconds that you think you will spend
+        // presenting each slide. This is used to show a pacing timer in the
+        // speaker view
+        defaultTiming: null,
+
+        // Enable slide navigation via mouse wheel
+        mouseWheel: false,
+
+        // The display mode that will be used to show slides
+        display: 'block',
+
+        // Hide cursor if inactive
+        hideInactiveCursor: true,
+
+        // Time before the cursor is hidden (in ms)
+        hideCursorTime: 5000,
+
+        // Opens links in an iframe preview overlay
+        previewLinks: false,
+
+        // Transition style (none/fade/slide/convex/concave/zoom)
+        transition: 'none',
+
+        // Transition speed (default/fast/slow)
+        transitionSpeed: 'default',
+
+        // Transition style for full page slide backgrounds
+        // (none/fade/slide/convex/concave/zoom)
+        backgroundTransition: 'none',
+
+        // Number of slides away from the current that are visible
+        viewDistance: 3,
+
+        // Number of slides away from the current that are visible on mobile
+        // devices. It is advisable to set this to a lower number than
+        // viewDistance in order to save resources.
+        mobileViewDistance: 2,
+
+        // The "normal" size of the presentation, aspect ratio will be preserved
+        // when the presentation is scaled to fit different resolutions. Can be
+        // specified using percentage units.
+        width: 1280,
+
+        height: 720,
+
+        // Factor of the display size that should remain empty around the content
+        margin: 6.0e-2,
+
+        math: {
+          mathjax: 'https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js',
+          config: 'TeX-AMS_HTML-full',
+          tex2jax: {
+            inlineMath: [['\\(','\\)']],
+            displayMath: [['\\[','\\]']],
+            balanceBraces: true,
+            processEscapes: false,
+            processRefs: true,
+            processEnvironments: true,
+            preview: 'TeX',
+            skipTags: ['script','noscript','style','textarea','pre','code'],
+            ignoreClass: 'tex2jax_ignore',
+            processClass: 'tex2jax_process'
+          },
+        },
+
+        // reveal.js plugins
+        plugins: [QuartoLineHighlight, PdfExport, RevealMenu, QuartoSupport,
+
+          RevealMath,
+          RevealNotes,
+          RevealSearch,
+          RevealZoom
+        ]
+      });
+    </script>
+    
+    <script>
+      // htmlwidgets need to know to resize themselves when slides are shown/hidden.
+      // Fire the "slideenter" event (handled by htmlwidgets.js) when the current
+      // slide changes (different for each slide format).
+      (function () {
+        // dispatch for htmlwidgets
+        function fireSlideEnter() {
+          const event = window.document.createEvent("Event");
+          event.initEvent("slideenter", true, true);
+          window.document.dispatchEvent(event);
+        }
+
+        function fireSlideChanged(previousSlide, currentSlide) {
+          fireSlideEnter();
+
+          // dispatch for shiny
+          if (window.jQuery) {
+            if (previousSlide) {
+              window.jQuery(previousSlide).trigger("hidden");
+            }
+            if (currentSlide) {
+              window.jQuery(currentSlide).trigger("shown");
+            }
+          }
+        }
+
+        // hookup for slidy
+        if (window.w3c_slidy) {
+          window.w3c_slidy.add_observer(function (slide_num) {
+            // slide_num starts at position 1
+            fireSlideChanged(null, w3c_slidy.slides[slide_num - 1]);
+          });
+        }
+
+      })();
+    </script>
+
+    <script id="quarto-html-after-body" type="application/javascript">
+      window.document.addEventListener("DOMContentLoaded", function (event) {
+        const tabsets =  window.document.querySelectorAll(".panel-tabset-tabby")
+        tabsets.forEach(function(tabset) {
+          const tabby = new Tabby('#' + tabset.id);
+        });
+        const isCodeAnnotation = (el) => {
+          for (const clz of el.classList) {
+            if (clz.startsWith('code-annotation-')) {                     
+              return true;
+            }
+          }
+          return false;
+        }
+        const onCopySuccess = function(e) {
+          // button target
+          const button = e.trigger;
+          // don't keep focus
+          button.blur();
+          // flash "checked"
+          button.classList.add('code-copy-button-checked');
+          var currentTitle = button.getAttribute("title");
+          button.setAttribute("title", "Copied!");
+          let tooltip;
+          if (window.bootstrap) {
+            button.setAttribute("data-bs-toggle", "tooltip");
+            button.setAttribute("data-bs-placement", "left");
+            button.setAttribute("data-bs-title", "Copied!");
+            tooltip = new bootstrap.Tooltip(button, 
+              { trigger: "manual", 
+                customClass: "code-copy-button-tooltip",
+                offset: [0, -8]});
+            tooltip.show();    
+          }
+          setTimeout(function() {
+            if (tooltip) {
+              tooltip.hide();
+              button.removeAttribute("data-bs-title");
+              button.removeAttribute("data-bs-toggle");
+              button.removeAttribute("data-bs-placement");
+            }
+            button.setAttribute("title", currentTitle);
+            button.classList.remove('code-copy-button-checked');
+          }, 1000);
+          // clear code selection
+          e.clearSelection();
+        }
+        const getTextToCopy = function(trigger) {
+          const outerScaffold = trigger.parentElement.cloneNode(true);
+          const codeEl = outerScaffold.querySelector('code');
+          for (const childEl of codeEl.children) {
+            if (isCodeAnnotation(childEl)) {
+              childEl.remove();
+            }
+          }
+          return codeEl.innerText;
+        }
+        const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+          text: getTextToCopy
+        });
+        clipboard.on('success', onCopySuccess);
+        if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+          const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+            text: getTextToCopy,
+            container: window.document.getElementById('quarto-embedded-source-code-modal')
+          });
+          clipboardModal.on('success', onCopySuccess);
+        }
+          var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+          var mailtoRegex = new RegExp(/^mailto:/);
+            var filterRegex = new RegExp("https:\/\/ml4ds\.com");
+          var isInternal = (href) => {
+              return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+          }
+          // Inspect non-navigation links and adorn them if external
+         var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+          for (var i=0; i<links.length; i++) {
+            const link = links[i];
+            if (!isInternal(link.href)) {
+              // undo the damage that might have been done by quarto-nav.js in the case of
+              // links that we want to consider external
+              if (link.dataset.originalHref !== undefined) {
+                link.href = link.dataset.originalHref;
+              }
+            }
+          }
+        function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+          const config = {
+            allowHTML: true,
+            maxWidth: 500,
+            delay: 100,
+            arrow: false,
+            appendTo: function(el) {
+                return el.closest('section.slide') || el.parentElement;
+            },
+            interactive: true,
+            interactiveBorder: 10,
+            theme: 'light-border',
+            placement: 'bottom-start',
+          };
+          if (contentFn) {
+            config.content = contentFn;
+          }
+          if (onTriggerFn) {
+            config.onTrigger = onTriggerFn;
+          }
+          if (onUntriggerFn) {
+            config.onUntrigger = onUntriggerFn;
+          }
+            config['offset'] = [0,0];
+            config['maxWidth'] = 700;
+          window.tippy(el, config); 
+        }
+        const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+        for (var i=0; i<noterefs.length; i++) {
+          const ref = noterefs[i];
+          tippyHover(ref, function() {
+            // use id or data attribute instead here
+            let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+            try { href = new URL(href).hash; } catch {}
+            const id = href.replace(/^#\/?/, "");
+            const note = window.document.getElementById(id);
+            if (note) {
+              return note.innerHTML;
+            } else {
+              return "";
+            }
+          });
+        }
+        const findCites = (el) => {
+          const parentEl = el.parentElement;
+          if (parentEl) {
+            const cites = parentEl.dataset.cites;
+            if (cites) {
+              return {
+                el,
+                cites: cites.split(' ')
+              };
+            } else {
+              return findCites(el.parentElement)
+            }
+          } else {
+            return undefined;
+          }
+        };
+        var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+        for (var i=0; i<bibliorefs.length; i++) {
+          const ref = bibliorefs[i];
+          const citeInfo = findCites(ref);
+          if (citeInfo) {
+            tippyHover(citeInfo.el, function() {
+              var popup = window.document.createElement('div');
+              citeInfo.cites.forEach(function(cite) {
+                var citeDiv = window.document.createElement('div');
+                citeDiv.classList.add('hanging-indent');
+                citeDiv.classList.add('csl-entry');
+                var biblioDiv = window.document.getElementById('ref-' + cite);
+                if (biblioDiv) {
+                  citeDiv.innerHTML = biblioDiv.innerHTML;
+                }
+                popup.appendChild(citeDiv);
+              });
+              return popup.innerHTML;
+            });
+          }
+        }
+      });
+      </script>
+    
+
+</body></html>

@@ -1,0 +1,1057 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.10.18">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>What a winning score shows – machine learning 4 data science</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: 1.5em;}
+div.column{flex: auto;}
+@media screen {
+div.columns{gap: min(4vw, 1.5em);}
+div.column{overflow-x: auto;}
+}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap-2933ca209de16f787bfe4fe53c4e45ee.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="../../styles.css">
+</head>
+
+<body class="nav-fixed quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a href="https://ml4ds.com" class="navbar-brand navbar-brand-logo">
+    <img src="../../files/sticker.png" alt="ml4ds" class="navbar-logo light-content">
+    <img src="../../files/sticker.png" alt="ml4ds" class="navbar-logo dark-content">
+    </a>
+    <a class="navbar-brand" href="https://ml4ds.com">
+    <span class="navbar-title">machine learning 4 data science</span>
+    </a>
+  </div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-references" role="link" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">references</span>
+    </a>
+    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="nav-menu-references">    
+        <li>
+    <a class="dropdown-item" href="https://www.statlearning.com/">
+ <span class="dropdown-text">ISLR</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="https://mlstory.org/">
+ <span class="dropdown-text">PPA (Patterns, Predictions, and Actions)</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="https://causalml-book.org/">
+ <span class="dropdown-text">CausalML</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="https://r4ds.hadley.nz/">
+ <span class="dropdown-text">R4DS</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="https://hastie.su.domains/ElemStatLearn/">
+ <span class="dropdown-text">ESL</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="https://hastie.su.domains/CASI/">
+ <span class="dropdown-text">CASI</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="https://christophm.github.io/interpretable-ml-book/">
+ <span class="dropdown-text">IML</span></a>
+  </li>  
+    </ul>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" href="../../index.html"> 
+<span class="menu-text">content</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../about.html"> 
+<span class="menu-text">about</span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul class="collapse">
+  <li><a href="#the-common-task-framework" id="toc-the-common-task-framework" class="nav-link active" data-scroll-target="#the-common-task-framework">The common task framework</a></li>
+  <li><a href="#how-far-a-score-can-be-from-its-risk" id="toc-how-far-a-score-can-be-from-its-risk" class="nav-link" data-scroll-target="#how-far-a-score-can-be-from-its-risk">How far a score can be from its risk</a></li>
+  <li><a href="#reusing-a-test-set" id="toc-reusing-a-test-set" class="nav-link" data-scroll-target="#reusing-a-test-set">Reusing a test set</a></li>
+  <li><a href="#when-the-distribution-moves" id="toc-when-the-distribution-moves" class="nav-link" data-scroll-target="#when-the-distribution-moves">When the distribution moves</a></li>
+  <li><a href="#what-a-winning-score-can-justify" id="toc-what-a-winning-score-can-justify" class="nav-link" data-scroll-target="#what-a-winning-score-can-justify">What a winning score can justify</a></li>
+  <li><a href="#when-the-target-or-the-task-is-wrong" id="toc-when-the-target-or-the-task-is-wrong" class="nav-link" data-scroll-target="#when-the-target-or-the-task-is-wrong">When the target or the task is wrong</a></li>
+  <li><a href="#summary" id="toc-summary" class="nav-link" data-scroll-target="#summary">Summary</a></li>
+  <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references">References</a></li>
+  </ul>
+<div class="quarto-alternate-formats"><h2>Other Formats</h2><ul><li><a href="winning-scores.pdf"><i class="bi bi-file-pdf"></i>PDF</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">What a winning score shows</h1>
+<p class="subtitle lead">Benchmarks, distribution shift and deployment</p>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p>Most of what machine learning knows about which methods work comes from competitions: a shared dataset, a task, an agreed score and a hidden evaluation set, with the winner chosen by best score. This note is about what such a win establishes. It follows the lecture: how far a score can be from what it estimates; how reusing a test set can mislead; what happens when the data a model meets differ from the data it was scored on; what a winning score can justify; and what it cannot answer, because the target or the task itself is in question. Each section opens with the works it draws on, and the sections of them it uses; full references are at the end.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Show the setup code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Course palette (theme/st310.scss): viridis for the primary scale, magma for the second.</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>v_dark <span class="ot">&lt;-</span> <span class="st">"#440154"</span>; v_blue <span class="ot">&lt;-</span> <span class="st">"#31688e"</span>; v_teal <span class="ot">&lt;-</span> <span class="st">"#21918c"</span>; m_pink <span class="ot">&lt;-</span> <span class="st">"#b73779"</span>; m_orange <span class="ot">&lt;-</span> <span class="st">"#fc8961"</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">theme_set</span>(<span class="fu">theme_minimal</span>(<span class="at">base_size =</span> <span class="dv">12</span>))</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">310</span>)   <span class="co"># the note's one seed</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<section id="the-common-task-framework" class="level2">
+<h2 class="anchored" data-anchor-id="the-common-task-framework">The common task framework</h2>
+<p><strong>Reference</strong>: Donoho (2017), section 6; Rodu and Baiocchi (2023), section 9.</p>
+<p>Donoho gives the framework three ingredients: a publicly available training dataset; a set of competitors whose common task is to produce a prediction rule from it; and a referee who scores each submitted rule on test data the competitors cannot see. He takes the name from the computational linguist Mark Liberman and traces the practice to US research programs from the late 1980s, in which groups funded by DARPA were scored on shared, sequestered data, with NIST as the referee. He argues that this framework, together with predictive modeling, is what made machine learning so productive: effort goes to measured performance, many groups can compete, judging is impartial and automatic, and the winning rules have already been tested on data they did not see, which makes them look close to ready for use. In a footnote he records that the winning algorithm of the Netflix challenge was never implemented.</p>
+<p>Liberman’s own account, in a letter quoted by Rodu and Baiocchi, adds something Donoho does not stress. The framework was designed to steer government-funded research on problems far from practical use. Tasks were deliberately chosen not to be the real goal of the work, and metrics were chosen to be simple and automatic, so that they were at best loosely related to what the research was for. Liberman’s view is that tasks and metrics have to be rethought when the aim is an application rather than research progress.</p>
+</section>
+<section id="how-far-a-score-can-be-from-its-risk" class="level2">
+<h2 class="anchored" data-anchor-id="how-far-a-score-can-be-from-its-risk">How far a score can be from its risk</h2>
+<p><strong>Reference</strong>: Hoeffding (1963).</p>
+<p>A model <span class="math inline">\(f\)</span>, fixed before the test data are seen, is scored on <span class="math inline">\(m\)</span> test rows. Its <strong>score</strong> is the mean of their losses, <span class="math display">\[
+\hat R = \frac1m \sum_{j=1}^m \ell_j, \qquad \ell_j = \ell\big(y_j^{\text{test}}, f(x_j^{\text{test}})\big),
+\]</span> and, for rows drawn independently from one distribution, the losses are independent with mean <span class="math inline">\(R = R(f)\)</span>, the model’s risk. How far can <span class="math inline">\(\hat R\)</span> be from <span class="math inline">\(R\)</span>?</p>
+<p><strong>The variance.</strong> Suppose every loss is between 0 and 1, as for a 0–1 loss or the Brier score <span class="math inline">\((y - \hat p)^2\)</span> of a probability. Then <span class="math inline">\(\ell^2 \le \ell\)</span>, so <span class="math display">\[
+\mathrm{Var}(\ell) = \mathbb E[\ell^2] - (\mathbb E\ell)^2 \le \mathbb E\ell - (\mathbb E\ell)^2 \le \tfrac14,
+\qquad\text{and so}\qquad
+\mathrm{Var}(\hat R) \le \frac{1}{4m}.
+\]</span> The worst case, variance <span class="math inline">\(\frac14\)</span>, is a loss that is 0 or 1 with probability <span class="math inline">\(\frac12\)</span> each.</p>
+<p><strong>A heuristic.</strong> For large <span class="math inline">\(m\)</span> the central limit theorem says that <span class="math inline">\(\hat R - R\)</span> is roughly normal. A normal variable <span class="math inline">\(Z\)</span> with mean 0 and variance <span class="math inline">\(\sigma^2\)</span> satisfies <span class="math inline">\(P(|Z| \ge t) \le 2e^{-t^2/(2\sigma^2)}\)</span>, and with the largest variance a loss between 0 and 1 allows, <span class="math inline">\(\sigma^2 = 1/(4m)\)</span>, this is <span class="math display">\[
+P\big(|\hat R - R| \ge t\big) \lessapprox 2e^{-2mt^2}.
+\]</span> This is a heuristic, not a bound. The central limit theorem describes the middle of the distribution of <span class="math inline">\(\hat R\)</span> well, but at a fixed <span class="math inline">\(m\)</span> it says nothing reliable about the far tail, and the far tail is where a small probability such as <span class="math inline">\(\delta = 0.05\)</span>, or <span class="math inline">\(0.05\)</span> divided among many models, lives.</p>
+<p><strong>Hoeffding’s inequality</strong> (Hoeffding 1963, Theorem 2, applied to each tail) says the heuristic is right. If <span class="math inline">\(Z_1, \ldots, Z_m\)</span> are independent with <span class="math inline">\(0 \le Z_i \le 1\)</span> and <span class="math inline">\(\bar Z\)</span> is their mean, then for every <span class="math inline">\(t &gt; 0\)</span> and every <span class="math inline">\(m\)</span>, <span class="math display">\[
+P\big(|\bar Z - \mathbb E\bar Z| \ge t\big) \le 2e^{-2mt^2}.
+\]</span> Three things make it believable without the proof.</p>
+<ul>
+<li><em>It is the normal tail at the worst-case variance.</em> A variable confined to <span class="math inline">\([0, 1]\)</span> cannot spread out more than its range allows. The proof makes this precise: such a variable’s moment generating function is never larger than that of a normal variable with variance <span class="math inline">\(\frac14\)</span>, and from there the bound follows as it would for a normal mean. So the bound is what the heuristic gives, but it holds for every <span class="math inline">\(m\)</span>, not only in the limit.</li>
+<li><em>It shrinks exponentially in <span class="math inline">\(m\)</span>.</em> For <span class="math inline">\(\hat R\)</span> to be <span class="math inline">\(t\)</span> above <span class="math inline">\(R\)</span>, the rows must err in the same direction, on average, by <span class="math inline">\(t\)</span>. Each further independent row multiplies the bound by <span class="math inline">\(e^{-2t^2}\)</span>, so the chance of a large gap falls geometrically with the number of rows.</li>
+<li><em>The gap shrinks like <span class="math inline">\(1/\sqrt m\)</span>.</em> Setting the right-hand side equal to <span class="math inline">\(\delta\)</span> and solving for <span class="math inline">\(t\)</span>: with probability at least <span class="math inline">\(1 - \delta\)</span>, <span class="math display">\[
+|\hat R - R| &lt; \sqrt{\frac{\log(2/\delta)}{2m}}.
+\]</span> Halving the gap takes four times as many rows, as for a standard error, and the confidence level enters only through <span class="math inline">\(\log(1/\delta)\)</span>, so asking for much more confidence costs little.</li>
+</ul>
+<div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>m_h <span class="ot">&lt;-</span> <span class="dv">50</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>tails <span class="ot">&lt;-</span> <span class="fu">expand_grid</span>(<span class="at">t =</span> <span class="fu">seq</span>(<span class="fl">0.01</span>, <span class="fl">0.4</span>, <span class="at">by =</span> <span class="fl">0.0025</span>), <span class="at">R =</span> <span class="fu">c</span>(<span class="fl">0.5</span>, <span class="fl">0.1</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">exact =</span> <span class="fu">map2_dbl</span>(t, R, <span class="cf">function</span>(t, R) {</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    k <span class="ot">&lt;-</span> <span class="dv">0</span><span class="sc">:</span>m_h; <span class="fu">sum</span>(<span class="fu">dbinom</span>(k, m_h, R)[<span class="fu">abs</span>(k <span class="sc">/</span> m_h <span class="sc">-</span> R) <span class="sc">&gt;=</span> t <span class="sc">-</span> <span class="fl">1e-12</span>]) }),</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">normal =</span> <span class="dv">2</span> <span class="sc">*</span> <span class="fu">pnorm</span>(<span class="sc">-</span>t <span class="sc">/</span> <span class="fu">sqrt</span>(R <span class="sc">*</span> (<span class="dv">1</span> <span class="sc">-</span> R) <span class="sc">/</span> m_h)), <span class="at">bound =</span> <span class="dv">2</span> <span class="sc">*</span> <span class="fu">exp</span>(<span class="sc">-</span><span class="dv">2</span> <span class="sc">*</span> m_h <span class="sc">*</span> t<span class="sc">^</span><span class="dv">2</span>))</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(tails, <span class="fu">aes</span>(t)) <span class="sc">+</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">data =</span> <span class="fu">filter</span>(tails, R <span class="sc">==</span> <span class="fl">0.5</span>), <span class="fu">aes</span>(<span class="at">y =</span> bound, <span class="at">colour =</span> <span class="st">"Hoeffding's bound"</span>), <span class="at">linewidth =</span> <span class="fl">1.1</span>) <span class="sc">+</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">data =</span> <span class="fu">filter</span>(tails, R <span class="sc">==</span> <span class="fl">0.5</span>), <span class="fu">aes</span>(<span class="at">y =</span> normal, <span class="at">colour =</span> <span class="st">"normal approximation"</span>), <span class="at">linewidth =</span> <span class="fl">0.8</span>) <span class="sc">+</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_step</span>(<span class="at">data =</span> <span class="fu">filter</span>(tails, R <span class="sc">==</span> <span class="fl">0.5</span>), <span class="fu">aes</span>(<span class="at">y =</span> exact, <span class="at">colour =</span> <span class="st">"exact, risk 1/2"</span>), <span class="at">linewidth =</span> <span class="fl">0.7</span>) <span class="sc">+</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_step</span>(<span class="at">data =</span> <span class="fu">filter</span>(tails, R <span class="sc">==</span> <span class="fl">0.1</span>), <span class="fu">aes</span>(<span class="at">y =</span> exact, <span class="at">colour =</span> <span class="st">"exact, risk 0.1"</span>), <span class="at">linewidth =</span> <span class="fl">0.7</span>, <span class="at">linetype =</span> <span class="st">"dashed"</span>) <span class="sc">+</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_log10</span>(<span class="at">limits =</span> <span class="fu">c</span>(<span class="fl">1e-6</span>, <span class="dv">2</span>), <span class="at">labels =</span> scales<span class="sc">::</span><span class="fu">label_log</span>()) <span class="sc">+</span></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_colour_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">"Hoeffding's bound"</span> <span class="ot">=</span> m_pink, <span class="st">"normal approximation"</span> <span class="ot">=</span> v_teal,</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>                                 <span class="st">"exact, risk 1/2"</span> <span class="ot">=</span> <span class="st">"black"</span>, <span class="st">"exact, risk 0.1"</span> <span class="ot">=</span> <span class="st">"grey45"</span>), <span class="at">name =</span> <span class="cn">NULL</span>) <span class="sc">+</span></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"t"</span>, <span class="at">y =</span> <span class="st">"probability of a gap of at least t"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<div id="fig-tails" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-tails-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="winning-scores_files/figure-html/fig-tails-1.png" class="img-fluid figure-img" width="1050">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-tails-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;1: The probability that the mean of <span class="math inline">\(m = 50\)</span> losses of 0 or 1 is at least <span class="math inline">\(t\)</span> from its expectation, on a log scale: exactly (binomial) when the risk is <span class="math inline">\(\frac12\)</span>, the normal approximation, and Hoeffding’s bound <span class="math inline">\(2e^{-2mt^2}\)</span>. The dashed line is the exact probability when the risk is 0.1, where the variance is smaller and the bound, which uses only the range, is loose.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p><strong>Many models at once.</strong> A leaderboard scores <span class="math inline">\(K\)</span> models. If they were all fixed before the test rows were opened, the chance that <em>any</em> score is <span class="math inline">\(t\)</span> or more from its risk is at most the sum of the <span class="math inline">\(K\)</span> chances, <span class="math inline">\(2Ke^{-2mt^2}\)</span> (the union bound, which needs no independence between the scores). Setting this equal to <span class="math inline">\(\delta\)</span>, every one of the <span class="math inline">\(K\)</span> scores is within <span class="math display">\[
+t_K = \sqrt{\frac{\log(2K/\delta)}{2m}}
+\]</span> of its risk, with probability at least <span class="math inline">\(1 - \delta\)</span>. The number of models enters only through <span class="math inline">\(\log K\)</span>. In the lecture, <span class="math inline">\(K = 5\)</span> models on <span class="math inline">\(m = 8{,}000\)</span> tuning rows give <span class="math inline">\(t_K = 0.018\)</span>; a million models on the same rows would give 0.033. What the bound costs is that it uses only the range of the losses. When the losses vary much less than the worst case allows, as the Brier scores of a good model do, the true gaps are far smaller than <span class="math inline">\(t_K\)</span>.</p>
+<p><strong>Two models on the same rows.</strong> To compare models <span class="math inline">\(A\)</span> and <span class="math inline">\(B\)</span>, take the difference of their losses on each row, <span class="math inline">\(\Delta_j = \ell_{A,j} - \ell_{B,j}\)</span>. The difference of their scores is <span class="math inline">\(\bar\Delta\)</span>, with <span class="math display">\[
+\mathrm{Var}(\bar\Delta) = \frac{\mathrm{Var}(\ell_A) + \mathrm{Var}(\ell_B) - 2\,\mathrm{Cov}(\ell_A, \ell_B)}{m},
+\]</span> estimated by <span class="math inline">\(\mathrm{sd}(\Delta)^2/m\)</span>. Two good models tend to be wrong on the same rows, so the covariance is large and the paired standard error far smaller than either score’s. In the lecture it was about a third of either score’s standard error, which let the same rows separate two models whose individual error bars overlapped.</p>
+<p><strong>A number that is not a mean.</strong> Some numbers that matter for a deployed model are not averages of per-row losses: the share of high-cost patients among the 3% with the highest scores depends on every patient’s score, through which patients make the top 3%. For such a statistic <span class="math inline">\(T\)</span>, the <strong>bootstrap</strong> of the test rows estimates its variability: draw <span class="math inline">\(m\)</span> rows with replacement, recompute <span class="math inline">\(T\)</span> on them, repeat <span class="math inline">\(B\)</span> times, and read off the spread, for example the 5th and 95th percentiles of the <span class="math inline">\(B\)</span> values. To compare two models, each drawn row keeps both models’ predictions, so that the comparison stays paired. The models are held fixed: the bootstrap describes how <span class="math inline">\(T\)</span> varies with the test rows, not how it would vary if the models were refitted, and it does nothing to correct for how the models being compared were chosen.</p>
+</section>
+<section id="reusing-a-test-set" class="level2">
+<h2 class="anchored" data-anchor-id="reusing-a-test-set">Reusing a test set</h2>
+<p><strong>Reference</strong>: Hardt and Recht (2022), chapter 8, section “Longevity of benchmarks”; Recht et al.&nbsp;(2019), sections 1 and 2; Roelofs et al.&nbsp;(2019), section 1.</p>
+<p>The union bound assumed the <span class="math inline">\(K\)</span> models were fixed in advance. In a benchmark that runs for years, each new model is designed after seeing the scores of the old ones on the same test set, and then the bound no longer applies: a score can be driven away from the risk. PPA shows how far in the worst case. Take a binary task whose labels nobody can predict, so that every model’s true accuracy is <span class="math inline">\(\frac12\)</span>. Submit <span class="math inline">\(k\)</span> random classifiers, keep those that happen to score above <span class="math inline">\(\frac12\)</span> on the <span class="math inline">\(n\)</span> test points, and take their majority vote. The vote’s test accuracy exceeds <span class="math inline">\(\frac12\)</span> by an amount of order <span class="math inline">\(\sqrt{k/n}\)</span>, while its accuracy on new data stays at <span class="math inline">\(\frac12\)</span>. Without adaptivity, the largest gap among <span class="math inline">\(k\)</span> fixed classifiers grows only like <span class="math inline">\(\sqrt{\log(k)/n}\)</span>, as the union bound says.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>n_a <span class="ot">&lt;-</span> <span class="dv">2000</span>; k_max <span class="ot">&lt;-</span> <span class="dv">1000</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>y_a <span class="ot">&lt;-</span> <span class="fu">rbinom</span>(n_a, <span class="dv">1</span>, <span class="fl">0.5</span>)</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>preds <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">rbinom</span>(k_max <span class="sc">*</span> n_a, <span class="dv">1</span>, <span class="fl">0.5</span>), <span class="at">nrow =</span> k_max)    <span class="co"># k random classifiers, as their predictions on the test points</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>acc <span class="ot">&lt;-</span> <span class="fu">rowMeans</span>(preds <span class="sc">==</span> <span class="fu">matrix</span>(y_a, k_max, n_a, <span class="at">byrow =</span> <span class="cn">TRUE</span>))</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>ks <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="dv">10</span>, k_max, <span class="at">by =</span> <span class="dv">10</span>)</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>vote_acc <span class="ot">&lt;-</span> <span class="fu">map_dbl</span>(ks, <span class="cf">function</span>(k) {</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>  keep <span class="ot">&lt;-</span> <span class="fu">which</span>(acc[<span class="dv">1</span><span class="sc">:</span>k] <span class="sc">&gt;</span> <span class="fl">0.5</span>)</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mean</span>((<span class="fu">colMeans</span>(preds[keep, , <span class="at">drop =</span> <span class="cn">FALSE</span>]) <span class="sc">&gt;</span> <span class="fl">0.5</span>) <span class="sc">==</span> y_a)</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>})</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>c_fit <span class="ot">&lt;-</span> <span class="fu">coef</span>(<span class="fu">lm</span>(<span class="fu">I</span>(vote_acc <span class="sc">-</span> <span class="fl">0.5</span>) <span class="sc">~</span> <span class="dv">0</span> <span class="sc">+</span> <span class="fu">sqrt</span>(ks <span class="sc">/</span> n_a)))[[<span class="dv">1</span>]]</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a><span class="fu">tibble</span>(<span class="at">k =</span> ks, <span class="at">acc =</span> vote_acc) <span class="sc">|&gt;</span></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(k, acc)) <span class="sc">+</span></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="fl">0.5</span>, <span class="at">colour =</span> <span class="st">"grey50"</span>) <span class="sc">+</span></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_function</span>(<span class="at">fun =</span> <span class="cf">function</span>(k) <span class="fl">0.5</span> <span class="sc">+</span> c_fit <span class="sc">*</span> <span class="fu">sqrt</span>(k <span class="sc">/</span> n_a), <span class="at">linetype =</span> <span class="st">"dashed"</span>, <span class="at">colour =</span> m_pink) <span class="sc">+</span></span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">colour =</span> v_dark, <span class="at">linewidth =</span> <span class="fl">0.9</span>) <span class="sc">+</span></span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"number of classifiers scored on the test set, k"</span>, <span class="at">y =</span> <span class="st">"test accuracy of the vote"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<div id="fig-adaptive" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-adaptive-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="winning-scores_files/figure-html/fig-adaptive-1.png" class="img-fluid figure-img" width="1050">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-adaptive-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;2: Overfitting by reusing a test set of <span class="math inline">\(n = 2{,}000\)</span> points whose labels are coin flips. After <span class="math inline">\(k\)</span> random classifiers have been scored, the majority vote of those that scored above one half has the test accuracy shown; its accuracy on new points is one half. The dashed curve is <span class="math inline">\(\frac12 + c\sqrt{k/n}\)</span>, with <span class="math inline">\(c\)</span> fitted to the simulated points by least squares.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>Whether this happens in practice is an empirical question, and two studies tested it.</p>
+<ul>
+<li>Recht et al.&nbsp;built new test sets for CIFAR-10 and ImageNet by repeating the original collection procedures. Every model scored worse on the new data, many by around 10 percentage points; the best ImageNet model in their Table 1 fell from 82.9% to 72.2%. But the order of the models was almost unchanged, and models that were better on the old test set gained more on the new one, which is not what overfitting to the old test set would produce. They split the drop in score into three parts (their section 2), here in the course’s notation for losses: <span class="math display">\[
+\hat R_{\text{old}} - \hat R_{\text{new}} = \underbrace{\big(\hat R_{\text{old}} - R_{\text{old}}\big)}_{\text{adaptivity}} + \underbrace{\big(R_{\text{old}} - R_{\text{new}}\big)}_{\text{distribution}} + \underbrace{\big(R_{\text{new}} - \hat R_{\text{new}}\big)}_{\text{sampling}},
+\]</span> where <span class="math inline">\(R_{\text{old}}\)</span> and <span class="math inline">\(R_{\text{new}}\)</span> are the model’s risks under the old and new collection procedures. The last term is the one Hoeffding’s inequality controls; adaptivity is the term the union bound no longer controls once the models depend on the old scores. Their evidence points to the middle term: the new images were slightly harder.</li>
+<li>Roelofs et al.&nbsp;compared the public and private leaderboards of 120 Kaggle competitions. The public leaderboard is the score competitors see and react to; the private one is a separate test set used once at the end. Apart from competitions with problems such as small test sets or splits that were not random, the two agreed closely.</li>
+</ul>
+<p>PPA offers two reasons why adaptivity did less damage than the worst case. Models built by practitioners resemble each other, so the number of genuinely different predictions they try is far smaller than the worst case allows (model similarity). And researchers mostly report whether a new model beats the best so far, which reveals less about the test set than reporting every score (the leaderboard principle). The chapter is careful to say these explain only part of what was observed. The lesson the readings draw is that a benchmark score has held up well as a comparison between models on its own distribution, and less well as an estimate of how a model will do on data collected even slightly differently.</p>
+</section>
+<section id="when-the-distribution-moves" class="level2">
+<h2 class="anchored" data-anchor-id="when-the-distribution-moves">When the distribution moves</h2>
+<p><strong>Reference</strong>: Nastl and Hardt (2024), sections 1 and 3.</p>
+<p>A score is evidence about the distribution its test rows came from. Write <span class="math inline">\(p_{\text{train}}(x, y)\)</span> for that distribution and <span class="math inline">\(p_{\text{test}}(x, y)\)</span> for the one the model will be used on, and <span class="math inline">\(R_{\text{train}}(f)\)</span> and <span class="math inline">\(R_{\text{test}}(f)\)</span> for the risks under each. A model is scored <strong>in distribution</strong> when new rows come from <span class="math inline">\(p_{\text{train}}\)</span>, which is what a held-out test set measures; it is used <strong>out of distribution</strong> when <span class="math inline">\(p_{\text{test}}\)</span> differs. Every joint distribution can be factored two ways, <span class="math display">\[
+p(x, y) = p(x)\,p(y \mid x) = p(y)\,p(x \mid y),
+\]</span> and the two standard kinds of shift assume that one conditional distribution stays fixed while the marginal beside it moves.</p>
+<section id="covariate-shift" class="level3">
+<h3 class="anchored" data-anchor-id="covariate-shift">Covariate shift</h3>
+<p><strong>Assumption</strong>: <span class="math inline">\(p_{\text{test}}(y \mid x) = p_{\text{train}}(y \mid x)\)</span>; only the distribution of the inputs changes. Write <span class="math inline">\(r(x) = \mathbb E[\ell(Y, f(X)) \mid X = x]\)</span>, the expected loss at <span class="math inline">\(x\)</span>, which by the assumption is the same under both distributions, and <span class="math display">\[
+w(x) = \frac{p_{\text{test}}(x)}{p_{\text{train}}(x)}.
+\]</span> Then <span class="math display">\[
+\begin{aligned}
+R_{\text{test}}(f) &amp;= \mathbb E_{\text{test}}\big[r(X)\big] &amp;&amp; \text{tower property; } r \text{ is the same under both}\\
+&amp;= \int r(x)\, p_{\text{test}}(x)\, dx \\
+&amp;= \int r(x)\, w(x)\, p_{\text{train}}(x)\, dx &amp;&amp; \text{needs } p_{\text{train}}(x) &gt; 0 \text{ wherever } p_{\text{test}}(x) &gt; 0\\
+&amp;= \mathbb E_{\text{train}}\big[w(X)\, \ell(Y, f(X))\big] &amp;&amp; \text{tower property again.}
+\end{aligned}
+\]</span> This is the <strong>covariate-shift identity</strong>. It turns the risk on the new population into an average over the old one, with each row reweighted by how much more (or less) common its inputs are where the model will be used. It is the same move as inverse propensity weighting, where each unit is weighted by <span class="math inline">\(1/\pi(Z)\)</span> and <span class="math inline">\(0 &lt; \pi(Z) &lt; 1\)</span> is needed; here the condition is <strong>overlap</strong>, that the training distribution covers every input the model will meet.</p>
+<p><strong>Estimating the new risk.</strong> On <span class="math inline">\(m\)</span> held-out rows from the training distribution, the reweighted score <span class="math display">\[
+\hat R_w = \frac1m \sum_{j=1}^m w(x_j)\,\ell_j
+\]</span> has expectation <span class="math inline">\(R_{\text{test}}(f)\)</span>, by the identity. Its variance is <span class="math inline">\(\mathrm{Var}_{\text{train}}(w\ell)/m\)</span>, which for losses between 0 and 1 is at most <span class="math inline">\(\mathbb E_{\text{train}}[w(X)^2]/m\)</span>. A common summary is the <strong>effective sample size</strong>, <span class="math inline">\((\sum_j w_j)^2 / \sum_j w_j^2\)</span>, the number of unweighted rows that would give about the same variance; since <span class="math inline">\(\mathbb E_{\text{train}}[w] = 1\)</span>, it is roughly <span class="math inline">\(m / \mathbb E_{\text{train}}[w^2]\)</span>.</p>
+<p>A one-dimensional example shows how quickly the price grows. Take <span class="math inline">\(p_{\text{train}} = N(0, 1)\)</span> and <span class="math inline">\(p_{\text{test}} = N(\mu, 1)\)</span>. Then <span class="math inline">\(w(x) = e^{\mu x - \mu^2/2}\)</span>, and <span class="math display">\[
+\mathbb E_{\text{train}}\big[w(X)^2\big] = \mathbb E\big[e^{2\mu X - \mu^2}\big] = e^{2\mu^2 - \mu^2} = e^{\mu^2},
+\]</span> so the effective sample size is about <span class="math inline">\(m e^{-\mu^2}\)</span>: 37% of the rows for a shift of one standard deviation, 1.8% for two. The overlap condition holds for every <span class="math inline">\(\mu\)</span>, but the rows that carry the information become rare.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>mu <span class="ot">&lt;-</span> <span class="fl">1.5</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>cs <span class="ot">&lt;-</span> <span class="fu">tibble</span>(<span class="at">x =</span> <span class="fu">seq</span>(<span class="sc">-</span><span class="fl">3.5</span>, <span class="dv">5</span>, <span class="at">length.out =</span> <span class="dv">400</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">training =</span> <span class="fu">dnorm</span>(x), <span class="at">deployment =</span> <span class="fu">dnorm</span>(x, mu), <span class="at">w =</span> <span class="fu">exp</span>(mu <span class="sc">*</span> x <span class="sc">-</span> mu<span class="sc">^</span><span class="dv">2</span> <span class="sc">/</span> <span class="dv">2</span>))</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>p1 <span class="ot">&lt;-</span> cs <span class="sc">|&gt;</span> <span class="fu">pivot_longer</span>(<span class="fu">c</span>(training, deployment), <span class="at">names_to =</span> <span class="st">"population"</span>, <span class="at">values_to =</span> <span class="st">"density"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(x, density, <span class="at">colour =</span> population)) <span class="sc">+</span> <span class="fu">geom_line</span>(<span class="at">linewidth =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_colour_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="at">training =</span> v_teal, <span class="at">deployment =</span> m_pink), <span class="at">name =</span> <span class="cn">NULL</span>) <span class="sc">+</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"bottom"</span>)</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>p2 <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(cs, <span class="fu">aes</span>(x, w)) <span class="sc">+</span> <span class="fu">geom_line</span>(<span class="at">linewidth =</span> <span class="dv">1</span>, <span class="at">colour =</span> v_dark) <span class="sc">+</span> <span class="fu">scale_y_log10</span>(<span class="at">labels =</span> scales<span class="sc">::</span><span class="fu">label_log</span>()) <span class="sc">+</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">y =</span> <span class="st">"w(x), log scale"</span>)</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>patchwork<span class="sc">::</span><span class="fu">wrap_plots</span>(p1, p2, <span class="at">nrow =</span> <span class="dv">1</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<div id="fig-covshift" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-covshift-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="winning-scores_files/figure-html/fig-covshift-1.png" class="img-fluid figure-img" width="1050">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-covshift-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;3: Covariate shift in one dimension. Left: the training and deployment densities of the input, <span class="math inline">\(N(0, 1)\)</span> and <span class="math inline">\(N(1.5, 1)\)</span>. Right: the weight <span class="math inline">\(w(x) = p_{\text{test}}(x)/p_{\text{train}}(x)\)</span> on a log scale. The deployment population is mostly where training rows are rare, so a few rows get large weights.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p><strong>When <span class="math inline">\(w\)</span> is unknown.</strong> In practice <span class="math inline">\(w\)</span> is estimated. One way uses a classifier: pool the training inputs with a sample of deployment inputs, and estimate the probability <span class="math inline">\(P(\text{deployment} \mid x)\)</span> that a row with inputs <span class="math inline">\(x\)</span> came from the deployment sample. By Bayes’ rule, <span class="math display">\[
+w(x) = \frac{P(\text{deployment} \mid x)}{P(\text{training} \mid x)} \cdot \frac{n_{\text{train}}}{n_{\text{test}}},
+\]</span> a ratio of the two classes’ probabilities, as in inverse propensity weighting. Estimated weights add estimation error to the variance above, and where the two populations barely overlap, the estimated probabilities near 0 or 1 make the weights unstable.</p>
+<p>The weights are needed to <em>evaluate</em> a fixed model on the new population. Whether to <em>fit</em> with them is a separate question: if the model is a good estimate of <span class="math inline">\(\mathbb E[Y \mid X = x]\)</span> wherever the deployment population lives, the same fit is good there and reweighting the fit adds variance; if the model is misspecified, reweighting the fit can move its errors to where they matter less.</p>
+</section>
+<section id="label-shift" class="level3">
+<h3 class="anchored" data-anchor-id="label-shift">Label shift</h3>
+<p><strong>Assumption</strong>: <span class="math inline">\(p_{\text{test}}(x \mid y) = p_{\text{train}}(x \mid y)\)</span>; only the share of each class changes. For a binary outcome write <span class="math inline">\(q = P(Y = 1)\)</span>, with values <span class="math inline">\(q_{\text{train}}\)</span> and <span class="math inline">\(q_{\text{test}}\)</span>. Bayes’ rule, in odds, gives <span class="math display">\[
+\frac{P(Y = 1 \mid X = x)}{P(Y = 0 \mid X = x)} = \frac{p(x \mid 1)}{p(x \mid 0)} \cdot \frac{q}{1 - q}.
+\]</span> The first factor is the same under both distributions, by the assumption; only the second changes. Taking logs, with <span class="math inline">\(\operatorname{logit} u = \log\frac{u}{1 - u}\)</span>, <span class="math display">\[
+\operatorname{logit} P_{\text{test}}(Y = 1 \mid X = x) = \operatorname{logit} P_{\text{train}}(Y = 1 \mid X = x) + \underbrace{\operatorname{logit} q_{\text{test}} - \operatorname{logit} q_{\text{train}}}_{\text{the same for every } x}.
+\]</span> This is the <strong>label-shift identity</strong>. Three consequences:</p>
+<ul>
+<li><strong>Calibration is lost, and an intercept repairs it.</strong> A score <span class="math inline">\(s(x)\)</span> calibrated under training, <span class="math inline">\(s(x) = P_{\text{train}}(Y = 1 \mid X = x)\)</span>, is off under deployment by the same shift on the log-odds scale at every <span class="math inline">\(x\)</span>. Adding <span class="math inline">\(\operatorname{logit} q_{\text{test}} - \operatorname{logit} q_{\text{train}}\)</span> to its log-odds repairs it: this is recalibration by a logistic regression on the logit of the score, with the slope kept at 1. It needs <span class="math inline">\(q_{\text{test}}\)</span>, known or estimated (estimating it is beyond this course).</li>
+<li><strong>The threshold.</strong> With unchanged costs, the optimal threshold theorem still says: predict 1 when the correct probability, now <span class="math inline">\(P_{\text{test}}(Y = 1 \mid X = x)\)</span>, exceeds <span class="math inline">\(c^\star = c_{FP}/(c_{FP} + c_{FN})\)</span>. In terms of the old score that is <span class="math display">\[
+\operatorname{logit} s(x) &gt; \operatorname{logit} c^\star - \big(\operatorname{logit} q_{\text{test}} - \operatorname{logit} q_{\text{train}}\big),
+\]</span> so the threshold on the correct deployment probability is unchanged and the old score needs a new threshold. For example, with <span class="math inline">\(c^\star = \frac12\)</span>, <span class="math inline">\(q_{\text{train}} = \frac14\)</span> and <span class="math inline">\(q_{\text{test}} = \frac12\)</span>, the shift is <span class="math inline">\(\log 3\)</span> and the old score’s threshold becomes <span class="math inline">\(\frac14\)</span>.</li>
+<li><strong>The ranking survives.</strong> The map from <span class="math inline">\(s(x)\)</span> to the deployment probability is increasing, so the units are ranked in the same order, and quantities that depend only on the ranking, such as the AUC, are unchanged in expectation.</li>
+</ul>
+<div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>shift_curve <span class="ot">&lt;-</span> <span class="cf">function</span>(q_test, <span class="at">q_train =</span> <span class="fl">0.25</span>) {</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tibble</span>(<span class="at">s =</span> <span class="fu">seq</span>(<span class="fl">0.001</span>, <span class="fl">0.999</span>, <span class="at">length.out =</span> <span class="dv">300</span>), <span class="at">q_test =</span> q_test) <span class="sc">|&gt;</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">p =</span> <span class="fu">plogis</span>(<span class="fu">qlogis</span>(s) <span class="sc">+</span> <span class="fu">qlogis</span>(q_test) <span class="sc">-</span> <span class="fu">qlogis</span>(q_train)))</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>curves <span class="ot">&lt;-</span> <span class="fu">bind_rows</span>(<span class="fu">shift_curve</span>(<span class="fl">0.25</span>), <span class="fu">shift_curve</span>(<span class="fl">0.5</span>), <span class="fu">shift_curve</span>(<span class="fl">0.1</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">label =</span> <span class="fu">factor</span>(q_test, <span class="at">levels =</span> <span class="fu">c</span>(<span class="fl">0.1</span>, <span class="fl">0.25</span>, <span class="fl">0.5</span>), <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"q test = 0.10"</span>, <span class="st">"q test = 0.25 (no shift)"</span>, <span class="st">"q test = 0.50"</span>)))</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>cuts <span class="ot">&lt;-</span> <span class="fu">tibble</span>(<span class="at">q_test =</span> <span class="fu">c</span>(<span class="fl">0.1</span>, <span class="fl">0.5</span>)) <span class="sc">|&gt;</span> <span class="fu">mutate</span>(<span class="at">s_cut =</span> <span class="fu">plogis</span>(<span class="fu">qlogis</span>(<span class="fl">0.5</span>) <span class="sc">-</span> (<span class="fu">qlogis</span>(q_test) <span class="sc">-</span> <span class="fu">qlogis</span>(<span class="fl">0.25</span>))))</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(curves, <span class="fu">aes</span>(s, p, <span class="at">colour =</span> label)) <span class="sc">+</span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="fl">0.5</span>, <span class="at">linetype =</span> <span class="st">"dotted"</span>, <span class="at">colour =</span> <span class="st">"grey50"</span>) <span class="sc">+</span></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_segment</span>(<span class="at">data =</span> cuts, <span class="fu">aes</span>(<span class="at">x =</span> s_cut, <span class="at">xend =</span> s_cut, <span class="at">y =</span> <span class="dv">0</span>, <span class="at">yend =</span> <span class="fl">0.5</span>), <span class="at">inherit.aes =</span> <span class="cn">FALSE</span>, <span class="at">linetype =</span> <span class="st">"dotted"</span>, <span class="at">colour =</span> <span class="st">"grey50"</span>) <span class="sc">+</span></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">linewidth =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_colour_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(m_pink, <span class="st">"grey45"</span>, v_teal), <span class="at">name =</span> <span class="cn">NULL</span>) <span class="sc">+</span></span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_equal</span>() <span class="sc">+</span></span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"score calibrated under training, s(x)"</span>, <span class="at">y =</span> <span class="st">"deployment probability"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<div id="fig-labelshift" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-labelshift-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="winning-scores_files/figure-html/fig-labelshift-1.png" class="img-fluid figure-img" width="1050">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-labelshift-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;4: Label shift: the correct deployment probability as a function of a score calibrated under training, when the share of positives moves from one quarter to one half or to one tenth. The dotted lines show the threshold one half on the deployment probability, and where it falls on the old score.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="what-survives-which-shift" class="level3">
+<h3 class="anchored" data-anchor-id="what-survives-which-shift">What survives which shift</h3>
+<p>No property is guaranteed under shift; which one survives depends on which mechanism changed.</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th></th>
+<th>Covariate shift, <span class="math inline">\(p(y \mid x)\)</span> fixed</th>
+<th>Label shift, <span class="math inline">\(p(x \mid y)\)</span> fixed</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Risk</td>
+<td>changes; estimate it with the weights <span class="math inline">\(w(x)\)</span></td>
+<td>changes</td>
+</tr>
+<tr class="even">
+<td>Calibration</td>
+<td>kept by a correct model of <span class="math inline">\(p(y \mid x)\)</span>, not always by a misspecified one</td>
+<td>lost; move the intercept</td>
+</tr>
+<tr class="odd">
+<td>Ranking of units by score</td>
+<td>the true <span class="math inline">\(p(y \mid x)\)</span> ranks them the same way; a model’s AUC can change with the mix of units</td>
+<td>kept</td>
+</tr>
+<tr class="even">
+<td>Coverage of a split conformal interval</td>
+<td>not guaranteed: new rows are no longer exchangeable with the held-out ones</td>
+<td>not guaranteed</td>
+</tr>
+</tbody>
+</table>
+<p>Neither correction helps when <span class="math inline">\(p(y \mid x)\)</span> itself changes: a new payment rule, a new treatment, a change in who receives care. Old rows carry no information about the new relation, and only new outcomes reveal it. Deploying a model can be what changes it: a program that enrolls the patients predicted to cost the most changes what they cost.</p>
+</section>
+<section id="causes-and-effects-as-inputs" class="level3">
+<h3 class="anchored" data-anchor-id="causes-and-effects-as-inputs">Causes and effects as inputs</h3>
+<p>A natural hope is that a model built on the causes of the outcome will travel better than one built on everything, because the distribution of an outcome given all its causes is unchanged by interventions that leave the outcome’s own mechanism alone. Nastl and Hardt tested this on 16 prediction tasks from tabular data in health, employment, education, social benefits and politics, each with several domains: income across regions of the US, voting across regions, hospital mortality across insurance types, and others. For each task they chose a conservative set of causal features, a broader set of arguably causal ones, and the full set. Models on all the features had the best accuracy both within the training domain and in new domains, in every task, and adding features that the outcome plausibly causes helped the causal models out of domain. Methods designed for causal domain generalization did no better than standard models on the arguably causal features. They note that the choice of causal features is a judgment, that the available features may leave out real causes, and that the study covers tabular data only. The theory they test is about the true conditional distribution given all the causes; a model fitted to a handful of causal features measured in a survey is a different object, and its risk can still change across domains.</p>
+</section>
+</section>
+<section id="what-a-winning-score-can-justify" class="level2">
+<h2 class="anchored" data-anchor-id="what-a-winning-score-can-justify">What a winning score can justify</h2>
+<p><strong>Reference</strong>: Rodu and Baiocchi (2023), sections 1, 2, 3.3, 3.4, 4 and 6; Feynman et al.&nbsp;(1963), chapter 26.</p>
+<p>Rodu and Baiocchi list five features of the framework (section 1.2): curated data in a repository; static data shared by every analyst; a well-defined task; agreement on the evaluation metric; and an evaluation set the analysts cannot see. Done correctly, a competition with these features supports a comparison: on this task, with this metric, one algorithm performs better than another. It takes a real problem and puts it in a sandbox. What it does not provide is a foundation for deploying the winner. In their words: “Competing successfully in a CTF event does not warrant deployment” (section 6).</p>
+<p>To say what would, they separate two ways of trusting a prediction (section 4.1):</p>
+<ul>
+<li><strong>Outcome reasoning</strong> judges an algorithm by its measured performance on outcomes. Beliefs about the world enter only through the choice of metric. It is the reasoning of the common task framework, and the authors extend it to deployment: an algorithm in use can keep being judged on the outcomes it predicted. But it can only be applied once outcomes have been observed.</li>
+<li><strong>Model reasoning</strong> judges an algorithm by whether its structure agrees with what we believe about the problem. It needs deductive argument and beliefs that can be stated, and in return it can be debated before the algorithm is used.</li>
+</ul>
+<p>They then ask when outcome reasoning alone is enough, and give four conditions, which they call MARA (sections 2 and 4.2):</p>
+<ul>
+<li><strong>Measurement</strong>: the outcomes of future predictions can be observed and scored;</li>
+<li><strong>Adaptability</strong>: the algorithm can be updated faster than the problem changes, and its use does not itself change the outcomes it predicts;</li>
+<li><strong>Resilience</strong>: the errors that accumulate while the algorithm is in use are tolerable;</li>
+<li><strong>Agnosis</strong>: the people affected can tolerate an algorithm whose structure may conflict with their beliefs, which may be scientific or moral.</li>
+</ul>
+<p>Each condition depends on who is asking: the “(s)” in MARA(s) stands for the stakeholders (section 2.1). A triage algorithm for mild symptoms can satisfy all four from a hospital administrator’s point of view, while for one patient the prediction replaces the diagnosis, so the outcome that would check it is never measured (section 3.3). The authors say plainly that their framework does not decide who counts as a stakeholder. Their main negative example is a recidivism score used in decisions about detention (sections 3.4 and 6): people who are detained have no observed outcome, so measurement fails, and for public defenders and the people being scored they argue that resilience and agnosis fail as well. When the conditions fail, they recommend that stakeholders ask for model reasoning before the algorithm is used.</p>
+<p>The lecture’s optics slides make the same distinction with an older example. Ptolemy’s table of refraction angles from air into water, as Feynman reprints it (Table 26-1), lists 8, 15½, 22½, 29, 35, 40½, 45½ and 50 degrees for angles of incidence from 10 to 80. Its second differences are all <span class="math inline">\(-\frac12\)</span>, so it is exactly the quadratic <span class="math inline">\(r = 8.25k - 0.25k^2\)</span> with <span class="math inline">\(k\)</span> the angle of incidence in tens of degrees: a curve that fits the measurements it came from. Snell’s law, <span class="math inline">\(\sin i = n \sin r\)</span>, fits the same angles within a few degrees with <span class="math inline">\(n = 1.33\)</span> for water, and says how they change in glass, where <span class="math inline">\(n\)</span> is about 1.5. Fermat’s principle of least time, from which the law follows, is the kind of structure model reasoning checks.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>quad <span class="ot">&lt;-</span> <span class="cf">function</span>(i) <span class="fl">8.25</span> <span class="sc">*</span> (i <span class="sc">/</span> <span class="dv">10</span>) <span class="sc">-</span> <span class="fl">0.25</span> <span class="sc">*</span> (i <span class="sc">/</span> <span class="dv">10</span>)<span class="sc">^</span><span class="dv">2</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>snell <span class="ot">&lt;-</span> <span class="cf">function</span>(i, n) <span class="fu">asin</span>(<span class="fu">sin</span>(i <span class="sc">*</span> pi <span class="sc">/</span> <span class="dv">180</span>) <span class="sc">/</span> n) <span class="sc">*</span> <span class="dv">180</span> <span class="sc">/</span> pi</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>ptolemy <span class="ot">&lt;-</span> <span class="fu">tibble</span>(<span class="at">i =</span> <span class="fu">seq</span>(<span class="dv">10</span>, <span class="dv">80</span>, <span class="dv">10</span>), <span class="at">r =</span> <span class="fu">c</span>(<span class="dv">8</span>, <span class="fl">15.5</span>, <span class="fl">22.5</span>, <span class="dv">29</span>, <span class="dv">35</span>, <span class="fl">40.5</span>, <span class="fl">45.5</span>, <span class="dv">50</span>))</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="fu">tibble</span>(<span class="at">i =</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="dv">88</span>, <span class="at">by =</span> <span class="dv">1</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="st">`</span><span class="at">Ptolemy's quadratic</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">quad</span>(i), <span class="st">`</span><span class="at">Snell, water</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">snell</span>(i, <span class="fl">1.33</span>), <span class="st">`</span><span class="at">Snell, glass</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">snell</span>(i, <span class="fl">1.5</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="sc">-</span>i, <span class="at">names_to =</span> <span class="st">"curve"</span>, <span class="at">values_to =</span> <span class="st">"r"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(i, r, <span class="at">colour =</span> curve, <span class="at">linetype =</span> curve)) <span class="sc">+</span></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">linewidth =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">data =</span> ptolemy, <span class="fu">aes</span>(i, r), <span class="at">inherit.aes =</span> <span class="cn">FALSE</span>, <span class="at">size =</span> <span class="dv">2</span>) <span class="sc">+</span></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_colour_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">"Ptolemy's quadratic"</span> <span class="ot">=</span> m_pink, <span class="st">"Snell, water"</span> <span class="ot">=</span> v_teal, <span class="st">"Snell, glass"</span> <span class="ot">=</span> v_dark), <span class="at">name =</span> <span class="cn">NULL</span>) <span class="sc">+</span></span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_linetype_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">"Ptolemy's quadratic"</span> <span class="ot">=</span> <span class="st">"dashed"</span>, <span class="st">"Snell, water"</span> <span class="ot">=</span> <span class="st">"solid"</span>, <span class="st">"Snell, glass"</span> <span class="ot">=</span> <span class="st">"solid"</span>), <span class="at">name =</span> <span class="cn">NULL</span>) <span class="sc">+</span></span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"angle of incidence in air (degrees)"</span>, <span class="at">y =</span> <span class="st">"angle after refraction"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<div id="fig-optics" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-optics-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="winning-scores_files/figure-html/fig-optics-1.png" class="img-fluid figure-img" width="1050">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-optics-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;5: Ptolemy’s table (points) and its quadratic, against Snell’s law with <span class="math inline">\(n = 1.33\)</span> for water and <span class="math inline">\(n = 1.5\)</span> for glass. The glass curve is computed from the law, not measured; the quadratic has nothing to change for glass.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="when-the-target-or-the-task-is-wrong" class="level2">
+<h2 class="anchored" data-anchor-id="when-the-target-or-the-task-is-wrong">When the target or the task is wrong</h2>
+<p><strong>Reference</strong>: Obermeyer et al.&nbsp;(2019); Hardt and Recht (2022), chapter 8, sections “Harms associated with data” and “Limits of data and prediction”; Salganik et al.&nbsp;(2020); Wang et al.&nbsp;(2024), sections 2.1, 2.2, 3.1, 3.2, 3.4, 3.6 and 4.4; Kiviat (2019).</p>
+<p><strong>The cost score.</strong> Obermeyer et al.&nbsp;studied a commercial algorithm that health systems use to choose patients for programs that give extra care to people with complex needs. In the system they studied, patients above the 97th percentile of the algorithm’s score were enrolled automatically and those above the 55th were referred to their doctor (p.&nbsp;448). The data covered about 6,000 Black and 43,500 White patients from 2013 to 2015. The algorithm predicts next year’s health care cost and does not use race (p.&nbsp;449). As a predictor of cost it does what it was built to do: at a given score, realized costs are about the same for Black and White patients (their Figure 3A). But at the 97th percentile Black patients had 4.8 active chronic conditions against 3.8 for White patients (p.&nbsp;448), and at the same number of chronic illnesses about $1,800 a year less was spent on Black patients (p.&nbsp;450). Because less is spent on them for the same need, a score that predicts cost understates their need, while being accurate and calibrated for the target it was given.</p>
+<p>The authors released a synthetic version of their data, generated to mimic it: 48,784 patient-years, with the commercial score in the column <code>risk_score_t</code>. The figure draws the paper’s two comparisons from it.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>hs <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"https://gitlab.com/labsysmed/dissecting-bias/-/raw/master/data/data_new.csv"</span>, <span class="at">show_col_types =</span> <span class="cn">FALSE</span>) <span class="sc">|&gt;</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">pct =</span> <span class="dv">100</span> <span class="sc">*</span> <span class="fu">rank</span>(risk_score_t, <span class="at">ties.method =</span> <span class="st">"first"</span>) <span class="sc">/</span> <span class="fu">n</span>(),</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>         <span class="at">race =</span> <span class="fu">factor</span>(race, <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">"black"</span>, <span class="st">"white"</span>), <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"Black"</span>, <span class="st">"White"</span>)))</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>by_bin <span class="ot">&lt;-</span> hs <span class="sc">|&gt;</span> <span class="fu">mutate</span>(<span class="at">bin =</span> <span class="fu">pmin</span>(<span class="fu">ceiling</span>(pct <span class="sc">/</span> <span class="dv">5</span>), <span class="dv">20</span>)) <span class="sc">|&gt;</span> <span class="fu">group_by</span>(race, bin) <span class="sc">|&gt;</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">pct =</span> <span class="dv">5</span> <span class="sc">*</span> bin[<span class="dv">1</span>] <span class="sc">-</span> <span class="fl">2.5</span>, <span class="at">cost =</span> <span class="fu">mean</span>(cost_t), <span class="at">cond =</span> <span class="fu">mean</span>(gagne_sum_t), <span class="at">.groups =</span> <span class="st">"drop"</span>)</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>top_cond <span class="ot">&lt;-</span> hs <span class="sc">|&gt;</span> <span class="fu">filter</span>(pct <span class="sc">&gt;</span> <span class="dv">97</span>) <span class="sc">|&gt;</span> <span class="fu">group_by</span>(race) <span class="sc">|&gt;</span> <span class="fu">summarise</span>(<span class="at">cond =</span> <span class="fu">mean</span>(gagne_sum_t), <span class="at">cost =</span> <span class="fu">mean</span>(cost_t), <span class="at">n =</span> <span class="fu">n</span>())</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>mid_cond <span class="ot">&lt;-</span> hs <span class="sc">|&gt;</span> <span class="fu">filter</span>(pct <span class="sc">&gt;</span> <span class="dv">55</span>, pct <span class="sc">&lt;=</span> <span class="dv">97</span>) <span class="sc">|&gt;</span> <span class="fu">group_by</span>(race) <span class="sc">|&gt;</span> <span class="fu">summarise</span>(<span class="at">cond =</span> <span class="fu">mean</span>(gagne_sum_t), <span class="at">cost =</span> <span class="fu">mean</span>(cost_t), <span class="at">n =</span> <span class="fu">n</span>())</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>panel <span class="ot">&lt;-</span> <span class="cf">function</span>(var, lab) <span class="fu">ggplot</span>(by_bin, <span class="fu">aes</span>(pct, .data[[var]], <span class="at">colour =</span> race)) <span class="sc">+</span></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> <span class="dv">97</span>, <span class="at">linetype =</span> <span class="st">"dashed"</span>, <span class="at">colour =</span> <span class="st">"grey55"</span>) <span class="sc">+</span></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">linewidth =</span> <span class="fl">0.8</span>) <span class="sc">+</span> <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="fl">1.5</span>) <span class="sc">+</span></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_colour_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="at">Black =</span> m_pink, <span class="at">White =</span> v_teal), <span class="at">name =</span> <span class="cn">NULL</span>) <span class="sc">+</span></span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"percentile of the score"</span>, <span class="at">y =</span> lab)</span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>patchwork<span class="sc">::</span><span class="fu">wrap_plots</span>(<span class="fu">panel</span>(<span class="st">"cost"</span>, <span class="st">"cost next year ($)"</span>), <span class="fu">panel</span>(<span class="st">"cond"</span>, <span class="st">"active chronic conditions"</span>), <span class="at">nrow =</span> <span class="dv">1</span>, <span class="at">guides =</span> <span class="st">"collect"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<div id="fig-obermeyer" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-obermeyer-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="winning-scores_files/figure-html/fig-obermeyer-1.png" class="img-fluid figure-img" width="1050">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-obermeyer-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;6: The synthetic patient-years released with Obermeyer et al.&nbsp;(2019), by percentile of the commercial algorithm’s score (bins of 5 percentiles; the dashed line is the 97th percentile). Left: mean cost the next year. Right: mean number of active chronic conditions the next year.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>In the synthetic rows, the patients between the 55th and 97th percentiles of the score, the range referred to a doctor, cost about the same on average in the two groups ($10,000 for Black and $10,100 for White patients), while Black patients had 3.0 active chronic conditions against 2.0. Above the 97th percentile the synthetic rows do not reproduce the paper’s calibration: there Black patients cost more on average ($58,500 against $39,000, from 293 and 1,171 patient-years), as well as having more chronic conditions (6.6 against 5.2). Synthetic data that match the original’s broad patterns need not match it in a thin tail, which is a reason to state claims about these rows as claims about the synthetic data. The lecture makes the same comparisons with a model fitted in class.</p>
+<p>The authors then trained models with the same inputs on three targets: total cost, avoidable cost and the number of active chronic conditions (Table 2, p.&nbsp;452). The share of Black patients among the top 3% of predicted risk was 14.1% with total cost as the target and 26.7% with active chronic conditions. Changing the target changed who would be offered care. The manufacturer, working with the authors, retrained its algorithm with a different target and reduced the bias on its own national data.</p>
+<p>One more lesson comes from the authors’ repository rather than the paper. The abstract reports that removing the bias would raise the share of Black patients receiving extra help from 17.7% to 46.5%. In 2022 the authors posted a correction: a coding error in that simulation made the second number too low, and the corrected figure is 59%. They also report a critique of the swapping procedure behind it. A number quoted from an abstract is worth checking against the authors’ latest materials.</p>
+<p><strong>The framing of the task.</strong> PPA’s section on harms gives two examples of how the way a task is set up decides what a good score means. Claims that models beat human accuracy at image classification rested on loosely defined human baselines. And for predicting which defendants will fail to appear in court, the chapter points out that the usual causes (transportation, childcare, work hours) can be addressed directly, so a more accurate prediction used to justify detention may be the wrong response to the problem. Its subsection on privacy tells how the ratings released for the Netflix challenge were linked to public IMDb ratings to identify subscribers, and how the fallout ended a planned second competition.</p>
+<p><strong>How predictable the outcome is.</strong> PPA’s last section describes the Fragile Families Challenge (Salganik et al.&nbsp;2020). Competitors were given data on 4,242 families, followed from a child’s birth to age 9, with about 12,900 variables, and asked to predict six outcomes measured at age 15, among them the child’s grade point average and whether the family was evicted. About 160 teams submitted models. The best predictions were not very accurate and only slightly better than a simple benchmark, and how badly a family was predicted depended much more on the family than on the method. The chapter’s reading is that some life outcomes may be close to unpredictable over such a span, whatever the method, and that prediction is a weak basis for decisions when the world is changing or when the question is what an intervention would do.</p>
+<p><strong>Against predictive optimization.</strong> Wang et al.&nbsp;name the kind of system the cost score belongs to: <em>predictive optimization</em> uses machine learning to predict a future outcome for each individual and uses those predictions to make decisions about them (section 2.1). They state the case for it before the case against: automation is consistent and efficient, a clear target looks objective, predictions seem to follow real patterns rather than judgment, and an algorithm’s bias is supposedly easier to find and fix than a person’s (section 2.2). They then argue that seven objections apply to every one of eight deployed systems they studied, one of them a commercial health risk model. Four of the seven take up where Rodu and Baiocchi stop:</p>
+<ul>
+<li><strong>Prediction is not intervention</strong> (section 3.1). A model fitted to observational data predicts outcomes under the old decisions, not the effect of a new one. Their example: setting higher bail for defendants with a high predicted risk can itself make them more likely to reoffend.</li>
+<li><strong>The target is not the construct</strong> (section 3.2). Pre-trial risk tools predict re-arrest because offending is not observed, and re-arrest depends on where police look; hiring tools predict proxies such as sales or ratings for job performance. They argue some mismatch always remains.</li>
+<li><strong>Limits to prediction</strong> (section 3.4). Besides the Fragile Families Challenge, they report a hospital sepsis model whose developer claimed an AUC of 0.76 to 0.83 and which scored 0.63 in an outside evaluation in 2021.</li>
+<li><strong>Contestability</strong> (section 3.6). To contest a decision, a person needs an explanation of it, access to the data and the model it used, and a way to have it reviewed and corrected; providing these takes away much of the efficiency that justified automating. Their example is the Dutch childcare benefits scandal, in which tens of thousands of parents were wrongly accused of fraud.</li>
+</ul>
+<p>The other three are that training data rarely match the setting of deployment, that differences in error rates between groups cannot be removed by an algorithm alone, and that people change their behavior in response to a score (Goodhart’s law). Their conclusion is that such systems should be presumed illegitimate until the people who deploy them justify them, and they give a rubric of 27 questions for doing so (section 4.4).</p>
+<p><strong>Accurate and still objectionable.</strong> Kiviat studied the use of credit scores to price car insurance in the US. The scores predict claims. Policymakers resisted them anyway, she finds, when the predictions held people accountable for circumstances that were not their fault, and when no causal story connected the data to the behavior being priced. Her study is about what people regard as fair grounds for treating them differently, which a better score does not settle.</p>
+</section>
+<section id="summary" class="level2">
+<h2 class="anchored" data-anchor-id="summary">Summary</h2>
+<p>A competition win is good evidence that one model beats another on one target, measured on one distribution. Hoeffding’s inequality and a paired comparison say how far the numbers on the leaderboard can be trusted for models fixed in advance, and the readings suggest that benchmark comparisons have held up better than the worst case of adaptive reuse predicts. A win does not say how the model will do on a population collected differently: the covariate-shift and label-shift identities say what can be done when the change is of a known kind, and nothing repairs a change in <span class="math inline">\(p(y \mid x)\)</span> from old data. It does not say whether the target measures what the decision needs. And it does not say whether the decision should be made this way at all.</p>
+</section>
+<section id="references" class="level2">
+<h2 class="anchored" data-anchor-id="references">References</h2>
+<ul>
+<li>Donoho, D. (2017). 50 years of data science. <em>Journal of Computational and Graphical Statistics</em> 26(4), 745–766. <a href="https://doi.org/10.1080/10618600.2017.1384734">doi:10.1080/10618600.2017.1384734</a>. Section 6, read in the version of 18 September 2015.</li>
+<li>Feynman, R. P., Leighton, R. B. and Sands, M. (1963). <em>The Feynman Lectures on Physics</em>, volume I, chapter 26, Table 26-1. <a href="https://www.feynmanlectures.caltech.edu/I_26.html">feynmanlectures.caltech.edu/I_26.html</a></li>
+<li>Hardt, M. and Recht, B. (2022). <em>Patterns, Predictions, and Actions: Foundations of Machine Learning</em>. Princeton University Press. Chapter 8, “Datasets”. Free online: <a href="https://mlstory.org/data.html">mlstory.org/data.html</a></li>
+<li>Hoeffding, W. (1963). Probability inequalities for sums of bounded random variables. <em>Journal of the American Statistical Association</em> 58(301), 13–30. <a href="https://doi.org/10.1080/01621459.1963.10500830">doi:10.1080/01621459.1963.10500830</a></li>
+<li>Kiviat, B. (2019). The moral limits of predictive practices: the case of credit-based insurance scores. <em>American Sociological Review</em> 84(6), 1134–1158. <a href="https://doi.org/10.1177/0003122419884917">doi:10.1177/0003122419884917</a></li>
+<li>Nastl, V. Y. and Hardt, M. (2024). Do causal predictors generalize better to new domains? <em>Advances in Neural Information Processing Systems</em> 37. <a href="https://doi.org/10.52202/079017-0983">doi:10.52202/079017-0983</a>. Also <a href="https://arxiv.org/abs/2402.09891">arXiv:2402.09891</a>.</li>
+<li>Obermeyer, Z., Powers, B., Vogeli, C. and Mullainathan, S. (2019). Dissecting racial bias in an algorithm used to manage the health of populations. <em>Science</em> 366(6464), 447–453. <a href="https://doi.org/10.1126/science.aax2342">doi:10.1126/science.aax2342</a>. Synthetic data, code and the 2022 correction: <a href="https://gitlab.com/labsysmed/dissecting-bias">gitlab.com/labsysmed/dissecting-bias</a></li>
+<li>Recht, B., Roelofs, R., Schmidt, L. and Shankar, V. (2019). Do ImageNet classifiers generalize to ImageNet? <em>Proceedings of the 36th International Conference on Machine Learning</em>, PMLR 97, 5389–5400. <a href="https://proceedings.mlr.press/v97/recht19a.html">proceedings.mlr.press/v97/recht19a.html</a></li>
+<li>Rodu, J. and Baiocchi, M. (2023). When black box algorithms are (not) appropriate: a principled prediction-problem ontology. <em>Observational Studies</em>. <a href="https://muse.jhu.edu/pub/56/article/883478">muse.jhu.edu/pub/56/article/883478</a>. Section numbers as in <a href="https://arxiv.org/abs/2001.07648">arXiv:2001.07648</a>, version of 31 March 2021.</li>
+<li>Roelofs, R., Shankar, V., Recht, B., Fridovich-Keil, S., Hardt, M., Miller, J. and Schmidt, L. (2019). A meta-analysis of overfitting in machine learning. <em>Advances in Neural Information Processing Systems</em> 32. <a href="https://papers.nips.cc/paper/9117-a-meta-analysis-of-overfitting-in-machine-learning">NeurIPS proceedings</a></li>
+<li>Salganik, M. J. et al.&nbsp;(2020). Measuring the predictability of life outcomes with a scientific mass collaboration. <em>Proceedings of the National Academy of Sciences</em> 117(15), 8398–8403. <a href="https://doi.org/10.1073/pnas.1915006117">doi:10.1073/pnas.1915006117</a></li>
+<li>Wang, A., Kapoor, S., Barocas, S. and Narayanan, A. (2024). Against predictive optimization: on the legitimacy of decision-making algorithms that optimize predictive accuracy. <em>ACM Journal on Responsible Computing</em> 1(1), 1–45. <a href="https://predictive-optimization.cs.princeton.edu/">predictive-optimization.cs.princeton.edu</a>. Section numbers as in the draft of 16 February 2023.</li>
+</ul>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/ml4ds\.com");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+<p>ST310 Machine Learning, LSE. Original course content CC BY 4.0 except where otherwise credited; datasets and images carry their own licences.</p>
+</div>   
+    <div class="nav-footer-center">
+      &nbsp;
+    </div>
+    <div class="nav-footer-right">
+      &nbsp;
+    </div>
+  </div>
+</footer>
+
+
+
+
+</body></html>

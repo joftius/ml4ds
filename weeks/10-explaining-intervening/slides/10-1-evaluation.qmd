@@ -1,0 +1,938 @@
+---
+title: "Machine learning"
+subtitle: "Week 10: evaluation, distribution shift and deployment"
+title-question: "A model wins a prediction competition. What has it shown, and what has it not?"
+format:
+  revealjs:
+    theme: [default, ../../../theme/st310.scss]
+    # The title slide with the question above (theme/title-slide.html).
+    template-partials:
+      - ../../../theme/title-slide.html
+    slide-number: c/t
+    width: 1280
+    height: 720
+    margin: 0.06
+    code-line-numbers: false
+    fig-width: 7
+    fig-height: 4.2
+    fig-dpi: 150
+    progress: true
+    history: false
+    footer: "ST310 Machine Learning"
+    # Figures render at their fig-width/fig-height; an overfull slide then shows
+    # as overfull instead of auto-stretch shrinking the figure to fit.
+    auto-stretch: false
+    # Speaker notes are stripped from the public render unless the environment
+    # variable ST310_KEEP_NOTES is set (see _build_env/strip_notes.lua).
+    filters:
+      - ../../../_build_env/strip_notes.lua
+execute:
+  echo: false
+  warning: false
+  message: false
+  freeze: auto
+---
+
+```{r}
+#| label: setup
+#| include: false
+library(tidyverse)
+library(knitr)
+library(patchwork)
+library(glmnet)
+library(rpart)
+library(randomForest)
+library(xgboost)
+theme_set(theme_minimal(base_size = 18))
+# Figures on dark slides (chunk option dark: true): a transparent background and light ink.
+theme_dark_slide <- theme_minimal(base_size = 18) +
+  theme(text = element_text(colour = "white"), axis.text = element_text(colour = "grey85"),
+        panel.grid = element_line(colour = "#FFFFFF2E"),
+        plot.background = element_rect(fill = "transparent", colour = NA),
+        panel.background = element_rect(fill = "transparent", colour = NA),
+        legend.background = element_rect(fill = "transparent", colour = NA),
+        legend.key = element_rect(fill = "transparent", colour = NA))
+knitr::opts_hooks$set(dark = function(options) { if (isTRUE(options$dark)) options$dev.args <- list(bg = "transparent"); options })
+knitr::knit_hooks$set(dark = function(before, options) {
+  if (isTRUE(options$dark)) theme_set(if (before) theme_dark_slide else theme_minimal(base_size = 18))
+  NULL
+})
+options(knitr.table.format = "html")
+# Palette: viridis for the primary scale, magma for the second one.
+v_dark <- "#440154"; v_blue <- "#31688e"; v_teal <- "#21918c"; v_green <- "#5ec962"
+m_pink <- "#b73779"; m_purple <- "#8c2981"; m_orange <- "#fc8961"
+f3 <- function(x) sprintf("%.3f", x)
+f4 <- function(x) sprintf("%.4f", x)
+pct <- function(x, d = 1) paste0(sprintf(paste0("%.", d, "f"), 100 * x), "%")
+big <- function(x) format(round(x), big.mark = ",")
+bigm <- function(x) gsub(",", "{,}", big(x))   # inside math
+brier <- function(y, p) (y - p)^2
+auc <- function(y, p) { r <- rank(p); n1 <- sum(y == 1); n0 <- sum(y == 0); (sum(r[y == 1]) - n1 * (n1 + 1) / 2) / (n1 * n0) }
+logit <- function(u) log(u / (1 - u))
+```
+
+```{r}
+#| label: data
+#| include: false
+# Synthetic patient-years released with Obermeyer et al. (2019) (data note: data/obermeyer.md), read from
+# the authors' repository; the course does not host the file. Inputs: every column measured in the year
+# before the outcomes (demographics, chronic conditions, costs, tests and medications), not race.
+hs <- read_csv("https://gitlab.com/labsysmed/dissecting-bias/-/raw/master/data/data_new.csv",
+               show_col_types = FALSE)
+outcomes_t <- c("risk_score_t", "program_enrolled_t", "gagne_sum_t", "cost_t", "cost_avoidable_t",
+                "bps_mean_t", "ghba1c_mean_t", "hct_mean_t", "cre_mean_t", "ldl_mean_t")
+inputs <- setdiff(names(hs), c(outcomes_t, "race"))
+X <- as.matrix(hs[inputs]); colnames(X) <- make.names(colnames(X))
+set.seed(310)   # the deck's one seed: the split, then every random step below, in order
+id <- sample(nrow(hs))
+i_train <- id[1:16000]; i_tune <- id[16001:24000]; i_test <- id[24001:36000]; i_res <- id[36001:nrow(hs)]
+cut_hi <- quantile(hs$cost_t[i_train], 0.75)   # the top quarter of next year's cost, on the training rows
+y <- as.numeric(hs$cost_t > cut_hi)
+q_train <- mean(y[i_train])
+```
+
+```{r}
+#| label: fits
+#| include: false
+# The competitors, with settings fixed before the tuning rows are scored (the lasso's lambda by
+# 5-fold cross-validation on the training rows).
+dtr <- data.frame(y = factor(y[i_train]), X[i_train, ])
+fit_tree <- rpart(y ~ ., dtr, cp = 0.002)
+fit_lasso <- cv.glmnet(X[i_train, ], y[i_train], family = "binomial", nfolds = 5)
+fit_forest <- randomForest(X[i_train, ], factor(y[i_train]), ntree = 200, nodesize = 20)
+boost_fit <- function(target, objective) xgboost(x = X[i_train, ], y = target, objective = objective,
+  max_depth = 4, learning_rate = 0.05, nrounds = 400, nthread = 2)
+fit_boost <- boost_fit(factor(y[i_train]), "binary:logistic")
+predictors <- list(
+  baseline = function(Xn) rep(q_train, nrow(Xn)),
+  tree     = function(Xn) predict(fit_tree, data.frame(Xn))[, 2],
+  lasso    = function(Xn) as.numeric(predict(fit_lasso, Xn, s = "lambda.min", type = "response")),
+  forest   = function(Xn) predict(fit_forest, Xn, type = "prob")[, 2],
+  boosting = function(Xn) predict(fit_boost, Xn))
+nice <- c(baseline = "baseline", tree = "tree", lasso = "lasso", forest = "forest", boosting = "boosted trees")
+K <- length(predictors)
+score_rows <- function(i) sapply(predictors, function(f) f(X[i, , drop = FALSE]))
+P_tune <- score_rows(i_tune)
+L_tune <- brier(y[i_tune], P_tune)
+m_tune <- length(i_tune)
+lb <- tibble(model = colnames(L_tune), brier = colMeans(L_tune), se = apply(L_tune, 2, sd) / sqrt(m_tune)) |>
+  arrange(brier) |> mutate(name = nice[model])
+pair <- lb$model[1:2]                          # chosen on the tuning rows, before the test rows are opened
+d_tune <- L_tune[, pair[1]] - L_tune[, pair[2]]
+se_d_tune <- sd(d_tune) / sqrt(m_tune)
+cor_pair <- cor(L_tune[, pair[1]], L_tune[, pair[2]])
+# Hoeffding with the union bound over the K models, delta = 0.05
+t_K <- sqrt(log(2 * K / 0.05) / (2 * m_tune))
+n_resolved <- sum(dist(lb$brier) > 2 * t_K)
+sd_loss <- sd(L_tune[, pair[1]])
+# The test rows, opened once, for the pair
+P_test <- score_rows(i_test)
+L_test <- brier(y[i_test], P_test)
+m_test <- length(i_test)
+d_test <- L_test[, pair[1]] - L_test[, pair[2]]
+se_d_test <- sd(d_test) / sqrt(m_test)
+lead <- pair[1]
+```
+
+```{r}
+#| label: bootstrap
+#| include: false
+# A statistic that is not a mean of per-row losses: among the 3% of test patients with the highest
+# predicted probability, the share whose cost was in the top quarter. Bootstrap the test rows, the
+# models held fixed; each resampled row keeps both models' predictions.
+top_share <- function(p, yy, frac = 0.03) { k <- ceiling(frac * length(p)); mean(yy[order(p, decreasing = TRUE)[1:k]]) }
+yt <- y[i_test]
+prec <- c(top_share(P_test[, pair[1]], yt), top_share(P_test[, pair[2]], yt))
+B <- 1000
+boot_prec <- replicate(B, {
+  b <- sample(m_test, replace = TRUE)
+  top_share(P_test[b, pair[1]], yt[b]) - top_share(P_test[b, pair[2]], yt[b])
+})
+ci_prec <- quantile(boot_prec, c(0.05, 0.95))
+```
+
+```{r}
+#| label: shift
+#| include: false
+# Two deployments built from the reserved rows, which no model has seen. A sicker population: each row kept
+# with a probability rising with last year's number of chronic conditions (covariate shift: p(y | x) is
+# unchanged). High cost twice as common: every high-cost row kept, a third of the others (label shift:
+# p(x | y) is unchanged).
+keep_prob <- function(i) plogis(-1.5 + 0.5 * hs$gagne_sum_tm1[i])
+i_cov <- i_res[runif(length(i_res)) < keep_prob(i_res)]
+w_norm <- mean(keep_prob(i_train))
+w_tune <- keep_prob(i_tune) / w_norm           # w(x) = p_test(x) / p_train(x), known because we built the shift
+i_lab <- i_res[y[i_res] == 1 | runif(length(i_res)) < 1 / 3]
+q_test <- q_train / (q_train + (1 - q_train) / 3)   # the deployment proportion, known by construction
+P_cov <- score_rows(i_cov); L_cov <- brier(y[i_cov], P_cov)
+P_lab <- score_rows(i_lab); L_lab <- brier(y[i_lab], P_lab)
+shift_tab <- tibble(model = names(predictors), tune = colMeans(L_tune), weighted = colMeans(w_tune * L_tune),
+                    cov = colMeans(L_cov), lab = colMeans(L_lab)) |>
+  mutate(name = nice[model]) |> arrange(tune)
+se_w <- sd(w_tune * L_tune[, lead]) / sqrt(m_tune)
+ess <- sum(w_tune)^2 / sum(w_tune^2)
+# Label shift: the intercept fix for the leader, and the ranking (AUC) it cannot change
+p_lab <- P_lab[, lead]
+p_fix <- plogis(qlogis(p_lab) + logit(q_test) - logit(q_train))
+lab_fix <- c(before = mean(brier(y[i_lab], p_lab)), after = mean(brier(y[i_lab], p_fix)))
+auc_tab <- c(tune = auc(y[i_tune], P_tune[, lead]), cov = auc(y[i_cov], P_cov[, lead]), lab = auc(y[i_lab], p_lab))
+c_old <- plogis(logit(0.5) - (logit(q_test) - logit(q_train)))   # the old score's threshold for c* = 1/2
+reliab <- function(p, yy, panel) tibble(p = p, y = yy) |> mutate(bin = ntile(p, 10)) |>
+  group_by(bin) |> summarise(pred = mean(p), obs = mean(y), .groups = "drop") |> mutate(panel = panel)
+rel <- bind_rows(
+  reliab(P_tune[, lead], y[i_tune], "tuning rows"),
+  reliab(P_cov[, lead], y[i_cov], "sicker population"),
+  reliab(p_lab, y[i_lab], "high cost twice as common"),
+  reliab(p_fix, y[i_lab], "high cost twice as common, intercept fixed"))
+```
+
+```{r}
+#| label: health
+#| include: false
+# Part 3, on the test rows: the leader's score against next year's health. Then the same learner, boosted
+# trees with the same settings, trained on other targets.
+te <- hs[i_test, ] |> mutate(p = P_test[, lead], high = yt, pct = 100 * rank(p) / n(),
+                             race = factor(race, levels = c("black", "white"), labels = c("Black", "White")))
+bins <- te |> mutate(bin = pmin(ceiling(pct / 5), 20)) |> group_by(race, bin) |>
+  summarise(pct = 5 * bin[1] - 2.5, high = mean(high), cond = mean(gagne_sum_t), n = n(), .groups = "drop")
+top <- te |> filter(pct > 97)
+cond_top <- top |> group_by(race) |> summarise(cond = mean(gagne_sum_t), n = n())
+cal_top <- top |> group_by(race) |> summarise(high = mean(high))
+cost_gap <- coef(lm(cost_t ~ factor(gagne_sum_t) + race, data = te))[["raceWhite"]]   # White minus Black
+fit_cost  <- boost_fit(hs$cost_t[i_train], "reg:squarederror")
+fit_avoid <- boost_fit(hs$cost_avoidable_t[i_train], "reg:squarederror")
+fit_cond  <- boost_fit(hs$gagne_sum_t[i_train], "reg:squarederror")
+label_scores <- list(
+  "Top quarter of cost (the competition)" = te$p,
+  "Total cost" = predict(fit_cost, X[i_test, ]),
+  "Avoidable cost" = predict(fit_avoid, X[i_test, ]),
+  "Active chronic conditions" = predict(fit_cond, X[i_test, ]),
+  "The commercial score (in the data)" = te$risk_score_t)
+flag <- function(s) rank(s, ties.method = "first") > 0.97 * length(s)
+label_tab <- imap_dfr(label_scores, function(s, nm) {
+  f <- flag(s)
+  tibble(label = nm, black = mean(te$race[f] == "Black"), cond = mean(te$gagne_sum_t[f]),
+         cost = sum(te$cost_t[f]) / sum(te$cost_t))
+})
+share_black <- mean(te$race == "Black")
+boot_lab <- replicate(B, {
+  b <- sample(m_test, replace = TRUE)
+  s1 <- label_scores[[4]][b]; s0 <- label_scores[[1]][b]; r <- te$race[b]
+  mean(r[flag(s1)] == "Black") - mean(r[flag(s0)] == "Black")
+})
+ci_lab <- quantile(boot_lab, c(0.05, 0.95))
+```
+
+```{r}
+#| label: optics
+#| include: false
+# Ptolemy's table for light passing from air into water (Feynman, Lectures, vol. I, Table 26-1): its second
+# differences are all -1/2, so it is the quadratic below. Snell's law: sin(i) = n sin(r).
+ptolemy <- tibble(i = seq(10, 80, 10), r = c(8, 15.5, 22.5, 29, 35, 40.5, 45.5, 50))
+quad <- function(i) 8.25 * (i / 10) - 0.25 * (i / 10)^2
+snell <- function(i, n) asin(sin(i * pi / 180) / n) * 180 / pi
+gap_water <- max(abs(ptolemy$r - snell(ptolemy$i, 1.33)))
+gap_glass <- abs(quad(c(10, 80)) - snell(c(10, 80), 1.5))
+```
+
+## Where we left off {minutes="3"}
+
+::: {.notes}
+The title slide's question first (its minutes are counted here). Collect two or three answers; come back to them in the conclusion.
+The Netflix slides: the blend was never put into production; the data re-identified people.
+:::
+
+::: {.retrieval}
+Prediction competition: curated data, the same for every competitor; a task; an agreed score; an evaluation dataset the competitors cannot see. Winning model chosen by best score
+:::
+
+The Netflix prize went to a blend that was never put into production
+
+::: {.leave}
+Winning a competition is not always useful
+:::
+
+Today, what a winning score does and does not tell us:
+
+- how variable the leaderboard is
+- what happens when the data the model meets are not like the data it was scored on
+- what the score leaves out
+
+## {.inverse}
+
+::: {.notes}
+Compress: the outline of the three parts.
+
+82 minutes on the scale: 70 of content, 7 on dark slides, 5 for the survey; budget about 76 with the survey. Dark = rush or skip. No proof in the lecture.
+
+Questions: can the same rows separate two models; what replaces sd/sqrt(m) for a statistic that is not a mean; what we can say about the risk on patients whose outcomes we do not have; what could still be wrong with the winning score; which tasks a better score would make better.
+
+Cut order: dark slides; "Ptolemy's curve in glass"; "More warnings for data about humans"; "Resampling the test rows" to its first two lines.
+
+Derived: the covariate-shift and label-shift identities. Stated: Hoeffding's inequality, adaptive drift.
+:::
+
+### Evaluation, distribution shift and deployment
+
+Part 1: the leaderboard
+
+Part 2: when the data move
+
+Part 3: scores and decisions
+
+## {.inverse .center}
+
+::: {.notes}
+Compress: pair the comparison; Hoeffding bounds every score at once; choose before opening the test rows; resample the rows for anything that is not a mean.
+:::
+
+### Part 1: the leaderboard
+
+## Data: patients of a health system {minutes="2"}
+
+::: {.notes}
+Synthetic rows: generated by trees fitted to the study's data (the R package synthpop), so no row is a real patient; every number today is about these rows. Their dictionary: rows are independent, not grouped by patient.
+Race is in the data and is not an input, as in the commercial algorithm.
+:::
+
+Obermeyer et al. (2019) studied a commercial algorithm that a US health system used to predict patients' costs, and released **synthetic** rows that mimic their data: `r big(nrow(hs))` patient-years (`r big(sum(hs$race == "black"))` Black, `r big(sum(hs$race == "white"))` White)
+
+- **Inputs**, from the year before: age band, sex, 34 chronic conditions, 13 kinds of cost, 94 test results and medications (`r length(inputs)` columns)
+- **Outcomes**, the year after: cost, number of active chronic conditions, test results
+- **Task**: predict whether next year's cost will be in the **top quarter** (above \$`r big(cut_hi)` on the training rows), as a probability $\hat p(x)$
+- **Score**: the **Brier score**, squared error for a probability, $\ell(y, \hat p) = (y - \hat p)^2$, between 0 and 1
+
+Split once at random: `r big(length(i_train))` training, `r big(m_tune)` tuning, `r big(m_test)` test, `r big(length(i_res))` kept back for later
+
+## CTF competition: the tuning leaderboard {minutes="2"}
+
+::: {.notes}
+Baseline: the training rate, `r f3(q_train)`, for everyone. Settings fixed before scoring; the lasso's lambda by cross-validation on the training rows.
+Bars: plus or minus two standard errors, sd of the losses over sqrt(m).
+:::
+
+```{r}
+#| label: leaderboard
+#| fig-width: 10
+#| fig-height: 3.4
+#| fig-align: center
+lb |> mutate(name = fct_reorder(name, -brier)) |>
+  ggplot(aes(brier, name)) +
+  geom_errorbarh(aes(xmin = brier - 2 * se, xmax = brier + 2 * se), height = 0.25, colour = v_teal, linewidth = 1) +
+  geom_point(size = 3.5, colour = v_dark) +
+  labs(x = "Brier score on the 8,000 tuning patients (lower is better)", y = NULL)
+```
+
+The four models with any structure are within `r f3(lb$brier[4] - lb$brier[1])` of each other, and every bar is about `r f3(4 * mean(lb$se))` wide
+
+## Can the same rows separate two models? {minutes="3"}
+
+::: {.notes}
+QUESTION: the bars overlap; can the same 8,000 patients still tell the two leaders apart?
+
+Pair the losses, patient by patient. Correlation of the two models' per-patient losses: `r sprintf("%.2f", cor_pair)`.
+The pair for the test rows is chosen here, before they are opened.
+:::
+
+::: {.ask}
+The two leaders' bars overlap. Their scores come from the same `r big(m_tune)` patients. Can those patients still tell the two models apart?
+:::
+
+. . .
+
+Score each patient twice and take the difference, $\Delta_j = \ell\big(y_j, \hat p_A(x_j)\big) - \ell\big(y_j, \hat p_B(x_j)\big)$
+
+- The difference of the two scores is $\bar\Delta$, with standard error $\mathrm{sd}(\Delta)/\sqrt m$
+- $\mathrm{Var}(\ell_A - \ell_B) = \mathrm{Var}(\ell_A) + \mathrm{Var}(\ell_B) - 2\,\mathrm{Cov}(\ell_A, \ell_B)$: the models err on mostly the same patients, so the covariance is large
+
+`r nice[pair[1]]` minus `r nice[pair[2]]`: $\bar\Delta = `r f4(mean(d_tune))`$, standard error `r f4(se_d_tune)`, against `r f4(lb$se[1])` for one score alone
+
+The pair to compare on the test rows: **`r nice[pair[1]]` against `r nice[pair[2]]`**, chosen now
+
+## A score and its risk {minutes="3"}
+
+::: {.notes}
+Heuristic, not a proof: the normal tail at the largest variance a loss in [0, 1] allows.
+Figure: m = 50 losses that are 0 or 1. Black: exact tail at risk 1/2; dashed: risk 0.1, where the bound is loose.
+:::
+
+A score is a mean of $m$ losses, $\hat R = \frac1m\sum_j \ell_j$, with mean $R$, the risk
+
+::: {.retrieval}
+A loss between 0 and 1 has variance at most $\frac14$, so $\mathrm{Var}(\hat R) \le \frac{1}{4m}$
+:::
+
+If $\hat R$ were normal with that variance: $P\big(|\hat R - R| \ge t\big) \le 2e^{-t^2/(2\sigma^2)}$ with $\sigma^2 = \frac{1}{4m}$, which is $2e^{-2mt^2}$
+
+::: {.columns}
+::: {.column width="56%"}
+```{r}
+#| label: tails
+#| fig-width: 6.6
+#| fig-height: 2.9
+m_h <- 50
+tails <- expand_grid(t = seq(0.01, 0.4, by = 0.0025), R = c(0.5, 0.1)) |>
+  mutate(exact = map2_dbl(t, R, function(t, R) {
+    k <- 0:m_h; sum(dbinom(k, m_h, R)[abs(k / m_h - R) >= t - 1e-12]) }),
+    normal = 2 * pnorm(-t / sqrt(R * (1 - R) / m_h)), bound = 2 * exp(-2 * m_h * t^2))
+ggplot(tails, aes(t)) +
+  geom_line(data = filter(tails, R == 0.5), aes(y = bound, colour = "bound, 2exp(-2mt²)"), linewidth = 1.3) +
+  geom_line(data = filter(tails, R == 0.5), aes(y = normal, colour = "normal approximation"), linewidth = 1) +
+  geom_step(data = filter(tails, R == 0.5), aes(y = exact, colour = "exact, risk 1/2"), linewidth = 0.9) +
+  geom_step(data = filter(tails, R == 0.1), aes(y = exact, colour = "exact, risk 0.1"), linewidth = 0.9, linetype = "dashed") +
+  scale_y_log10(limits = c(1e-6, 2), labels = scales::label_log()) +
+  scale_colour_manual(values = c("bound, 2exp(-2mt²)" = m_pink, "normal approximation" = v_teal,
+                                 "exact, risk 1/2" = "black", "exact, risk 0.1" = "grey40"), name = NULL) +
+  labs(x = "t", y = "P(|score − risk| ≥ t)") +
+  theme(legend.text = element_text(size = 13), legend.key.width = unit(1.2, "lines"))
+```
+:::
+::: {.column width="44%"}
+$m = 50$ losses of 0 or 1
+
+The central limit theorem makes the normal shape plausible, but does not control the far tail at a fixed $m$
+:::
+:::
+
+## Hoeffding's inequality {minutes="3"}
+
+::: {.notes}
+The proof is the seminar problem with Markov's inequality on e^(lambda D); the lemma is stated.
+Loose here: the range, 1, in place of the losses' sd, `r f3(sd_loss)`; and each score separately, not the difference.
+:::
+
+::: {.leave}
+**Hoeffding's inequality** (stated). If $Z_1, \ldots, Z_m$ are independent with $0 \le Z_i \le 1$ and $\bar Z$ is their mean, then for every $t > 0$ and every $m$, $P\big(|\bar Z - \mathbb E\bar Z| \ge t\big) \le 2e^{-2mt^2}$
+:::
+
+Why it holds for every $m$:
+
+1. Markov's inequality on $e^{\lambda D}$, $D = \bar Z - \mathbb E\bar Z$; by independence, $\mathbb E\big[e^{\lambda D}\big]$ is a product of $m$ factors
+2. **Hoeffding's lemma** (stated): each factor is at most what a normal with variance $\frac14$ would give; then choose $\lambda$
+
+. . .
+
+$K$ models fixed in advance, by the union bound: every score within $t_K = \sqrt{\log(2K/\delta)/(2m)}$ of its risk, with probability $1 - \delta$. Here $t_K = `r f3(t_K)`$: gaps above $2t_K$ are resolved for `r n_resolved` of the `r choose(K, 2)` pairs, against a paired standard error of `r f4(se_d_tune)`
+
+## The test rows, opened once {minutes="2"}
+
+::: {.notes}
+Written down before opening: the pair, the difference, two standard errors.
+Retrieval: the selected candidate's score is biased low; here K = 5 and m = 8,000, so the bias is small.
+:::
+
+Decided before opening: `r nice[pair[1]]` against `r nice[pair[2]]`, the paired difference with two standard errors
+
+```{r}
+#| label: test-table
+tibble(` ` = c("tuning", "test"),
+       a = f3(c(mean(L_tune[, pair[1]]), mean(L_test[, pair[1]]))),
+       b = f3(c(mean(L_tune[, pair[2]]), mean(L_test[, pair[2]]))),
+       d = c(sprintf("%.4f ± %.4f", mean(d_tune), 2 * se_d_tune), sprintf("%.4f ± %.4f", mean(d_test), 2 * se_d_test))) |>
+  setNames(c(" ", nice[pair[1]], nice[pair[2]], "difference ± 2 SE")) |>
+  kable(align = "lccc")
+```
+
+::: {.retrieval}
+The selected candidate's score is biased low: the winner of $K$ noisy scores was partly lucky. A test set scored once, for models fixed before it is opened, has no such bias
+:::
+
+The leader scored `r f3(mean(L_tune[, lead]))` on the tuning rows and `r f3(mean(L_test[, lead]))` on the test rows: with $K = `r K`$ and $m = `r bigm(m_tune)`$, no sign of the bias
+
+## Resampling the test rows {minutes="3"}
+
+::: {.notes}
+QUESTION: this number is not an average of per-patient losses; what replaces sd/sqrt(m)?
+
+The bootstrap of the test rows, B = `r B`; for a mean it reproduces sd/sqrt(m). Retrieval: bagging's bootstrap samples.
+:::
+
+A program can enroll only the 3% with the highest scores. Of those `r big(ceiling(0.03 * m_test))` test patients, the share with top-quarter cost is `r pct(prec[1])` for `r nice[pair[1]]` and `r pct(prec[2])` for `r nice[pair[2]]`
+
+::: {.ask}
+Which patients are in the top 3% depends on every patient's score. This number is not an average of per-patient losses. What replaces $\mathrm{sd}/\sqrt m$?
+:::
+
+. . .
+
+**Bootstrap the test rows**: draw $m$ rows with replacement, recompute the difference, repeat $B$ times, and read off the spread. Each drawn row keeps both models' predictions, so the comparison stays paired
+
+90% bootstrap interval for the difference: `r sprintf("%.1f", 100 * ci_prec[1])` to `r sprintf("%.1f", 100 * ci_prec[2])` percentage points, so this number does not separate them. The models are held fixed: the interval says nothing about refitting, and nothing about how the pair was chosen
+
+## Scores that move {minutes="3"}
+
+::: {.notes}
+Adaptive drift, stated. Recht et al. (2019), section 2 (the three gaps) and Table 1 (82.9 to 72.2). Roelofs et al. (2019): 120 Kaggle competitions, public against private leaderboards.
+Checked through a reading of the arXiv text, not line by line.
+:::
+
+**Adaptive drift** (stated). If the candidates depend on earlier scores on the same rows (tune, look, tune again), the union bound no longer covers them, and the score can be driven away from the risk. A test set scored once, for models fixed before, does not move
+
+Recht et al. (2019) built new test sets for CIFAR-10 and ImageNet to the original recipe. Accuracy fell for every model, many by about 10 percentage points (the best ImageNet model in their Table 1 from 82.9% to 72.2%), with the order of the models almost unchanged. They split the drop into three gaps:
+
+$$
+\hat R_{\text{old}} - \hat R_{\text{new}} = \underbrace{\hat R_{\text{old}} - R_{\text{old}}}_{\text{adaptivity}} \;+\; \underbrace{R_{\text{old}} - R_{\text{new}}}_{\text{distribution}} \;+\; \underbrace{R_{\text{new}} - \hat R_{\text{new}}}_{\text{sampling}}
+$$
+
+and found it was mostly the distribution: slightly harder images. On 120 Kaggle competitions, public and private leaderboards agreed closely (Roelofs et al. 2019)
+
+## {.inverse .center}
+
+::: {.notes}
+Compress: a score is evidence about one distribution; under covariate shift reweight by p_test/p_train; under label shift move the intercept; neither fixes a changed p(y | x).
+:::
+
+### Part 2: when the data move
+
+## In distribution and out of distribution {minutes="3"}
+
+::: {.notes}
+In distribution: new rows from the distribution the model was scored on, which is what a test set measures. Out of distribution: anything else.
+Both deployments are built from the rows kept back, so we know what changed. `r big(length(i_cov))` and `r big(length(i_lab))` patients.
+:::
+
+::: {.retrieval}
+Fit to 142 countries in 2002, tested on the same countries in 1997: has it predicted anything new?
+:::
+
+Built from the patients kept back: a **sicker population** (kept with a probability rising with last year's chronic conditions), and one with **high cost twice as common** (every high-cost patient kept, a third of the others)
+
+```{r}
+#| label: shift-table
+shift_tab |> transmute(Model = name, `Tuning rows` = f3(tune), `Sicker population` = f3(cov),
+                       `High cost twice as common` = f3(lab)) |>
+  kable(align = "lccc")
+```
+
+## Covariate shift {minutes="4"}
+
+::: {.notes}
+QUESTION: the new patients' outcomes are not known yet; what can we say about a model's risk on them?
+
+One line per step: tower property; the assumption that p(y | x) did not change; multiply and divide by p_train, which needs overlap; tower property back. Inverse propensity weighting: the same move.
+:::
+
+::: {.ask}
+The new patients' costs are not known yet. What is a model's risk on them?
+:::
+
+. . .
+
+$p_{\text{test}}$: where the model will be used. $r(x) = \mathbb E[\ell(Y, f(X)) \mid X = x]$, $w(x) = p_{\text{test}}(x)/p_{\text{train}}(x)$
+
+$$
+\begin{alignedat}{2}
+R_{\text{test}}(f) &= \mathbb E_{\text{test}}\big[r_{\text{test}}(X)\big] &\quad& \color{gray}\small\text{tower property} \\[2pt]
+&\class{fragment}{{}= \mathbb E_{\text{test}}\big[r_{\text{train}}(X)\big]}
+&& \class{fragment}{\color{gray}\small\text{covariate shift: } p_{\text{test}}(y \mid x) = p_{\text{train}}(y \mid x)} \\[2pt]
+&\class{fragment}{{}= \textstyle\int r_{\text{train}}(x)\, w(x)\, p_{\text{train}}(x)\, dx}
+&& \class{fragment}{\color{gray}\small\text{needs } p_{\text{train}}(x) > 0 \text{ wherever } p_{\text{test}}(x) > 0} \\[2pt]
+&\class{fragment}{{}= \mathbb E_{\text{train}}\big[w(X)\, \ell(Y, f(X))\big]}
+&& \class{fragment}{\color{gray}\small\text{tower property again}}
+\end{alignedat}
+$$
+
+::: {.retrieval}
+Inverse propensity weighting: weight $1/\pi(Z)$, needing $0 < \pi(Z) < 1$
+:::
+
+## Reweighting the tuning rows {minutes="2"}
+
+::: {.notes}
+w is known because we built the shift; in practice it is estimated, and that is the seminar's complication.
+Effective sample size of the weights: `r big(ess)` of `r big(m_tune)`.
+:::
+
+The covariate-shift identity on the tuning rows, $\frac1m\sum_j w(x_j)\,\ell_j$, against the score on the sicker population itself:
+
+```{r}
+#| label: reweight-table
+shift_tab |> transmute(Model = name, `Tuning rows` = f3(tune), `Reweighted tuning rows` = f3(weighted),
+                       `Sicker population` = f3(cov)) |>
+  kable(align = "lccc")
+```
+
+The weights are needed to evaluate a fixed model's risk on the new population. Whether to fit with them is a separate question
+
+The weights add variance: for `r nice[lead]`, the reweighted score has standard error `r f4(se_w)`, against `r f4(lb$se[1])` unweighted
+
+## Label shift {minutes="3"}
+
+::: {.notes}
+Bayes' rule, odds form: the likelihood ratio p(x | 1)/p(x | 0) is what stays fixed.
+Here q_train = `r f3(q_train)`, q_test = `r f3(q_test)`; for c* = 1/2 the old score's threshold becomes `r f3(c_old)`.
+`r nice[lead]`, high cost twice as common: Brier `r f3(lab_fix[1])` as it stands, `r f3(lab_fix[2])` with the intercept moved; AUC `r f3(auc_tab["lab"])` against `r f3(auc_tab["tune"])` on the tuning rows.
+:::
+
+If $p(x \mid y)$ is unchanged and the share with $Y = 1$ moves from $q_{\text{train}}$ to $q_{\text{test}}$, Bayes' rule in odds changes only the last factor:
+
+$$
+\begin{aligned}
+\frac{P(Y = 1 \mid X = x)}{P(Y = 0 \mid X = x)} &= \frac{p(x \mid 1)}{p(x \mid 0)} \cdot \frac{q}{1 - q} \\[4pt]
+\operatorname{logit} P_{\text{test}}(Y = 1 \mid X = x) &= \operatorname{logit} P_{\text{train}}(Y = 1 \mid X = x) + \operatorname{logit} q_{\text{test}} - \operatorname{logit} q_{\text{train}}
+\end{aligned}
+$$
+
+- The fix: move the intercept (a recalibration with the slope kept at 1), with $q_{\text{test}}$ known or estimated
+- With unchanged costs, the optimal threshold on the correct deployment probability is still $c^\star$; the old score needs a new threshold. The order of patients by score does not change
+
+## Accuracy, calibration and ranking under shift {minutes="3"}
+
+::: {.notes}
+Calibration of the leader, by deciles of its prediction. Under covariate shift it survives here because the model is close to p(y | x). None of this is guaranteed. Split conformal coverage: not guaranteed under either shift (the rows are no longer exchangeable).
+:::
+
+```{r}
+#| label: reliability
+#| fig-width: 11.5
+#| fig-height: 2.8
+#| fig-align: center
+rel |> mutate(panel = fct_inorder(panel)) |>
+  ggplot(aes(pred, obs)) +
+  geom_abline(colour = "grey60", linetype = "dashed") +
+  geom_line(colour = v_teal, linewidth = 0.9) + geom_point(colour = v_dark, size = 2.2) +
+  facet_wrap(~ panel, nrow = 1, labeller = label_wrap_gen(24)) +
+  coord_cartesian(xlim = c(0, 1), ylim = c(0, 1)) +
+  scale_x_continuous(breaks = c(0, 0.5, 1)) + scale_y_continuous(breaks = c(0, 0.5, 1)) +
+  labs(x = "predicted probability", y = "observed share") + theme(strip.text = element_text(size = 13))
+```
+
+| | Covariate shift, $p(y \mid x)$ fixed | Label shift, $p(x \mid y)$ fixed |
+|---|---|---|
+| Risk | changes; estimate it by reweighting with $w(x)$ | changes |
+| Calibration | kept by a correct model of $p(y \mid x)$, not always by others | lost; move the intercept |
+| Ranking by score (AUC) | can change with the mix of patients | kept |
+
+## When the function itself has moved {.inverse}
+
+::: {.notes}
+Skip if behind.
+:::
+
+If $p(y \mid x)$ changes (a new payment rule, a new treatment, a change in who gets care), neither fix applies: the old rows contain no information about the new relation, and only new outcomes reveal it
+
+Deploying a model can be what moves it: a program that enrolls the predicted high-cost patients changes their costs, and next year's training rows record a world the model helped make
+
+## Causes and effects as inputs {.inverse}
+
+::: {.notes}
+Skip if behind. Nastl and Hardt (2024), sections 1.2, 2 and 3.
+:::
+
+Theory: the distribution of $Y$ given all its causes is unchanged by interventions that leave $Y$'s own mechanism alone, so a model on the causes should travel
+
+Nastl and Hardt (2024), 16 tabular tasks with several domains each (income by region, voting by region, hospital mortality by insurance type, ...): models on all features beat models on causal features **in** and **out** of domain in every task. Their advice: approximate the best predictor on all the features available
+
+The invariance holds for the true conditional distribution, not for the risk of a model fitted to a few features
+
+## {.inverse .center}
+
+::: {.notes}
+Compress: a curve that fits is not a law; a win shows that one model beats another, not that deploying it is right; the winner, read by health; tasks a better score cannot fix.
+:::
+
+### Part 3: scores and decisions
+
+## An absurdly abbreviated history of optics {minutes="2"}
+
+::: {.notes}
+Legacy slide, kept whole.
+Ptolemy's table is in Feynman's Lectures, vol. I, Table 26-1.
+:::
+
+- Ptolemy (100-170) measured refraction of light passing from air to water, altering measurements so they would fit to a quadratic curve (ancient "machine learning" or curve fitting)
+
+- Ibn Sahl (940-1000) described the correct law, which English speakers refer to as Snell's law
+
+- Fermat (1607-1665) proposed the more general "principle of least time" which can be used to derive Snell's law *and* solve other optical problems -- predict values in different settings
+
+## Ptolemy's curve in glass {minutes="2"}
+
+::: {.notes}
+Glass computed from Snell's law with n = 1.5, not measured.
+The quadratic's second differences are all -1/2: exactly the table.
+:::
+
+::: {.columns}
+::: {.column width="60%"}
+```{r}
+#| label: optics-plot
+#| fig-width: 7.2
+#| fig-height: 4
+grid_i <- seq(0, 88, by = 1)
+opt <- bind_rows(
+  tibble(medium = "air to water", i = grid_i, Snell = snell(grid_i, 1.33), Ptolemy = quad(grid_i)),
+  tibble(medium = "air to glass", i = grid_i, Snell = snell(grid_i, 1.5), Ptolemy = quad(grid_i))) |>
+  pivot_longer(c(Snell, Ptolemy), names_to = "law", values_to = "r") |>
+  mutate(medium = fct_inorder(medium),
+         law = recode(law, Snell = "Snell's law", Ptolemy = "Ptolemy's quadratic"))
+ggplot(opt, aes(i, r, colour = law, linetype = law)) +
+  geom_line(linewidth = 1.2) +
+  geom_point(data = mutate(ptolemy, medium = factor("air to water", levels = levels(opt$medium))),
+             aes(i, r), inherit.aes = FALSE, size = 2.8, colour = "black") +
+  facet_wrap(~ medium) +
+  scale_colour_manual(values = c("Snell's law" = v_teal, "Ptolemy's quadratic" = m_pink), name = NULL) +
+  scale_linetype_manual(values = c("Snell's law" = "solid", "Ptolemy's quadratic" = "dashed"), name = NULL) +
+  labs(x = "angle in air (degrees)", y = "angle after refraction") +
+  theme(legend.position = "bottom", strip.text = element_text(size = 15))
+```
+:::
+::: {.column width="40%"}
+Points: Ptolemy's table, air to water, within `r sprintf("%.1f", gap_water)` degrees of Snell's law, $\sin i = n \sin r$ with $n = 1.33$
+
+In glass the same curve is off by `r sprintf("%.1f", gap_glass[1])` degrees at 10 and `r sprintf("%.1f", gap_glass[2])` at 80. Snell's law changes one number, $n = 1.5$
+
+Refitted to new measurements, a quadratic would fit glass too. It could not say anything before them
+:::
+:::
+
+## Put the "science" back in "data science"! {minutes="2"}
+
+::: {.notes}
+Legacy slide, kept whole. Feynman, Lectures, vol. I, section 26-3; "Cargo Cult Science" (1974).
+:::
+
+Feynman, [Lectures on Physics, Vol. 1](https://www.feynmanlectures.caltech.edu/I_26.html):
+
+> Now in the further development of science, we want more than just a formula. First we have an observation, then we have numbers that we measure, then we have a law which summarizes all the numbers. *But the real glory of science is that we can find a way of thinking such that the law is evident*.
+
+And from "Cargo Cult Science":
+
+> When you have put a lot of ideas together to make an **elaborate theory**, you want to make sure, when explaining what it fits, that *those things it fits are not just the things that gave you the idea for the theory*; but that the finished theory makes something else come out right, in addition.
+
+## CTF competition: what it delivered {minutes="2"}
+
+::: {.notes}
+Donoho (2017), section 6, read in the 2015 version. The deployable-rule claim is his; the next slide disputes it.
+:::
+
+Donoho (2017) called prediction plus the common task framework machine learning's "secret sauce":
+
+- training data shared by everyone, competitors, and a referee who scores each submitted rule on data hidden from them
+- effort goes to measured performance; many groups compete; judging is impartial and automatic
+- winners arrive already tested, so they look close to deployable
+
+::: {.retrieval}
+The Netflix prize: the winning blend was never put into production
+:::
+
+## Outcome reasoning and model reasoning {minutes="3"}
+
+::: {.notes}
+Rodu and Baiocchi, sections 1.2, 2, 4.1 and 6, as numbered in the 2021 arXiv version. The four names are theirs; MARA(s).
+Their triage example: passes for the administrator, fails for one patient whose diagnosis it replaces.
+Fermat against Ptolemy: model reasoning against outcome reasoning.
+:::
+
+Rodu and Baiocchi (2023): a competition justifies "Algorithm A performs better than Algorithm B", not deployment
+
+::: {.columns}
+::: {.column width="50%"}
+Two ways to trust a prediction:
+
+- **outcome reasoning**: measured performance
+- **model reasoning**: the model's structure, checked against what we know
+
+Only the second can be argued before use
+:::
+::: {.column width="50%"}
+Outcome reasoning is enough only if:
+
+- **measurement**: future outcomes can be scored
+- **adaptability**: the model can be updated in time
+- **resilience**: accumulated errors are tolerable
+- **agnosis**: conflict with beliefs is tolerable
+:::
+:::
+
+Each depends on **who is asking**, the stakeholders
+
+## The winner, deployed {minutes="2"}
+
+::: {.notes}
+QUESTION: it predicts cost well, about equally in both groups; what could still be wrong?
+
+The setting of Obermeyer et al. (2019), p. 448: auto-enrolled at the 97th percentile, referred above the 55th.
+:::
+
+The health system uses a cost score to choose who gets extra care: the 3% with the highest scores are enrolled in a program for patients with complex needs
+
+Use the competition's winner, `r nice[lead]`. On the test patients at or above the 97th percentile of its score, the share with top-quarter cost is `r pct(cal_top$high[cal_top$race == "Black"])` for Black and `r pct(cal_top$high[cal_top$race == "White"])` for White patients
+
+::: {.ask}
+The score predicts cost well, and about equally well in both groups. What could still be wrong?
+:::
+
+## The same score, by health {minutes="3"}
+
+::: {.notes}
+Obermeyer et al. (2019), Figures 1A and 3A, here on the synthetic test rows. Their numbers at the 97th percentile: 4.8 against 3.8 conditions; $1,801 less a year at the same number of conditions (pp. 448, 450).
+:::
+
+```{r}
+#| label: by-health
+#| fig-width: 11.5
+#| fig-height: 2.9
+#| fig-align: center
+p_cal <- ggplot(bins, aes(pct, high, colour = race)) + geom_vline(xintercept = 97, linetype = "dashed", colour = "grey55") +
+  geom_line(linewidth = 0.9) + geom_point(size = 2) +
+  labs(x = "percentile of the score", y = "share in top cost quarter", colour = NULL)
+p_hlt <- ggplot(bins, aes(pct, cond, colour = race)) + geom_vline(xintercept = 97, linetype = "dashed", colour = "grey55") +
+  geom_line(linewidth = 0.9) + geom_point(size = 2) +
+  labs(x = "percentile of the score", y = "active chronic conditions", colour = NULL)
+(p_cal | p_hlt) + plot_layout(guides = "collect") &
+  scale_colour_manual(values = c(Black = m_pink, White = v_teal)) & theme(legend.text = element_text(size = 15))
+```
+
+Left: what the score was trained for, similar in both groups. Right: at the same score, Black patients are sicker. Enrolled: `r sprintf("%.1f", cond_top$cond[cond_top$race == "Black"])` active chronic conditions for Black, `r sprintf("%.1f", cond_top$cond[cond_top$race == "White"])` for White patients
+
+Why, in the study: at the same number of chronic illnesses, \$1,801 a year less was spent on Black patients (in these rows, \$`r big(cost_gap)`), so cost understates their need
+
+## Another target {minutes="3"}
+
+::: {.notes}
+Same learner, same settings, same inputs; only the target changes. The paper's Table 2 (p. 452): 14.1% for total cost, 21.0% avoidable, 26.7% active chronic conditions.
+Bootstrap: test rows resampled, models fixed, B = `r B`.
+:::
+
+Boosted trees with the same settings, trained on other targets. Who is in the top 3% of the test patients:
+
+```{r}
+#| label: label-table
+label_tab |> transmute(Target = label, `Share Black` = pct(black), `Mean active conditions` = sprintf("%.2f", cond),
+                       `Share of next year's cost` = pct(cost)) |>
+  kable(align = "lccc")
+```
+
+`r pct(share_black)` of all test patients are Black. With chronic conditions as the target, the share among those enrolled rises by `r sprintf("%.1f", 100 * mean(boot_lab))` percentage points (90% bootstrap interval `r sprintf("%.1f", 100 * ci_lab[1])` to `r sprintf("%.1f", 100 * ci_lab[2])`)
+
+The competition fixed the target before anyone competed. Changing it changes who gets care, and no score on the old target can show that
+
+## Should this be predicted at all? {minutes="2"}
+
+::: {.notes}
+QUESTION: for which of these would a model with a better score make things better?
+
+Let the room disagree; the next slide gives questions to ask, not a verdict.
+:::
+
+::: {.ask}
+For which of these tasks would a model with a better score make things better?
+
+1. which patients will cost the most next year, to offer them extra care
+2. which defendants will be re-arrested before trial, to decide who is released
+3. which applicants will stay in a job for two years, to decide who is hired
+4. which drivers will claim on their insurance, to set the price they pay
+:::
+
+## Limits of predictive optimization {minutes="3"}
+
+::: {.notes}
+Wang et al., sections 2.2, 3.1, 3.2, 3.4 and 3.6, of the seven in their section 3. Salganik et al. (2020), abstract. Kiviat (2019), abstract.
+:::
+
+The case for prediction: decisions that are consistent, cheap, auditable, and often more accurate than unaided judgment (Wang et al. 2024). Questions a score does not answer:
+
+- **Acting on it**: does acting on the prediction help? A decision can change the outcome it was predicted from
+- **The target**: is it what we care about? Re-arrest is not offending, and cost is not need
+- **Predictability**: in a mass competition on life outcomes, 160 teams' best predictions were only slightly better than a simple benchmark (Salganik et al. 2020)
+- **Contesting**: can the person decided about get an explanation, their data, and a way to correct the decision?
+
+Some predictions are objected to even when they are accurate: pricing car insurance by credit score holds people accountable for things that are not their fault (Kiviat 2019)
+
+## More warnings for data about humans {minutes="2"}
+
+::: {.notes}
+Legacy slide, kept whole (links as in the legacy deck).
+:::
+
+Social science is hard! Health is also (at least partially) social. It is very difficult to [predict life outcomes](https://www.pnas.org/content/117/15/8398), even with machine learning models and [big data](https://hdsr.mitpress.mit.edu/pub/uan1b4m9/release/3)
+
+Strategic/adversarial/adaptive behavior: [Goodhart's law / Campbell's law](https://twitter.com/CT_Bergstrom/status/1329175501882019841) / [Lucas critique](https://en.wikipedia.org/wiki/Lucas_critique) / [Friedman's thermostat](https://worthwhile.typepad.com/worthwhile_canadian_initi/2012/07/why-are-almost-all-economists-unaware-of-milton-friedmans-thermostat.html) / [Washback effect](https://en.wikipedia.org/wiki/Washback_effect) / [Performativity](https://en.wikipedia.org/wiki/Performativity) / [Reflexivity](https://en.wikipedia.org/wiki/Reflexivity_%28social_theory%29) / [Hammer's law](https://twitter.com/MCHammer/status/1363908982289559553)
+
+For these reasons, *when dealing with human data*:
+
+- Almost all variables correlate
+- Unconfoundedness assumptions are always wrong
+- Can't separate "normative vs scientific" (ethics always important)
+
+Remember: focus on what is **importantly wrong**
+
+## Recap {minutes="4"}
+
+::: {.notes}
+Protected: the survey follows. One line each; point to where it was proved.
+:::
+
+::: {style="font-size: 1.15em"}
+| | |
+|---|---|
+| The loss and the target define the problem | optimal model theorem; optimal threshold theorem; quantile optimality |
+| Training error underestimates the risk | optimism theorem; the selected candidate's score is biased low |
+| Faster rates need assumptions | no free lunch; the k-NN rate |
+| Shrinkage and averaging trade bias for variance | bias--variance decompositions; ridge; the correlated-average variance |
+| Prediction is not intervention | adjustment theorem; inverse propensity weighting; partial dependence and causal effects |
+| A score is evidence about one target on one distribution, not a license to deploy | Hoeffding's inequality; covariate and label shift; another target |
+
+: {tbl-colwidths="[45,55]"}
+:::
+
+## Before the seminar {minutes="1"}
+
+- Do the exercises at the top of the seminar notebook before the seminar
+
+## Conclusion {.inverse}
+
+::: {.notes}
+Compress: pair, bound, open once; reweight or move the intercept when the data move; a win is evidence about one target on one distribution, and deploying is a further decision.
+:::
+
+#### The leaderboard
+
+Compare two models on the same rows, paired. Hoeffding's inequality bounds every score at once for models fixed in advance. Choose the comparison before opening the test rows; resample the rows for anything that is not a mean
+
+#### When the data move
+
+Covariate shift: reweight by $p_{\text{test}}/p_{\text{train}}$, where the supports overlap. Label shift: move the intercept. Neither repairs a change in $p(y \mid x)$
+
+#### Scores and decisions
+
+That one model beats another, on one target and one distribution. Whether to deploy it, and whether the target is the right one, are questions the score does not answer
+
+## Course survey {minutes="5"}
+
+::: {.notes}
+Link from the convenor.
+:::
+
+A few minutes for the course survey, now
+
+## References (1 of 2) {.inverse minutes="0"}
+
+::: {.notes}
+Skip: the works named on the slides, in full.
+:::
+
+::: {style="font-size: 0.74em"}
+- Donoho, D. (2017). 50 years of data science. *Journal of Computational and Graphical Statistics* 26(4), 745--766. [doi:10.1080/10618600.2017.1384734](https://doi.org/10.1080/10618600.2017.1384734). Section 6.
+- Feynman, R. P., Leighton, R. B. and Sands, M. (1963). *The Feynman Lectures on Physics*, vol. I, chapter 26, Table 26-1 and section 26-3. [feynmanlectures.caltech.edu/I_26.html](https://www.feynmanlectures.caltech.edu/I_26.html)
+- Feynman, R. P. (1974). Cargo cult science. *Engineering and Science* 37(7), 10--13.
+- Hoeffding, W. (1963). Probability inequalities for sums of bounded random variables. *Journal of the American Statistical Association* 58(301), 13--30. [doi:10.1080/01621459.1963.10500830](https://doi.org/10.1080/01621459.1963.10500830)
+- Kiviat, B. (2019). The moral limits of predictive practices: the case of credit-based insurance scores. *American Sociological Review* 84(6), 1134--1158. [doi:10.1177/0003122419884917](https://doi.org/10.1177/0003122419884917)
+- Nastl, V. Y. and Hardt, M. (2024). Do causal predictors generalize better to new domains? *Advances in Neural Information Processing Systems* 37. [doi:10.52202/079017-0983](https://doi.org/10.52202/079017-0983)
+- Obermeyer, Z., Powers, B., Vogeli, C. and Mullainathan, S. (2019). Dissecting racial bias in an algorithm used to manage the health of populations. *Science* 366(6464), 447--453. [doi:10.1126/science.aax2342](https://doi.org/10.1126/science.aax2342). Synthetic data and code: [gitlab.com/labsysmed/dissecting-bias](https://gitlab.com/labsysmed/dissecting-bias)
+:::
+
+## References (2 of 2) {.inverse minutes="0"}
+
+::: {.notes}
+Skip.
+:::
+
+::: {style="font-size: 0.74em"}
+- Recht, B., Roelofs, R., Schmidt, L. and Shankar, V. (2019). Do ImageNet classifiers generalize to ImageNet? *Proceedings of the 36th International Conference on Machine Learning*, PMLR 97, 5389--5400. [proceedings.mlr.press/v97/recht19a.html](https://proceedings.mlr.press/v97/recht19a.html)
+- Rodu, J. and Baiocchi, M. (2023). When black box algorithms are (not) appropriate: a principled prediction-problem ontology. *Observational Studies*. [muse.jhu.edu/pub/56/article/883478](https://muse.jhu.edu/pub/56/article/883478). Sections as numbered in [arXiv:2001.07648v4](https://arxiv.org/abs/2001.07648v4).
+- Roelofs, R., Shankar, V., Recht, B., Fridovich-Keil, S., Hardt, M., Miller, J. and Schmidt, L. (2019). A meta-analysis of overfitting in machine learning. *Advances in Neural Information Processing Systems* 32. [NeurIPS proceedings](https://papers.nips.cc/paper/9117-a-meta-analysis-of-overfitting-in-machine-learning)
+- Salganik, M. J. et al. (2020). Measuring the predictability of life outcomes with a scientific mass collaboration. *Proceedings of the National Academy of Sciences* 117(15), 8398--8403. [doi:10.1073/pnas.1915006117](https://doi.org/10.1073/pnas.1915006117)
+- Wang, A., Kapoor, S., Barocas, S. and Narayanan, A. (2024). Against predictive optimization: on the legitimacy of decision-making algorithms that optimize predictive accuracy. *ACM Journal on Responsible Computing* 1(1), 1--45. [predictive-optimization.cs.princeton.edu](https://predictive-optimization.cs.princeton.edu/). Sections as numbered in the draft of 16 February 2023.
+:::
