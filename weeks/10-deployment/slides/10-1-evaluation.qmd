@@ -1,6 +1,6 @@
 ---
 title: "Machine learning"
-subtitle: "Week 10: evaluation, distribution shift and deployment"
+subtitle: "Week 10: deployment and evaluation"
 title-question: "A model wins a prediction competition. What has it shown, and what has it not?"
 format:
   revealjs:
@@ -272,7 +272,7 @@ Cut order: dark slides; "Ptolemy's curve in glass"; "More warnings for data abou
 Derived: the covariate-shift and label-shift identities. Stated: Hoeffding's inequality, adaptive drift.
 :::
 
-### Evaluation, distribution shift and deployment
+### Evaluation, distribution shift, and deployment
 
 Part 1: the leaderboard
 
@@ -576,7 +576,7 @@ $$
 - The fix: move the intercept (a recalibration with the slope kept at 1), with $q_{\text{test}}$ known or estimated
 - With unchanged costs, the optimal threshold on the correct deployment probability is still $c^\star$; the old score needs a new threshold. The order of patients by score does not change
 
-## Accuracy, calibration and ranking under shift {minutes="3"}
+## Accuracy, calibration, and ranking under shift {minutes="3"}
 
 ::: {.notes}
 Calibration of the leader, by deciles of its prediction. Under covariate shift it survives here because the model is close to p(y | x). None of this is guaranteed. Split conformal coverage: not guaranteed under either shift (the rows are no longer exchangeable).
@@ -616,7 +616,7 @@ Deploying a model can be what moves it: a program that enrolls the predicted hig
 ## Causes and effects as inputs {.inverse}
 
 ::: {.notes}
-Skip if behind. Nastl and Hardt (2024), sections 1.2, 2 and 3.
+Skip if behind. Nastl and Hardt (2024), sections 1.2, 2, and 3.
 :::
 
 Theory: the distribution of $Y$ given all its causes is unchanged by interventions that leave $Y$'s own mechanism alone, so a model on the causes should travel
@@ -719,7 +719,7 @@ The Netflix prize: the winning blend was never put into production
 ## Outcome reasoning and model reasoning {minutes="3"}
 
 ::: {.notes}
-Rodu and Baiocchi, sections 1.2, 2, 4.1 and 6, as numbered in the 2021 arXiv version. The four names are theirs; MARA(s).
+Rodu and Baiocchi, sections 1.2, 2, 4.1, and 6, as numbered in the 2021 arXiv version. The four names are theirs; MARA(s).
 Their triage example: passes for the administrator, fails for one patient whose diagnosis it replaces.
 Fermat against Ptolemy: model reasoning against outcome reasoning.
 :::
@@ -828,7 +828,7 @@ For which of these tasks would a model with a better score make things better?
 ## Limits of predictive optimization {minutes="3"}
 
 ::: {.notes}
-Wang et al., sections 2.2, 3.1, 3.2, 3.4 and 3.6, of the seven in their section 3. Salganik et al. (2020), abstract. Kiviat (2019), abstract.
+Wang et al., sections 2.2, 3.1, 3.2, 3.4, and 3.6, of the seven in their section 3. Salganik et al. (2020), abstract. Kiviat (2019), abstract.
 :::
 
 The case for prediction: decisions that are consistent, cheap, auditable, and often more accurate than unaided judgment (Wang et al. 2024). Questions a score does not answer:

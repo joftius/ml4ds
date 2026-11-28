@@ -1,9 +1,0 @@
-## Week 10: evaluation, distribution shift and deployment
-
-What a winning score shows, and what it does not. The leaderboard first: comparing two models on the same rows, paired; Hoeffding's inequality and the union bound, which say how far every score can be from its risk at once; choosing the comparison before the test rows are opened; the bootstrap for numbers that are not averages; and scores that drift when the candidates are tuned to them. Then the data move: in-distribution against out-of-distribution generalization, covariate shift and reweighting by a ratio of probabilities, label shift and a change of intercept, and what each shift does to accuracy, calibration and ranking. Last, scores and decisions: curve fitting with and without a theory behind it, what a competition win does and does not license, a cost score used to allocate extra care that is accurate and calibrated and still allocates it unequally, and prediction tasks that a better score would not make better. Data: synthetic patient-years from a study of a commercial health algorithm ([data note](data/obermeyer.html)).
-
-**Reading [PROVISIONAL]**
-
-- [What a winning score shows](weeks/10-explaining-intervening/winning-scores.html) ([PDF](weeks/10-explaining-intervening/winning-scores.pdf)), the note for this lecture: competitions and benchmarks, how far a score can be from its risk, distribution shift, and what a winning score cannot justify. The works it draws on are listed in each section and at the end.
-
-**Lecture:** [slides](weeks/10-explaining-intervening/slides/10-1-evaluation.html)

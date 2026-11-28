@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>What a winning score shows – machine learning 4 data science</title>
+<title>You found the best predictor. Now what? – machine learning 4 data science</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -214,15 +214,15 @@ window.Quarto = {
   <li><a href="#summary" id="toc-summary" class="nav-link" data-scroll-target="#summary">Summary</a></li>
   <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references">References</a></li>
   </ul>
-<div class="quarto-alternate-formats"><h2>Other Formats</h2><ul><li><a href="winning-scores.pdf"><i class="bi bi-file-pdf"></i>PDF</a></li></ul></div></nav>
+<div class="quarto-alternate-formats"><h2>Other Formats</h2><ul><li><a href="winning-ctf.pdf"><i class="bi bi-file-pdf"></i>PDF</a></li></ul></div></nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">What a winning score shows</h1>
-<p class="subtitle lead">Benchmarks, distribution shift and deployment</p>
+<h1 class="title">You found the best predictor. Now what?</h1>
+<p class="subtitle lead">Benchmarks, distribution shift, and deployment</p>
 </div>
 
 
@@ -239,7 +239,7 @@ window.Quarto = {
 </header>
 
 
-<p>Most of what machine learning knows about which methods work comes from competitions: a shared dataset, a task, an agreed score and a hidden evaluation set, with the winner chosen by best score. This note is about what such a win establishes. It follows the lecture: how far a score can be from what it estimates; how reusing a test set can mislead; what happens when the data a model meets differ from the data it was scored on; what a winning score can justify; and what it cannot answer, because the target or the task itself is in question. Each section opens with the works it draws on, and the sections of them it uses; full references are at the end.</p>
+<p>Most of what machine learning knows about which methods work comes from competitions: a shared dataset, a task, an agreed score, and a hidden evaluation set, with the winner chosen by best score. This note is about what such a win establishes. It follows the lecture: how far a score can be from what it estimates; how reusing a test set can mislead; what happens when the data a model meets differ from the data it was scored on; what a winning score can justify; and what it cannot answer, because the target or the task itself is in question. Each section opens with the works it draws on, and the sections of them it uses; full references are at the end.</p>
 <div class="cell">
 <details class="code-fold">
 <summary>Show the setup code</summary>
@@ -302,7 +302,7 @@ P\big(|\bar Z - \mathbb E\bar Z| \ge t\big) \le 2e^{-2mt^2}.
 <div id="fig-tails" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-tails-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="winning-scores_files/figure-html/fig-tails-1.png" class="img-fluid figure-img" width="1050">
+<img src="winning-ctf_files/figure-html/fig-tails-1.png" class="img-fluid figure-img" width="1050">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-tails-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;1: The probability that the mean of <span class="math inline">\(m = 50\)</span> losses of 0 or 1 is at least <span class="math inline">\(t\)</span> from its expectation, on a log scale: exactly (binomial) when the risk is <span class="math inline">\(\frac12\)</span>, the normal approximation, and Hoeffding’s bound <span class="math inline">\(2e^{-2mt^2}\)</span>. The dashed line is the exact probability when the risk is 0.1, where the variance is smaller and the bound, which uses only the range, is loose.
@@ -347,7 +347,7 @@ t_K = \sqrt{\frac{\log(2K/\delta)}{2m}}
 <div id="fig-adaptive" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-adaptive-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="winning-scores_files/figure-html/fig-adaptive-1.png" class="img-fluid figure-img" width="1050">
+<img src="winning-ctf_files/figure-html/fig-adaptive-1.png" class="img-fluid figure-img" width="1050">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-adaptive-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;2: Overfitting by reusing a test set of <span class="math inline">\(n = 2{,}000\)</span> points whose labels are coin flips. After <span class="math inline">\(k\)</span> random classifiers have been scored, the majority vote of those that scored above one half has the test accuracy shown; its accuracy on new points is one half. The dashed curve is <span class="math inline">\(\frac12 + c\sqrt{k/n}\)</span>, with <span class="math inline">\(c\)</span> fitted to the simulated points by least squares.
@@ -407,7 +407,7 @@ R_{\text{test}}(f) &amp;= \mathbb E_{\text{test}}\big[r(X)\big] &amp;&amp; \text
 <div id="fig-covshift" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-covshift-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="winning-scores_files/figure-html/fig-covshift-1.png" class="img-fluid figure-img" width="1050">
+<img src="winning-ctf_files/figure-html/fig-covshift-1.png" class="img-fluid figure-img" width="1050">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-covshift-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;3: Covariate shift in one dimension. Left: the training and deployment densities of the input, <span class="math inline">\(N(0, 1)\)</span> and <span class="math inline">\(N(1.5, 1)\)</span>. Right: the weight <span class="math inline">\(w(x) = p_{\text{test}}(x)/p_{\text{train}}(x)\)</span> on a log scale. The deployment population is mostly where training rows are rare, so a few rows get large weights.
@@ -432,7 +432,7 @@ w(x) = \frac{P(\text{deployment} \mid x)}{P(\text{training} \mid x)} \cdot \frac
 <li><strong>Calibration is lost, and an intercept repairs it.</strong> A score <span class="math inline">\(s(x)\)</span> calibrated under training, <span class="math inline">\(s(x) = P_{\text{train}}(Y = 1 \mid X = x)\)</span>, is off under deployment by the same shift on the log-odds scale at every <span class="math inline">\(x\)</span>. Adding <span class="math inline">\(\operatorname{logit} q_{\text{test}} - \operatorname{logit} q_{\text{train}}\)</span> to its log-odds repairs it: this is recalibration by a logistic regression on the logit of the score, with the slope kept at 1. It needs <span class="math inline">\(q_{\text{test}}\)</span>, known or estimated (estimating it is beyond this course).</li>
 <li><strong>The threshold.</strong> With unchanged costs, the optimal threshold theorem still says: predict 1 when the correct probability, now <span class="math inline">\(P_{\text{test}}(Y = 1 \mid X = x)\)</span>, exceeds <span class="math inline">\(c^\star = c_{FP}/(c_{FP} + c_{FN})\)</span>. In terms of the old score that is <span class="math display">\[
 \operatorname{logit} s(x) &gt; \operatorname{logit} c^\star - \big(\operatorname{logit} q_{\text{test}} - \operatorname{logit} q_{\text{train}}\big),
-\]</span> so the threshold on the correct deployment probability is unchanged and the old score needs a new threshold. For example, with <span class="math inline">\(c^\star = \frac12\)</span>, <span class="math inline">\(q_{\text{train}} = \frac14\)</span> and <span class="math inline">\(q_{\text{test}} = \frac12\)</span>, the shift is <span class="math inline">\(\log 3\)</span> and the old score’s threshold becomes <span class="math inline">\(\frac14\)</span>.</li>
+\]</span> so the threshold on the correct deployment probability is unchanged and the old score needs a new threshold. For example, with <span class="math inline">\(c^\star = \frac12\)</span>, <span class="math inline">\(q_{\text{train}} = \frac14\)</span>, and <span class="math inline">\(q_{\text{test}} = \frac12\)</span>, the shift is <span class="math inline">\(\log 3\)</span> and the old score’s threshold becomes <span class="math inline">\(\frac14\)</span>.</li>
 <li><strong>The ranking survives.</strong> The map from <span class="math inline">\(s(x)\)</span> to the deployment probability is increasing, so the units are ranked in the same order, and quantities that depend only on the ranking, such as the AUC, are unchanged in expectation.</li>
 </ul>
 <div class="cell">
@@ -457,7 +457,7 @@ w(x) = \frac{P(\text{deployment} \mid x)}{P(\text{training} \mid x)} \cdot \frac
 <div id="fig-labelshift" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-labelshift-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="winning-scores_files/figure-html/fig-labelshift-1.png" class="img-fluid figure-img" width="1050">
+<img src="winning-ctf_files/figure-html/fig-labelshift-1.png" class="img-fluid figure-img" width="1050">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-labelshift-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;4: Label shift: the correct deployment probability as a function of a score calibrated under training, when the share of positives moves from one quarter to one half or to one tenth. The dotted lines show the threshold one half on the deployment probability, and where it falls on the old score.
@@ -510,12 +510,12 @@ Figure&nbsp;4: Label shift: the correct deployment probability as a function of 
 </section>
 <section id="causes-and-effects-as-inputs" class="level3">
 <h3 class="anchored" data-anchor-id="causes-and-effects-as-inputs">Causes and effects as inputs</h3>
-<p>A natural hope is that a model built on the causes of the outcome will travel better than one built on everything, because the distribution of an outcome given all its causes is unchanged by interventions that leave the outcome’s own mechanism alone. Nastl and Hardt tested this on 16 prediction tasks from tabular data in health, employment, education, social benefits and politics, each with several domains: income across regions of the US, voting across regions, hospital mortality across insurance types, and others. For each task they chose a conservative set of causal features, a broader set of arguably causal ones, and the full set. Models on all the features had the best accuracy both within the training domain and in new domains, in every task, and adding features that the outcome plausibly causes helped the causal models out of domain. Methods designed for causal domain generalization did no better than standard models on the arguably causal features. They note that the choice of causal features is a judgment, that the available features may leave out real causes, and that the study covers tabular data only. The theory they test is about the true conditional distribution given all the causes; a model fitted to a handful of causal features measured in a survey is a different object, and its risk can still change across domains.</p>
+<p>A natural hope is that a model built on the causes of the outcome will travel better than one built on everything, because the distribution of an outcome given all its causes is unchanged by interventions that leave the outcome’s own mechanism alone. Nastl and Hardt tested this on 16 prediction tasks from tabular data in health, employment, education, social benefits, and politics, each with several domains: income across regions of the US, voting across regions, hospital mortality across insurance types, and others. For each task they chose a conservative set of causal features, a broader set of arguably causal ones, and the full set. Models on all the features had the best accuracy both within the training domain and in new domains, in every task, and adding features that the outcome plausibly causes helped the causal models out of domain. Methods designed for causal domain generalization did no better than standard models on the arguably causal features. They note that the choice of causal features is a judgment, that the available features may leave out real causes, and that the study covers tabular data only. The theory they test is about the true conditional distribution given all the causes; a model fitted to a handful of causal features measured in a survey is a different object, and its risk can still change across domains.</p>
 </section>
 </section>
 <section id="what-a-winning-score-can-justify" class="level2">
 <h2 class="anchored" data-anchor-id="what-a-winning-score-can-justify">What a winning score can justify</h2>
-<p><strong>Reference</strong>: Rodu and Baiocchi (2023), sections 1, 2, 3.3, 3.4, 4 and 6; Feynman et al.&nbsp;(1963), chapter 26.</p>
+<p><strong>Reference</strong>: Rodu and Baiocchi (2023), sections 1, 2, 3.3, 3.4, 4, and 6; Feynman et al.&nbsp;(1963), chapter 26.</p>
 <p>Rodu and Baiocchi list five features of the framework (section 1.2): curated data in a repository; static data shared by every analyst; a well-defined task; agreement on the evaluation metric; and an evaluation set the analysts cannot see. Done correctly, a competition with these features supports a comparison: on this task, with this metric, one algorithm performs better than another. It takes a real problem and puts it in a sandbox. What it does not provide is a foundation for deploying the winner. In their words: “Competing successfully in a CTF event does not warrant deployment” (section 6).</p>
 <p>To say what would, they separate two ways of trusting a prediction (section 4.1):</p>
 <ul>
@@ -530,7 +530,7 @@ Figure&nbsp;4: Label shift: the correct deployment probability as a function of 
 <li><strong>Agnosis</strong>: the people affected can tolerate an algorithm whose structure may conflict with their beliefs, which may be scientific or moral.</li>
 </ul>
 <p>Each condition depends on who is asking: the “(s)” in MARA(s) stands for the stakeholders (section 2.1). A triage algorithm for mild symptoms can satisfy all four from a hospital administrator’s point of view, while for one patient the prediction replaces the diagnosis, so the outcome that would check it is never measured (section 3.3). The authors say plainly that their framework does not decide who counts as a stakeholder. Their main negative example is a recidivism score used in decisions about detention (sections 3.4 and 6): people who are detained have no observed outcome, so measurement fails, and for public defenders and the people being scored they argue that resilience and agnosis fail as well. When the conditions fail, they recommend that stakeholders ask for model reasoning before the algorithm is used.</p>
-<p>The lecture’s optics slides make the same distinction with an older example. Ptolemy’s table of refraction angles from air into water, as Feynman reprints it (Table 26-1), lists 8, 15½, 22½, 29, 35, 40½, 45½ and 50 degrees for angles of incidence from 10 to 80. Its second differences are all <span class="math inline">\(-\frac12\)</span>, so it is exactly the quadratic <span class="math inline">\(r = 8.25k - 0.25k^2\)</span> with <span class="math inline">\(k\)</span> the angle of incidence in tens of degrees: a curve that fits the measurements it came from. Snell’s law, <span class="math inline">\(\sin i = n \sin r\)</span>, fits the same angles within a few degrees with <span class="math inline">\(n = 1.33\)</span> for water, and says how they change in glass, where <span class="math inline">\(n\)</span> is about 1.5. Fermat’s principle of least time, from which the law follows, is the kind of structure model reasoning checks.</p>
+<p>The lecture’s optics slides make the same distinction with an older example. Ptolemy’s table of refraction angles from air into water, as Feynman reprints it (Table 26-1), lists 8, 15½, 22½, 29, 35, 40½, 45½, and 50 degrees for angles of incidence from 10 to 80. Its second differences are all <span class="math inline">\(-\frac12\)</span>, so it is exactly the quadratic <span class="math inline">\(r = 8.25k - 0.25k^2\)</span> with <span class="math inline">\(k\)</span> the angle of incidence in tens of degrees: a curve that fits the measurements it came from. Snell’s law, <span class="math inline">\(\sin i = n \sin r\)</span>, fits the same angles within a few degrees with <span class="math inline">\(n = 1.33\)</span> for water, and says how they change in glass, where <span class="math inline">\(n\)</span> is about 1.5. Fermat’s principle of least time, from which the law follows, is the kind of structure model reasoning checks.</p>
 <div class="cell">
 <details class="code-fold">
 <summary>Show the code</summary>
@@ -551,7 +551,7 @@ Figure&nbsp;4: Label shift: the correct deployment probability as a function of 
 <div id="fig-optics" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-optics-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="winning-scores_files/figure-html/fig-optics-1.png" class="img-fluid figure-img" width="1050">
+<img src="winning-ctf_files/figure-html/fig-optics-1.png" class="img-fluid figure-img" width="1050">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-optics-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;5: Ptolemy’s table (points) and its quadratic, against Snell’s law with <span class="math inline">\(n = 1.33\)</span> for water and <span class="math inline">\(n = 1.5\)</span> for glass. The glass curve is computed from the law, not measured; the quadratic has nothing to change for glass.
@@ -563,7 +563,7 @@ Figure&nbsp;5: Ptolemy’s table (points) and its quadratic, against Snell’s l
 </section>
 <section id="when-the-target-or-the-task-is-wrong" class="level2">
 <h2 class="anchored" data-anchor-id="when-the-target-or-the-task-is-wrong">When the target or the task is wrong</h2>
-<p><strong>Reference</strong>: Obermeyer et al.&nbsp;(2019); Hardt and Recht (2022), chapter 8, sections “Harms associated with data” and “Limits of data and prediction”; Salganik et al.&nbsp;(2020); Wang et al.&nbsp;(2024), sections 2.1, 2.2, 3.1, 3.2, 3.4, 3.6 and 4.4; Kiviat (2019).</p>
+<p><strong>Reference</strong>: Obermeyer et al.&nbsp;(2019); Hardt and Recht (2022), chapter 8, sections “Harms associated with data” and “Limits of data and prediction”; Salganik et al.&nbsp;(2020); Wang et al.&nbsp;(2024), sections 2.1, 2.2, 3.1, 3.2, 3.4, 3.6, and 4.4; Kiviat (2019).</p>
 <p><strong>The cost score.</strong> Obermeyer et al.&nbsp;studied a commercial algorithm that health systems use to choose patients for programs that give extra care to people with complex needs. In the system they studied, patients above the 97th percentile of the algorithm’s score were enrolled automatically and those above the 55th were referred to their doctor (p.&nbsp;448). The data covered about 6,000 Black and 43,500 White patients from 2013 to 2015. The algorithm predicts next year’s health care cost and does not use race (p.&nbsp;449). As a predictor of cost it does what it was built to do: at a given score, realized costs are about the same for Black and White patients (their Figure 3A). But at the 97th percentile Black patients had 4.8 active chronic conditions against 3.8 for White patients (p.&nbsp;448), and at the same number of chronic illnesses about $1,800 a year less was spent on Black patients (p.&nbsp;450). Because less is spent on them for the same need, a score that predicts cost understates their need, while being accurate and calibrated for the target it was given.</p>
 <p>The authors released a synthetic version of their data, generated to mimic it: 48,784 patient-years, with the commercial score in the column <code>risk_score_t</code>. The figure draws the paper’s two comparisons from it.</p>
 <div class="cell">
@@ -587,7 +587,7 @@ Figure&nbsp;5: Ptolemy’s table (points) and its quadratic, against Snell’s l
 <div id="fig-obermeyer" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-obermeyer-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="winning-scores_files/figure-html/fig-obermeyer-1.png" class="img-fluid figure-img" width="1050">
+<img src="winning-ctf_files/figure-html/fig-obermeyer-1.png" class="img-fluid figure-img" width="1050">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-obermeyer-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;6: The synthetic patient-years released with Obermeyer et al.&nbsp;(2019), by percentile of the commercial algorithm’s score (bins of 5 percentiles; the dashed line is the 97th percentile). Left: mean cost the next year. Right: mean number of active chronic conditions the next year.
@@ -597,7 +597,7 @@ Figure&nbsp;6: The synthetic patient-years released with Obermeyer et al.&nbsp;(
 </div>
 </div>
 <p>In the synthetic rows, the patients between the 55th and 97th percentiles of the score, the range referred to a doctor, cost about the same on average in the two groups ($10,000 for Black and $10,100 for White patients), while Black patients had 3.0 active chronic conditions against 2.0. Above the 97th percentile the synthetic rows do not reproduce the paper’s calibration: there Black patients cost more on average ($58,500 against $39,000, from 293 and 1,171 patient-years), as well as having more chronic conditions (6.6 against 5.2). Synthetic data that match the original’s broad patterns need not match it in a thin tail, which is a reason to state claims about these rows as claims about the synthetic data. The lecture makes the same comparisons with a model fitted in class.</p>
-<p>The authors then trained models with the same inputs on three targets: total cost, avoidable cost and the number of active chronic conditions (Table 2, p.&nbsp;452). The share of Black patients among the top 3% of predicted risk was 14.1% with total cost as the target and 26.7% with active chronic conditions. Changing the target changed who would be offered care. The manufacturer, working with the authors, retrained its algorithm with a different target and reduced the bias on its own national data.</p>
+<p>The authors then trained models with the same inputs on three targets: total cost, avoidable cost, and the number of active chronic conditions (Table 2, p.&nbsp;452). The share of Black patients among the top 3% of predicted risk was 14.1% with total cost as the target and 26.7% with active chronic conditions. Changing the target changed who would be offered care. The manufacturer, working with the authors, retrained its algorithm with a different target and reduced the bias on its own national data.</p>
 <p>One more lesson comes from the authors’ repository rather than the paper. The abstract reports that removing the bias would raise the share of Black patients receiving extra help from 17.7% to 46.5%. In 2022 the authors posted a correction: a coding error in that simulation made the second number too low, and the corrected figure is 59%. They also report a critique of the swapping procedure behind it. A number quoted from an abstract is worth checking against the authors’ latest materials.</p>
 <p><strong>The framing of the task.</strong> PPA’s section on harms gives two examples of how the way a task is set up decides what a good score means. Claims that models beat human accuracy at image classification rested on loosely defined human baselines. And for predicting which defendants will fail to appear in court, the chapter points out that the usual causes (transportation, childcare, work hours) can be addressed directly, so a more accurate prediction used to justify detention may be the wrong response to the problem. Its subsection on privacy tells how the ratings released for the Netflix challenge were linked to public IMDb ratings to identify subscribers, and how the fallout ended a planned second competition.</p>
 <p><strong>How predictable the outcome is.</strong> PPA’s last section describes the Fragile Families Challenge (Salganik et al.&nbsp;2020). Competitors were given data on 4,242 families, followed from a child’s birth to age 9, with about 12,900 variables, and asked to predict six outcomes measured at age 15, among them the child’s grade point average and whether the family was evicted. About 160 teams submitted models. The best predictions were not very accurate and only slightly better than a simple benchmark, and how badly a family was predicted depended much more on the family than on the method. The chapter’s reading is that some life outcomes may be close to unpredictable over such a span, whatever the method, and that prediction is a weak basis for decisions when the world is changing or when the question is what an intervention would do.</p>
@@ -624,7 +624,7 @@ Figure&nbsp;6: The synthetic patient-years released with Obermeyer et al.&nbsp;(
 <li>Hoeffding, W. (1963). Probability inequalities for sums of bounded random variables. <em>Journal of the American Statistical Association</em> 58(301), 13–30. <a href="https://doi.org/10.1080/01621459.1963.10500830">doi:10.1080/01621459.1963.10500830</a></li>
 <li>Kiviat, B. (2019). The moral limits of predictive practices: the case of credit-based insurance scores. <em>American Sociological Review</em> 84(6), 1134–1158. <a href="https://doi.org/10.1177/0003122419884917">doi:10.1177/0003122419884917</a></li>
 <li>Nastl, V. Y. and Hardt, M. (2024). Do causal predictors generalize better to new domains? <em>Advances in Neural Information Processing Systems</em> 37. <a href="https://doi.org/10.52202/079017-0983">doi:10.52202/079017-0983</a>. Also <a href="https://arxiv.org/abs/2402.09891">arXiv:2402.09891</a>.</li>
-<li>Obermeyer, Z., Powers, B., Vogeli, C. and Mullainathan, S. (2019). Dissecting racial bias in an algorithm used to manage the health of populations. <em>Science</em> 366(6464), 447–453. <a href="https://doi.org/10.1126/science.aax2342">doi:10.1126/science.aax2342</a>. Synthetic data, code and the 2022 correction: <a href="https://gitlab.com/labsysmed/dissecting-bias">gitlab.com/labsysmed/dissecting-bias</a></li>
+<li>Obermeyer, Z., Powers, B., Vogeli, C. and Mullainathan, S. (2019). Dissecting racial bias in an algorithm used to manage the health of populations. <em>Science</em> 366(6464), 447–453. <a href="https://doi.org/10.1126/science.aax2342">doi:10.1126/science.aax2342</a>. Synthetic data, code, and the 2022 correction: <a href="https://gitlab.com/labsysmed/dissecting-bias">gitlab.com/labsysmed/dissecting-bias</a></li>
 <li>Recht, B., Roelofs, R., Schmidt, L. and Shankar, V. (2019). Do ImageNet classifiers generalize to ImageNet? <em>Proceedings of the 36th International Conference on Machine Learning</em>, PMLR 97, 5389–5400. <a href="https://proceedings.mlr.press/v97/recht19a.html">proceedings.mlr.press/v97/recht19a.html</a></li>
 <li>Rodu, J. and Baiocchi, M. (2023). When black box algorithms are (not) appropriate: a principled prediction-problem ontology. <em>Observational Studies</em>. <a href="https://muse.jhu.edu/pub/56/article/883478">muse.jhu.edu/pub/56/article/883478</a>. Section numbers as in <a href="https://arxiv.org/abs/2001.07648">arXiv:2001.07648</a>, version of 31 March 2021.</li>
 <li>Roelofs, R., Shankar, V., Recht, B., Fridovich-Keil, S., Hardt, M., Miller, J. and Schmidt, L. (2019). A meta-analysis of overfitting in machine learning. <em>Advances in Neural Information Processing Systems</em> 32. <a href="https://papers.nips.cc/paper/9117-a-meta-analysis-of-overfitting-in-machine-learning">NeurIPS proceedings</a></li>

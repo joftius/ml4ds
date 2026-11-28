@@ -31,6 +31,6 @@ A week's delivery edits only its own block; nothing here changes. -->
 
 {{< include weeks/09-uncert-interp/_index.qmd >}}
 
-{{< include weeks/10-explaining-intervening/_index.qmd >}}
+{{< include weeks/10-deployment/_index.qmd >}}
 
 {{< include weeks/11-synthesis/_index.qmd >}}
